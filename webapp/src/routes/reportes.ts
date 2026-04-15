@@ -387,6 +387,12 @@ reportes.get('/reportes', async (c) => {
             <a href="/reportes/exportar/files?${exportParams}" class="btn btn-sm" style="background:#1d6f42;color:white;border:none;">
               <i class="fas fa-file-excel"></i> Exportar Files
             </a>
+            <a href="/reportes/exportar/servicios-pagados?desde=${desde}&hasta=${hasta}" class="btn btn-sm" style="background:#0369a1;color:white;border:none;">
+              <i class="fas fa-file-excel"></i> Servicios Pagados
+            </a>
+            <a href="/reportes/exportar/servicios-pendientes?desde=${desde}&hasta=${hasta}" class="btn btn-sm" style="background:#7B3FA0;color:white;border:none;">
+              <i class="fas fa-file-excel"></i> Servicios Pendientes
+            </a>
           </div>
         </div>
       </form>
@@ -1234,3 +1240,103 @@ reportes.get('/reportes/exportar/cuentas-corrientes', async (c) => {
 })
 
 export default reportes
+
+// ── GET /reportes/exportar/servicios-pagados ─────────────────
+reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+  const desde = c.req.query('desde') || ''
+  const hasta = c.req.query('hasta') || ''
+
+  try {
+    let q = `
+      SELECT s.id, s.tipo_servicio, s.descripcion, s.nro_ticket,
+             p.nombre as proveedor, o.nombre as operador,
+             s.costo_original, s.moneda_origen, s.precio_venta,
+             s.fecha_inicio, s.estado_pago_proveedor,
+             f.numero as file_numero,
+             COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
+             u.nombre as vendedor,
+             s.created_at
+      FROM servicios s
+      JOIN files f ON f.id = s.file_id
+      LEFT JOIN proveedores p ON p.id = s.proveedor_id
+      LEFT JOIN operadores o ON o.id = s.operador_id
+      LEFT JOIN clientes cl ON cl.id = f.cliente_id
+      LEFT JOIN usuarios u ON u.id = f.vendedor_id
+      WHERE (s.prepago_realizado = 1 OR s.estado_pago_proveedor = 'pagado')
+        AND f.estado != 'anulado'
+    `
+    const params: string[] = []
+    if (desde) { q += ` AND date(s.created_at) >= ?`; params.push(desde) }
+    if (hasta) { q += ` AND date(s.created_at) <= ?`; params.push(hasta) }
+    q += ` ORDER BY s.created_at DESC`
+
+    const rows = await c.env.DB.prepare(q).bind(...params).all()
+    const headers = ['ID', 'File', 'Cliente', 'Vendedor', 'Tipo', 'Descripción', 'Ticket/Reserva', 'Proveedor', 'Operador', 'Costo', 'Moneda', 'Venta', 'Fecha Servicio', 'Estado Pago', 'Fecha Registro']
+    const data = (rows.results as any[]).map((s: any) => [
+      s.id, s.file_numero, s.cliente, s.vendedor,
+      s.tipo_servicio, s.descripcion, s.nro_ticket || '',
+      s.proveedor || '', s.operador || '',
+      Number(s.costo_original).toFixed(2), s.moneda_origen,
+      Number(s.precio_venta).toFixed(2),
+      (s.fecha_inicio || ''), s.estado_pago_proveedor,
+      (s.created_at || '').split('T')[0]
+    ])
+    const label = desde && hasta ? `${desde}_${hasta}` : new Date().toISOString().split('T')[0]
+    return csvResponse(`servicios_pagados_${label}.csv`, headers, data)
+  } catch (e: any) {
+    return c.text('Error: ' + e.message, 500)
+  }
+})
+
+// ── GET /reportes/exportar/servicios-pendientes ──────────────
+reportes.get('/reportes/exportar/servicios-pendientes', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+  const desde = c.req.query('desde') || ''
+  const hasta = c.req.query('hasta') || ''
+
+  try {
+    let q = `
+      SELECT s.id, s.tipo_servicio, s.descripcion, s.nro_ticket,
+             p.nombre as proveedor, o.nombre as operador,
+             s.costo_original, s.moneda_origen, s.precio_venta,
+             s.fecha_inicio, s.fecha_limite_prepago, s.estado_pago_proveedor,
+             f.numero as file_numero,
+             COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
+             u.nombre as vendedor,
+             s.created_at
+      FROM servicios s
+      JOIN files f ON f.id = s.file_id
+      LEFT JOIN proveedores p ON p.id = s.proveedor_id
+      LEFT JOIN operadores o ON o.id = s.operador_id
+      LEFT JOIN clientes cl ON cl.id = f.cliente_id
+      LEFT JOIN usuarios u ON u.id = f.vendedor_id
+      WHERE s.prepago_realizado = 0
+        AND s.estado_pago_proveedor NOT IN ('pagado')
+        AND f.estado != 'anulado'
+        AND s.estado != 'cancelado'
+    `
+    const params: string[] = []
+    if (desde) { q += ` AND date(s.created_at) >= ?`; params.push(desde) }
+    if (hasta) { q += ` AND date(s.created_at) <= ?`; params.push(hasta) }
+    q += ` ORDER BY s.fecha_limite_prepago ASC NULLS LAST, f.numero ASC`
+
+    const rows = await c.env.DB.prepare(q).bind(...params).all()
+    const headers = ['ID', 'File', 'Cliente', 'Vendedor', 'Tipo', 'Descripción', 'Ticket/Reserva', 'Proveedor', 'Operador', 'Costo', 'Moneda', 'Venta', 'Fecha Servicio', 'Fecha Límite Pago', 'Estado Pago']
+    const data = (rows.results as any[]).map((s: any) => [
+      s.id, s.file_numero, s.cliente, s.vendedor,
+      s.tipo_servicio, s.descripcion, s.nro_ticket || '',
+      s.proveedor || '', s.operador || '',
+      Number(s.costo_original).toFixed(2), s.moneda_origen,
+      Number(s.precio_venta).toFixed(2),
+      (s.fecha_inicio || ''), (s.fecha_limite_prepago || '—'),
+      s.estado_pago_proveedor || 'pendiente'
+    ])
+    const label = desde && hasta ? `${desde}_${hasta}` : new Date().toISOString().split('T')[0]
+    return csvResponse(`servicios_pendientes_${label}.csv`, headers, data)
+  } catch (e: any) {
+    return c.text('Error: ' + e.message, 500)
+  }
+})
