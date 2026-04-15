@@ -5475,4 +5475,162 @@ tesoreria.get('/tesoreria/tarjetas/reporte', async (c) => {
   return c.html(baseLayout('Reporte TCs', content, user, 'tesoreria'))
 })
 
+
+// ── GET: Ver pagos desimputables (solo gerente) ───────────────
+tesoreria.get('/tesoreria/desimputar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isGerente(user.rol)) return c.redirect('/tesoreria?error=sin_permiso')
+
+  const ok  = c.req.query('ok')    || ''
+  const err = c.req.query('error') || ''
+
+  try {
+    const pagos = await c.env.DB.prepare(`
+      SELECT pcc.id, pcc.proveedor_id, pcc.monto, pcc.moneda, pcc.concepto,
+             pcc.movimiento_caja_id, pcc.servicios_ids, pcc.fecha, pcc.created_at,
+             p.nombre as proveedor_nombre,
+             u.nombre as usuario_nombre
+      FROM proveedor_cuenta_corriente pcc
+      LEFT JOIN proveedores p ON p.id = pcc.proveedor_id
+      LEFT JOIN usuarios u ON u.id = pcc.usuario_id
+      WHERE pcc.tipo = 'credito' AND pcc.estado = 'confirmado'
+        AND pcc.metodo != 'tarjeta_credito'
+      ORDER BY pcc.created_at DESC
+      LIMIT 100
+    `).all()
+
+    const rows = (pagos.results as any[]).map((p: any) => {
+      const svcIds = (p.servicios_ids || '').split(',').filter(Boolean)
+      return `
+        <tr style="border-bottom:1px solid #f3f4f6;">
+          <td style="padding:10px 12px;font-size:12px;color:#6b7280;">${(p.created_at||'').substring(0,16)}</td>
+          <td style="padding:10px 12px;font-weight:600;">${esc(p.proveedor_nombre||'—')}</td>
+          <td style="padding:10px 12px;font-size:13px;">${esc(p.concepto||'')}</td>
+          <td style="padding:10px 12px;font-weight:700;color:#7B3FA0;">$${Number(p.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${p.moneda||'USD'}</td>
+          <td style="padding:10px 12px;font-size:11px;color:#6b7280;">${svcIds.length} servicio(s)</td>
+          <td style="padding:10px 12px;font-size:12px;color:#9ca3af;">${esc(p.usuario_nombre||'—')}</td>
+          <td style="padding:10px 12px;">
+            <form method="POST" action="/tesoreria/desimputar" onsubmit="return confirm('¿Confirmar desimputación de $${Number(p.monto).toLocaleString()} a ${esc(p.proveedor_nombre||'')}? Esta acción no se puede deshacer.')">
+              <input type="hidden" name="pago_id" value="${p.id}">
+              <button type="submit" style="padding:4px 12px;background:#dc2626;color:white;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:600;">
+                <i class="fas fa-undo"></i> Desimputar
+              </button>
+            </form>
+          </td>
+        </tr>
+      `
+    }).join('')
+
+    const content = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div>
+          <h2 style="margin:0;color:#1a1a2e;"><i class="fas fa-undo" style="color:#dc2626;"></i> Desimputar Pagos</h2>
+          <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Solo gerentes pueden revertir pagos registrados a proveedores.</p>
+        </div>
+        <a href="/tesoreria/proveedores" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Volver</a>
+      </div>
+      ${ok === '1' ? `<div class="alert alert-success"><i class="fas fa-check-circle"></i> Pago desimputado correctamente. Los servicios volvieron a estado pendiente.</div>` : ''}
+      ${err ? `<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Error: ${esc(err)}</div>` : ''}
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-list"></i> Pagos registrados (${pagos.results.length})</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f8f3ff;font-size:11px;color:#6b7280;text-transform:uppercase;">
+                <th style="padding:10px 12px;text-align:left;">Fecha</th>
+                <th style="padding:10px 12px;text-align:left;">Proveedor</th>
+                <th style="padding:10px 12px;text-align:left;">Concepto</th>
+                <th style="padding:10px 12px;text-align:left;">Monto</th>
+                <th style="padding:10px 12px;text-align:left;">Servicios</th>
+                <th style="padding:10px 12px;text-align:left;">Registrado por</th>
+                <th style="padding:10px 12px;text-align:left;">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows || '<tr><td colspan="7" style="text-align:center;padding:30px;color:#9ca3af;">Sin pagos registrados</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `
+    return c.html(baseLayout('Desimputar Pagos', content, user, 'tesoreria'))
+  } catch (e: any) {
+    return c.html(baseLayout('Desimputar Pagos', `<div class="alert alert-danger">Error: ${e.message}</div>`, user, 'tesoreria'))
+  }
+})
+
+// ── POST: Desimputar un pago (solo gerente) ───────────────────
+tesoreria.post('/tesoreria/desimputar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isGerente(user.rol)) return c.redirect('/tesoreria?error=sin_permiso')
+
+  try {
+    const body   = await c.req.parseBody()
+    const pagoId = Number(body.pago_id)
+    if (!pagoId) return c.redirect('/tesoreria/desimputar?error=id_invalido')
+
+    // Buscar el pago
+    const pago = await c.env.DB.prepare(
+      `SELECT * FROM proveedor_cuenta_corriente WHERE id = ? AND tipo = 'credito' AND estado = 'confirmado'`
+    ).bind(pagoId).first() as any
+
+    if (!pago) return c.redirect('/tesoreria/desimputar?error=pago_no_encontrado')
+
+    // 1. Revertir estado de servicios a pendiente
+    const svcIds = (pago.servicios_ids || '').split(',').map((s: string) => Number(s.trim())).filter((n: number) => n > 0)
+    for (const svcId of svcIds) {
+      await c.env.DB.prepare(
+        `UPDATE servicios SET prepago_realizado = 0, estado_pago_proveedor = 'pendiente', monto_tc_asignado = 0 WHERE id = ?`
+      ).bind(svcId).run().catch(() => {})
+    }
+
+    // 2. Anular movimiento de caja si existe
+    if (pago.movimiento_caja_id) {
+      await c.env.DB.prepare(
+        `UPDATE movimientos_caja SET anulado = 1, motivo_anulacion = ? WHERE id = ?`
+      ).bind(`Desimputado por ${user.nombre} el ${new Date().toLocaleDateString('es-UY')}`, pago.movimiento_caja_id).run().catch(() => {})
+    }
+
+    // 3. Marcar el registro de cuenta corriente como anulado
+    await c.env.DB.prepare(
+      `UPDATE proveedor_cuenta_corriente SET estado = 'anulado' WHERE id = ?`
+    ).bind(pagoId).run()
+
+    // 4. Generar débito en cuenta corriente = la deuda vuelve a existir
+    const conceptoDeuda = `Deuda reestablecida — desimputación de: ${pago.concepto || ''} (por ${user.nombre})`
+    await c.env.DB.prepare(`
+      INSERT INTO proveedor_cuenta_corriente
+        (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, servicios_ids, fecha)
+      VALUES (?, 'debito', 'ajuste', ?, ?, ?, ?, 'confirmado', ?, ?, date('now'))
+    `).bind(
+      pago.proveedor_id, pago.monto, pago.moneda || 'USD',
+      conceptoDeuda, `desimputacion_${pagoId}`,
+      user.id, pago.servicios_ids || ''
+    ).run()
+
+    // 5. Actualizar totales del file si corresponde
+    if (svcIds.length > 0) {
+      const fileRows = await c.env.DB.prepare(
+        `SELECT DISTINCT file_id FROM servicios WHERE id IN (${svcIds.map(() => '?').join(',')})` 
+      ).bind(...svcIds).all().catch(() => ({ results: [] }))
+      for (const fr of (fileRows.results as any[])) {
+        if (!fr.file_id) continue
+        const totals = await c.env.DB.prepare(`
+          SELECT COALESCE(SUM(precio_venta),0) as tv, COALESCE(SUM(costo_original),0) as tc
+          FROM servicios WHERE file_id = ? AND estado != 'cancelado'
+        `).bind(fr.file_id).first() as any
+        await c.env.DB.prepare(
+          `UPDATE files SET total_venta = ?, total_costo = ?, updated_at = datetime('now') WHERE id = ?`
+        ).bind(totals?.tv || 0, totals?.tc || 0, fr.file_id).run().catch(() => {})
+      }
+    }
+
+    return c.redirect('/tesoreria/desimputar?ok=1')
+  } catch (e: any) {
+    return c.redirect('/tesoreria/desimputar?error=' + encodeURIComponent(e.message || 'error_interno'))
+  }
+})
+
 export default tesoreria
