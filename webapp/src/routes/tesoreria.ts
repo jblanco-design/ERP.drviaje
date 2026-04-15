@@ -1079,7 +1079,7 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
           COALESCE(SUM(CASE WHEN tipo='debito'  AND estado='confirmado' THEN monto ELSE 0 END),0) as deb
         FROM proveedor_cuenta_corriente WHERE proveedor_id = ?
       `).bind(provId).first() as any
-      saldoDisponible = Number(saldoRow?.cred || 0) - Number(saldoRow?.deb || 0)
+      saldoDisponible = Number(saldoRow?.deb || 0) - Number(saldoRow?.cred || 0)
       if (saldoDisponible < 0) saldoDisponible = 0
     }
 
@@ -2251,12 +2251,13 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       FROM proveedor_cuenta_corriente WHERE proveedor_id = ?
     `).bind(provId).first() as any
 
-    const totalPagado    = Number(saldoRow?.total_credito || 0)  // créditos = pagos realizados
-    const totalDeuda     = Number(saldoRow?.total_debito  || 0)  // débitos = deuda con proveedor
-    const saldoDisponible = totalPagado - totalDeuda               // positivo = overpago, negativo = deuda pendiente
+    const totalPagado    = Number(saldoRow?.total_credito || 0)  // créditos = pagos al proveedor
+    const totalDebitos   = Number(saldoRow?.total_debito  || 0)  // débitos = devoluciones/NC del proveedor
+    // Saldo a favor nuestro = lo que el proveedor nos debe (devoluciones sin compensar)
+    const saldoDisponible = totalDebitos - totalPagado  // positivo = tenemos crédito a favor para usar
     const saldoPendiente  = Number(saldoRow?.total_pendiente || 0)
     const totalCreditos   = totalPagado
-    const totalDebitos    = totalDeuda
+    const totalDeuda      = totalDebitos
 
     // Servicios pendientes de pago del proveedor
     const serviciosPendientes = await c.env.DB.prepare(`
@@ -2460,11 +2461,11 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       <!-- Balance cards -->
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;">
         <!-- Saldo disponible — grande y destacado -->
-        <div style="background:${saldoDisponible>0?'linear-gradient(135deg,#059669,#047857)':saldoDisponible<0?'linear-gradient(135deg,#dc2626,#b91c1c)':'linear-gradient(135deg,#6b7280,#4b5563)'};
+        <div style="background:${saldoDisponible>0?'linear-gradient(135deg,#059669,#047857)':'linear-gradient(135deg,#6b7280,#4b5563)'};
           border-radius:14px;padding:20px;color:white;grid-column:span 1;">
-          <div style="font-size:11px;font-weight:700;opacity:0.85;letter-spacing:1px;margin-bottom:6px;">SALDO DISPONIBLE</div>
-          <div style="font-size:28px;font-weight:900;">${saldoDisponible<0?'-':''}$${Math.abs(saldoDisponible).toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
-          <div style="font-size:11px;opacity:0.75;margin-top:4px;">${saldoDisponible>0?'Saldo a favor (overpago)':saldoDisponible<0?'Deuda pendiente':'✓ Al día'}</div>
+          <div style="font-size:11px;font-weight:700;opacity:0.85;letter-spacing:1px;margin-bottom:6px;">CRÉDITO DISPONIBLE</div>
+          <div style="font-size:28px;font-weight:900;">$${Math.max(0,saldoDisponible).toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
+          <div style="font-size:11px;opacity:0.75;margin-top:4px;">${saldoDisponible>0?'Crédito disponible':saldoDisponible<0?'Pagos sin compensar':'✓ Sin saldo pendiente'}</div>
         </div>
         <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid #e5e7eb;">
           <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:6px;">SERVICIOS PENDIENTES</div>
@@ -2588,11 +2589,11 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
             <!-- Mini resumen créditos/débitos -->
             <div style="display:flex;gap:0;border-bottom:1px solid #e5e7eb;">
               <div style="flex:1;padding:10px 14px;text-align:center;border-right:1px solid #e5e7eb;">
-                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">PAGADO</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">TOTAL PAGADO</div>
                 <div style="font-size:16px;font-weight:800;color:#7B3FA0;">+$${totalCreditos.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
               </div>
               <div style="flex:1;padding:10px 14px;text-align:center;">
-                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">DEUDA</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">DEVOLUCIONES</div>
                 <div style="font-size:16px;font-weight:800;color:#dc2626;">-$${totalDebitos.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
               </div>
             </div>
