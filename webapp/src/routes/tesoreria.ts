@@ -2144,11 +2144,11 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
         return c.redirect(backUrl)
       }
 
-      // Registrar débito en cuenta corriente (usa el saldo a favor)
+      // Registrar en cuenta corriente (crédito = pago con saldo)
       await c.env.DB.prepare(`
         INSERT INTO proveedor_cuenta_corriente
           (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, servicios_ids)
-        VALUES (?, 'debito', 'saldo_cc', ?, ?, ?, ?, 'confirmado', ?, ?)
+        VALUES (?, 'credito', 'saldo_cc', ?, ?, ?, ?, 'confirmado', ?, ?)
       `).bind(proveedorId, montoCC, moneda, conceptoCompleto, referencia, user.id, serviciosStr).run()
 
       // Marcar servicios como pagados
@@ -2173,11 +2173,11 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
 
     const cajaId = cajaResult.meta.last_row_id as number
 
-    // Registrar en cuenta corriente del proveedor (débito confirmado)
+    // Registrar en cuenta corriente del proveedor (crédito = pago confirmado)
     await c.env.DB.prepare(`
       INSERT INTO proveedor_cuenta_corriente
         (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, movimiento_caja_id, servicios_ids)
-      VALUES (?, 'debito', ?, ?, ?, ?, ?, 'confirmado', ?, ?, ?)
+      VALUES (?, 'credito', ?, ?, ?, ?, ?, 'confirmado', ?, ?, ?)
     `).bind(proveedorId, metodo, monto, moneda, conceptoCompleto, referencia, user.id, cajaId, serviciosStr).run()
 
     for (const sId of serviciosIds) {
@@ -2251,10 +2251,12 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       FROM proveedor_cuenta_corriente WHERE proveedor_id = ?
     `).bind(provId).first() as any
 
-    const saldoDisponible = Number(saldoRow?.total_credito || 0) - Number(saldoRow?.total_debito || 0)
+    const totalPagado    = Number(saldoRow?.total_credito || 0)  // créditos = pagos realizados
+    const totalDeuda     = Number(saldoRow?.total_debito  || 0)  // débitos = deuda con proveedor
+    const saldoDisponible = totalPagado - totalDeuda               // positivo = overpago, negativo = deuda pendiente
     const saldoPendiente  = Number(saldoRow?.total_pendiente || 0)
-    const totalCreditos   = Number(saldoRow?.total_credito || 0)
-    const totalDebitos    = Number(saldoRow?.total_debito  || 0)
+    const totalCreditos   = totalPagado
+    const totalDebitos    = totalDeuda
 
     // Servicios pendientes de pago del proveedor
     const serviciosPendientes = await c.env.DB.prepare(`
@@ -2462,7 +2464,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
           border-radius:14px;padding:20px;color:white;grid-column:span 1;">
           <div style="font-size:11px;font-weight:700;opacity:0.85;letter-spacing:1px;margin-bottom:6px;">SALDO DISPONIBLE</div>
           <div style="font-size:28px;font-weight:900;">${saldoDisponible<0?'-':''}$${Math.abs(saldoDisponible).toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
-          <div style="font-size:11px;opacity:0.75;margin-top:4px;">${saldoDisponible>0?'A favor del proveedor':saldoDisponible<0?'Saldo deudor':'Sin movimientos'}</div>
+          <div style="font-size:11px;opacity:0.75;margin-top:4px;">${saldoDisponible>0?'Saldo a favor (overpago)':saldoDisponible<0?'Deuda pendiente':'✓ Al día'}</div>
         </div>
         <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid #e5e7eb;">
           <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:6px;">SERVICIOS PENDIENTES</div>
@@ -2572,19 +2574,25 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
           <div class="card">
             <div class="card-header">
               <span class="card-title" style="font-size:13px;"><i class="fas fa-history" style="color:#7B3FA0;"></i> Historial Cuenta Corriente</span>
-              <button onclick="document.getElementById('modal-pago-cuenta').classList.add('active')"
-                style="padding:4px 10px;background:#7B3FA0;color:white;border:none;border-radius:6px;font-size:11px;cursor:pointer;">
-                <i class="fas fa-plus"></i> Nuevo
-              </button>
+              <div style="display:flex;gap:6px;">
+                <a href="/reportes/exportar/servicios-pagados?proveedor_id=${provId}" 
+                  style="padding:4px 10px;background:#217346;color:white;border:none;border-radius:6px;font-size:11px;cursor:pointer;text-decoration:none;">
+                  <i class="fas fa-file-excel"></i> Exportar
+                </a>
+                <button onclick="document.getElementById('modal-pago-cuenta').classList.add('active')"
+                  style="padding:4px 10px;background:#7B3FA0;color:white;border:none;border-radius:6px;font-size:11px;cursor:pointer;">
+                  <i class="fas fa-plus"></i> Nuevo
+                </button>
+              </div>
             </div>
             <!-- Mini resumen créditos/débitos -->
             <div style="display:flex;gap:0;border-bottom:1px solid #e5e7eb;">
               <div style="flex:1;padding:10px 14px;text-align:center;border-right:1px solid #e5e7eb;">
-                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">CRÉDITOS</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">PAGADO</div>
                 <div style="font-size:16px;font-weight:800;color:#7B3FA0;">+$${totalCreditos.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
               </div>
               <div style="flex:1;padding:10px 14px;text-align:center;">
-                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">DÉBITOS</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:700;margin-bottom:2px;">DEUDA</div>
                 <div style="font-size:16px;font-weight:800;color:#dc2626;">-$${totalDebitos.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
               </div>
             </div>
