@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "drviaje-erp",
+  "compatibility_date": "2026-03-29",
+  "pages_build_output_dir": "./dist",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "drviaje-erp-production",
+      "database_id": "326132b9-ff85-4d3f-a849-d9854815f1b3"
+    }
+  ]
+}
