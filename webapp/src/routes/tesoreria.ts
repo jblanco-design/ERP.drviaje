@@ -5131,7 +5131,6 @@ tesoreria.post('/api/tarjetas/asignar-proveedor', async (c) => {
         `tarjeta_asignacion_saldo_${asigIds[asigIds.length-1]}`,
         user.id
       ).run().catch(() => {})
-      }
     }
 
     return c.json({ ok: true, asignaciones: asigIds, saldo_favor: Math.max(0, saldoFavor) })
