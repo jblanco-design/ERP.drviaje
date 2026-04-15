@@ -1026,7 +1026,13 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
           s.fecha_inicio, s.fecha_limite_prepago, s.prepago_realizado,
           s.estado_pago_proveedor, COALESCE(s.monto_tc_asignado,0) as monto_tc_asignado,
           f.numero as file_numero, f.id as file_id,
-          COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '(sin cliente)') as cliente_nombre
+          COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '(sin cliente)') as cliente_nombre,
+          COALESCE((
+            SELECT GROUP_CONCAT(COALESCE(p.nombre || ' ' || p.apellido, p.nombre_completo), ', ')
+            FROM servicio_pasajeros sp
+            JOIN pasajeros p ON p.id = sp.pasajero_id
+            WHERE sp.servicio_id = s.id
+          ), '') as pasajeros_nombres
         FROM servicios s
         JOIN files f ON s.file_id = f.id
         LEFT JOIN clientes c ON f.cliente_id = c.id
@@ -1162,14 +1168,16 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
       else if (epProv === 'tc_enviada') bgFila = '#fffbeb'
       else if (vencido) bgFila = '#fff5f5'
       // data-* en minúsculas para búsqueda case-insensitive
-      const dataFile    = s.file_numero.toLowerCase()
-      const dataCliente = s.cliente_nombre.toLowerCase()
-      const dataDesc    = s.descripcion.toLowerCase()
-      const dataTick    = (s.nro_ticket || '').toLowerCase()
-      const dataTipo    = s.tipo_servicio.toLowerCase()
+      const dataFile      = s.file_numero.toLowerCase()
+      const dataCliente   = s.cliente_nombre.toLowerCase()
+      const dataDesc      = s.descripcion.toLowerCase()
+      const dataTick      = (s.nro_ticket || '').toLowerCase()
+      const dataTipo      = s.tipo_servicio.toLowerCase()
+      const dataPasajeros = (s.pasajeros_nombres || '').toLowerCase()
       return `
         <tr data-file="${dataFile}" data-cliente="${dataCliente}" data-desc="${dataDesc}"
             data-ticket="${dataTick}" data-tipo="${dataTipo}" data-estado="${estadoRow}"
+            data-pasajeros="${dataPasajeros}"
             style="background:${bgFila};">
           <td style="padding:8px 12px;">
             ${(epProv !== 'pagado' && epProv !== 'tc_enviada' && epProv !== 'tc_negada') ? `
@@ -1490,7 +1498,7 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
               <div style="position:relative;flex:1;min-width:200px;">
                 <i class="fas fa-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:13px;"></i>
                 <input type="text" id="buscador-servicios" 
-                       placeholder="Buscar por Nº file, cliente, descripción, ticket..."
+                       placeholder="Buscar por Nº file, cliente, pasajero, descripción, ticket..."
                        oninput="filtrarServicios(this.value)"
                        style="width:100%;padding:8px 12px 8px 32px;border:1.5px solid #d8b4fe;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"
                        onfocus="this.style.borderColor='#7B3FA0'" 
@@ -1741,6 +1749,7 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
               || tr.dataset.desc.includes(q)
               || tr.dataset.ticket.includes(q)
               || tr.dataset.tipo.includes(q)
+              || (tr.dataset.pasajeros || '').includes(q)
             tr.style.display = hayq ? '' : 'none'
             if (hayq) visibles++
           })
@@ -2267,7 +2276,13 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
         s.fecha_limite_prepago, s.prepago_realizado,
         s.estado_pago_proveedor, COALESCE(s.monto_tc_asignado,0) as monto_tc_asignado,
         f.numero as file_numero, f.id as file_id,
-        COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '(sin cliente)') as cliente_nombre
+        COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '(sin cliente)') as cliente_nombre,
+        COALESCE((
+          SELECT GROUP_CONCAT(COALESCE(p.nombre || ' ' || p.apellido, p.nombre_completo), ', ')
+          FROM servicio_pasajeros sp
+          JOIN pasajeros p ON p.id = sp.pasajero_id
+          WHERE sp.servicio_id = s.id
+        ), '') as pasajeros_nombres
       FROM servicios s
       JOIN files f ON s.file_id = f.id
       LEFT JOIN clientes c ON f.cliente_id = c.id
@@ -2301,7 +2316,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       else if (epProv === 'tc_negada') bgFila = '#fff5f5'
       else if (vencido) bgFila = '#fff5f5'
       return `
-        <tr class="fila-servicio-cuenta" data-desc="${s.descripcion.toLowerCase()}" data-file="${s.file_numero.toLowerCase()}" data-ticket="${(s.nro_ticket||'').toLowerCase()}" style="background:${bgFila};border-bottom:1px solid #f3f4f6;">
+        <tr class="fila-servicio-cuenta" data-desc="${s.descripcion.toLowerCase()}" data-file="${s.file_numero.toLowerCase()}" data-ticket="${(s.nro_ticket||'').toLowerCase()}" data-cliente="${(s.cliente_nombre||'').toLowerCase()}" data-pasajeros="${(s.pasajeros_nombres||'').toLowerCase()}" style="background:${bgFila};border-bottom:1px solid #f3f4f6;">
           <td style="padding:8px 12px;">
             ${(s.prepago_realizado || epProv === 'pagado') ? `<i class="fas fa-check-circle" style="color:#059669;" title="Pagado"></i>`
             : epProv === 'tc_enviada' ? `<i class="fas fa-paper-plane" style="color:#d97706;" title="TC Enviada al proveedor"></i>`
@@ -2508,7 +2523,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
             <div class="card-header" style="flex-wrap:wrap;gap:8px;">
               <span class="card-title"><i class="fas fa-list-check" style="color:#F7941D;"></i> Servicios (<span id="count-servicios">${serviciosPendientes.results.length}</span>)</span>
               <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-                <input type="text" id="filtro-servicios-cuenta" placeholder="🔍 Descripción, reserva o file..."
+                <input type="text" id="filtro-servicios-cuenta" placeholder="🔍 Descripción, file, cliente, pasajero..."
                   oninput="filtrarServiciosCuenta(this.value)"
                   style="padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;width:230px;">
                 <button onclick="selTodosServ()" class="btn btn-outline btn-sm" style="font-size:11px;">
@@ -2849,10 +2864,12 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
           const filas = document.querySelectorAll('.fila-servicio-cuenta')
           let visible = 0
           filas.forEach(function(fila) {
-            const desc   = fila.dataset.desc   || ''
-            const file   = fila.dataset.file   || ''
-            const ticket = fila.dataset.ticket || ''
-            const match  = !q || desc.includes(q) || file.includes(q) || ticket.includes(q)
+            const desc      = fila.dataset.desc      || ''
+            const file      = fila.dataset.file      || ''
+            const ticket    = fila.dataset.ticket    || ''
+            const cliente   = fila.dataset.cliente   || ''
+            const pasajeros = fila.dataset.pasajeros || ''
+            const match     = !q || desc.includes(q) || file.includes(q) || ticket.includes(q) || cliente.includes(q) || pasajeros.includes(q)
             fila.style.display = match ? '' : 'none'
             if (match) visible++
           })
