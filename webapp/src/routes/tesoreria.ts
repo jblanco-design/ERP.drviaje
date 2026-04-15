@@ -2023,13 +2023,16 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
           const chkAutorizar = document.getElementById('chk-autorizar-saldo')
           if (alertaSaldo && alertaSaldo.style.display !== 'none') {
             if (!chkAutorizar || !chkAutorizar.checked) {
-              alert('Hay files con saldo insuficiente. Debés marcar la casilla de autorización para continuar.')
+              alert('Hay files con saldo insuficiente. Marcá la casilla de autorización para continuar.')
               e.preventDefault(); return false
             }
-            const autorizadoPor = document.getElementById('input-autorizado-por')?.value?.trim()
-            if (!autorizadoPor) {
-              alert('Ingresá el nombre del responsable que autoriza el pago con saldo insuficiente.')
-              e.preventDefault(); return false
+            const campoPor = document.getElementById('campo-autorizado-por')
+            if (campoPor && campoPor.style.display !== 'none') {
+              const autorizadoPor = document.getElementById('input-autorizado-por')?.value?.trim()
+              if (!autorizadoPor) {
+                alert('Ingresá el nombre del responsable que autoriza el pago.')
+                e.preventDefault(); return false
+              }
             }
           }
 
@@ -2295,7 +2298,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       else if (epProv === 'tc_negada') bgFila = '#fff5f5'
       else if (vencido) bgFila = '#fff5f5'
       return `
-        <tr style="background:${bgFila};border-bottom:1px solid #f3f4f6;">
+        <tr class="fila-servicio-cuenta" data-desc="${s.descripcion.toLowerCase()}" data-file="${s.file_numero.toLowerCase()}" data-ticket="${(s.nro_ticket||'').toLowerCase()}" style="background:${bgFila};border-bottom:1px solid #f3f4f6;">
           <td style="padding:8px 12px;">
             ${(s.prepago_realizado || epProv === 'pagado') ? `<i class="fas fa-check-circle" style="color:#059669;" title="Pagado"></i>`
             : epProv === 'tc_enviada' ? `<i class="fas fa-paper-plane" style="color:#d97706;" title="TC Enviada al proveedor"></i>`
@@ -2499,9 +2502,12 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
           </div>
 
           <div class="card">
-            <div class="card-header">
-              <span class="card-title"><i class="fas fa-list-check" style="color:#F7941D;"></i> Servicios (${serviciosPendientes.results.length})</span>
-              <div style="display:flex;gap:6px;">
+            <div class="card-header" style="flex-wrap:wrap;gap:8px;">
+              <span class="card-title"><i class="fas fa-list-check" style="color:#F7941D;"></i> Servicios (<span id="count-servicios">${serviciosPendientes.results.length}</span>)</span>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <input type="text" id="filtro-servicios-cuenta" placeholder="🔍 Descripción, reserva o file..."
+                  oninput="filtrarServiciosCuenta(this.value)"
+                  style="padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;width:230px;">
                 <button onclick="selTodosServ()" class="btn btn-outline btn-sm" style="font-size:11px;">
                   <i class="fas fa-check-double"></i> Sel. pendientes
                 </button>
@@ -2829,6 +2835,22 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
 
       <script>
         // ── Selección de servicios ───────────────────────────────────────
+        function filtrarServiciosCuenta(texto) {
+          const q = texto.toLowerCase().trim()
+          const filas = document.querySelectorAll('.fila-servicio-cuenta')
+          let visible = 0
+          filas.forEach(function(fila) {
+            const desc   = fila.dataset.desc   || ''
+            const file   = fila.dataset.file   || ''
+            const ticket = fila.dataset.ticket || ''
+            const match  = !q || desc.includes(q) || file.includes(q) || ticket.includes(q)
+            fila.style.display = match ? '' : 'none'
+            if (match) visible++
+          })
+          const cnt = document.getElementById('count-servicios')
+          if (cnt) cnt.textContent = visible + ' / ' + filas.length
+        }
+
         function recalcPago() {
           const checks = document.querySelectorAll('.svc-check:checked')
           const total  = Array.from(checks).reduce((s,c) => s + parseFloat(c.dataset.monto||'0'), 0)
