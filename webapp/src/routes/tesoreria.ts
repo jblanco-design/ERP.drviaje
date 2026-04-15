@@ -5094,7 +5094,7 @@ tesoreria.post('/api/tarjetas/asignar-proveedor', async (c) => {
       // Marcar servicio como TC Enviada
       await c.env.DB.prepare(
         `UPDATE servicios SET estado_pago_proveedor='tc_enviada', monto_tc_asignado=COALESCE(monto_tc_asignado,0)+? WHERE id=?`
-).bind(monto, svcId).run()
+      ).bind(monto, svcId).run()
 
       // Registrar en cuenta corriente del proveedor como débito pendiente
       await c.env.DB.prepare(`
@@ -5120,7 +5120,7 @@ tesoreria.post('/api/tarjetas/asignar-proveedor', async (c) => {
       `).bind(cliTcId, provTcId, provId, saldoFavor, moneda, notas ? notas+' [saldo a favor]' : 'Saldo a favor proveedor', user.id).run()
       asigIds.push(Number(ins.meta?.last_row_id))
 
-// Registrar saldo a favor en cuenta corriente del proveedor
+      // Registrar saldo a favor en cuenta corriente del proveedor
       await c.env.DB.prepare(`
         INSERT INTO proveedor_cuenta_corriente
           (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, fecha)
@@ -5360,4 +5360,3 @@ tesoreria.get('/tesoreria/tarjetas/reporte', async (c) => {
 })
 
 export default tesoreria
-Fix: corregir asignación tarjetas - cuenta corriente proveedor
