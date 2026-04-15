@@ -2235,6 +2235,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
         s.id, s.tipo_servicio, s.descripcion, s.nro_ticket,
         s.costo_original, s.moneda_origen, s.fecha_inicio,
         s.fecha_limite_prepago, s.prepago_realizado,
+        s.estado_pago_proveedor, COALESCE(s.monto_tc_asignado,0) as monto_tc_asignado,
         f.numero as file_numero, f.id as file_id,
         COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '(sin cliente)') as cliente_nombre
       FROM servicios s
@@ -2263,16 +2264,25 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
     // Filas de servicios
     const rowsServicios = (serviciosPendientes.results as any[]).map((s: any) => {
       const vencido = s.fecha_limite_prepago && s.fecha_limite_prepago < hoy && !s.prepago_realizado
+      const epProv  = s.estado_pago_proveedor || 'pendiente'
+      let bgFila = 'white'
+      if (s.prepago_realizado || epProv === 'pagado') bgFila = '#f0fdf4'
+      else if (epProv === 'tc_enviada') bgFila = '#fffbeb'
+      else if (epProv === 'tc_negada') bgFila = '#fff5f5'
+      else if (vencido) bgFila = '#fff5f5'
       return `
-        <tr style="background:${s.prepago_realizado ? '#f0fdf4' : vencido ? '#fff5f5' : 'white'};border-bottom:1px solid #f3f4f6;">
+        <tr style="background:${bgFila};border-bottom:1px solid #f3f4f6;">
           <td style="padding:8px 12px;">
-            ${!s.prepago_realizado ? `
+            ${(s.prepago_realizado || epProv === 'pagado') ? `<i class="fas fa-check-circle" style="color:#059669;" title="Pagado"></i>`
+            : epProv === 'tc_enviada' ? `<i class="fas fa-paper-plane" style="color:#d97706;" title="TC Enviada al proveedor"></i>`
+            : epProv === 'tc_negada' ? `<i class="fas fa-times-circle" style="color:#dc2626;" title="TC Negada"></i>`
+            : `
               <input type="checkbox" class="svc-check" value="${s.id}"
                 data-monto="${s.costo_original}" data-moneda="${s.moneda_origen}"
                 data-desc="${esc(s.descripcion)}" data-file="#${s.file_numero}"
                 onchange="recalcPago()"
                 style="width:15px;height:15px;cursor:pointer;accent-color:#7B3FA0;">
-            ` : `<i class="fas fa-check-circle" style="color:#059669;" title="Pagado"></i>`}
+            `}
           </td>
           <td style="padding:8px 12px;">
             <span style="font-size:11px;background:#f3e8ff;color:#7B3FA0;padding:2px 7px;border-radius:8px;font-weight:700;">
@@ -2301,8 +2311,12 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
             </strong>
           </td>
           <td style="padding:8px 12px;">
-            ${s.prepago_realizado
+            ${(s.prepago_realizado || epProv === 'pagado')
               ? `<span style="font-size:10px;background:#d1fae5;color:#059669;padding:2px 8px;border-radius:8px;font-weight:700;">✓ PAGADO</span>`
+              : epProv === 'tc_enviada'
+              ? `<span style="font-size:10px;background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:8px;font-weight:700;">⏳ TC ENVIADA</span>`
+              : epProv === 'tc_negada'
+              ? `<span style="font-size:10px;background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:8px;font-weight:700;">✗ TC NEGADA</span>`
               : `<span style="font-size:10px;background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:8px;font-weight:700;">PENDIENTE</span>`
             }
           </td>
@@ -5131,7 +5145,8 @@ tesoreria.post('/api/tarjetas/asignar-proveedor', async (c) => {
         `tarjeta_asignacion_saldo_${asigIds[asigIds.length-1]}`,
         user.id
       ).run().catch(() => {})
-      }
+    }
+
     return c.json({ ok: true, asignaciones: asigIds, saldo_favor: Math.max(0, saldoFavor) })
   } catch (e: any) {
     return c.json({ error: e.message || 'Error interno' }, 500)
