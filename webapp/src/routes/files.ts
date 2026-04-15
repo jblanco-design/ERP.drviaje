@@ -915,6 +915,18 @@ files.get('/files/:id', async (c) => {
           <div><strong>Acción no permitida</strong> — No tenés permisos para realizar esta operación. Contactá al gerente o administrador.</div>
         </div>
       ` : ''}
+      ${errorParam === 'servicios_activos' ? `
+        <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i class="fas fa-exclamation-triangle" style="font-size:18px;"></i>
+          <div><strong>No se puede anular el file</strong> — Primero debés cancelar todos los servicios activos desde la sección "Servicios del File".</div>
+        </div>
+      ` : ''}
+      ${errorParam === 'servicios_pagados_desimputar' ? `
+        <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i class="fas fa-ban" style="font-size:18px;"></i>
+          <div><strong>No se puede anular</strong> — Este file tiene servicios con pagos registrados. Primero debés desimputar los pagos desde <a href="/tesoreria/desimputar" style="color:#dc2626;font-weight:700;">Tesorería → Desimputar Pagos</a>.</div>
+        </div>
+      ` : ''}
       ${errorParam === 'fechas_inconsistentes' ? `
         <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
           <i class="fas fa-calendar-times" style="font-size:18px;"></i>
@@ -3389,6 +3401,23 @@ files.post('/files/:id/estado', async (c) => {
     // Solo gerente y administración pueden anular
     if (nuevoEstado === 'anulado' && !canAnularFile(user.rol)) {
       return c.redirect(`/files/${id}?error=sin_permiso`)
+    }
+
+    // No se puede anular si hay servicios activos (no cancelados)
+    if (nuevoEstado === 'anulado') {
+      const serviciosActivos = await c.env.DB.prepare(
+        `SELECT COUNT(*) as total FROM servicios WHERE file_id = ? AND estado != 'cancelado'`
+      ).bind(id).first() as any
+      if (Number(serviciosActivos?.total || 0) > 0) {
+        return c.redirect(`/files/${id}?error=servicios_activos`)
+      }
+      // Si hay servicios pagados al proveedor, NADIE puede anular — hay que desimputar primero
+      const serviciosPagados = await c.env.DB.prepare(
+        `SELECT COUNT(*) as total FROM servicios WHERE file_id = ? AND (prepago_realizado = 1 OR estado_pago_proveedor = 'pagado')`
+      ).bind(id).first() as any
+      if (Number(serviciosPagados?.total || 0) > 0) {
+        return c.redirect(`/files/${id}?error=servicios_pagados_desimputar`)
+      }
     }
 
     // Solo gerente y administración pueden reabrir un file cerrado
