@@ -1245,8 +1245,9 @@ export default reportes
 reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
-  const desde = c.req.query('desde') || ''
-  const hasta = c.req.query('hasta') || ''
+  const desde       = c.req.query('desde') || ''
+  const hasta       = c.req.query('hasta') || ''
+  const proveedorId = c.req.query('proveedor_id') || ''
 
   try {
     let q = `
@@ -1268,6 +1269,7 @@ reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
         AND f.estado != 'anulado'
     `
     const params: string[] = []
+    if (proveedorId) { q += ` AND s.proveedor_id = ?`; params.push(proveedorId) }
     if (desde) { q += ` AND date(s.created_at) >= ?`; params.push(desde) }
     if (hasta) { q += ` AND date(s.created_at) <= ?`; params.push(hasta) }
     q += ` ORDER BY s.created_at DESC`
