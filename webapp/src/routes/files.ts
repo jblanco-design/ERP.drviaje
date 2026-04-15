@@ -755,7 +755,7 @@ files.get('/files/:id', async (c) => {
           <td><strong style="color:#059669;">$${Number(s.precio_venta||0).toLocaleString()}</strong></td>
           <td style="color:#6b7280;font-size:12px;">$${Number(s.costo_original||0).toLocaleString()} ${s.moneda_origen}</td>
           <td>
-            ${getBadgePago(servicioPagado ? 'pagado' : 'pendiente')}
+            ${getBadgePago(s.estado_pago_proveedor || (servicioPagado ? 'pagado' : 'pendiente'))}
             ${s.requiere_prepago && !servicioPagado && s.fecha_limite_prepago ? `
               <div style="font-size:10px;color:${s.fecha_limite_prepago < hoy ? '#dc2626' : '#6b7280'};margin-top:3px;">
                 ${s.fecha_limite_prepago < hoy ? '⚠ vence' : '⏰'} ${s.fecha_limite_prepago}
@@ -1089,6 +1089,7 @@ files.get('/files/:id', async (c) => {
               <td style="padding:7px 10px;font-size:12px;color:#6b7280;">${(t.fecha_cargo||t.created_at||'').substring(0,10)}</td>
               <td style="padding:7px 10px;font-size:13px;font-weight:700;">
                 <i class="fas fa-credit-card" style="color:#EC008C;font-size:11px;"></i> **** ${esc(t.ultimos_4)}
+                ${t.tipo_tarjeta ? `<span style="font-size:10px;font-weight:700;color:#7B3FA0;margin-left:4px;">${esc(t.tipo_tarjeta)}</span>` : ''}
                 ${t.banco_emisor ? `<span style="font-size:11px;color:#9ca3af;margin-left:4px;">${esc(t.banco_emisor)}</span>` : ''}
               </td>
               <td style="padding:7px 10px;font-size:13px;font-weight:800;color:${estadoColor};">
