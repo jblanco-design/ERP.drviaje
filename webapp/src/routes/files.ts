@@ -54,6 +54,7 @@ files.get('/files', async (c) => {
   const vendedorId = c.req.query('vendedor_id') || ''
   const fechaDesde = c.req.query('fecha_desde') || ''
   const fechaHasta = c.req.query('fecha_hasta') || ''
+  const conSaldo   = c.req.query('con_saldo')   || ''
   const isGerente = canSeeAllFiles(user.rol)  // supervisor, admin y gerente ven todos
 
   try {
@@ -81,6 +82,7 @@ files.get('/files', async (c) => {
     if (buscar) { query += ` AND (f.numero LIKE ? OR COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) LIKE ? OR f.destino_principal LIKE ?)`; params.push(`%${buscar}%`, `%${buscar}%`, `%${buscar}%`) }
     if (fechaDesde) { query += ' AND f.fecha_viaje >= ?'; params.push(fechaDesde) }
     if (fechaHasta) { query += ' AND f.fecha_viaje <= ?'; params.push(fechaHasta) }
+    if (conSaldo) { query += " AND f.estado != 'anulado' AND (f.total_venta - COALESCE((SELECT SUM(m2.monto) FROM movimientos_caja m2 WHERE m2.file_id = f.id AND m2.tipo='ingreso' AND m2.anulado=0),0)) > 0.01"}
     query += ' ORDER BY f.fecha_viaje ASC NULLS LAST, f.created_at DESC LIMIT 200'
 
     const result = await c.env.DB.prepare(query).bind(...params).all()
@@ -113,6 +115,10 @@ files.get('/files', async (c) => {
         <div>
           <label class="form-label">Salida hasta</label>
           <input type="date" name="fecha_hasta" value="${fechaHasta}" class="form-control" style="width:150px;">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:18px;">
+          <input type="checkbox" name="con_saldo" value="1" id="chk-con-saldo" ${conSaldo?'checked':''} style="width:15px;height:15px;accent-color:#dc2626;">
+          <label for="chk-con-saldo" style="font-size:13px;font-weight:600;color:#dc2626;cursor:pointer;white-space:nowrap;">Con saldo pendiente</label>
         </div>
         <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrar</button>
         <a href="/files" class="btn btn-outline">Limpiar</a>
