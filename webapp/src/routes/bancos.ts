@@ -31,8 +31,10 @@ bancos.get('/bancos', async (c) => {
   if (!user) return c.redirect('/login')
 
   try {
-    const error   = c.req.query('error')   || ''
-    const success = c.req.query('success') || ''
+    const error    = c.req.query('error')    || ''
+    const success  = c.req.query('success')  || ''
+    const autoOpen = c.req.query('banco_id') || ''
+    const okMsg    = c.req.query('ok')       || ''
 
     // Traer todas las cuentas (activas e inactivas) con saldo calculado
     const bancosList = await c.env.DB.prepare(
@@ -478,6 +480,19 @@ bancos.get('/bancos', async (c) => {
             body: JSON.stringify({ conciliado: conciliado ? 1 : 0 })
           })
         }
+        // Auto-abrir conciliación si viene de un redirect
+        ${autoOpen ? `
+        document.addEventListener('DOMContentLoaded', function() {
+          abrirConciliacion(${autoOpen})
+          ${okMsg === 'linea_agregada' ? `
+          const toast = document.createElement('div')
+          toast.innerHTML = '<i class="fas fa-check-circle"></i> Línea agregada correctamente'
+          toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#059669;color:white;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);'
+          document.body.appendChild(toast)
+          setTimeout(() => toast.remove(), 3000)
+          ` : ''}
+        })
+        ` : ''}
       </script>
     `
     return c.html(baseLayout('Bancos', content, user, 'bancos'))
@@ -582,7 +597,7 @@ bancos.post('/bancos/:id/conciliacion', async (c) => {
   await c.env.DB.prepare(
     `INSERT INTO conciliacion_bancaria (banco_id, fecha, descripcion, monto, tipo) VALUES (?,datetime('now'),?,?,?)`
   ).bind(id, descripcion, monto, tipoCon).run()
-  return c.redirect('/bancos')
+  return c.redirect('/bancos?banco_id=' + id + '&ok=linea_agregada')
 })
 
 // ── POST /bancos/conciliacion/:id/toggle ─────────────────────
