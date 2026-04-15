@@ -28,6 +28,7 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
     { href: '/tesoreria/transferencias', icon: 'fa-exchange-alt', label: 'Transferencias', page: 'transferencias' },
     { href: '/bancos', icon: 'fa-university', label: 'Bancos', page: 'bancos' },
     { href: '/gastos', icon: 'fa-receipt', label: 'Gastos', page: 'gastos' },
+    ...(rol === 'gerente' ? [{ href: '/tesoreria/desimputar', icon: 'fa-undo', label: 'Desimputar Pagos', page: 'desimputar' }] : []),
   ] : []
 
   // Reportes: gerente, administración y supervisor
