@@ -5094,7 +5094,20 @@ tesoreria.post('/api/tarjetas/asignar-proveedor', async (c) => {
       // Marcar servicio como TC Enviada
       await c.env.DB.prepare(
         `UPDATE servicios SET estado_pago_proveedor='tc_enviada', monto_tc_asignado=COALESCE(monto_tc_asignado,0)+? WHERE id=?`
-      ).bind(monto, svcId).run().catch(() => {})
+).bind(monto, svcId).run()
+
+      // Registrar en cuenta corriente del proveedor como débito pendiente
+      await c.env.DB.prepare(`
+        INSERT INTO proveedor_cuenta_corriente
+          (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, servicios_ids, fecha)
+        VALUES (?, 'debito', 'tarjeta_credito', ?, ?, ?, ?, 'pendiente', ?, ?, date('now'))
+      `).bind(
+        provId, monto, moneda,
+        `TC **** ${tc.ultimos_4 || '????'} asignada a servicio ${svc.tipo_servicio} (File #${svc.file_id || fileId})`,
+        `tarjeta_asignacion_${ins.meta?.last_row_id}`,
+        user.id,
+        String(svcId)
+      ).run().catch(() => {})
     }
 
     // Si sobra saldo → asignación saldo a favor (sin servicio)
@@ -5107,18 +5120,17 @@ tesoreria.post('/api/tarjetas/asignar-proveedor', async (c) => {
       `).bind(cliTcId, provTcId, provId, saldoFavor, moneda, notas ? notas+' [saldo a favor]' : 'Saldo a favor proveedor', user.id).run()
       asigIds.push(Number(ins.meta?.last_row_id))
 
-      // Registrar saldo a favor en cuenta corriente del proveedor
-      const cc = await c.env.DB.prepare(
-        `SELECT id FROM proveedor_cuentas_corrientes WHERE proveedor_id = ? LIMIT 1`
-      ).bind(provId).first() as any
-      if (cc) {
-        await c.env.DB.prepare(`
-          INSERT INTO proveedor_movimientos_cc (cuenta_id, tipo, monto, moneda, concepto, referencia, usuario_id, fecha)
-          VALUES (?, 'credito', ?, ?, ?, ?, ?, date('now'))
-        `).bind(cc.id, saldoFavor, moneda,
-          `Saldo a favor TC **** ${tc.ultimos_4 || '????'} (pendiente autorización)`,
-          `tarjeta_asignacion_saldo_${asigIds[asigIds.length-1]}`, user.id
-        ).run().catch(() => {})
+// Registrar saldo a favor en cuenta corriente del proveedor
+      await c.env.DB.prepare(`
+        INSERT INTO proveedor_cuenta_corriente
+          (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, fecha)
+        VALUES (?, 'debito', 'tarjeta_credito', ?, ?, ?, ?, 'pendiente', ?, date('now'))
+      `).bind(
+        provId, saldoFavor, moneda,
+        `Saldo a favor TC **** ${tc.ultimos_4 || '????'} (pendiente autorización)`,
+        `tarjeta_asignacion_saldo_${asigIds[asigIds.length-1]}`,
+        user.id
+      ).run().catch(() => {})
       }
     }
 
@@ -5349,3 +5361,4 @@ tesoreria.get('/tesoreria/tarjetas/reporte', async (c) => {
 })
 
 export default tesoreria
+Fix: corregir asignación tarjetas - cuenta corriente proveedor
