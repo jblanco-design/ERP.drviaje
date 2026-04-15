@@ -2276,10 +2276,10 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       ORDER BY s.prepago_realizado ASC, s.fecha_limite_prepago ASC NULLS LAST, f.numero ASC
     `).bind(provId).all()
 
-    const totalPendiente = (serviciosPendientes.results as any[])
+    const totalServPendiente = (serviciosPendientes.results as any[])
       .filter((s: any) => !s.prepago_realizado)
       .reduce((acc: number, s: any) => acc + Number(s.costo_original || 0), 0)
-    const totalPagado = (serviciosPendientes.results as any[])
+    const totalServPagado = (serviciosPendientes.results as any[])
       .filter((s: any) => s.prepago_realizado)
       .reduce((acc: number, s: any) => acc + Number(s.costo_original || 0), 0)
 
@@ -2468,12 +2468,12 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
         </div>
         <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid #e5e7eb;">
           <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:6px;">SERVICIOS PENDIENTES</div>
-          <div style="font-size:22px;font-weight:800;color:#dc2626;">$${totalPendiente.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
+          <div style="font-size:22px;font-weight:800;color:#dc2626;">$${totalServPendiente.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
           <div style="font-size:11px;color:#9ca3af;margin-top:4px;">${(serviciosPendientes.results as any[]).filter((s:any)=>!s.prepago_realizado).length} servicio(s) sin pagar</div>
         </div>
         <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid #e5e7eb;">
           <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:6px;">YA PAGADO</div>
-          <div style="font-size:22px;font-weight:800;color:#059669;">$${totalPagado.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
+          <div style="font-size:22px;font-weight:800;color:#059669;">$${totalServPagado.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
           <div style="font-size:11px;color:#9ca3af;margin-top:4px;">${(serviciosPendientes.results as any[]).filter((s:any)=>s.prepago_realizado).length} servicio(s) pagados</div>
         </div>
         ${saldoPendiente > 0 ? `
