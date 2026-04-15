@@ -49,9 +49,11 @@ files.get('/files', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
 
-  const estado    = c.req.query('estado')    || ''
-  const buscar    = c.req.query('buscar')    || ''
+  const estado     = c.req.query('estado')      || ''
+  const buscar     = c.req.query('buscar')      || ''
   const vendedorId = c.req.query('vendedor_id') || ''
+  const fechaDesde = c.req.query('fecha_desde') || ''
+  const fechaHasta = c.req.query('fecha_hasta') || ''
   const isGerente = canSeeAllFiles(user.rol)  // supervisor, admin y gerente ven todos
 
   try {
@@ -60,8 +62,13 @@ files.get('/files', async (c) => {
       ? await c.env.DB.prepare(`SELECT id, nombre FROM usuarios WHERE activo=1 ORDER BY nombre`).all()
       : { results: [] }
 
-    let query = `SELECT f.*, COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre, u.nombre as vendedor_nombre 
-                 FROM files f JOIN clientes c ON f.cliente_id = c.id JOIN usuarios u ON f.vendedor_id = u.id
+    let query = `SELECT f.*,
+                   COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre,
+                   u.nombre as vendedor_nombre,
+                   COALESCE((SELECT SUM(m.monto) FROM movimientos_caja m WHERE m.file_id = f.id AND m.tipo='ingreso' AND m.anulado=0),0) as total_cobrado
+                 FROM files f
+                 JOIN clientes c ON f.cliente_id = c.id
+                 JOIN usuarios u ON f.vendedor_id = u.id
                  WHERE 1=1`
     const params: any[] = []
 
@@ -72,7 +79,9 @@ files.get('/files', async (c) => {
     }
     if (estado) { query += ' AND f.estado = ?'; params.push(estado) }
     if (buscar) { query += ` AND (f.numero LIKE ? OR COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) LIKE ? OR f.destino_principal LIKE ?)`; params.push(`%${buscar}%`, `%${buscar}%`, `%${buscar}%`) }
-    query += ' ORDER BY f.created_at DESC LIMIT 200'
+    if (fechaDesde) { query += ' AND f.fecha_viaje >= ?'; params.push(fechaDesde) }
+    if (fechaHasta) { query += ' AND f.fecha_viaje <= ?'; params.push(fechaHasta) }
+    query += ' ORDER BY f.fecha_viaje ASC NULLS LAST, f.created_at DESC LIMIT 200'
 
     const result = await c.env.DB.prepare(query).bind(...params).all()
 
@@ -97,6 +106,14 @@ files.get('/files', async (c) => {
             ${vendedoresList.results.map((v: any) => `<option value="${v.id}" ${vendedorId==v.id?'selected':''}>${esc(v.nombre)}</option>`).join('')}
           </select>
         </div>` : ''}
+        <div>
+          <label class="form-label">Salida desde</label>
+          <input type="date" name="fecha_desde" value="${fechaDesde}" class="form-control" style="width:150px;">
+        </div>
+        <div>
+          <label class="form-label">Salida hasta</label>
+          <input type="date" name="fecha_hasta" value="${fechaHasta}" class="form-control" style="width:150px;">
+        </div>
         <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrar</button>
         <a href="/files" class="btn btn-outline">Limpiar</a>
         <a href="/files/nuevo" class="btn btn-orange" style="margin-left:auto;"><i class="fas fa-plus"></i> Nuevo File</a>
@@ -114,6 +131,7 @@ files.get('/files', async (c) => {
         <td><strong style="color:#059669;">$${Number(f.total_venta||0).toLocaleString()}</strong></td>
         <td style="color:#6b7280;">$${Number(f.total_costo||0).toLocaleString()}</td>
         <td><strong style="color:#F7941D;">$${Number((f.total_venta||0)-(f.total_costo||0)).toLocaleString()}</strong></td>
+        <td>${(() => { const saldo = Number(f.total_venta||0) - Number(f.total_cobrado||0); if (saldo <= 0.01) return '<span style="font-size:11px;color:#059669;font-weight:700;">✓</span>'; return '<strong style="color:#dc2626;">-$' + saldo.toLocaleString('es-UY',{minimumFractionDigits:2}) + '</strong>' })()}</td>
         <td style="font-size:12px;color:#9ca3af;">${esc(f.fecha_apertura?.split('T')[0])||''}</td>
         <td>
           <a href="/files/${f.id}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></a>
@@ -134,7 +152,7 @@ files.get('/files', async (c) => {
               <tr>
                 <th>Nº File</th><th>Cliente</th><th>Vendedor</th><th>Destino</th>
                 <th>Fecha Viaje</th><th>Estado</th><th>Venta</th><th>Costo</th>
-                <th>Utilidad</th><th>Apertura</th><th>Acciones</th>
+                <th>Utilidad</th><th>Saldo</th><th>Apertura</th><th>Acciones</th>
               </tr>
             </thead>
             <tbody>
