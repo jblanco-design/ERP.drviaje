@@ -550,7 +550,10 @@ files.get('/files/:id', async (c) => {
     // Tarjetas de crédito registradas en este file
     const tcDelFile = await c.env.DB.prepare(`
       SELECT ct.*, COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '—') as cliente_nombre,
-             u.nombre as autorizado_nombre
+             u.nombre as autorizado_nombre,
+             (SELECT GROUP_CONCAT(DISTINCT p.nombre) FROM tarjeta_asignaciones ta
+              JOIN proveedores p ON p.id = ta.proveedor_id
+              WHERE ta.cliente_tarjeta_id = ct.id AND ta.estado NOT IN ('revertido','tc_negada')) as asig_proveedores
       FROM cliente_tarjetas ct
       LEFT JOIN clientes c ON c.id = ct.cliente_id
       LEFT JOIN usuarios u ON u.id = ct.autorizado_por_usuario
@@ -1098,6 +1101,7 @@ files.get('/files/:id', async (c) => {
               <td style="padding:7px 10px;font-size:12px;">${esc(t.cliente_nombre)}</td>
               <td style="padding:7px 10px;">
                 <span style="font-size:11px;font-weight:700;color:${estadoColor};background:${estadoBg};padding:2px 8px;border-radius:8px;">${estadoLabel}</span>
+                ${t.asig_proveedores ? `<div style="font-size:10px;color:#d97706;margin-top:2px;font-weight:600;"><i class="fas fa-paper-plane"></i> Enviada a: ${esc(t.asig_proveedores)}</div>` : ''}
                 ${t.estado !== 'pendiente' && t.autorizado_nombre ? `<div style="font-size:10px;color:#9ca3af;">por ${esc(t.autorizado_nombre)}</div>` : ''}
               </td>
             </tr>
