@@ -27,22 +27,27 @@ clientes.get('/clientes', async (c) => {
   if (!user) return c.redirect('/login')
 
   const buscar = c.req.query('buscar') || ''
+  const tipoFiltro = c.req.query('tipo') || ''  // 'empresa' | 'persona_fisica' | ''
   try {
     // Auto-aplicar migración 0017 si columnas no existen aún
     try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN tipo_cliente TEXT NOT NULL DEFAULT 'persona_fisica'`).run() } catch(_){}
     try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN razon_social TEXT`).run() } catch(_){}
     try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN persona_contacto TEXT`).run() } catch(_){}
-    let q = 'SELECT * FROM clientes WHERE 1=1'
+    let q = `SELECT c.*,
+      COALESCE((SELECT SUM(f.total_venta) FROM files f WHERE f.cliente_id = c.id AND f.estado != 'anulado'),0) as total_venta,
+      COALESCE((SELECT SUM(m.monto) FROM movimientos_caja m JOIN files f ON f.id = m.file_id WHERE f.cliente_id = c.id AND m.tipo='ingreso' AND m.anulado=0),0) as total_cobrado
+      FROM clientes c WHERE 1=1`
     const params: any[] = []
     if (buscar) {
-      q += ` AND (nombre LIKE ? OR apellido LIKE ? OR email LIKE ?
-              OR nro_documento LIKE ? OR telefono LIKE ?
-              OR razon_social LIKE ? OR persona_contacto LIKE ?
-              OR (nombre || ' ' || apellido) LIKE ?)`
+      q += ` AND (c.nombre LIKE ? OR c.apellido LIKE ? OR c.email LIKE ?
+              OR c.nro_documento LIKE ? OR c.telefono LIKE ?
+              OR c.razon_social LIKE ? OR c.persona_contacto LIKE ?
+              OR (c.nombre || ' ' || c.apellido) LIKE ?)`
       const like = `%${buscar}%`
       params.push(like, like, like, like, like, like, like, like)
     }
-    q += ' ORDER BY apellido, nombre LIMIT 100'
+    if (tipoFiltro) { q += ` AND c.tipo_cliente = ?`; params.push(tipoFiltro) }
+    q += ' ORDER BY c.apellido, c.nombre LIMIT 100'
     const result = await c.env.DB.prepare(q).bind(...params).all()
 
     const hoy     = new Date().toISOString().split('T')[0]
@@ -81,6 +86,11 @@ clientes.get('/clientes', async (c) => {
                 </span>`
               : '<span style="color:#9ca3af;font-size:11px;">—</span>')}
           </td>
+          <td>${(() => {
+            const deuda = Number(cl.total_venta||0) - Number(cl.total_cobrado||0)
+            if (deuda <= 0.01) return '<span style="font-size:11px;color:#059669;font-weight:700;">✓</span>'
+            return '<strong style="color:#dc2626;font-size:12px;">-$' + deuda.toLocaleString('es-UY',{minimumFractionDigits:2}) + '</strong>'
+          })()}</td>
           <td>
             <a href="/clientes/${cl.id}" class="btn btn-outline btn-sm" title="Ver cliente"><i class="fas fa-eye"></i></a>
             <a href="/clientes/${cl.id}/editar" class="btn btn-sm" style="background:#f3e8ff;color:#7B3FA0;" title="Editar"><i class="fas fa-edit"></i></a>
@@ -92,10 +102,15 @@ clientes.get('/clientes', async (c) => {
 
     const content = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-        <form method="GET" style="display:flex;gap:8px;">
-          <input type="text" name="buscar" value="${esc(buscar)}" placeholder="Buscar cliente..." class="form-control" style="width:260px;">
+        <form method="GET" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="text" name="buscar" value="${esc(buscar)}" placeholder="Buscar cliente..." class="form-control" style="width:220px;">
+          <select name="tipo" class="form-control" style="width:160px;">
+            <option value="" ${!tipoFiltro?'selected':''}>Todos los tipos</option>
+            <option value="persona_fisica" ${tipoFiltro==='persona_fisica'?'selected':''}>👤 Persona física</option>
+            <option value="empresa" ${tipoFiltro==='empresa'?'selected':''}>🏢 Empresa</option>
+          </select>
           <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-          ${buscar ? `<a href="/clientes" class="btn btn-outline"><i class="fas fa-times"></i></a>` : ''}
+          ${buscar||tipoFiltro ? `<a href="/clientes" class="btn btn-outline"><i class="fas fa-times"></i></a>` : ''}
         </form>
         <a href="/clientes/nuevo" class="btn btn-orange"><i class="fas fa-plus"></i> Nuevo Cliente</a>
       </div>
@@ -105,7 +120,7 @@ clientes.get('/clientes', async (c) => {
         </div>
         <div class="table-wrapper">
           <table>
-            <thead><tr><th>Nombre completo</th><th>Email</th><th>Teléfono</th><th>Documento</th><th>Pasaporte</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Nombre completo</th><th>Email</th><th>Teléfono</th><th>Documento</th><th>Pasaporte</th><th>Deuda</th><th>Acciones</th></tr></thead>
             <tbody>
               ${rows || `<tr><td colspan="6" style="text-align:center;padding:30px;color:#9ca3af;">Sin clientes. <a href="/clientes/nuevo" style="color:#7B3FA0;">Crear primero</a></td></tr>`}
             </tbody>
@@ -194,11 +209,22 @@ clientes.get('/clientes/:id', async (c) => {
     const cl = await c.env.DB.prepare('SELECT * FROM clientes WHERE id = ?').bind(id).first() as any
     if (!cl) return c.redirect('/clientes')
 
-    const filesCl = await c.env.DB.prepare(`
-      SELECT f.*, u.nombre as vendedor_nombre FROM files f
+    const fechaDesdeC = c.req.query('fecha_desde') || ''
+    const fechaHastaC = c.req.query('fecha_hasta') || ''
+    const conSaldoC   = c.req.query('con_saldo')   || ''
+
+    let filesQuery = `
+      SELECT f.*, u.nombre as vendedor_nombre,
+        COALESCE((SELECT SUM(m.monto) FROM movimientos_caja m WHERE m.file_id = f.id AND m.tipo='ingreso' AND m.anulado=0),0) as cobrado
+      FROM files f
       JOIN usuarios u ON f.vendedor_id = u.id
-      WHERE f.cliente_id = ? ORDER BY f.created_at DESC
-    `).bind(id).all()
+      WHERE f.cliente_id = ?`
+    const filesParams: any[] = [id]
+    if (fechaDesdeC) { filesQuery += ' AND f.fecha_viaje >= ?'; filesParams.push(fechaDesdeC) }
+    if (fechaHastaC) { filesQuery += ' AND f.fecha_viaje <= ?'; filesParams.push(fechaHastaC) }
+    if (conSaldoC)   { filesQuery += ` AND (f.total_venta - COALESCE((SELECT SUM(m2.monto) FROM movimientos_caja m2 WHERE m2.file_id = f.id AND m2.tipo='ingreso' AND m2.anulado=0),0)) > 0.01 AND f.estado != 'anulado'` }
+    filesQuery += ' ORDER BY f.fecha_viaje DESC, f.created_at DESC'
+    const filesCl = await c.env.DB.prepare(filesQuery).bind(...filesParams).all()
 
     const hoy = new Date().toISOString().split('T')[0]
     const pasaVencido = cl.vencimiento_pasaporte && cl.vencimiento_pasaporte < hoy
@@ -267,19 +293,38 @@ clientes.get('/clientes/:id', async (c) => {
           <div style="font-size:13px;font-weight:700;color:#5a2d75;margin-bottom:12px;">
             <i class="fas fa-folder-open" style="color:#F7941D"></i> Files (${filesCl.results.length})
           </div>
-          ${filesCl.results.map((f: any) => `
-            <div style="background:white;border:1px solid #ede5f5;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
-              <div>
-                <strong style="color:#7B3FA0;">#${esc(f.numero)}</strong>
-                <span style="font-size:12px;color:#6b7280;margin-left:8px;">${esc(f.destino_principal) || '—'}</span>
-                <br><span class="badge badge-${esc(f.estado)}" style="margin-top:4px;">${esc(f.estado)}</span>
+          <!-- Filtros de files -->
+          <form method="GET" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+            <input type="date" name="fecha_desde" value="${fechaDesdeC}" class="form-control" style="font-size:11px;padding:4px 8px;width:130px;" title="Salida desde">
+            <input type="date" name="fecha_hasta" value="${fechaHastaC}" class="form-control" style="font-size:11px;padding:4px 8px;width:130px;" title="Salida hasta">
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#dc2626;cursor:pointer;">
+              <input type="checkbox" name="con_saldo" value="1" ${conSaldoC?'checked':''} style="accent-color:#dc2626;"> Con saldo
+            </label>
+            <button type="submit" class="btn btn-outline btn-sm" style="font-size:11px;padding:4px 10px;"><i class="fas fa-filter"></i></button>
+            ${fechaDesdeC||fechaHastaC||conSaldoC ? `<a href="/clientes/${id}" class="btn btn-outline btn-sm" style="font-size:11px;padding:4px 10px;"><i class="fas fa-times"></i></a>` : ''}
+          </form>
+          ${filesCl.results.map((f: any) => {
+            const saldo = Number(f.total_venta||0) - Number(f.cobrado||0)
+            const util  = Number(f.total_venta||0) - Number(f.total_costo||0)
+            return `
+            <div style="background:white;border:1px solid #ede5f5;border-radius:10px;padding:12px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div>
+                  <strong style="color:#7B3FA0;">#${esc(f.numero)}</strong>
+                  <span style="font-size:12px;color:#6b7280;margin-left:6px;">${esc(f.destino_principal)||'—'}</span>
+                  ${f.fecha_viaje ? `<span style="font-size:11px;color:#9ca3af;margin-left:6px;"><i class="fas fa-calendar"></i> ${esc(f.fecha_viaje)}</span>` : ''}
+                  <br><span class="badge badge-${esc(f.estado)}" style="margin-top:4px;">${esc(f.estado)}</span>
+                </div>
+                <a href="/files/${f.id}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></a>
               </div>
-              <div style="text-align:right;">
-                <div style="font-weight:700;color:#059669;">$${Number(f.total_venta || 0).toLocaleString()}</div>
-                <a href="/files/${f.id}" class="btn btn-outline btn-sm" style="margin-top:4px;"><i class="fas fa-eye"></i></a>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:8px;font-size:11px;">
+                <div style="text-align:center;"><div style="color:#6b7280;">Venta</div><div style="font-weight:700;color:#059669;">$${Number(f.total_venta||0).toLocaleString()}</div></div>
+                <div style="text-align:center;"><div style="color:#6b7280;">Costo</div><div style="font-weight:700;color:#374151;">$${Number(f.total_costo||0).toLocaleString()}</div></div>
+                <div style="text-align:center;"><div style="color:#6b7280;">Utilidad</div><div style="font-weight:700;color:#F7941D;">$${util.toLocaleString()}</div></div>
+                <div style="text-align:center;"><div style="color:#6b7280;">Saldo</div><div style="font-weight:700;color:${saldo>0.01?'#dc2626':'#059669'};">${saldo>0.01?'-$'+saldo.toLocaleString('es-UY',{minimumFractionDigits:2}):'✓'}</div></div>
               </div>
             </div>
-          `).join('') || '<div style="color:#9ca3af;font-size:13px;">Sin files</div>'}
+          `}).join('') || '<div style="color:#9ca3af;font-size:13px;">Sin files</div>'}
         </div>
       </div>
     `
