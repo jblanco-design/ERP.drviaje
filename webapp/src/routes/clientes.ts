@@ -1,5 +1,29 @@
 import { Hono } from 'hono'
 import { getUser, isSupervisorOrAbove } from '../lib/auth'
+
+// ── Normalizar Cédula de Identidad uruguaya → X.XXX.XXX-D ─────
+function normalizarCI(raw: string): string {
+  // Quitar todo lo que no sea dígito
+  const soloDigitos = raw.replace(/[^0-9]/g, '')
+  if (soloDigitos.length < 2) return raw.trim()
+
+  // Separar dígito verificador (último) del resto
+  const verificador = soloDigitos.slice(-1)
+  const cuerpo = soloDigitos.slice(0, -1)
+
+  // Formatear cuerpo con puntos cada 3 dígitos desde la derecha
+  const cuerpoFormateado = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+
+  return `${cuerpoFormateado}-${verificador}`
+}
+
+// Normalizar documento según tipo
+function normalizarDocumento(tipo: string, nro: string): string {
+  if (!nro) return ''
+  if (tipo === 'CI') return normalizarCI(nro)
+  // Para todos los demás (PAS, DNI, RUT, etc.) → mayúsculas y sin espacios al inicio/fin
+  return nro.trim().toUpperCase()
+}
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
 
@@ -163,7 +187,7 @@ clientes.post('/clientes', async (c) => {
     const personaContacto  = esEmp ? String(b.persona_contacto || '').trim() : null
     if (esEmp && !personaContacto) return c.redirect('/clientes/nuevo?error=contacto_requerido')
 
-    const nroDocumento = String(b.nro_documento || '').trim()
+    const nroDocumento = normalizarDocumento(tipoDoc, String(b.nro_documento || '').trim())
     const telefono     = String(b.telefono || '').trim()
     if (!nroDocumento) return c.redirect('/clientes/nuevo?error=documento_requerido')
     if (!telefono)     return c.redirect('/clientes/nuevo?error=telefono_requerido')
@@ -171,6 +195,19 @@ clientes.post('/clientes', async (c) => {
     const TIPOS_DOC = ['CI', 'DNI', 'PAS', 'RUT', 'NIF', 'OTRO']
     const tipoDocDefault = esEmp ? 'RUT' : 'CI'
     const tipoDoc = TIPOS_DOC.includes(String(b.tipo_documento)) ? String(b.tipo_documento) : tipoDocDefault
+
+    // Verificar documento duplicado (normalizando CI antes de comparar)
+    const nroDocRaw = String(b.nro_documento || '').trim()
+    const nroDocC   = normalizarDocumento(tipoDoc, nroDocRaw)
+    if (nroDocC) {
+      const existe = await c.env.DB.prepare(
+        `SELECT id, nombre, apellido, nombre_completo FROM clientes WHERE nro_documento = ? LIMIT 1`
+      ).bind(nroDocC).first() as any
+      if (existe) {
+        const nombreExistente = existe.nombre_completo || `${existe.nombre} ${existe.apellido}`.trim()
+        return c.redirect(`/clientes/nuevo?error=documento_duplicado&doc=${encodeURIComponent(nroDocC)}&cliente=${encodeURIComponent(nombreExistente)}`)
+      }
+    }
 
     const hoyClNuevo = new Date().toISOString().split('T')[0]
     if (!esEmp && b.fecha_nacimiento && String(b.fecha_nacimiento) > hoyClNuevo) {
@@ -379,7 +416,7 @@ clientes.post('/clientes/:id/editar', async (c) => {
     const personaContacto = esEmp ? String(b.persona_contacto || '').trim() : null
     if (esEmp && !personaContacto) return c.redirect(`/clientes/${id}/editar?error=contacto_requerido`)
 
-    const nroDocumentoE = String(b.nro_documento || '').trim()
+    const nroDocumentoE = normalizarDocumento(tipoDoc2, String(b.nro_documento || '').trim())
     const telefonoE     = String(b.telefono || '').trim()
     if (!nroDocumentoE) return c.redirect(`/clientes/${id}/editar?error=documento_requerido`)
     if (!telefonoE)     return c.redirect(`/clientes/${id}/editar?error=telefono_requerido`)
@@ -387,6 +424,19 @@ clientes.post('/clientes/:id/editar', async (c) => {
     const TIPOS_DOC2 = ['CI', 'DNI', 'PAS', 'RUT', 'NIF', 'OTRO']
     const tipoDocDefault2 = esEmp ? 'RUT' : 'CI'
     const tipoDoc2 = TIPOS_DOC2.includes(String(b.tipo_documento)) ? String(b.tipo_documento) : tipoDocDefault2
+
+    // Verificar documento duplicado (normalizando CI antes de comparar)
+    const nroDocRawE = String(b.nro_documento || '').trim()
+    const nroDocE    = normalizarDocumento(tipoDoc2, nroDocRawE)
+    if (nroDocE) {
+      const existe = await c.env.DB.prepare(
+        `SELECT id, nombre, apellido, nombre_completo FROM clientes WHERE nro_documento = ? AND id != ? LIMIT 1`
+      ).bind(nroDocE, id).first() as any
+      if (existe) {
+        const nombreExistente = existe.nombre_completo || `${existe.nombre} ${existe.apellido}`.trim()
+        return c.redirect(`/clientes/${id}/editar?error=documento_duplicado&doc=${encodeURIComponent(nroDocE)}&cliente=${encodeURIComponent(nombreExistente)}`)
+      }
+    }
 
     const hoyClEdit = new Date().toISOString().split('T')[0]
     if (!esEmp && b.fecha_nacimiento && String(b.fecha_nacimiento) > hoyClEdit) {
@@ -447,6 +497,21 @@ function clienteForm(cl: any, id?: string, userRol?: string, usuariosList?: any[
   return `
     <div style="max-width:720px;">
       <a href="${backHref}" style="color:#7B3FA0;font-size:13px;margin-bottom:20px;display:block;"><i class="fas fa-arrow-left"></i> Volver</a>
+      <script>
+        (function() {
+          const p = new URLSearchParams(window.location.search)
+          const err = p.get('error')
+          const doc = p.get('doc')
+          const cli = p.get('cliente')
+          if (err === 'documento_duplicado') {
+            const div = document.createElement('div')
+            div.className = 'alert alert-danger'
+            div.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;'
+            div.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size:18px;"></i><div><strong>Documento duplicado</strong> — El número <strong>' + (doc||'') + '</strong> ya está registrado para el cliente <strong>' + (cli||'') + '</strong>.</div>'
+            document.currentScript.parentNode.insertBefore(div, document.currentScript.nextSibling)
+          }
+        })()
+      </script>
       <div class="card">
         <div class="card-header">
           <span class="card-title">
