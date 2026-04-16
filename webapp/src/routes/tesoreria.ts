@@ -3468,6 +3468,28 @@ tesoreria.post('/tesoreria/tc/autorizar', async (c) => {
 })
 
 // ── POST: Autorizar TC individual ────────────────────────────────
+// ── POST: Autorizar movimiento de cuenta corriente pendiente ──
+tesoreria.post('/tesoreria/proveedor/:id/cuenta/autorizar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/login')
+  const provId = c.req.param('id')
+  const body   = await c.req.parseBody()
+  const ccId   = Number(body.cc_id)
+
+  if (!Number.isInteger(ccId) || ccId <= 0) {
+    return c.redirect(`/tesoreria/proveedor/${provId}/cuenta?error=id_invalido`)
+  }
+
+  try {
+    await c.env.DB.prepare(
+      `UPDATE proveedor_cuenta_corriente SET estado = 'confirmado' WHERE id = ? AND proveedor_id = ? AND estado = 'pendiente'`
+    ).bind(ccId, provId).run()
+    return c.redirect(`/tesoreria/proveedor/${provId}/cuenta?ok=autorizado`)
+  } catch (e: any) {
+    return c.redirect(`/tesoreria/proveedor/${provId}/cuenta?error=error_interno`)
+  }
+})
+
 tesoreria.post('/tesoreria/proveedor/:id/cuenta/autorizar-tc', async (c) => {
   const user = await getUser(c)
   if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/login')
