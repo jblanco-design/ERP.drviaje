@@ -491,11 +491,17 @@ files.post('/files', async (c) => {
       return c.redirect('/files/nuevo?error=fecha_viaje_pasada')
     }
 
+    const vendedorDelFile = body.vendedor_id || user.id
     await c.env.DB.prepare(`
       INSERT INTO files (numero, cliente_id, vendedor_id, estado, destino_principal, fecha_viaje, moneda, notas)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(numero, body.cliente_id, body.vendedor_id || user.id, body.estado || 'en_proceso',
+    `).bind(numero, body.cliente_id, vendedorDelFile, body.estado || 'en_proceso',
       body.destino_principal || null, body.fecha_viaje || null, body.moneda || 'USD', body.notas || null).run()
+
+    // Actualizar vendedor_id del cliente al vendedor del file (último file creado = vendedor titular)
+    await c.env.DB.prepare(
+      `UPDATE clientes SET vendedor_id = ? WHERE id = ?`
+    ).bind(vendedorDelFile, body.cliente_id).run().catch(() => {})
 
     const newFile = await c.env.DB.prepare('SELECT id FROM files WHERE numero = ?').bind(numero).first() as any
     return c.redirect(`/files/${newFile.id}`)
