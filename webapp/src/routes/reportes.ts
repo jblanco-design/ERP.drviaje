@@ -431,6 +431,20 @@ reportes.get('/reportes', async (c) => {
               </select>
             </div>
 
+            <!-- Tipo de servicio (solo para servicios pagados/pendientes) -->
+            <div id="exp-campo-tipo" style="margin-bottom:12px;display:none;">
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">TIPO DE SERVICIO</label>
+              <select id="exp-tipo" class="form-control" style="font-size:13px;">
+                <option value="">Todos los tipos</option>
+                <option value="aereo">✈ Aéreo</option>
+                <option value="hotel">🏨 Hotel</option>
+                <option value="traslado">🚗 Traslado</option>
+                <option value="tour">🗺 Tour</option>
+                <option value="seguro">🛡 Seguro</option>
+                <option value="otro">📦 Otro</option>
+              </select>
+            </div>
+
             <!-- Vendedor (para ventas y files) -->
             <div id="exp-campo-vendedor" style="margin-bottom:12px;display:none;">
               <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">VENDEDOR</label>
@@ -482,10 +496,12 @@ reportes.get('/reportes', async (c) => {
           const showProv  = ['servicios-pagados','servicios-pendientes','conciliacion-proveedores'].includes(tipo)
           const showVend  = ['ventas','files'].includes(tipo)
           const showState = tipo === 'files'
+          const showTipo  = ['servicios-pagados','servicios-pendientes'].includes(tipo)
 
-          document.getElementById('exp-campo-proveedor').style.display = showProv ? 'block' : 'none'
-          document.getElementById('exp-campo-vendedor').style.display  = showVend ? 'block' : 'none'
+          document.getElementById('exp-campo-proveedor').style.display = showProv  ? 'block' : 'none'
+          document.getElementById('exp-campo-vendedor').style.display  = showVend  ? 'block' : 'none'
           document.getElementById('exp-campo-estado').style.display    = showState ? 'block' : 'none'
+          document.getElementById('exp-campo-tipo').style.display      = showTipo  ? 'block' : 'none'
         }
 
         function cerrarModalExport() {
@@ -498,13 +514,15 @@ reportes.get('/reportes', async (c) => {
           const provId   = document.getElementById('exp-proveedor')?.value || ''
           const vendId   = document.getElementById('exp-vendedor')?.value  || ''
           const estado   = document.getElementById('exp-estado')?.value    || ''
+          const tipo     = document.getElementById('exp-tipo')?.value      || ''
 
           const params = new URLSearchParams()
-          if (desde)  params.set('desde',       desde)
-          if (hasta)  params.set('hasta',       hasta)
+          if (desde)  params.set('desde',        desde)
+          if (hasta)  params.set('hasta',        hasta)
           if (provId) params.set('proveedor_id', provId)
           if (vendId) params.set('vendedor_id',  vendId)
           if (estado) params.set('estado',       estado)
+          if (tipo)   params.set('tipo',         tipo)
 
           window.location.href = '/reportes/exportar/' + tipoExportActual + (params.toString() ? '?' + params.toString() : '')
           cerrarModalExport()
@@ -1389,8 +1407,10 @@ reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
       WHERE (s.prepago_realizado = 1 OR s.estado_pago_proveedor = 'pagado')
         AND f.estado != 'anulado'
     `
+    const tipoFilter = c.req.query('tipo') || ''
     const params: string[] = []
     if (proveedorId) { q += ` AND s.proveedor_id = ?`; params.push(proveedorId) }
+    if (tipoFilter)  { q += ` AND s.tipo_servicio = ?`; params.push(tipoFilter) }
     if (desde) { q += ` AND date(s.created_at) >= ?`; params.push(desde) }
     if (hasta) { q += ` AND date(s.created_at) <= ?`; params.push(hasta) }
     q += ` ORDER BY s.created_at DESC`
@@ -1442,6 +1462,9 @@ reportes.get('/reportes/exportar/servicios-pendientes', async (c) => {
         AND s.estado != 'cancelado'
     `
     const params: string[] = []
+    if (proveedorId) { q += ` AND s.proveedor_id = ?`; params.push(proveedorId) }
+    const tipoFilterP = c.req.query('tipo') || ''
+    if (tipoFilterP) { q += ` AND s.tipo_servicio = ?`; params.push(tipoFilterP) }
     if (desde) { q += ` AND date(s.created_at) >= ?`; params.push(desde) }
     if (hasta) { q += ` AND date(s.created_at) <= ?`; params.push(hasta) }
     q += ` ORDER BY s.fecha_limite_prepago ASC NULLS LAST, f.numero ASC`
