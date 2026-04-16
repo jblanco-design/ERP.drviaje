@@ -83,6 +83,7 @@ reportes.get('/reportes', async (c) => {
     const vendedores = isGerente
       ? await c.env.DB.prepare(`SELECT id, nombre FROM usuarios WHERE rol IN ('vendedor','supervisor','administracion','gerente') AND email != 'gerente@drviaje.com' ORDER BY nombre`).all()
       : { results: [] as any[] }
+    const proveedoresList = await c.env.DB.prepare(`SELECT id, nombre FROM proveedores WHERE activo = 1 ORDER BY nombre`).all()
 
     // ── Métricas del período ─────────────────────────────
     // Los files compartidos se dividen 50/50:
@@ -378,24 +379,143 @@ reportes.get('/reportes', async (c) => {
             <a href="/reportes/cuentas-corrientes" class="btn btn-sm" style="background:#0369a1;color:white;border:none;">
               <i class="fas fa-file-invoice-dollar"></i> Ctas. Corrientes
             </a>
-            <a href="/reportes/exportar/conciliacion-proveedores" class="btn btn-sm" style="background:#b45309;color:white;border:none;">
+            <button type="button" onclick="abrirModalExport('conciliacion-proveedores')" class="btn btn-sm" style="background:#b45309;color:white;border:none;">
               <i class="fas fa-file-excel"></i> Proveedores
-            </a>
-            <a href="/reportes/exportar/ventas?${exportParams}" class="btn btn-sm" style="background:#217346;color:white;border:none;">
-              <i class="fas fa-file-excel"></i> Exportar Ventas
-            </a>
-            <a href="/reportes/exportar/files?${exportParams}" class="btn btn-sm" style="background:#1d6f42;color:white;border:none;">
-              <i class="fas fa-file-excel"></i> Exportar Files
-            </a>
-            <a href="/reportes/exportar/servicios-pagados?desde=${desde}&hasta=${hasta}" class="btn btn-sm" style="background:#0369a1;color:white;border:none;">
+            </button>
+            <button type="button" onclick="abrirModalExport('ventas')" class="btn btn-sm" style="background:#217346;color:white;border:none;">
+              <i class="fas fa-file-excel"></i> Ventas
+            </button>
+            <button type="button" onclick="abrirModalExport('files')" class="btn btn-sm" style="background:#1d6f42;color:white;border:none;">
+              <i class="fas fa-file-excel"></i> Files
+            </button>
+            <button type="button" onclick="abrirModalExport('servicios-pagados')" class="btn btn-sm" style="background:#0369a1;color:white;border:none;">
               <i class="fas fa-file-excel"></i> Servicios Pagados
-            </a>
-            <a href="/reportes/exportar/servicios-pendientes?desde=${desde}&hasta=${hasta}" class="btn btn-sm" style="background:#7B3FA0;color:white;border:none;">
+            </button>
+            <button type="button" onclick="abrirModalExport('servicios-pendientes')" class="btn btn-sm" style="background:#7B3FA0;color:white;border:none;">
               <i class="fas fa-file-excel"></i> Servicios Pendientes
-            </a>
+            </button>
           </div>
         </div>
       </form>
+
+      <!-- Modal de exportación con filtros -->
+      <div id="modal-export" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:16px;">
+        <div style="background:white;border-radius:14px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+          <div style="background:linear-gradient(135deg,#217346,#1d6f42);border-radius:14px 14px 0 0;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:white;font-size:16px;font-weight:700;"><i class="fas fa-file-excel"></i> <span id="modal-export-titulo">Exportar</span></div>
+            <button onclick="cerrarModalExport()" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:16px;">✕</button>
+          </div>
+          <div style="padding:20px;">
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#166534;">
+              <i class="fas fa-info-circle"></i> Filtrá para descargar solo lo que necesitás. Dejá los campos vacíos para exportar todo.
+            </div>
+
+            <!-- Rango de fechas -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">FECHA DESDE</label>
+                <input type="date" id="exp-desde" class="form-control" style="font-size:13px;">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">FECHA HASTA</label>
+                <input type="date" id="exp-hasta" class="form-control" style="font-size:13px;">
+              </div>
+            </div>
+
+            <!-- Proveedor (solo para servicios pagados/pendientes/proveedores) -->
+            <div id="exp-campo-proveedor" style="margin-bottom:12px;display:none;">
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">PROVEEDOR</label>
+              <select id="exp-proveedor" class="form-control" style="font-size:13px;">
+                <option value="">Todos los proveedores</option>
+                ${(proveedoresList.results as any[]).map((p: any) => `<option value="${p.id}">${esc(p.nombre)}</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Vendedor (para ventas y files) -->
+            <div id="exp-campo-vendedor" style="margin-bottom:12px;display:none;">
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">VENDEDOR</label>
+              <select id="exp-vendedor" class="form-control" style="font-size:13px;">
+                <option value="">Todos los vendedores</option>
+                ${(vendedores.results as any[]).map((v: any) => `<option value="${v.id}">${esc(v.nombre)}</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Estado del file (para files) -->
+            <div id="exp-campo-estado" style="margin-bottom:16px;display:none;">
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">ESTADO DEL FILE</label>
+              <select id="exp-estado" class="form-control" style="font-size:13px;">
+                <option value="">Todos los estados</option>
+                <option value="en_proceso">En Proceso</option>
+                <option value="seniado">Señado</option>
+                <option value="cerrado">Cerrado</option>
+                <option value="anulado">Anulado</option>
+              </select>
+            </div>
+
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+              <button onclick="cerrarModalExport()" class="btn btn-outline">Cancelar</button>
+              <button onclick="ejecutarExport()" class="btn btn-primary" style="background:#217346;">
+                <i class="fas fa-download"></i> Descargar CSV
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        let tipoExportActual = ''
+
+        const titulos = {
+          'ventas': 'Exportar Ventas',
+          'files': 'Exportar Files',
+          'servicios-pagados': 'Exportar Servicios Pagados',
+          'servicios-pendientes': 'Exportar Servicios Pendientes',
+          'conciliacion-proveedores': 'Exportar Conciliación Proveedores'
+        }
+
+        function abrirModalExport(tipo) {
+          tipoExportActual = tipo
+          document.getElementById('modal-export-titulo').textContent = titulos[tipo] || 'Exportar'
+          document.getElementById('modal-export').style.display = 'flex'
+
+          // Mostrar/ocultar campos según tipo
+          const showProv  = ['servicios-pagados','servicios-pendientes','conciliacion-proveedores'].includes(tipo)
+          const showVend  = ['ventas','files'].includes(tipo)
+          const showState = tipo === 'files'
+
+          document.getElementById('exp-campo-proveedor').style.display = showProv ? 'block' : 'none'
+          document.getElementById('exp-campo-vendedor').style.display  = showVend ? 'block' : 'none'
+          document.getElementById('exp-campo-estado').style.display    = showState ? 'block' : 'none'
+        }
+
+        function cerrarModalExport() {
+          document.getElementById('modal-export').style.display = 'none'
+        }
+
+        function ejecutarExport() {
+          const desde    = document.getElementById('exp-desde').value
+          const hasta    = document.getElementById('exp-hasta').value
+          const provId   = document.getElementById('exp-proveedor')?.value || ''
+          const vendId   = document.getElementById('exp-vendedor')?.value  || ''
+          const estado   = document.getElementById('exp-estado')?.value    || ''
+
+          const params = new URLSearchParams()
+          if (desde)  params.set('desde',       desde)
+          if (hasta)  params.set('hasta',       hasta)
+          if (provId) params.set('proveedor_id', provId)
+          if (vendId) params.set('vendedor_id',  vendId)
+          if (estado) params.set('estado',       estado)
+
+          window.location.href = '/reportes/exportar/' + tipoExportActual + (params.toString() ? '?' + params.toString() : '')
+          cerrarModalExport()
+        }
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') cerrarModalExport()
+        })
+      </script>
+
       <script>
         function setModo(modo) {
           document.getElementById('input-modo').value = modo
@@ -815,6 +935,7 @@ reportes.get('/reportes/exportar/files', async (c) => {
       ? `date(f.fecha_apertura) BETWEEN '${desde}' AND '${hasta}'`
       : `strftime('%Y-%m', f.fecha_apertura) = '${mes}'`
     const periodoLabel = modoFecha === 'rango' ? `${desde}_${hasta}` : mes
+    const estadoFilter = c.req.query('estado') || ''
     const params: any[] = vendedorId ? [vendedorId] : []
     const rows = await c.env.DB.prepare(`
       SELECT f.numero, f.fecha_apertura, f.estado, f.destino_principal, f.moneda, f.notas,
@@ -825,7 +946,7 @@ reportes.get('/reportes/exportar/files', async (c) => {
       FROM files f
       LEFT JOIN clientes cl ON f.cliente_id = cl.id
       LEFT JOIN usuarios u  ON f.vendedor_id = u.id
-      WHERE f.estado NOT IN ('anulado') AND ${fechaCond}
+      WHERE ${estadoFilter ? `f.estado = '${estadoFilter}'` : "f.estado NOT IN ('anulado')"} AND ${fechaCond}
       ${vendedorId ? 'AND f.vendedor_id = ?' : ''}
       ORDER BY f.numero DESC
     `).bind(...params).all()
