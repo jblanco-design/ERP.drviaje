@@ -1080,10 +1080,21 @@ files.get('/files/:id', async (c) => {
       <div class="card" style="margin-bottom:20px;">
         <div class="card-header">
           <span class="card-title"><i class="fas fa-concierge-bell" style="color:#F7941D"></i> Servicios del File</span>
-          ${fileBloqueado
+          ${fileBloqueado && file.estado === 'anulado'
             ? `<span style="font-size:12px;color:#9ca3af;display:flex;align-items:center;gap:4px;">
-                <i class="fas fa-lock"></i> ${fileCerrado ? 'File cerrado' : 'File anulado'}
+                <i class="fas fa-lock"></i> File anulado
                </span>`
+            : fileBloqueado && fileCerrado
+            ? `<div style="display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:#9ca3af;display:flex;align-items:center;gap:4px;">
+                  <i class="fas fa-lock"></i> File cerrado
+                </span>
+                ${isAdminOrAbove(user.rol) && servicios.results.length > 0 ? `
+                  <button onclick="abrirAjustarVenta()" class="btn btn-sm"
+                    style="background:linear-gradient(135deg,#0369a1,#0ea5e9);color:white;border:none;">
+                    <i class="fas fa-sliders-h"></i> Ajustar Venta
+                  </button>` : ''}
+               </div>`
             : esVendedorCompartido
             ? `<span style="font-size:12px;color:#6366f1;display:flex;align-items:center;gap:4px;">
                 <i class="fas fa-share-alt"></i> Compartido — solo lectura
@@ -4045,7 +4056,9 @@ files.post('/api/files/:id/ajustar-venta', async (c) => {
     const file = await c.env.DB.prepare('SELECT * FROM files WHERE id = ?').bind(id).first() as any
     if (!file) return c.json({ error: 'File no encontrado' }, 404)
     if (!canSeeAllFiles(user.rol) && file.vendedor_id != user.id) return c.json({ error: 'Sin permiso' }, 403)
-    if (file.estado === 'cerrado' || file.estado === 'anulado') return c.json({ error: 'El file está bloqueado' }, 403)
+    // Files cerrados: solo admin/gerente pueden ajustar venta
+    if (file.estado === 'anulado') return c.json({ error: 'No se puede ajustar un file anulado' }, 403)
+    if (file.estado === 'cerrado' && !isAdminOrAbove(user.rol)) return c.json({ error: 'Solo administración o gerencia puede ajustar la venta de un file cerrado' }, 403)
 
     // Verificar que no tenga liquidaciones aprobadas/pagadas
     const liqExistente = await c.env.DB.prepare(`
