@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { getUser } from '../lib/auth'
+import { getUser, isSupervisorOrAbove } from '../lib/auth'
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
 
@@ -31,12 +31,16 @@ clientes.get('/clientes', async (c) => {
   try {
     // Auto-aplicar migración 0017 si columnas no existen aún
     try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN tipo_cliente TEXT NOT NULL DEFAULT 'persona_fisica'`).run() } catch(_){}
+    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN vendedor_id INTEGER`).run() } catch(_){}
     try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN razon_social TEXT`).run() } catch(_){}
     try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN persona_contacto TEXT`).run() } catch(_){}
     let q = `SELECT c.*,
       COALESCE((SELECT SUM(f.total_venta) FROM files f WHERE f.cliente_id = c.id AND f.estado != 'anulado'),0) as total_venta,
-      COALESCE((SELECT SUM(m.monto) FROM movimientos_caja m JOIN files f ON f.id = m.file_id WHERE f.cliente_id = c.id AND m.tipo='ingreso' AND m.anulado=0),0) as total_cobrado
-      FROM clientes c WHERE 1=1`
+      COALESCE((SELECT SUM(m.monto) FROM movimientos_caja m JOIN files f ON f.id = m.file_id WHERE f.cliente_id = c.id AND m.tipo='ingreso' AND m.anulado=0),0) as total_cobrado,
+      u.nombre as vendedor_nombre
+      FROM clientes c
+      LEFT JOIN usuarios u ON u.id = c.vendedor_id
+      WHERE 1=1`
     const params: any[] = []
     if (buscar) {
       q += ` AND (c.nombre LIKE ? OR c.apellido LIKE ? OR c.email LIKE ?
@@ -91,6 +95,7 @@ clientes.get('/clientes', async (c) => {
             if (deuda <= 0.01) return '<span style="font-size:11px;color:#059669;font-weight:700;">✓</span>'
             return '<strong style="color:#dc2626;font-size:12px;">-$' + deuda.toLocaleString('es-UY',{minimumFractionDigits:2}) + '</strong>'
           })()}</td>
+          <td style="font-size:12px;color:#6b7280;">${esc(cl.vendedor_nombre || '—')}</td>
           <td>
             <a href="/clientes/${cl.id}" class="btn btn-outline btn-sm" title="Ver cliente"><i class="fas fa-eye"></i></a>
             <a href="/clientes/${cl.id}/editar" class="btn btn-sm" style="background:#f3e8ff;color:#7B3FA0;" title="Editar"><i class="fas fa-edit"></i></a>
@@ -120,7 +125,7 @@ clientes.get('/clientes', async (c) => {
         </div>
         <div class="table-wrapper">
           <table>
-            <thead><tr><th>Nombre completo</th><th>Email</th><th>Teléfono</th><th>Documento</th><th>Pasaporte</th><th>Deuda</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Nombre completo</th><th>Email</th><th>Teléfono</th><th>Documento</th><th>Pasaporte</th><th>Deuda</th><th>Vendedor</th><th>Acciones</th></tr></thead>
             <tbody>
               ${rows || `<tr><td colspan="6" style="text-align:center;padding:30px;color:#9ca3af;">Sin clientes. <a href="/clientes/nuevo" style="color:#7B3FA0;">Crear primero</a></td></tr>`}
             </tbody>
@@ -206,7 +211,11 @@ clientes.get('/clientes/:id', async (c) => {
   if (!user) return c.redirect('/login')
   const id = c.req.param('id')
   try {
-    const cl = await c.env.DB.prepare('SELECT * FROM clientes WHERE id = ?').bind(id).first() as any
+    const cl = await c.env.DB.prepare(`
+      SELECT c.*, u.nombre as vendedor_nombre
+      FROM clientes c LEFT JOIN usuarios u ON u.id = c.vendedor_id
+      WHERE c.id = ?
+    `).bind(id).first() as any
     if (!cl) return c.redirect('/clientes')
 
     const fechaDesdeC = c.req.query('fecha_desde') || ''
@@ -233,7 +242,10 @@ clientes.get('/clientes/:id', async (c) => {
     const content = `
       <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <a href="/clientes" style="color:#7B3FA0;font-size:13px;"><i class="fas fa-arrow-left"></i> Volver</a>
-        <div style="display:flex;gap:8px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:12px;color:#6b7280;background:#f3e8ff;padding:4px 10px;border-radius:8px;">
+            <i class="fas fa-user-tie" style="color:#7B3FA0;"></i> <strong>${esc(cl.vendedor_nombre || '—')}</strong>
+          </span>
           <a href="/clientes/${id}/cuenta-corriente" class="btn btn-sm" style="background:#217346;color:white;border:none;">
             <i class="fas fa-file-invoice-dollar"></i> Estado de Cuenta
           </a>
@@ -313,7 +325,9 @@ clientes.get('/clientes/:id', async (c) => {
                   <strong style="color:#7B3FA0;">#${esc(f.numero)}</strong>
                   <span style="font-size:12px;color:#6b7280;margin-left:6px;">${esc(f.destino_principal)||'—'}</span>
                   ${f.fecha_viaje ? `<span style="font-size:11px;color:#9ca3af;margin-left:6px;"><i class="fas fa-calendar"></i> ${esc(f.fecha_viaje)}</span>` : ''}
-                  <br><span class="badge badge-${esc(f.estado)}" style="margin-top:4px;">${esc(f.estado)}</span>
+                  <br>
+                  <span class="badge badge-${esc(f.estado)}" style="margin-top:4px;">${esc(f.estado)}</span>
+                  <span style="font-size:11px;color:#7B3FA0;margin-left:6px;"><i class="fas fa-user"></i> ${esc(f.vendedor_nombre||'—')}</span>
                 </div>
                 <a href="/files/${f.id}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></a>
               </div>
@@ -341,7 +355,10 @@ clientes.get('/clientes/:id/editar', async (c) => {
   const id = c.req.param('id')
   const cl = await c.env.DB.prepare('SELECT * FROM clientes WHERE id = ?').bind(id).first() as any
   if (!cl) return c.redirect('/clientes')
-  return c.html(baseLayout('Editar Cliente', clienteForm(cl, id), user, 'clientes'))
+  const usuariosList = isSupervisorOrAbove(user.rol)
+    ? await c.env.DB.prepare(`SELECT id, nombre FROM usuarios WHERE activo=1 ORDER BY nombre`).all()
+    : { results: [] as any[] }
+  return c.html(baseLayout('Editar Cliente', clienteForm(cl, id, user.rol, usuariosList.results), user, 'clientes'))
 })
 
 clientes.post('/clientes/:id/editar', async (c) => {
@@ -377,6 +394,11 @@ clientes.post('/clientes/:id/editar', async (c) => {
     }
 
     const nc = esEmp ? nombre : `${nombre} ${apellido}`.trim()
+
+    // Solo gerente/supervisor/admin pueden cambiar el vendedor titular
+    const canChangeVend = isSupervisorOrAbove(user.rol)
+    const vendedorIdNew = canChangeVend && b.vendedor_id ? Number(b.vendedor_id) : null
+
     await c.env.DB.prepare(`
       UPDATE clientes SET
         nombre=?, apellido=?, nombre_completo=?,
@@ -385,6 +407,7 @@ clientes.post('/clientes/:id/editar', async (c) => {
         fecha_nacimiento=?, vencimiento_pasaporte=?,
         preferencias_comida=?, millas_aerolineas=?, notas=?,
         tipo_cliente=?, razon_social=?, persona_contacto=?,
+        ${canChangeVend && b.vendedor_id ? 'vendedor_id=?,' : ''}
         updated_at=datetime('now')
       WHERE id=?
     `).bind(
@@ -401,6 +424,7 @@ clientes.post('/clientes/:id/editar', async (c) => {
       tipoCliente,
       razonSocial ? razonSocial.substring(0, 200) : null,
       personaContacto ? personaContacto.substring(0, 200) : null,
+      ...(canChangeVend && b.vendedor_id ? [vendedorIdNew] : []),
       id
     ).run()
     return c.redirect(`/clientes/${id}`)
@@ -412,12 +436,13 @@ clientes.post('/clientes/:id/editar', async (c) => {
 // ══════════════════════════════════════════════════════════════
 // FORMULARIO
 // ══════════════════════════════════════════════════════════════
-function clienteForm(cl: any, id?: string): string {
+function clienteForm(cl: any, id?: string, userRol?: string, usuariosList?: any[]): string {
   const action    = id ? `/clientes/${id}/editar` : '/clientes'
   const backHref  = id ? `/clientes/${id}` : '/clientes'
   const isEdit    = !!id
   const initEmp   = cl?.tipo_cliente === 'empresa'
   const errorQ    = '' // errors shown via query param
+  const canChangeVendedor = userRol === 'gerente' || userRol === 'administracion' || userRol === 'supervisor'
 
   return `
     <div style="max-width:720px;">
@@ -583,6 +608,17 @@ function clienteForm(cl: any, id?: string): string {
               <label class="form-label">NOTAS</label>
               <textarea name="notas" rows="3" class="form-control">${esc(cl?.notas) || ''}</textarea>
             </div>
+
+            ${canChangeVendedor && isEdit && usuariosList?.length ? `
+            <div class="form-group" style="margin-bottom:20px;">
+              <label class="form-label">VENDEDOR TITULAR</label>
+              <select name="vendedor_id" class="form-control">
+                <option value="">— Sin asignar —</option>
+                ${(usuariosList || []).map((u: any) => `<option value="${u.id}" ${cl?.vendedor_id == u.id ? 'selected' : ''}>${esc(u.nombre)}</option>`).join('')}
+              </select>
+              <div style="font-size:11px;color:#6b7280;margin-top:3px;"><i class="fas fa-info-circle"></i> Solo gerentes y supervisores pueden modificar el vendedor titular.</div>
+            </div>
+            ` : ''}
 
             <div style="display:flex;gap:10px;">
               <button type="submit" class="btn btn-primary" onclick="return validarFormCliente()">
