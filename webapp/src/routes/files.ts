@@ -563,8 +563,12 @@ files.get('/files/:id', async (c) => {
 
   try {
     const file = await c.env.DB.prepare(`
-      SELECT f.*, COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre, c.email as cliente_email, 
-             c.telefono as cliente_tel, c.vencimiento_pasaporte, c.tipo_documento, c.nro_documento,
+      SELECT f.*, COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre,
+             c.nombre as cliente_nombre_solo, c.apellido as cliente_apellido,
+             c.email as cliente_email, c.telefono as cliente_tel,
+             c.vencimiento_pasaporte, c.tipo_documento, c.nro_documento,
+             c.fecha_nacimiento as cliente_fecha_nac,
+             c.tipo_cliente, c.razon_social, c.persona_contacto,
              u.nombre as vendedor_nombre
       FROM files f JOIN clientes c ON f.cliente_id = c.id JOIN usuarios u ON f.vendedor_id = u.id
       WHERE f.id = ?
@@ -1069,7 +1073,11 @@ files.get('/files/:id', async (c) => {
           <div class="grid-3">
             <div>
               <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:6px;">CLIENTE</div>
-              <div style="font-weight:700;color:#1a1a2e;">${esc(file.cliente_nombre)}</div>
+              <div style="font-weight:700;color:#1a1a2e;">
+                <button onclick="abrirModalCliente()" style="background:none;border:none;padding:0;font-weight:700;color:#7B3FA0;cursor:pointer;font-size:inherit;text-decoration:underline dotted;text-underline-offset:3px;" title="Editar datos del cliente">
+                  ${esc(file.cliente_nombre)} <i class="fas fa-edit" style="font-size:10px;opacity:0.6;"></i>
+                </button>
+              </div>
               <div style="font-size:12px;color:#6b7280;">${esc(file.cliente_email)||''}</div>
               <div style="font-size:12px;color:#6b7280;">${esc(file.cliente_tel)||''}</div>
               <div style="font-size:12px;margin-top:4px;">
@@ -2881,11 +2889,167 @@ files.get('/files/:id', async (c) => {
           `}
         </div>
       </div>
+
+      <!-- Modal editar cliente desde file -->
+      <div id="modal-editar-cliente" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:16px;">
+        <div style="background:white;border-radius:14px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+          <div style="background:linear-gradient(135deg,#7B3FA0,#EC008C);border-radius:14px 14px 0 0;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:white;font-size:15px;font-weight:700;"><i class="fas fa-user-edit"></i> Datos de ${esc(file.cliente_nombre)}</div>
+            <button onclick="cerrarModalCliente()" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:16px;">✕</button>
+          </div>
+          <div style="padding:20px;">
+            <div style="display:grid;gap:12px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">TIPO DOC.</label>
+                  <select id="mc-tipo-doc" class="form-control" style="font-size:13px;">
+                    ${['CI','PAS','DNI','RUT','NIF','OTRO'].map(t => '<option value="' + t + '"' + (file.tipo_documento === t ? ' selected' : '') + '>' + t + '</option>').join('')}
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">NRO. DOCUMENTO</label>
+                  <input type="text" id="mc-nro-doc" class="form-control" style="font-size:13px;" value="${esc(file.nro_documento||'')}">
+                </div>
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">VENCIMIENTO PASAPORTE</label>
+                <input type="date" id="mc-vto-pas" class="form-control" style="font-size:13px;" value="${esc(file.vencimiento_pasaporte||'')}">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">TELÉFONO</label>
+                <input type="text" id="mc-telefono" class="form-control" style="font-size:13px;" value="${esc(file.cliente_tel||'')}">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">EMAIL</label>
+                <input type="email" id="mc-email" class="form-control" style="font-size:13px;" value="${esc(file.cliente_email||'')}">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">FECHA DE NACIMIENTO</label>
+                <input type="date" id="mc-fecha-nac" class="form-control" style="font-size:13px;" value="${esc(file.cliente_fecha_nac||'')}">
+              </div>
+            </div>
+            <div id="mc-msg" style="margin-top:10px;font-size:12px;display:none;"></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;">
+              <button onclick="cerrarModalCliente()" class="btn btn-outline">Cancelar</button>
+              ${file.tipo_cliente !== 'empresa' ? `
+              <button onclick="agregarComoPasajero()" class="btn btn-sm" style="background:#F7941D;color:white;border:none;">
+                <i class="fas fa-user-plus"></i> Agregar como pasajero
+              </button>` : ''}
+              <button onclick="guardarCliente()" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function abrirModalCliente() {
+          document.getElementById('modal-editar-cliente').style.display = 'flex'
+        }
+        function cerrarModalCliente() {
+          document.getElementById('modal-editar-cliente').style.display = 'none'
+        }
+        async function guardarCliente() {
+          const msg = document.getElementById('mc-msg')
+          msg.style.display = 'none'
+          const body = {
+            tipo_documento:       document.getElementById('mc-tipo-doc').value,
+            nro_documento:        document.getElementById('mc-nro-doc').value,
+            vencimiento_pasaporte: document.getElementById('mc-vto-pas').value,
+            telefono:             document.getElementById('mc-telefono').value,
+            email:                document.getElementById('mc-email').value,
+            fecha_nacimiento:     document.getElementById('mc-fecha-nac').value,
+          }
+          try {
+            const res = await fetch('/api/files/${file.id}/editar-cliente', {
+              method: 'POST',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify(body)
+            })
+            const data = await res.json()
+            if (data.ok) {
+              msg.style.cssText = 'display:block;color:#059669;background:#f0fdf4;padding:8px;border-radius:6px;margin-top:10px;'
+              msg.textContent = '✓ Datos guardados correctamente. Recargando...'
+              setTimeout(() => location.reload(), 1000)
+            } else {
+              msg.style.cssText = 'display:block;color:#dc2626;background:#fef2f2;padding:8px;border-radius:6px;margin-top:10px;'
+              msg.textContent = 'Error: ' + (data.error || 'Error desconocido')
+            }
+          } catch(e) {
+            msg.style.cssText = 'display:block;color:#dc2626;background:#fef2f2;padding:8px;border-radius:6px;margin-top:10px;'
+            msg.textContent = 'Error de conexión'
+          }
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModalCliente() })
+        async function agregarComoPasajero() {
+          const msg = document.getElementById('mc-msg')
+          msg.style.display = 'none'
+          if (!confirm('¿Crear pasajero con los datos de ${esc(file.cliente_nombre)}?')) return
+          try {
+            const res = await fetch('/clientes/${file.cliente_id}/agregar-pasajero', { method: 'POST' })
+            // The route redirects, check final URL
+            if (res.ok || res.redirected) {
+              msg.style.cssText = 'display:block;color:#059669;background:#f0fdf4;padding:8px;border-radius:6px;margin-top:10px;'
+              msg.textContent = '✓ Pasajero creado correctamente.'
+              setTimeout(() => location.reload(), 1000)
+            }
+          } catch(e) {
+            // Do a form POST instead
+            const form = document.createElement('form')
+            form.method = 'POST'
+            form.action = '/clientes/${file.cliente_id}/agregar-pasajero'
+            document.body.appendChild(form)
+            form.submit()
+          }
+        }
+      </script>
     `
     return c.html(baseLayout(`File #${file.numero}`, content, user, 'files'))
   } catch (e: any) {
     console.error('[FILE_DETAIL]', e.message)
     return c.html(baseLayout('File', `<div class="alert alert-danger">Error interno del servidor</div>`, user, 'files'))
+  }
+})
+
+// ── POST /api/files/:id/editar-cliente ───────────────────────
+files.post('/api/files/:id/editar-cliente', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.json({ error: 'No autenticado' }, 401)
+  const fileId = Number(c.req.param('id'))
+  try {
+    const body = await c.req.json() as any
+    const file = await c.env.DB.prepare('SELECT cliente_id FROM files WHERE id = ?').bind(fileId).first() as any
+    if (!file) return c.json({ error: 'File no encontrado' }, 404)
+
+    const clienteId = file.cliente_id
+    const fields: string[] = []
+    const vals: any[] = []
+
+    if (body.email !== undefined)    { fields.push('email=?');    vals.push(body.email || null) }
+    if (body.telefono !== undefined) { fields.push('telefono=?'); vals.push(body.telefono || null) }
+    if (body.fecha_nacimiento !== undefined) { fields.push('fecha_nacimiento=?'); vals.push(body.fecha_nacimiento || null) }
+    if (body.vencimiento_pasaporte !== undefined) { fields.push('vencimiento_pasaporte=?'); vals.push(body.vencimiento_pasaporte || null) }
+    if (body.nro_documento !== undefined && body.tipo_documento !== undefined) {
+      let nroDoc = String(body.nro_documento || '').trim()
+      if (body.tipo_documento === 'CI' && nroDoc) {
+        const digits = nroDoc.replace(/[^0-9]/g, '')
+        if (digits.length >= 2) {
+          const ver = digits.slice(-1)
+          const cuerpo = digits.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+          nroDoc = cuerpo + '-' + ver
+        }
+      } else {
+        nroDoc = nroDoc.toUpperCase()
+      }
+      fields.push('tipo_documento=?', 'nro_documento=?')
+      vals.push(body.tipo_documento, nroDoc)
+    }
+
+    if (fields.length === 0) return c.json({ ok: true })
+    fields.push("updated_at=datetime('now')")
+    vals.push(clienteId)
+    await c.env.DB.prepare('UPDATE clientes SET ' + fields.join(', ') + ' WHERE id = ?').bind(...vals).run()
+    return c.json({ ok: true })
+  } catch (e: any) {
+    return c.json({ error: e.message }, 500)
   }
 })
 
