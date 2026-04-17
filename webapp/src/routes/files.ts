@@ -166,40 +166,42 @@ files.get('/files', async (c) => {
           <table>
             <thead>
               <tr>
-                ${[
-                  ['numero',      'Nº File'],
-                  ['',            'Cliente'],
-                  ['',            'Vendedor'],
-                  ['',            'Destino'],
-                  ['fecha_viaje', 'Fecha Viaje'],
-                  ['',            'Estado'],
-                  ['',            'Venta'],
-                  ['',            'Costo'],
-                  ['',            'Utilidad'],
-                  ['',            'Saldo'],
-                  ['apertura',    'Apertura'],
-                  ['',            'Acciones'],
-                ].map(([col, label]) => {
-                  if (!col) return `<th>${label}</th>`
-                  const isActive = sortBy === col
-                  const nextDir  = isActive && sortDir === 'ASC' ? 'desc' : 'asc'
-                  const icon     = isActive ? (sortDir === 'ASC' ? '↑' : '↓') : '<span style="opacity:0.3">↕</span>'
-                  // Preserve all current query params except sort/dir
-                  const qs = new URLSearchParams({
-                    ...(estado     ? {estado}      : {}),
-                    ...(buscar     ? {buscar}       : {}),
-                    ...(vendedorId ? {vendedor_id: vendedorId} : {}),
-                    ...(fechaDesde ? {fecha_desde: fechaDesde} : {}),
-                    ...(fechaHasta ? {fecha_hasta: fechaHasta} : {}),
-                    ...(conSaldo   ? {con_saldo: conSaldo}     : {}),
-                    sort: col, dir: nextDir
-                  }).toString()
-                  return \`<th style="cursor:pointer;user-select:none;white-space:nowrap;">
-                    <a href="/files?\${qs}" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:4px;">
-                      \${label} \${icon}
-                    </a>
-                  </th>\`
-                }).join('')}
+                ${(() => {
+                  const cols: [string,string][] = [
+                    ['numero',      'Nº File'],
+                    ['',            'Cliente'],
+                    ['',            'Vendedor'],
+                    ['',            'Destino'],
+                    ['fecha_viaje', 'Fecha Viaje'],
+                    ['',            'Estado'],
+                    ['',            'Venta'],
+                    ['',            'Costo'],
+                    ['',            'Utilidad'],
+                    ['',            'Saldo'],
+                    ['apertura',    'Apertura'],
+                    ['',            'Acciones'],
+                  ]
+                  return cols.map(([col, label]) => {
+                    if (!col) return '<th>' + label + '</th>'
+                    const isActive = sortBy === col
+                    const nextDir  = isActive && sortDir === 'ASC' ? 'desc' : 'asc'
+                    const icon     = isActive ? (sortDir === 'ASC' ? '↑' : '↓') : '<span style="opacity:0.3">↕</span>'
+                    const qs = new URLSearchParams(Object.assign(
+                      {},
+                      estado     ? {estado}                : {},
+                      buscar     ? {buscar}                : {},
+                      vendedorId ? {vendedor_id: vendedorId} : {},
+                      fechaDesde ? {fecha_desde: fechaDesde} : {},
+                      fechaHasta ? {fecha_hasta: fechaHasta} : {},
+                      conSaldo   ? {con_saldo: conSaldo}    : {},
+                      {sort: col, dir: nextDir}
+                    )).toString()
+                    return '<th style="cursor:pointer;user-select:none;white-space:nowrap;">' +
+                      '<a href="/files?' + qs + '" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:4px;">' +
+                      label + ' ' + icon +
+                      '</a></th>'
+                  }).join('')
+                })()}
               </tr>
             </thead>
             <tbody>
