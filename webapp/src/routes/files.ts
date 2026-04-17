@@ -55,6 +55,8 @@ files.get('/files', async (c) => {
   const fechaDesde = c.req.query('fecha_desde') || ''
   const fechaHasta = c.req.query('fecha_hasta') || ''
   const conSaldo   = c.req.query('con_saldo')   || ''
+  const sortBy     = c.req.query('sort')        || 'fecha_viaje'
+  const sortDir    = c.req.query('dir')         === 'desc' ? 'DESC' : 'ASC'
   const isGerente = canSeeAllFiles(user.rol)  // supervisor, admin y gerente ven todos
 
   try {
@@ -83,7 +85,15 @@ files.get('/files', async (c) => {
     if (fechaDesde) { query += ' AND f.fecha_viaje >= ?'; params.push(fechaDesde) }
     if (fechaHasta) { query += ' AND f.fecha_viaje <= ?'; params.push(fechaHasta) }
     if (conSaldo) { query += " AND f.estado != 'anulado' AND (f.total_venta - COALESCE((SELECT SUM(m2.monto) FROM movimientos_caja m2 WHERE m2.file_id = f.id AND m2.tipo='ingreso' AND m2.anulado=0),0)) > 0.01"}
-    query += ' ORDER BY f.fecha_viaje ASC NULLS LAST, f.created_at DESC LIMIT 200'
+    // Columnas permitidas para ordenar (whitelist para evitar SQL injection)
+    const sortCols: Record<string, string> = {
+      'numero':      'f.numero',
+      'fecha_viaje': 'f.fecha_viaje',
+      'apertura':    'f.created_at',
+    }
+    const sortCol = sortCols[sortBy] || 'f.fecha_viaje'
+    const nullsDir = sortDir === 'ASC' ? 'NULLS LAST' : 'NULLS FIRST'
+    query += ` ORDER BY ${sortCol} ${sortDir} ${nullsDir} LIMIT 200`
 
     const result = await c.env.DB.prepare(query).bind(...params).all()
 
@@ -156,9 +166,40 @@ files.get('/files', async (c) => {
           <table>
             <thead>
               <tr>
-                <th>Nº File</th><th>Cliente</th><th>Vendedor</th><th>Destino</th>
-                <th>Fecha Viaje</th><th>Estado</th><th>Venta</th><th>Costo</th>
-                <th>Utilidad</th><th>Saldo</th><th>Apertura</th><th>Acciones</th>
+                ${[
+                  ['numero',      'Nº File'],
+                  ['',            'Cliente'],
+                  ['',            'Vendedor'],
+                  ['',            'Destino'],
+                  ['fecha_viaje', 'Fecha Viaje'],
+                  ['',            'Estado'],
+                  ['',            'Venta'],
+                  ['',            'Costo'],
+                  ['',            'Utilidad'],
+                  ['',            'Saldo'],
+                  ['apertura',    'Apertura'],
+                  ['',            'Acciones'],
+                ].map(([col, label]) => {
+                  if (!col) return `<th>${label}</th>`
+                  const isActive = sortBy === col
+                  const nextDir  = isActive && sortDir === 'ASC' ? 'desc' : 'asc'
+                  const icon     = isActive ? (sortDir === 'ASC' ? '↑' : '↓') : '<span style="opacity:0.3">↕</span>'
+                  // Preserve all current query params except sort/dir
+                  const qs = new URLSearchParams({
+                    ...(estado     ? {estado}      : {}),
+                    ...(buscar     ? {buscar}       : {}),
+                    ...(vendedorId ? {vendedor_id: vendedorId} : {}),
+                    ...(fechaDesde ? {fecha_desde: fechaDesde} : {}),
+                    ...(fechaHasta ? {fecha_hasta: fechaHasta} : {}),
+                    ...(conSaldo   ? {con_saldo: conSaldo}     : {}),
+                    sort: col, dir: nextDir
+                  }).toString()
+                  return \`<th style="cursor:pointer;user-select:none;white-space:nowrap;">
+                    <a href="/files?\${qs}" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:4px;">
+                      \${label} \${icon}
+                    </a>
+                  </th>\`
+                }).join('')}
               </tr>
             </thead>
             <tbody>
