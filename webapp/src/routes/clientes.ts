@@ -1,28 +1,17 @@
 import { Hono } from 'hono'
 import { getUser, isSupervisorOrAbove } from '../lib/auth'
 
-// ── Normalizar Cédula de Identidad uruguaya → X.XXX.XXX-D ─────
+// ── Normalizar documento: siempre sin puntos, guiones ni espacios ─
 function normalizarCI(raw: string): string {
-  // Quitar todo lo que no sea dígito
-  const soloDigitos = raw.replace(/[^0-9]/g, '')
-  if (soloDigitos.length < 2) return raw.trim()
-
-  // Separar dígito verificador (último) del resto
-  const verificador = soloDigitos.slice(-1)
-  const cuerpo = soloDigitos.slice(0, -1)
-
-  // Formatear cuerpo con puntos cada 3 dígitos desde la derecha
-  const cuerpoFormateado = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-
-  return `${cuerpoFormateado}-${verificador}`
+  // Solo dígitos, sin puntos ni guiones
+  return raw.replace(/[^0-9]/g, '')
 }
 
-// Normalizar documento según tipo
 function normalizarDocumento(tipo: string, nro: string): string {
   if (!nro) return ''
   if (tipo === 'CI') return normalizarCI(nro)
-  // Para todos los demás (PAS, DNI, RUT, etc.) → mayúsculas y sin espacios al inicio/fin
-  return nro.trim().toUpperCase()
+  // Otros tipos → mayúsculas, sin espacios ni puntos ni guiones
+  return nro.trim().toUpperCase().replace(/[\.\-\s]/g, '')
 }
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
