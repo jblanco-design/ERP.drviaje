@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { getUser, canSeeAllFiles, canReopenFile, canCloseAtLoss, canAnularFile, canAccessTesoreria, isSupervisorOrAbove, isAdminOrAbove } from '../lib/auth'
+import { getUser, canSeeAllFiles, canReopenFile, canCloseAtLoss, canAnularFile, canAccessTesoreria, isSupervisorOrAbove, isAdminOrAbove, isGerente } from '../lib/auth'
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
 
@@ -559,6 +559,7 @@ files.get('/files/:id', async (c) => {
   if (!user) return c.redirect('/login')
   const id = c.req.param('id')
   const errorParam = c.req.query('error') || ''
+  const okParam    = c.req.query('ok')    || ''
   const errorMsg   = c.req.query('msg') ? decodeURIComponent(c.req.query('msg')!) : ''
 
   try {
@@ -622,6 +623,15 @@ files.get('/files/:id', async (c) => {
       LEFT JOIN usuarios u ON m.usuario_id = u.id
       LEFT JOIN pasajeros pax ON m.pasajero_pagador_id = pax.id
       WHERE m.file_id = ? AND m.anulado = 0 ORDER BY m.fecha DESC
+    `).bind(id).all()
+
+    const devoluciones = await c.env.DB.prepare(`
+      SELECT d.*, u1.nombre as solicitado_nombre, u2.nombre as aprobado_nombre
+      FROM devoluciones d
+      LEFT JOIN usuarios u1 ON u1.id = d.solicitado_por
+      LEFT JOIN usuarios u2 ON u2.id = d.aprobado_por
+      WHERE d.file_id = ?
+      ORDER BY d.created_at DESC
     `).bind(id).all()
 
     // Tarjetas de crédito registradas en este file
@@ -903,8 +913,11 @@ files.get('/files/:id', async (c) => {
 
     const totalVentaServicios = servicios.results.reduce((s: number, sv: any) => s + Number(sv.precio_venta || 0), 0)
     const totalCostoServicios = servicios.results.reduce((s: number, sv: any) => s + Number(sv.costo_original || 0), 0)
-    const totalCobrado = movimientos.results.filter((m: any) => m.tipo === 'ingreso').reduce((s: number, m: any) => s + Number(m.monto || 0), 0)
-    const saldoPendiente = totalVentaServicios - totalCobrado
+    const totalCobrado    = movimientos.results.filter((m: any) => m.tipo === 'ingreso').reduce((s: number, m: any) => s + Number(m.monto || 0), 0)
+    const totalDevuelto   = (devoluciones.results as any[]).filter((d: any) => d.estado === 'aprobada').reduce((s: number, d: any) => s + Number(d.monto || 0), 0)
+    const totalDevPendiente = (devoluciones.results as any[]).filter((d: any) => d.estado === 'pendiente').reduce((s: number, d: any) => s + Number(d.monto || 0), 0)
+    const cobradoNeto     = totalCobrado - totalDevuelto
+    const saldoPendiente  = totalVentaServicios - cobradoNeto
 
     const content = `
       <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
@@ -1093,6 +1106,8 @@ files.get('/files/:id', async (c) => {
             <div>
               <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:6px;">ESTADO COBRO</div>
               <div style="font-size:15px;font-weight:700;color:#059669;">Cobrado: $${Number(totalCobrado).toLocaleString()}</div>
+              ${totalDevuelto > 0 ? `<div style="font-size:13px;font-weight:600;color:#dc2626;">Devuelto: -$${Number(totalDevuelto).toLocaleString()}</div>` : ''}
+              ${totalDevPendiente > 0 ? `<div style="font-size:12px;color:#d97706;font-weight:600;"><i class="fas fa-clock"></i> Dev. pendiente aprobación: $${Number(totalDevPendiente).toLocaleString()}</div>` : ''}
               <div style="font-size:13px;color:${saldoPendiente > 0 ? '#dc2626' : '#059669'};font-weight:600;">
                 Pendiente: $${Number(saldoPendiente).toLocaleString()}
               </div>
@@ -1235,6 +1250,62 @@ files.get('/files/:id', async (c) => {
           </div>
         `
       })() : ''}
+
+      <!-- Devoluciones al cliente -->
+      ${(devoluciones.results as any[]).length > 0 || isAdminOrAbove(user.rol) ? `
+      <div class="card" style="margin-bottom:20px;border:2px solid #fecaca;">
+        <div class="card-header" style="background:#fef2f2;display:flex;justify-content:space-between;align-items:center;">
+          <span class="card-title"><i class="fas fa-undo-alt" style="color:#dc2626"></i> Devoluciones al Cliente</span>
+          ${isAdminOrAbove(user.rol) && !fileAnulado ? `
+          <button onclick="document.getElementById('modal-devolucion').style.display='flex'"
+            class="btn btn-sm" style="background:#dc2626;color:white;border:none;">
+            <i class="fas fa-plus"></i> Nueva Devolución
+          </button>` : ''}
+        </div>
+        ${(devoluciones.results as any[]).length === 0 ? `
+        <div style="padding:16px;color:#9ca3af;font-size:13px;">Sin devoluciones registradas.</div>
+        ` : `
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead><tr style="background:#fef2f2;font-size:11px;color:#6b7280;text-transform:uppercase;">
+              <th style="padding:8px 12px;text-align:left;">Fecha</th>
+              <th style="padding:8px 12px;text-align:left;">Monto</th>
+              <th style="padding:8px 12px;text-align:left;">Método</th>
+              <th style="padding:8px 12px;text-align:left;">Motivo</th>
+              <th style="padding:8px 12px;text-align:left;">Solicitado por</th>
+              <th style="padding:8px 12px;text-align:left;">Estado</th>
+              ${isGerente(user.rol) ? '<th style="padding:8px 12px;text-align:left;">Acción</th>' : ''}
+            </tr></thead>
+            <tbody>
+              ${(devoluciones.results as any[]).map((d: any) => {
+                const estadoColor = d.estado === 'aprobada' ? '#059669' : d.estado === 'rechazada' ? '#6b7280' : '#d97706'
+                const estadoLabel = d.estado === 'aprobada' ? '✓ Aprobada' : d.estado === 'rechazada' ? '✗ Rechazada' : '⏳ Pendiente'
+                return '<tr style="border-bottom:1px solid #fee2e2;">' +
+                  '<td style="padding:8px 12px;color:#6b7280;">' + (d.created_at||'').substring(0,10) + '</td>' +
+                  '<td style="padding:8px 12px;font-weight:700;color:#dc2626;">-$' + Number(d.monto).toLocaleString('es-UY',{minimumFractionDigits:2}) + ' ' + (d.moneda||'USD') + '</td>' +
+                  '<td style="padding:8px 12px;">' + esc(d.metodo||'') + '</td>' +
+                  '<td style="padding:8px 12px;font-size:12px;max-width:200px;">' + esc(d.motivo||'—') + '</td>' +
+                  '<td style="padding:8px 12px;font-size:12px;">' + esc(d.solicitado_nombre||'—') + '</td>' +
+                  '<td style="padding:8px 12px;"><span style="font-weight:700;color:' + estadoColor + ';">' + estadoLabel + '</span>' +
+                    (d.aprobado_nombre ? '<br><span style="font-size:10px;color:#9ca3af;">por ' + esc(d.aprobado_nombre) + '</span>' : '') + '</td>' +
+                  (isGerente(user.rol) && d.estado === 'pendiente' ?
+                    '<td style="padding:8px 12px;">' +
+                      '<form method="POST" action="/files/${id}/devoluciones/' + d.id + '/aprobar" style="display:inline;" onsubmit="return confirm(\'¿Aprobar esta devolución de $' + Number(d.monto).toLocaleString() + '?\')">' +
+                        '<button type="submit" style="padding:3px 8px;background:#059669;color:white;border:none;border-radius:5px;font-size:11px;cursor:pointer;margin-right:4px;"><i class="fas fa-check"></i> Aprobar</button>' +
+                      '</form>' +
+                      '<form method="POST" action="/files/${id}/devoluciones/' + d.id + '/rechazar" style="display:inline;" onsubmit="return confirm(\'¿Rechazar esta devolución?\')">' +
+                        '<button type="submit" style="padding:3px 8px;background:#6b7280;color:white;border:none;border-radius:5px;font-size:11px;cursor:pointer;"><i class="fas fa-times"></i> Rechazar</button>' +
+                      '</form>' +
+                    '</td>'
+                    : (isGerente(user.rol) ? '<td></td>' : '')
+                  ) +
+                  '</tr>'
+              }).join('')}
+            </tbody>
+          </table>
+        </div>`}
+      </div>
+      ` : ''}
 
       <!-- Movimientos de caja -->
       <div class="card" style="margin-bottom:20px;">
@@ -2890,6 +2961,54 @@ files.get('/files/:id', async (c) => {
         </div>
       </div>
 
+      <!-- Modal nueva devolución -->
+      <div id="modal-devolucion" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:16px;">
+        <div style="background:white;border-radius:14px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+          <div style="background:linear-gradient(135deg,#dc2626,#b91c1c);border-radius:14px 14px 0 0;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:white;font-size:15px;font-weight:700;"><i class="fas fa-undo-alt"></i> Nueva Devolución — File #${file.numero}</div>
+            <button onclick="document.getElementById('modal-devolucion').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:16px;">✕</button>
+          </div>
+          <form method="POST" action="/files/${id}/devoluciones">
+            <div style="padding:20px;display:grid;gap:12px;">
+              <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;font-size:12px;color:#991b1b;">
+                <i class="fas fa-info-circle"></i> La devolución reduce la venta del file. Requiere aprobación de un gerente para impactar en caja.
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">MONTO *</label>
+                  <input type="number" name="monto" step="0.01" min="0.01" required class="form-control" style="font-size:13px;" placeholder="0.00">
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">MONEDA</label>
+                  <select name="moneda" class="form-control" style="font-size:13px;">
+                    <option value="USD" ${file.moneda==='USD'?'selected':''}>USD</option>
+                    <option value="UYU" ${file.moneda==='UYU'?'selected':''}>UYU</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">MÉTODO DE DEVOLUCIÓN</label>
+                <select name="metodo" class="form-control" style="font-size:13px;">
+                  <option value="transferencia">Transferencia bancaria</option>
+                  <option value="efectivo">Efectivo</option>
+                  <option value="tarjeta">Tarjeta</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">MOTIVO *</label>
+                <textarea name="motivo" required class="form-control" rows="2" style="font-size:13px;" placeholder="Ej: Cancelación del viaje, cambio de servicio..."></textarea>
+              </div>
+              <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button type="button" onclick="document.getElementById('modal-devolucion').style.display='none'" class="btn btn-outline">Cancelar</button>
+                <button type="submit" class="btn btn-sm" style="background:#dc2626;color:white;border:none;">
+                  <i class="fas fa-paper-plane"></i> Solicitar Devolución
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- Modal editar cliente desde file -->
       <div id="modal-editar-cliente" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:16px;">
         <div style="background:white;border-radius:14px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
@@ -3009,6 +3128,80 @@ files.get('/files/:id', async (c) => {
   }
 })
 
+// ── POST /files/:id/devoluciones — Solicitar devolución ──────
+files.post('/files/:id/devoluciones', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/login')
+  const id = c.req.param('id')
+  try {
+    const b = await c.req.parseBody()
+    const monto = Number(b.monto)
+    if (!monto || monto <= 0) return c.redirect(`/files/${id}?error=monto_invalido`)
+    const motivo = String(b.motivo || '').trim()
+    if (!motivo) return c.redirect(`/files/${id}?error=motivo_requerido`)
+
+    await c.env.DB.prepare(`
+      INSERT INTO devoluciones (file_id, monto, moneda, motivo, metodo, estado, solicitado_por)
+      VALUES (?, ?, ?, ?, ?, 'pendiente', ?)
+    `).bind(Number(id), monto, b.moneda || 'USD', motivo, b.metodo || 'transferencia', user.id).run()
+
+    return c.redirect(`/files/${id}?ok=devolucion_solicitada`)
+  } catch (e: any) {
+    return c.redirect(`/files/${id}?error=1`)
+  }
+})
+
+// ── POST /files/:id/devoluciones/:did/aprobar — Solo gerente ──
+files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isGerente(user.rol)) return c.redirect(`/files/${c.req.param('id')}?error=sin_permiso`)
+  const id  = c.req.param('id')
+  const did = Number(c.req.param('did'))
+  try {
+    const dev = await c.env.DB.prepare(
+      `SELECT * FROM devoluciones WHERE id = ? AND file_id = ? AND estado = 'pendiente'`
+    ).bind(did, Number(id)).first() as any
+    if (!dev) return c.redirect(`/files/${id}?error=devolucion_no_encontrada`)
+
+    // 1. Registrar egreso en movimientos_caja
+    const movRes = await c.env.DB.prepare(`
+      INSERT INTO movimientos_caja (tipo, metodo, monto, moneda, concepto, file_id, usuario_id, fecha, anulado)
+      VALUES ('egreso', ?, ?, ?, ?, ?, ?, datetime('now'), 0)
+    `).bind(dev.metodo, dev.monto, dev.moneda,
+      'Devolución aprobada: ' + (dev.motivo || ''), Number(id), user.id).run()
+
+    // 2. Reducir total_venta del file
+    await c.env.DB.prepare(
+      `UPDATE files SET total_venta = MAX(0, total_venta - ?), updated_at = datetime('now') WHERE id = ?`
+    ).bind(dev.monto, Number(id)).run()
+
+    // 3. Marcar devolución como aprobada
+    await c.env.DB.prepare(
+      `UPDATE devoluciones SET estado = 'aprobada', aprobado_por = ?, movimiento_caja_id = ?, updated_at = datetime('now') WHERE id = ?`
+    ).bind(user.id, movRes.meta?.last_row_id || null, did).run()
+
+    return c.redirect(`/files/${id}?ok=devolucion_aprobada`)
+  } catch (e: any) {
+    return c.redirect(`/files/${id}?error=1`)
+  }
+})
+
+// ── POST /files/:id/devoluciones/:did/rechazar — Solo gerente ─
+files.post('/files/:id/devoluciones/:did/rechazar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isGerente(user.rol)) return c.redirect(`/files/${c.req.param('id')}?error=sin_permiso`)
+  const id  = c.req.param('id')
+  const did = Number(c.req.param('did'))
+  try {
+    await c.env.DB.prepare(
+      `UPDATE devoluciones SET estado = 'rechazada', aprobado_por = ?, updated_at = datetime('now') WHERE id = ? AND file_id = ? AND estado = 'pendiente'`
+    ).bind(user.id, did, Number(id)).run()
+    return c.redirect(`/files/${id}?ok=devolucion_rechazada`)
+  } catch (e: any) {
+    return c.redirect(`/files/${id}?error=1`)
+  }
+})
+
 // ── POST /api/files/:id/editar-cliente ───────────────────────
 files.post('/api/files/:id/editar-cliente', async (c) => {
   const user = await getUser(c)
@@ -3030,14 +3223,9 @@ files.post('/api/files/:id/editar-cliente', async (c) => {
     if (body.nro_documento !== undefined && body.tipo_documento !== undefined) {
       let nroDoc = String(body.nro_documento || '').trim()
       if (body.tipo_documento === 'CI' && nroDoc) {
-        const digits = nroDoc.replace(/[^0-9]/g, '')
-        if (digits.length >= 2) {
-          const ver = digits.slice(-1)
-          const cuerpo = digits.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-          nroDoc = cuerpo + '-' + ver
-        }
+        nroDoc = nroDoc.replace(/[^0-9]/g, '')
       } else {
-        nroDoc = nroDoc.toUpperCase()
+        nroDoc = nroDoc.toUpperCase().replace(/[.\-\s]/g, '')
       }
       fields.push('tipo_documento=?', 'nro_documento=?')
       vals.push(body.tipo_documento, nroDoc)
