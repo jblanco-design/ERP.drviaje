@@ -51,7 +51,8 @@ clientes.get('/clientes', async (c) => {
   if (!user) return c.redirect('/login')
 
   const buscar = c.req.query('buscar') || ''
-  const tipoFiltro = c.req.query('tipo') || ''  // 'empresa' | 'persona_fisica' | ''
+  const tipoFiltro  = c.req.query('tipo')      || ''  // 'empresa' | 'persona_fisica' | ''
+  const conDeuda    = c.req.query('con_deuda') || ''
   try {
     // Auto-aplicar migración 0017 si columnas no existen aún
     try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN tipo_cliente TEXT NOT NULL DEFAULT 'persona_fisica'`).run() } catch(_){}
@@ -75,6 +76,7 @@ clientes.get('/clientes', async (c) => {
       params.push(like, like, like, like, like, like, like, like)
     }
     if (tipoFiltro) { q += ` AND c.tipo_cliente = ?`; params.push(tipoFiltro) }
+    if (conDeuda)   { q += ` HAVING (total_venta - total_cobrado) > 0.01` }
     q += ' ORDER BY c.apellido, c.nombre LIMIT 100'
     const result = await c.env.DB.prepare(q).bind(...params).all()
 
@@ -138,8 +140,11 @@ clientes.get('/clientes', async (c) => {
             <option value="persona_fisica" ${tipoFiltro==='persona_fisica'?'selected':''}>👤 Persona física</option>
             <option value="empresa" ${tipoFiltro==='empresa'?'selected':''}>🏢 Empresa</option>
           </select>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#dc2626;cursor:pointer;white-space:nowrap;">
+            <input type="checkbox" name="con_deuda" value="1" ${conDeuda?'checked':''} style="accent-color:#dc2626;"> Con deuda
+          </label>
           <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-          ${buscar||tipoFiltro ? `<a href="/clientes" class="btn btn-outline"><i class="fas fa-times"></i></a>` : ''}
+          ${buscar||tipoFiltro||conDeuda ? `<a href="/clientes" class="btn btn-outline"><i class="fas fa-times"></i></a>` : ''}
         </form>
         <a href="/clientes/nuevo" class="btn btn-orange"><i class="fas fa-plus"></i> Nuevo Cliente</a>
       </div>
@@ -279,6 +284,33 @@ clientes.get('/clientes/:id', async (c) => {
     const content = `
       <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <a href="/clientes" style="color:#7B3FA0;font-size:13px;"><i class="fas fa-arrow-left"></i> Volver</a>
+        <script>
+          (function(){
+            const p = new URLSearchParams(window.location.search)
+            const ok  = p.get('ok')
+            const err = p.get('error')
+            const pid = p.get('pasajero_id')
+            const container = document.currentScript.parentNode
+            let div
+            if (ok === 'pasajero_creado') {
+              div = document.createElement('div')
+              div.className = 'alert alert-success'
+              div.style.cssText = 'display:flex;align-items:center;gap:10px;margin:12px 0;'
+              div.innerHTML = '<i class="fas fa-check-circle" style="font-size:18px;"></i><div><strong>Pasajero creado correctamente</strong> con los datos del cliente. Ya podés asignarlo a servicios.</div>'
+            } else if (err === 'ya_es_pasajero') {
+              div = document.createElement('div')
+              div.className = 'alert alert-warning'
+              div.style.cssText = 'display:flex;align-items:center;gap:10px;margin:12px 0;'
+              div.innerHTML = '<i class="fas fa-info-circle" style="font-size:18px;"></i><div><strong>Este cliente ya tiene un pasajero vinculado.</strong>' + (pid ? ' <a href="/pasajeros/'+pid+'" style="color:#92400e;">Ver pasajero</a>' : '') + '</div>'
+            } else if (err === 'empresa_no_pasajero') {
+              div = document.createElement('div')
+              div.className = 'alert alert-danger'
+              div.style.cssText = 'display:flex;align-items:center;gap:10px;margin:12px 0;'
+              div.innerHTML = '<i class="fas fa-ban" style="font-size:18px;"></i><div>Las empresas no pueden convertirse en pasajeros.</div>'
+            }
+            if (div) container.insertAdjacentElement('afterend', div)
+          })()
+        </script>
         <div style="display:flex;gap:8px;align-items:center;">
           <span style="font-size:12px;color:#6b7280;background:#f3e8ff;padding:4px 10px;border-radius:8px;">
             <i class="fas fa-user-tie" style="color:#7B3FA0;"></i> <strong>${esc(cl.vendedor_nombre || '—')}</strong>
@@ -286,6 +318,13 @@ clientes.get('/clientes/:id', async (c) => {
           <a href="/clientes/${id}/cuenta-corriente" class="btn btn-sm" style="background:#217346;color:white;border:none;">
             <i class="fas fa-file-invoice-dollar"></i> Estado de Cuenta
           </a>
+          ${!esEmpresa(cl) ? `
+          <form method="POST" action="/clientes/${id}/agregar-pasajero" style="display:inline;"
+            onsubmit="return confirm('¿Crear pasajero con los datos de ${esc(nc)}?')">
+            <button type="submit" class="btn btn-sm" style="background:#F7941D;color:white;border:none;">
+              <i class="fas fa-user-plus"></i> Agregar como pasajero
+            </button>
+          </form>` : ''}
           <a href="/clientes/${id}/editar" class="btn btn-outline"><i class="fas fa-edit"></i> Editar</a>
         </div>
       </div>
@@ -382,6 +421,43 @@ clientes.get('/clientes/:id', async (c) => {
     return c.html(baseLayout(nc, content, user, 'clientes'))
   } catch (e: any) {
     return c.redirect('/clientes')
+  }
+})
+
+// ── Convertir cliente en pasajero ────────────────────────────
+clientes.post('/clientes/:id/agregar-pasajero', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+  const id = c.req.param('id')
+  try {
+    const cl = await c.env.DB.prepare('SELECT * FROM clientes WHERE id = ?').bind(id).first() as any
+    if (!cl) return c.redirect('/clientes')
+    if (cl.tipo_cliente === 'empresa') return c.redirect(`/clientes/${id}?error=empresa_no_pasajero`)
+
+    // Verificar si ya existe un pasajero vinculado a este cliente
+    const yaExiste = await c.env.DB.prepare(
+      'SELECT id FROM pasajeros WHERE cliente_id = ? LIMIT 1'
+    ).bind(id).first() as any
+    if (yaExiste) return c.redirect(`/clientes/${id}?error=ya_es_pasajero&pasajero_id=${yaExiste.id}`)
+
+    const nc = cl.nombre_completo || `${cl.nombre} ${cl.apellido}`.trim()
+    await c.env.DB.prepare(`
+      INSERT INTO pasajeros (nombre_completo, nombre, apellido, tipo_documento, nro_documento,
+        fecha_nacimiento, vencimiento_pasaporte, email, telefono,
+        preferencias_comida, millas_aerolineas, notas, cliente_id, created_at, updated_at)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'),datetime('now'))
+    `).bind(
+      nc, cl.nombre || '', cl.apellido || '',
+      cl.tipo_documento || 'CI', cl.nro_documento || null,
+      cl.fecha_nacimiento || null, cl.vencimiento_pasaporte || null,
+      cl.email || null, cl.telefono || null,
+      cl.preferencias_comida || null, cl.millas_aerolineas || null,
+      cl.notas || null, Number(id)
+    ).run()
+
+    return c.redirect(`/clientes/${id}?ok=pasajero_creado`)
+  } catch (e: any) {
+    return c.redirect(`/clientes/${id}?error=1`)
   }
 })
 
