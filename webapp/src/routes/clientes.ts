@@ -188,7 +188,6 @@ clientes.post('/clientes', async (c) => {
     const nroDocumento = normalizarDocumento(tipoDoc, String(b.nro_documento || '').trim())
     const telefono     = String(b.telefono || '').trim()
     if (!nroDocumento) return c.redirect('/clientes/nuevo?error=documento_requerido')
-    if (!telefono)     return c.redirect('/clientes/nuevo?error=telefono_requerido')
 
     // Verificar documento duplicado (normalizando CI antes de comparar)
     const nroDocRaw = String(b.nro_documento || '').trim()
@@ -582,6 +581,21 @@ function clienteForm(cl: any, id?: string, userRol?: string, usuariosList?: any[
             div.className = 'alert alert-danger'
             div.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;'
             div.innerHTML = '<i class="fas fa-exclamation-triangle" style="font-size:18px;"></i><div><strong>Documento duplicado</strong> — El número <strong>' + (doc||'') + '</strong> ya está registrado para el cliente <strong>' + (cli||'') + '</strong>.</div>'
+            document.currentScript.parentNode.insertBefore(div, document.currentScript.nextSibling)
+          } else if (err) {
+            const msgs = {
+              'nombre_requerido':          'El nombre y apellido son obligatorios.',
+              'contacto_requerido':        'La persona de contacto es obligatoria para empresas.',
+              'documento_requerido':       'El número de documento es obligatorio.',
+              'telefono_requerido':        'El teléfono es obligatorio.',
+              'fecha_nacimiento_invalida': 'La fecha de nacimiento no puede ser futura.',
+              '1':                         'Ocurrió un error al guardar. Revisá los datos e intentá de nuevo.',
+            }
+            const msg = msgs[err] || 'Error al crear el cliente. Revisá los datos.'
+            const div = document.createElement('div')
+            div.className = 'alert alert-danger'
+            div.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:16px;'
+            div.innerHTML = '<i class="fas fa-exclamation-circle" style="font-size:18px;"></i><div><strong>Error:</strong> ' + msg + '</div>'
             document.currentScript.parentNode.insertBefore(div, document.currentScript.nextSibling)
           }
         })()
