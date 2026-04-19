@@ -706,8 +706,8 @@ function clienteForm(cl: any, id?: string, userRol?: string, usuariosList?: any[
             <!-- Teléfono y Email -->
             <div class="grid-2" style="margin-bottom:14px;">
               <div class="form-group">
-                <label class="form-label">TELÉFONO <span style="color:#dc2626;">*</span></label>
-                <input type="text" name="telefono" required
+                <label class="form-label">TELÉFONO</label>
+                <input type="text" name="telefono"
                   value="${esc(cl?.telefono) || ''}"
                   class="form-control" placeholder="+598 9X XXX XXX">
               </div>
@@ -821,6 +821,17 @@ function clienteForm(cl: any, id?: string, userRol?: string, usuariosList?: any[
               if (!nombre) { alert('El nombre es obligatorio.'); return false }
               if (!apellido) { alert('El apellido es obligatorio.'); return false }
               if (!contacto) { alert('La persona de contacto es obligatoria para empresas.'); return false }
+
+              // Deshabilitar los inputs de la sección oculta para que no se envíen al servidor
+              if (esEmp) {
+                const pfNombre = document.getElementById('inp-nombre-pf')
+                const pfApell  = document.getElementById('inp-apellido')
+                if (pfNombre) pfNombre.disabled = true
+                if (pfApell)  pfApell.disabled  = true
+              } else {
+                const empNombre = document.getElementById('inp-nombre-emp')
+                if (empNombre) empNombre.disabled = true
+              }
               return true
             }
 
