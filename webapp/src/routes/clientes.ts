@@ -181,14 +181,14 @@ clientes.post('/clientes', async (c) => {
     const personaContacto  = esEmp ? String(b.persona_contacto || '').trim() : null
     if (esEmp && !personaContacto) return c.redirect('/clientes/nuevo?error=contacto_requerido')
 
+    const TIPOS_DOC = ['CI', 'DNI', 'PAS', 'RUT', 'NIF', 'OTRO']
+    const tipoDocDefault = esEmp ? 'RUT' : 'CI'
+    const tipoDoc = TIPOS_DOC.includes(String(b.tipo_documento)) ? String(b.tipo_documento) : tipoDocDefault
+
     const nroDocumento = normalizarDocumento(tipoDoc, String(b.nro_documento || '').trim())
     const telefono     = String(b.telefono || '').trim()
     if (!nroDocumento) return c.redirect('/clientes/nuevo?error=documento_requerido')
     if (!telefono)     return c.redirect('/clientes/nuevo?error=telefono_requerido')
-
-    const TIPOS_DOC = ['CI', 'DNI', 'PAS', 'RUT', 'NIF', 'OTRO']
-    const tipoDocDefault = esEmp ? 'RUT' : 'CI'
-    const tipoDoc = TIPOS_DOC.includes(String(b.tipo_documento)) ? String(b.tipo_documento) : tipoDocDefault
 
     // Verificar documento duplicado (normalizando CI antes de comparar)
     const nroDocRaw = String(b.nro_documento || '').trim()
@@ -209,7 +209,7 @@ clientes.post('/clientes', async (c) => {
     }
 
     const nc = esEmp ? nombre : `${nombre} ${apellido}`.trim()
-    await c.env.DB.prepare(`
+    const insertResult = await c.env.DB.prepare(`
       INSERT INTO clientes (nombre, apellido, nombre_completo, email, telefono, direccion,
         tipo_documento, nro_documento, fecha_nacimiento, vencimiento_pasaporte,
         preferencias_comida, millas_aerolineas, notas,
@@ -230,7 +230,9 @@ clientes.post('/clientes', async (c) => {
       razonSocial ? razonSocial.substring(0, 200) : null,
       personaContacto ? personaContacto.substring(0, 200) : null
     ).run()
-    return c.redirect('/clientes')
+
+    const nuevoId = insertResult.meta?.last_row_id
+    return c.redirect(`/clientes/${nuevoId}?ok=creado`)
   } catch (e: any) {
     return c.redirect('/clientes/nuevo?error=1')
   }
@@ -241,6 +243,8 @@ clientes.get('/clientes/:id', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const id = c.req.param('id')
+  const okParam  = c.req.query('ok')    || ''
+  const errParam = c.req.query('error') || ''
   try {
     const cl = await c.env.DB.prepare(`
       SELECT c.*, u.nombre as vendedor_nombre
@@ -281,7 +285,12 @@ clientes.get('/clientes/:id', async (c) => {
             const pid = p.get('pasajero_id')
             const container = document.currentScript.parentNode
             let div
-            if (ok === 'pasajero_creado') {
+            if (ok === 'creado') {
+              div = document.createElement('div')
+              div.className = 'alert alert-success'
+              div.style.cssText = 'display:flex;align-items:center;gap:10px;margin:12px 0;'
+              div.innerHTML = '<i class="fas fa-check-circle" style="font-size:18px;color:#059669;"></i><div><strong>Cliente creado correctamente.</strong></div>'
+            } else if (ok === 'pasajero_creado') {
               div = document.createElement('div')
               div.className = 'alert alert-success'
               div.style.cssText = 'display:flex;align-items:center;gap:10px;margin:12px 0;'
