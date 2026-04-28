@@ -86,6 +86,9 @@ api.get('/api/v1/customers/search', async (c) => {
              COALESCE(nombre_completo, nombre || ' ' || apellido) as nombre_completo,
              tipo_documento,
              nro_documento,
+             tipo_cliente,
+             razon_social,
+             persona_contacto,
              email,
              telefono
       FROM clientes
@@ -102,8 +105,13 @@ api.get('/api/v1/customers/search', async (c) => {
       firstName:      cliente.nombre,
       lastName:       cliente.apellido,
       fullName:       cliente.nombre_completo,
+      clientType:     cliente.tipo_cliente,
       documentType:   cliente.tipo_documento,
       documentNumber: cliente.nro_documento,
+      ...(cliente.tipo_cliente === 'empresa' ? {
+        businessName:   cliente.razon_social   || null,
+        contactPerson:  cliente.persona_contacto || null,
+      } : {}),
       email:          cliente.email    || null,
       phone:          cliente.telefono || null,
     })
