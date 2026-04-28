@@ -144,6 +144,8 @@ api.post('/api/v1/customers', async (c) => {
   const clientType     = String(body.clientType     || '').trim()
   const documentType   = String(body.documentType   || '').trim().toUpperCase()
   const documentNumber = String(body.documentNumber || '').trim()
+  const email          = String(body.email          || '').trim() || null
+  const phone          = String(body.phone          || '').trim() || null
 
   if (!firstName)      return c.json({ error: 'Bad Request', message: 'firstName is required' }, 400)
   if (!documentType)   return c.json({ error: 'Bad Request', message: 'documentType is required' }, 400)
@@ -156,6 +158,11 @@ api.post('/api/v1/customers', async (c) => {
 
   const tipoCliente = clientType === 'empresa' ? 'empresa' : 'persona_fisica'
   const nroNorm     = normalizarDoc(documentType, documentNumber)
+
+  // Para empresas: firstName = nombre comercial, lastName = razón social
+  const nombreComercial  = firstName
+  const razonSocial      = tipoCliente === 'empresa' ? (lastName || firstName) : ''
+  const nombreCompleto   = tipoCliente === 'empresa' ? firstName : (lastName ? `${firstName} ${lastName}` : firstName)
 
   try {
     const existe = await c.env.DB.prepare(
@@ -170,15 +177,22 @@ api.post('/api/v1/customers', async (c) => {
       }, 409)
     }
 
-    const fullName = lastName ? `${firstName} ${lastName}` : firstName
+    const fullName = nombreCompleto
 
     await c.env.DB.prepare(`
-      INSERT INTO clientes (nombre, apellido, nombre_completo, tipo_cliente, tipo_documento, nro_documento, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
-    `).bind(firstName, lastName || '', fullName, tipoCliente, documentType, nroNorm).run()
+      INSERT INTO clientes (nombre, apellido, nombre_completo, tipo_cliente, tipo_documento, nro_documento,
+        razon_social, email, telefono, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+    `).bind(
+      nombreComercial, tipoCliente === 'empresa' ? '' : (lastName || ''),
+      fullName, tipoCliente, documentType, nroNorm,
+      tipoCliente === 'empresa' ? razonSocial : null,
+      email, phone
+    ).run()
 
     const nuevo = await c.env.DB.prepare(
-      `SELECT id, nombre, apellido, nombre_completo, tipo_cliente, tipo_documento, nro_documento
+      `SELECT id, nombre, apellido, nombre_completo, tipo_cliente, tipo_documento, nro_documento,
+              razon_social, email, telefono
        FROM clientes WHERE tipo_documento = ? AND nro_documento = ? ORDER BY id DESC LIMIT 1`
     ).bind(documentType, nroNorm).first() as any
 
@@ -190,6 +204,11 @@ api.post('/api/v1/customers', async (c) => {
       clientType:     nuevo.tipo_cliente,
       documentType:   nuevo.tipo_documento,
       documentNumber: nuevo.nro_documento,
+      ...(nuevo.tipo_cliente === 'empresa' ? {
+        businessName: nuevo.razon_social || null,
+      } : {}),
+      email:          nuevo.email    || null,
+      phone:          nuevo.telefono || null,
     }, 201)
 
   } catch (e: any) {
