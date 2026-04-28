@@ -141,6 +141,7 @@ api.post('/api/v1/customers', async (c) => {
 
   const firstName      = String(body.firstName      || '').trim()
   const lastName       = String(body.lastName       || '').trim()
+  const businessName   = String(body.businessName   || '').trim() || null
   const clientType     = String(body.clientType     || '').trim()
   const documentType   = String(body.documentType   || '').trim().toUpperCase()
   const documentNumber = String(body.documentNumber || '').trim()
@@ -159,10 +160,13 @@ api.post('/api/v1/customers', async (c) => {
   const tipoCliente = clientType === 'empresa' ? 'empresa' : 'persona_fisica'
   const nroNorm     = normalizarDoc(documentType, documentNumber)
 
-  // Para empresas: firstName = nombre comercial, lastName = razón social
-  const nombreComercial  = firstName
-  const razonSocial      = tipoCliente === 'empresa' ? (lastName || firstName) : ''
-  const nombreCompleto   = tipoCliente === 'empresa' ? firstName : (lastName ? `${firstName} ${lastName}` : firstName)
+  // fullName se construye automáticamente
+  // Empresa:  firstName = nombre comercial, businessName = razón social
+  // Persona:  firstName + lastName = nombre completo
+  const fullName    = tipoCliente === 'empresa'
+    ? firstName
+    : (lastName ? `${firstName} ${lastName}` : firstName)
+  const razonSocial = tipoCliente === 'empresa' ? (businessName || firstName) : null
 
   try {
     const existe = await c.env.DB.prepare(
@@ -184,10 +188,10 @@ api.post('/api/v1/customers', async (c) => {
         razon_social, email, telefono, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
     `).bind(
-      nombreComercial, tipoCliente === 'empresa' ? '' : (lastName || ''),
+      firstName,
+      tipoCliente === 'empresa' ? '' : (lastName || ''),
       fullName, tipoCliente, documentType, nroNorm,
-      tipoCliente === 'empresa' ? razonSocial : null,
-      email, phone
+      razonSocial, email, phone
     ).run()
 
     const nuevo = await c.env.DB.prepare(
