@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { getUser } from './lib/auth'
 import auth from './routes/auth'
+import api from './routes/api'
 import dashboard from './routes/dashboard'
 import files from './routes/files'
 import clientes from './routes/clientes'
@@ -57,6 +58,9 @@ app.use('*', async (c, next) => {
 
 // ── Rutas públicas ───────────────────────────────────────────
 app.route('/', auth)
+
+// ── API externa (autenticación por X-API-Key, sin sesión) ────
+app.route('/', api)
 
 // Redirect raíz
 app.get('/', async (c) => {
