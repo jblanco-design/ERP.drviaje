@@ -117,7 +117,7 @@ api.get('/api/v1/customers/search', async (c) => {
     })
   } catch (e: any) {
     console.error('[API] customers/search error:', e.message)
-    return c.json({ error: 'Internal Server Error' }, 500)
+    return c.json({ error: 'Internal Server Error', detail: e.message }, 500)
   }
 })
 
@@ -217,7 +217,7 @@ api.post('/api/v1/customers', async (c) => {
 
   } catch (e: any) {
     console.error('[API] create-customer error:', e.message)
-    return c.json({ error: 'Internal Server Error' }, 500)
+    return c.json({ error: 'Internal Server Error', detail: e.message }, 500)
   }
 })
 
@@ -250,7 +250,7 @@ api.get('/api/v1/users/search', async (c) => {
     })
   } catch (e: any) {
     console.error('[API] users/search error:', e.message)
-    return c.json({ error: 'Internal Server Error' }, 500)
+    return c.json({ error: 'Internal Server Error', detail: e.message }, 500)
   }
 })
 
@@ -335,7 +335,7 @@ api.post('/api/v1/files', async (c) => {
 
   } catch (e: any) {
     console.error('[API] create-file error:', e.message)
-    return c.json({ error: 'Internal Server Error' }, 500)
+    return c.json({ error: 'Internal Server Error', detail: e.message }, 500)
   }
 })
 
