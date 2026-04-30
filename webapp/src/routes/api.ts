@@ -181,7 +181,7 @@ api.post('/api/v1/customers', async (c) => {
       }, 409)
     }
 
-    const fullName = nombreCompleto
+    // fullName ya está definido arriba
 
     await c.env.DB.prepare(`
       INSERT INTO clientes (nombre, apellido, nombre_completo, tipo_cliente, tipo_documento, nro_documento,
