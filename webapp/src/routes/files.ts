@@ -44,6 +44,118 @@ async function generarNumeroFile(db: D1Database): Promise<string> {
   return `${año}${String(num).padStart(3, '0')}`
 }
 
+// ── Búsqueda de destinos (autocompletado) ─────────────────────────────────────
+files.get('/destinos/search', async (c) => {
+  const q = (c.req.query('q') || '').trim().toUpperCase()
+  if (q.length < 2) return c.json([])
+  const rows = await c.env.DB.prepare(`
+    SELECT code, name, country_id
+    FROM destinos
+    WHERE code LIKE ? OR UPPER(name) LIKE ?
+    ORDER BY
+      CASE WHEN code = ? THEN 0
+           WHEN code LIKE ? THEN 1
+           ELSE 2 END,
+      name
+    LIMIT 10
+  `).bind(`${q}%`, `%${q}%`, q, `${q}%`).all()
+  return c.json(rows.results || [])
+})
+
+// ── Componente HTML de autocompletado de destinos ────────────────────────────
+function destinoAutocomplete(opts: {
+  name: string,
+  id: string,
+  value?: string,
+  label?: string,
+  placeholder?: string,
+  required?: boolean
+}): string {
+  const { name, id, value = '', label = 'DESTINO', placeholder = 'Escribí código IATA o nombre...', required = false } = opts
+  return `
+    <div class="destino-autocomplete-wrapper" style="position:relative;">
+      <input type="hidden" name="${name}" id="${id}-hidden" value="${esc(value)}">
+      <input type="text" id="${id}-input" autocomplete="off"
+        class="form-control" placeholder="${placeholder}"
+        value="${esc(value)}"
+        ${required ? 'required' : ''}
+        style="padding-right:32px;"
+        oninput="destinoSearch('${id}', this.value)"
+        onkeydown="destinoKeydown(event, '${id}')"
+        onblur="setTimeout(()=>destinoHide('${id}'), 200)">
+      ${value ? `<span id="${id}-clear" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9ca3af;font-size:14px;" onclick="destinoClear('${id}')">✕</span>` : `<span id="${id}-clear" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9ca3af;font-size:14px;" onclick="destinoClear('${id}')">✕</span>`}
+      <div id="${id}-dropdown" style="display:none;position:absolute;z-index:1000;left:0;right:0;top:100%;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);max-height:280px;overflow-y:auto;"></div>
+    </div>
+    <script>
+    (function(){
+      if (window._destinoACInit) return
+      window._destinoACInit = true
+      window._destinoTimers = {}
+      window._destinoIdx = {}
+
+      window.destinoSearch = function(id, val) {
+        clearTimeout(window._destinoTimers[id])
+        const hidden = document.getElementById(id+'-hidden')
+        const clr = document.getElementById(id+'-clear')
+        if (clr) clr.style.display = val ? 'block' : 'none'
+        if (!val || val.length < 2) { destinoHide(id); hidden.value = ''; return }
+        window._destinoTimers[id] = setTimeout(async () => {
+          const res = await fetch('/destinos/search?q=' + encodeURIComponent(val))
+          const data = await res.json()
+          window._destinoIdx[id] = -1
+          const dd = document.getElementById(id+'-dropdown')
+          if (!data.length) { dd.style.display='none'; return }
+          dd.innerHTML = data.map((d,i) => \`<div data-idx="\${i}" data-code="\${d.code}" data-name="\${d.name}"
+            style="padding:8px 12px;cursor:pointer;display:flex;gap:8px;align-items:center;font-size:13px;"
+            onmouseenter="this.style.background='#f3f0ff'"
+            onmouseleave="this.style.background=''"
+            onmousedown="destinoSelect('\${id}','\${d.code}','\${d.name.replace(/'/g,'\\\\\\'')}')">
+            <span style="background:#ede9fe;color:#6d28d9;padding:2px 7px;border-radius:5px;font-weight:700;font-size:11px;min-width:38px;text-align:center;">\${d.code}</span>
+            <span>\${d.name}</span>
+            <span style="color:#9ca3af;font-size:11px;margin-left:auto;">\${d.country_id}</span>
+          </div>\`).join('')
+          dd.style.display = 'block'
+        }, 200)
+      }
+
+      window.destinoSelect = function(id, code, name) {
+        document.getElementById(id+'-hidden').value = code
+        document.getElementById(id+'-input').value = code + ' — ' + name
+        const clr = document.getElementById(id+'-clear')
+        if (clr) clr.style.display = 'block'
+        destinoHide(id)
+      }
+
+      window.destinoClear = function(id) {
+        document.getElementById(id+'-hidden').value = ''
+        document.getElementById(id+'-input').value = ''
+        const clr = document.getElementById(id+'-clear')
+        if (clr) clr.style.display = 'none'
+        destinoHide(id)
+        document.getElementById(id+'-input').focus()
+      }
+
+      window.destinoHide = function(id) {
+        const dd = document.getElementById(id+'-dropdown')
+        if (dd) dd.style.display = 'none'
+      }
+
+      window.destinoKeydown = function(e, id) {
+        const dd = document.getElementById(id+'-dropdown')
+        if (!dd || dd.style.display==='none') return
+        const items = dd.querySelectorAll('[data-idx]')
+        let idx = window._destinoIdx[id] || -1
+        if (e.key==='ArrowDown') { e.preventDefault(); idx=Math.min(idx+1,items.length-1) }
+        else if (e.key==='ArrowUp') { e.preventDefault(); idx=Math.max(idx-1,-1) }
+        else if (e.key==='Enter' && idx>=0) { e.preventDefault(); const it=items[idx]; destinoSelect(id,it.dataset.code,it.dataset.name); return }
+        else if (e.key==='Escape') { destinoHide(id); return }
+        window._destinoIdx[id] = idx
+        items.forEach((it,i) => { it.style.background = i===idx ? '#f3f0ff' : '' })
+      }
+    })()
+    </script>`
+}
+
 // Lista de Files
 files.get('/files', async (c) => {
   const user = await getUser(c)
@@ -363,7 +475,7 @@ files.get('/files/nuevo', async (c) => {
               <div class="grid-2">
                 <div class="form-group">
                   <label class="form-label">DESTINO PRINCIPAL</label>
-                  <input type="text" name="destino_principal" placeholder="Ej: PUJ, Cancún, Paris" class="form-control">
+                  ${destinoAutocomplete({ name: 'destino_principal', id: 'dest-nuevo', placeholder: 'Ej: CUN — Cancún, MVD — Montevideo...' })}
                 </div>
                 <div class="form-group">
                   <label class="form-label">FECHA DE VIAJE</label>
@@ -1378,7 +1490,7 @@ files.get('/files/:id', async (c) => {
               <div class="grid-2">
                 <div class="form-group">
                   <label class="form-label">DESTINO (código IATA)</label>
-                  <input type="text" name="destino_codigo" class="form-control" placeholder="Ej: PUJ, MVD, MAD" maxlength="5">
+                  ${destinoAutocomplete({ name: 'destino_codigo', id: 'dest-servicio', placeholder: 'Ej: CUN, MVD, MAD...' })}
                 </div>
                 <div class="form-group">
                   <label class="form-label">FECHA INICIO</label>
@@ -3688,6 +3800,13 @@ files.get('/files/:id/editar', async (c) => {
     const clientes = await c.env.DB.prepare(`SELECT id, IFNULL(tipo_cliente,'persona_fisica') as tipo_cliente, COALESCE(nombre || ' ' || apellido, nombre_completo) as nombre_completo FROM clientes ORDER BY apellido, nombre`).all()
     const vendedores = await c.env.DB.prepare('SELECT id, nombre FROM usuarios WHERE activo=1').all()
 
+    // Enriquecer destino con nombre para mostrar en el input
+    let destinoDisplay = file.destino_principal || ''
+    if (destinoDisplay) {
+      const dest = await c.env.DB.prepare('SELECT name FROM destinos WHERE code = ?').bind(destinoDisplay.toUpperCase()).first() as any
+      if (dest) destinoDisplay = `${destinoDisplay.toUpperCase()} — ${dest.name}`
+    }
+
     const content = `
       <div style="max-width:700px;">
         <a href="/files/${id}" style="color:#7B3FA0;font-size:13px;margin-bottom:20px;display:block;"><i class="fas fa-arrow-left"></i> Volver</a>
@@ -3715,7 +3834,17 @@ files.get('/files/:id/editar', async (c) => {
               <div class="grid-2">
                 <div class="form-group">
                   <label class="form-label">DESTINO</label>
-                  <input type="text" name="destino_principal" value="${esc(file.destino_principal)||''}" class="form-control">
+                  ${destinoAutocomplete({ name: 'destino_principal', id: 'dest-editar', value: esc(file.destino_principal)||'', placeholder: 'Ej: CUN — Cancún, MVD — Montevideo...' })}
+                  <script>
+                    // Set display value with name if available
+                    (function(){
+                      const inp = document.getElementById('dest-editar-input')
+                      if (inp && inp.value) {
+                        const display = ${JSON.stringify(destinoDisplay)}
+                        if (display && display !== inp.value) inp.value = display
+                      }
+                    })()
+                  </script>
                 </div>
                 <div class="form-group">
                   <label class="form-label">FECHA VIAJE</label>
