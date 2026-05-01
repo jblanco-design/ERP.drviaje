@@ -1317,9 +1317,10 @@ files.get('/files/:id', async (c) => {
                     style="background:linear-gradient(135deg,#0369a1,#0ea5e9);color:white;border:none;">
                     <i class="fas fa-sliders-h"></i> Ajustar Venta
                   </button>` : ''}
+                ${puedeEditarFile && !fileBloqueado ? `
                 <button onclick="document.getElementById('modal-servicio').classList.add('active')" class="btn btn-primary btn-sm">
                   <i class="fas fa-plus"></i> Agregar Servicio
-                </button>
+                </button>` : ''}
                </div>`
           }
         </div>
@@ -1457,9 +1458,10 @@ files.get('/files/:id', async (c) => {
       <div class="card" style="margin-bottom:20px;">
         <div class="card-header">
           <span class="card-title"><i class="fas fa-dollar-sign" style="color:#059669"></i> Movimientos de Caja</span>
+          ${isAdminOrAbove(user.rol) ? `
           <button onclick="document.getElementById('modal-movimiento').classList.add('active')" class="btn btn-sm" style="background:#d1fae5;color:#059669;">
             <i class="fas fa-plus"></i> Registrar Movimiento
-          </button>
+          </button>` : ''}
         </div>
         <div class="table-wrapper">
           <table>
