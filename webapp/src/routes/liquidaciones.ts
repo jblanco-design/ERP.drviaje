@@ -322,7 +322,7 @@ liquidaciones.get('/liquidaciones/pendientes', async (c) => {
                 const pctColor = pctUtil >= 10 ? '#059669' : pctUtil >= 5 ? '#d97706' : '#dc2626'
                 return `
                 <tr style="${Math.abs(p.pendiente) > 0 && p.pendiente < 0 ? 'background:#fff5f5;' : ''}">
-                  <td><a href="/files/${p.file.id}" style="color:#7B3FA0;font-weight:700;">#${esc(p.file.numero)}</a></td>
+                  <td><a href="/files/${p.file.id}" style="color:#7B3FA0;font-weight:700;">#${esc(p.file.numero).replace(/^\d{4}/,'')}</a></td>
                   <td style="font-size:12px;">${esc(p.file.cliente)}</td>
                   <td><span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;background:#f3f4f6;">${esc(p.file.estado)}</span></td>
                   <td style="font-size:12px;">${fmtUSD(Number(p.file.total_venta||0))}</td>
