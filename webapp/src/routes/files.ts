@@ -335,12 +335,10 @@ files.get('/files/nuevo', async (c) => {
   if (!user) return c.redirect('/login')
 
   try {
-    // Aplicar migración 0017 si aún no existe la columna tipo_cliente
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN tipo_cliente TEXT NOT NULL DEFAULT 'persona_fisica'`).run() } catch(_){}
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN razon_social TEXT`).run() } catch(_){}
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN persona_contacto TEXT`).run() } catch(_){}
-    const clientes = await c.env.DB.prepare(`SELECT id, IFNULL(tipo_cliente,'persona_fisica') as tipo_cliente, COALESCE(nombre || ' ' || apellido, nombre_completo) as nombre_completo FROM clientes ORDER BY apellido, nombre`).all()
-    const vendedores = await c.env.DB.prepare('SELECT id, nombre FROM usuarios WHERE activo=1 ORDER BY nombre').all()
+    const [clientes, vendedores] = await Promise.all([
+      c.env.DB.prepare(`SELECT id, IFNULL(tipo_cliente,'persona_fisica') as tipo_cliente, COALESCE(nombre || ' ' || apellido, nombre_completo) as nombre_completo FROM clientes ORDER BY apellido, nombre`).all(),
+      c.env.DB.prepare('SELECT id, nombre FROM usuarios WHERE activo=1 ORDER BY nombre').all(),
+    ])
     const errNuevoFile = c.req.query('error') || ''
 
     const content = `
@@ -690,134 +688,148 @@ files.get('/files/:id', async (c) => {
     if (!file) return c.redirect('/files')
     if (!canSeeAllFiles(user.rol) && file.vendedor_id != user.id) return c.redirect('/files')
 
-    const servicios = await c.env.DB.prepare(`
-      SELECT s.*, p.nombre as proveedor_nombre, o.nombre as operador_nombre
-      FROM servicios s 
-      LEFT JOIN proveedores p ON s.proveedor_id = p.id 
-      LEFT JOIN operadores o ON s.operador_id = o.id
-      WHERE s.file_id = ? ORDER BY s.fecha_inicio ASC, s.id ASC
-    `).bind(id).all()
+    // ── Queries paralelas — todas independientes entre sí ─────
+    const [
+      serviciosRes,
+      pasajerosFileRes,
+      movimientosRes,
+      devolucionesRes,
+      tcDelFileRes,
+      proveedoresRes,
+      operadoresRes,
+      bancosRes,
+      alertasTcFileRes,
+      compartidoRes,
+      vendedoresCompartirRes,
+      liquidacionesFileRes,
+    ] = await Promise.all([
+      c.env.DB.prepare(`
+        SELECT s.*, p.nombre as proveedor_nombre, o.nombre as operador_nombre
+        FROM servicios s 
+        LEFT JOIN proveedores p ON s.proveedor_id = p.id 
+        LEFT JOIN operadores o ON s.operador_id = o.id
+        WHERE s.file_id = ? ORDER BY s.fecha_inicio ASC, s.id ASC
+      `).bind(id).all(),
 
-    // Cargar pasajeros del file con sus pasajeros por servicio
-    const pasajerosFile = await c.env.DB.prepare(`
-      SELECT fp.id as fp_id, fp.rol, fp.grupo, fp.orden,
-             p.id, p.nombre_completo, p.tipo_documento, p.nro_documento,
-             p.fecha_nacimiento, p.vencimiento_pasaporte, p.nacionalidad,
-             p.email, p.telefono, p.preferencias_comida, p.millas_aerolineas
-      FROM file_pasajeros fp
-      JOIN pasajeros p ON fp.pasajero_id = p.id
-      WHERE fp.file_id = ?
-      ORDER BY fp.rol DESC, fp.orden ASC, p.nombre_completo ASC
-    `).bind(id).all()
+      c.env.DB.prepare(`
+        SELECT fp.id as fp_id, fp.rol, fp.grupo, fp.orden,
+               p.id, p.nombre_completo, p.tipo_documento, p.nro_documento,
+               p.fecha_nacimiento, p.vencimiento_pasaporte, p.nacionalidad,
+               p.email, p.telefono, p.preferencias_comida, p.millas_aerolineas
+        FROM file_pasajeros fp
+        JOIN pasajeros p ON fp.pasajero_id = p.id
+        WHERE fp.file_id = ?
+        ORDER BY fp.rol DESC, fp.orden ASC, p.nombre_completo ASC
+      `).bind(id).all(),
 
-    // Para cada servicio, cargar qué pasajeros están incluidos
+      c.env.DB.prepare(`
+        SELECT m.*, u.nombre as usuario_nombre,
+               pax.nombre_completo as pagador_nombre
+        FROM movimientos_caja m 
+        LEFT JOIN usuarios u ON m.usuario_id = u.id
+        LEFT JOIN pasajeros pax ON m.pasajero_pagador_id = pax.id
+        WHERE m.file_id = ? AND m.anulado = 0 ORDER BY m.fecha DESC
+      `).bind(id).all(),
+
+      c.env.DB.prepare(`
+        SELECT d.*, u1.nombre as solicitado_nombre, u2.nombre as aprobado_nombre
+        FROM devoluciones d
+        LEFT JOIN usuarios u1 ON u1.id = d.solicitado_por
+        LEFT JOIN usuarios u2 ON u2.id = d.aprobado_por
+        WHERE d.file_id = ?
+        ORDER BY d.created_at DESC
+      `).bind(id).all(),
+
+      c.env.DB.prepare(`
+        SELECT ct.*, COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '—') as cliente_nombre,
+               u.nombre as autorizado_nombre,
+               (SELECT GROUP_CONCAT(DISTINCT p.nombre) FROM tarjeta_asignaciones ta
+                JOIN proveedores p ON p.id = ta.proveedor_id
+                WHERE ta.cliente_tarjeta_id = ct.id AND ta.estado NOT IN ('revertido','tc_negada')) as asig_proveedores
+        FROM cliente_tarjetas ct
+        LEFT JOIN clientes c ON c.id = ct.cliente_id
+        LEFT JOIN usuarios u ON u.id = ct.autorizado_por_usuario
+        WHERE ct.file_id = ?
+        ORDER BY ct.created_at DESC
+      `).bind(id).all(),
+
+      c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all(),
+      c.env.DB.prepare('SELECT id, nombre FROM operadores WHERE activo=1 ORDER BY nombre').all(),
+      c.env.DB.prepare('SELECT id, nombre_entidad, moneda FROM bancos WHERE activo=1 ORDER BY nombre_entidad').all(),
+
+      c.env.DB.prepare(`
+        SELECT atc.*, p.nombre as proveedor_nombre
+        FROM alertas_tc atc
+        LEFT JOIN proveedores p ON p.id = atc.proveedor_id
+        WHERE atc.file_id = ? AND atc.estado IN ('pendiente','vista')
+        ORDER BY atc.creado_at DESC
+      `).bind(id).all().catch(() => ({ results: [] })),
+
+      c.env.DB.prepare(`
+        SELECT fc.*, u.nombre as vendedor_compartido_nombre, uc.nombre as compartido_por_nombre
+        FROM file_compartido fc
+        JOIN usuarios u  ON fc.vendedor_id    = u.id
+        JOIN usuarios uc ON fc.compartido_por = uc.id
+        WHERE fc.file_id = ?
+      `).bind(id).first().catch(() => null),
+
+      c.env.DB.prepare(`
+        SELECT id, nombre FROM usuarios
+        WHERE activo = 1
+          AND rol IN ('vendedor','supervisor','administracion','gerente')
+          AND id != ?
+        ORDER BY nombre
+      `).bind(file.vendedor_id).all(),
+
+      c.env.DB.prepare(`
+        SELECT lf.id, l.estado, l.periodo
+        FROM liquidacion_files lf
+        JOIN liquidaciones l ON l.id = lf.liquidacion_id
+        WHERE lf.file_id = ? AND l.estado IN ('aprobada','pagada')
+        LIMIT 1
+      `).bind(id).first().catch(() => null),
+    ])
+
+    const servicios            = serviciosRes
+    const pasajerosFile        = pasajerosFileRes
+    const movimientos          = movimientosRes
+    const devoluciones         = devolucionesRes
+    const tcDelFile            = tcDelFileRes
+    const proveedores          = proveedoresRes
+    const operadores           = operadoresRes
+    const bancos               = bancosRes
+    const alertasTcFile        = alertasTcFileRes
+    const compartidoRow        = compartidoRes as any
+    const vendedoresParaCompartir = vendedoresCompartirRes
+    const liquidacionesFile    = liquidacionesFileRes as any
+
+    // Pasajeros por servicio — una sola query en vez de N queries
     const serviciosPasajeros: Record<number, number[]> = {}
     if (servicios.results.length > 0) {
-      // Solo IDs enteros positivos (vienen de la BD, pero sanitizamos por seguridad)
-      const ids = servicios.results
+      const svcIds = servicios.results
         .map((s: any) => Number(s.id))
-        .filter(n => Number.isInteger(n) && n > 0)
+        .filter((n: number) => Number.isInteger(n) && n > 0)
         .join(',')
-      const spRows = await c.env.DB.prepare(`
-        SELECT sp.servicio_id, sp.pasajero_id FROM servicio_pasajeros sp
-        WHERE sp.servicio_id IN (${ids})
-      `).all()
+      const spRows = await c.env.DB.prepare(
+        `SELECT sp.servicio_id, sp.pasajero_id FROM servicio_pasajeros sp WHERE sp.servicio_id IN (${svcIds})`
+      ).all()
       spRows.results.forEach((sp: any) => {
         if (!serviciosPasajeros[sp.servicio_id]) serviciosPasajeros[sp.servicio_id] = []
         serviciosPasajeros[sp.servicio_id].push(sp.pasajero_id)
       })
     }
 
-    const movimientos = await c.env.DB.prepare(`
-      SELECT m.*, u.nombre as usuario_nombre,
-             pax.nombre_completo as pagador_nombre
-      FROM movimientos_caja m 
-      LEFT JOIN usuarios u ON m.usuario_id = u.id
-      LEFT JOIN pasajeros pax ON m.pasajero_pagador_id = pax.id
-      WHERE m.file_id = ? AND m.anulado = 0 ORDER BY m.fecha DESC
-    `).bind(id).all()
-
-    const devoluciones = await c.env.DB.prepare(`
-      SELECT d.*, u1.nombre as solicitado_nombre, u2.nombre as aprobado_nombre
-      FROM devoluciones d
-      LEFT JOIN usuarios u1 ON u1.id = d.solicitado_por
-      LEFT JOIN usuarios u2 ON u2.id = d.aprobado_por
-      WHERE d.file_id = ?
-      ORDER BY d.created_at DESC
-    `).bind(id).all()
-
-    // Tarjetas de crédito registradas en este file
-    const tcDelFile = await c.env.DB.prepare(`
-      SELECT ct.*, COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '—') as cliente_nombre,
-             u.nombre as autorizado_nombre,
-             (SELECT GROUP_CONCAT(DISTINCT p.nombre) FROM tarjeta_asignaciones ta
-              JOIN proveedores p ON p.id = ta.proveedor_id
-              WHERE ta.cliente_tarjeta_id = ct.id AND ta.estado NOT IN ('revertido','tc_negada')) as asig_proveedores
-      FROM cliente_tarjetas ct
-      LEFT JOIN clientes c ON c.id = ct.cliente_id
-      LEFT JOIN usuarios u ON u.id = ct.autorizado_por_usuario
-      WHERE ct.file_id = ?
-      ORDER BY ct.created_at DESC
-    `).bind(id).all()
-
-    const proveedores = await c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all()
-    const operadores  = await c.env.DB.prepare('SELECT id, nombre FROM operadores WHERE activo=1 ORDER BY nombre').all()
-    const bancos      = await c.env.DB.prepare('SELECT id, nombre_entidad, moneda FROM bancos WHERE activo=1 ORDER BY nombre_entidad').all()
-
-    // Alertas TC negadas para este file
-    const alertasTcFile = await c.env.DB.prepare(`
-      SELECT atc.*, p.nombre as proveedor_nombre
-      FROM alertas_tc atc
-      LEFT JOIN proveedores p ON p.id = atc.proveedor_id
-      WHERE atc.file_id = ? AND atc.estado IN ('pendiente','vista')
-      ORDER BY atc.creado_at DESC
-    `).bind(id).all().catch(() => ({ results: [] }))
-
-    // ── Estado del file (necesario antes de los permisos) ─────
-    const fileCerrado  = file.estado === 'cerrado'
-    const fileAnulado  = file.estado === 'anulado'
+    // ── Estado del file ────────────────────────────────────────
+    const fileCerrado   = file.estado === 'cerrado'
+    const fileAnulado   = file.estado === 'anulado'
     const fileBloqueado = fileCerrado || fileAnulado
-
-    // ── Compartido ────────────────────────────────────────────
-    const compartidoRow = await c.env.DB.prepare(`
-      SELECT fc.*, u.nombre as vendedor_compartido_nombre, uc.nombre as compartido_por_nombre
-      FROM file_compartido fc
-      JOIN usuarios u  ON fc.vendedor_id    = u.id
-      JOIN usuarios uc ON fc.compartido_por = uc.id
-      WHERE fc.file_id = ?
-    `).bind(id).first() as any
-
-    // Vendedores disponibles para compartir (excluir al dueño del file y al ya compartido)
-    const vendedoresParaCompartir = await c.env.DB.prepare(`
-      SELECT id, nombre FROM usuarios
-      WHERE activo = 1
-        AND rol IN ('vendedor','supervisor','administracion','gerente')
-        AND id != ?
-      ORDER BY nombre
-    `).bind(file.vendedor_id).all()
-
-    // Permiso para compartir: dueño del file, supervisor, admin o gerente
-    const puedeCompartir = !fileAnulado && (
-      user.id == file.vendedor_id ||
-      isSupervisorOrAbove(user.rol)
-    )
-    // Quitar compartido: SIEMPRE solo supervisor o gerente, sin importar estado del file
-    const puedeQuitarCompartido = compartidoRow && isSupervisorOrAbove(user.rol)
-
-    // ── Liquidaciones: verificar si el file tiene liquidaciones aprobadas o pagadas ──
-    const liquidacionesFile = await c.env.DB.prepare(`
-      SELECT lf.id, l.estado, l.periodo
-      FROM liquidacion_files lf
-      JOIN liquidaciones l ON l.id = lf.liquidacion_id
-      WHERE lf.file_id = ? AND l.estado IN ('aprobada','pagada')
-      LIMIT 1
-    `).bind(id).first().catch(() => null) as any
     const fileLiquidado = !!liquidacionesFile
 
-    // ── Permisos de edición del file ──────────────────────────
-    // El vendedor compartido puede VER el file pero NO editar ni agregar/quitar servicios
-    const esDuenioFile = user.id == file.vendedor_id
+    // ── Permisos ───────────────────────────────────────────────
+    const esDuenioFile         = user.id == file.vendedor_id
     const esVendedorCompartido = compartidoRow && compartidoRow.vendedor_id == user.id
+    const puedeCompartir       = !fileAnulado && (user.id == file.vendedor_id || isSupervisorOrAbove(user.rol))
+    const puedeQuitarCompartido = compartidoRow && isSupervisorOrAbove(user.rol)
     // Puede editar: dueño del file, supervisor, admin, gerente (NO el vendedor compartido)
     const puedeEditarFile = esDuenioFile || (canSeeAllFiles(user.rol) && !esVendedorCompartido) || isAdminOrAbove(user.rol)
 
@@ -949,6 +961,10 @@ files.get('/files/:id', async (c) => {
             <span style="font-size:11px;background:#f3e8ff;color:#7B3FA0;padding:2px 7px;border-radius:10px;font-weight:700;display:inline-block;margin-top:3px;">
               🎫 ${s.nro_ticket ? esc(s.nro_ticket) : '<em style="color:#dc2626;font-style:normal;">Sin código</em>'}
             </span>
+            ${s.nro_factura_proveedor ? `
+            <span style="font-size:11px;background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:10px;font-weight:700;display:inline-block;margin-top:3px;">
+              🧾 FAC: ${esc(s.nro_factura_proveedor)}${s.fecha_factura_proveedor ? ' · ' + s.fecha_factura_proveedor : ''}
+            </span>` : ''}
           </td>
           <td style="font-size:12px;">${esc(s.proveedor_nombre) || '—'}</td>
           <td style="font-size:12px;">${esc(s.operador_nombre) || '—'}</td>
@@ -1520,6 +1536,23 @@ files.get('/files/:id', async (c) => {
                 <div class="form-group">
                   <label class="form-label">PRECIO VENTA (al cliente) *</label>
                   <input type="number" name="precio_venta" required min="0" step="0.01" class="form-control" placeholder="0.00">
+                </div>
+              </div>
+
+              <!-- Factura Proveedor -->
+              <div style="border:1.5px solid #d1fae5;border-radius:8px;padding:14px;margin-bottom:16px;background:#f0fdf4;">
+                <div style="font-size:12px;font-weight:700;color:#065f46;margin-bottom:10px;letter-spacing:.04em;">
+                  <i class="fas fa-file-invoice" style="color:#10b981;"></i> FACTURA DEL PROVEEDOR
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">NRO. FACTURA</label>
+                    <input type="text" name="nro_factura_proveedor" class="form-control" placeholder="Ej: FAC-2026-0042">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">FECHA FACTURA</label>
+                    <input type="date" name="fecha_factura_proveedor" class="form-control">
+                  </div>
                 </div>
               </div>
 
@@ -2310,9 +2343,11 @@ files.get('/files/:id', async (c) => {
           set('moneda_origen',         s.moneda_origen)
           set('costo_original',        s.costo_original)
           set('precio_venta',          s.precio_venta)
-          set('requiere_prepago',      s.requiere_prepago)
-          set('fecha_limite_prepago',  s.fecha_limite_prepago)
-          set('notas',                 s.notas)
+          set('requiere_prepago',        s.requiere_prepago)
+          set('fecha_limite_prepago',    s.fecha_limite_prepago)
+          set('nro_factura_proveedor',   s.nro_factura_proveedor)
+          set('fecha_factura_proveedor', s.fecha_factura_proveedor)
+          set('notas',                   s.notas)
 
           // Cantidad pasajeros
           const cantEl = document.getElementById('srv-cant-pax')
@@ -3554,6 +3589,8 @@ files.post('/servicios/:id/editar', async (c) => {
         operador_id         = ?,
         destino_codigo      = ?,
         nro_ticket          = ?,
+        nro_factura_proveedor     = ?,
+        fecha_factura_proveedor   = ?,
         fecha_inicio        = ?,
         fecha_fin           = ?,
         costo_original      = ?,
@@ -3571,6 +3608,8 @@ files.post('/servicios/:id/editar', async (c) => {
       body.operador_id   || null,
       body.destino_codigo || null,
       body.nro_ticket    || null,
+      body.nro_factura_proveedor   || null,
+      body.fecha_factura_proveedor || null,
       body.fecha_inicio  || null,
       body.fecha_fin     || null,
       Number(body.costo_original  || 0),
@@ -3634,31 +3673,6 @@ files.post('/files/:id/servicios', async (c) => {
   const body = await c.req.parseBody()
 
   try {
-    // Auto-migrar tablas de pasajeros si no existen en producción
-    await c.env.DB.prepare(`CREATE TABLE IF NOT EXISTS pasajeros (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nombre_completo TEXT NOT NULL,
-      nombre TEXT, apellido TEXT,
-      tipo_documento TEXT DEFAULT 'CI',
-      nro_documento TEXT,
-      cliente_id INTEGER REFERENCES clientes(id),
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`).run().catch(()=>{})
-    await c.env.DB.prepare(`CREATE TABLE IF NOT EXISTS file_pasajeros (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      file_id INTEGER NOT NULL REFERENCES files(id),
-      pasajero_id INTEGER NOT NULL REFERENCES pasajeros(id),
-      rol TEXT DEFAULT 'acompañante',
-      orden INTEGER DEFAULT 99,
-      UNIQUE(file_id, pasajero_id)
-    )`).run().catch(()=>{})
-    await c.env.DB.prepare(`CREATE TABLE IF NOT EXISTS servicio_pasajeros (
-      servicio_id INTEGER NOT NULL REFERENCES servicios(id),
-      pasajero_id INTEGER NOT NULL REFERENCES pasajeros(id),
-      PRIMARY KEY (servicio_id, pasajero_id)
-    )`).run().catch(()=>{})
-    await c.env.DB.prepare(`ALTER TABLE servicios ADD COLUMN cantidad_pasajeros INTEGER DEFAULT 1`).run().catch(()=>{})
-
     // Verificar que el file no está cerrado o anulado
     const fileCheck = await c.env.DB.prepare('SELECT estado FROM files WHERE id = ?').bind(id).first() as any
     if (fileCheck && (fileCheck.estado === 'cerrado' || fileCheck.estado === 'anulado')) {
@@ -3748,8 +3762,9 @@ files.post('/files/:id/servicios', async (c) => {
     const result = await c.env.DB.prepare(`
       INSERT INTO servicios (file_id, tipo_servicio, descripcion, proveedor_id, operador_id,
         destino_codigo, nro_ticket, fecha_inicio, fecha_fin, costo_original, moneda_origen,
-        precio_venta, requiere_prepago, fecha_limite_prepago, notas, cantidad_pasajeros)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        precio_venta, requiere_prepago, fecha_limite_prepago, notas, cantidad_pasajeros,
+        nro_factura_proveedor, fecha_factura_proveedor)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `).bind(
       id, body.tipo_servicio, body.descripcion,
       body.proveedor_id || null, body.operador_id || null,
@@ -3758,7 +3773,9 @@ files.post('/files/:id/servicios', async (c) => {
       Number(body.costo_original || 0), body.moneda_origen || 'USD',
       Number(body.precio_venta || 0), body.requiere_prepago ? 1 : 0,
       body.fecha_limite_prepago || null, body.notas || null,
-      cantPax
+      cantPax,
+      body.nro_factura_proveedor   || null,
+      body.fecha_factura_proveedor || null
     ).run()
 
     const servicioId = result.meta.last_row_id as number
@@ -3793,19 +3810,20 @@ files.get('/files/:id/editar', async (c) => {
     // Los supervisores NO pueden editar archivos cerrados
     if (file.estado === 'cerrado' && user.rol === 'supervisor') return c.redirect(`/files/${id}`)
 
-    // Aplicar migración 0017 si aún no existe la columna tipo_cliente
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN tipo_cliente TEXT NOT NULL DEFAULT 'persona_fisica'`).run() } catch(_){}
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN razon_social TEXT`).run() } catch(_){}
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN persona_contacto TEXT`).run() } catch(_){}
-    const clientes = await c.env.DB.prepare(`SELECT id, IFNULL(tipo_cliente,'persona_fisica') as tipo_cliente, COALESCE(nombre || ' ' || apellido, nombre_completo) as nombre_completo FROM clientes ORDER BY apellido, nombre`).all()
-    const vendedores = await c.env.DB.prepare('SELECT id, nombre FROM usuarios WHERE activo=1').all()
-
-    // Enriquecer destino con nombre para mostrar en el input
-    let destinoDisplay = file.destino_principal || ''
-    if (destinoDisplay) {
-      const dest = await c.env.DB.prepare('SELECT name FROM destinos WHERE code = ?').bind(destinoDisplay.toUpperCase()).first() as any
-      if (dest) destinoDisplay = `${destinoDisplay.toUpperCase()} — ${dest.name}`
-    }
+    const destinoPrincipal = file.destino_principal || ''
+    const [[clientes, vendedores], destinoRow] = await Promise.all([
+      Promise.all([
+        c.env.DB.prepare(`SELECT id, IFNULL(tipo_cliente,'persona_fisica') as tipo_cliente, COALESCE(nombre || ' ' || apellido, nombre_completo) as nombre_completo FROM clientes ORDER BY apellido, nombre`).all(),
+        c.env.DB.prepare('SELECT id, nombre FROM usuarios WHERE activo=1').all(),
+      ]),
+      destinoPrincipal
+        ? c.env.DB.prepare('SELECT name FROM destinos WHERE code = ?').bind(destinoPrincipal.toUpperCase()).first()
+        : Promise.resolve(null),
+    ])
+    const destinoRow2 = destinoRow as any
+    let destinoDisplay = destinoPrincipal
+      ? (destinoRow2 ? `${destinoPrincipal.toUpperCase()} — ${destinoRow2.name}` : destinoPrincipal)
+      : ''
 
     const content = `
       <div style="max-width:700px;">
