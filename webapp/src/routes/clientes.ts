@@ -39,9 +39,17 @@ clientes.get('/clientes', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
 
-  const buscar = c.req.query('buscar') || ''
-  const tipoFiltro  = c.req.query('tipo')      || ''  // 'empresa' | 'persona_fisica' | ''
+  const buscar      = c.req.query('buscar') || ''
+  const tipoFiltro  = c.req.query('tipo')      || ''
   const conDeuda    = c.req.query('con_deuda') || ''
+  const isVendedor  = user.rol === 'vendedor'
+
+  // Vendedor solo ve sus clientes — filtro forzado por su id
+  // Gerente/admin pueden ver todos o filtrar por vendedor
+  const filtroVendedorId = isVendedor
+    ? user.id
+    : (c.req.query('vendedor_id') ? Number(c.req.query('vendedor_id')) : null)
+
   try {
     let q = `SELECT c.*,
       COALESCE((SELECT SUM(f.total_venta) FROM files f WHERE f.cliente_id = c.id AND f.estado != 'anulado'),0) as total_venta,
@@ -60,6 +68,8 @@ clientes.get('/clientes', async (c) => {
       params.push(like, like, like, like, like, like, like, like)
     }
     if (tipoFiltro) { q += ` AND c.tipo_cliente = ?`; params.push(tipoFiltro) }
+    // Filtro por vendedor — obligatorio para vendedor, opcional para admin/gerente
+    if (filtroVendedorId) { q += ` AND c.vendedor_id = ?`; params.push(filtroVendedorId) }
     if (conDeuda)   { q += ` HAVING (total_venta - total_cobrado) > 0.01` }
     q += ' ORDER BY c.apellido, c.nombre LIMIT 100'
     const result = await c.env.DB.prepare(q).bind(...params).all()
