@@ -2161,7 +2161,7 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
 
       if (tcAsignacionId) {
         // ── Flujo TC existente (cruzamiento): usar la asignación ya creada ──
-        // Verificar que la asignación existe y está disponible
+        // Verificar que la asignación existe, está disponible y NO fue ya consumida
         const asig = await c.env.DB.prepare(`
           SELECT ta.*, ct.ultimos_4, ct.banco_emisor, ct.monto as tc_monto, ct.moneda as tc_moneda, ct.id as ct_id
           FROM tarjeta_asignaciones ta
@@ -2170,45 +2170,61 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
         `).bind(tcAsignacionId, proveedorId).first() as any
 
         if (!asig) {
-          const backUrl = `/tesoreria/proveedores?proveedor_id=${proveedorId}&error=tc_no_disponible`
-          return c.redirect(backUrl)
+          return c.redirect(`/tesoreria/proveedores?proveedor_id=${proveedorId}&error=tc_no_disponible`)
+        }
+
+        // Verificar que esta asignación no fue ya consumida en un pago anterior
+        const yaUsado = await c.env.DB.prepare(`
+          SELECT COUNT(*) as cnt FROM movimientos_caja 
+          WHERE concepto LIKE ? AND tipo = 'egreso' AND proveedor_id = ?
+        `).bind(`%asig_${tcAsignacionId}%`, proveedorId).first() as any
+
+        if (Number(yaUsado?.cnt || 0) > 0) {
+          return c.redirect(`/tesoreria/proveedores?proveedor_id=${proveedorId}&error=tc_ya_utilizada`)
+        }
+
+        // Verificar que el monto no supera el saldo de la asignación
+        if (monto > Number(asig.monto) + 0.001) {
+          return c.redirect(`/tesoreria/proveedores?proveedor_id=${proveedorId}&error=tc_monto_excedido`)
         }
 
         // Registrar crédito confirmado en cuenta corriente del proveedor
-        // usando el saldo a favor que ya estaba disponible (débito id=9)
-        const ccResult = await c.env.DB.prepare(`
+        await c.env.DB.prepare(`
           INSERT INTO proveedor_cuenta_corriente
             (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, servicios_ids)
           VALUES (?, 'credito', 'tarjeta', ?, ?, ?, ?, 'confirmado', ?, ?)
         `).bind(proveedorId, monto, moneda, conceptoCompleto, referencia, user.id, serviciosStr).run()
 
-        // Registrar egreso en caja vinculado a la TC existente
+        // Registrar egreso en caja con referencia única a la asignación
         await c.env.DB.prepare(`
           INSERT INTO movimientos_caja
             (tipo, metodo, moneda, monto, cotizacion, monto_uyu, proveedor_id, concepto, usuario_id, fecha)
           VALUES ('egreso','tarjeta',?,?,1,?,?,?,?,datetime('now'))
         `).bind(moneda, monto, monto, proveedorId,
-          `TC autorizada **** ${asig.ultimos_4} (cruzamiento) — ${serviciosIds.length} servicio(s)`,
+          `TC **** ${asig.ultimos_4} cruzamiento asig_${tcAsignacionId} — ${serviciosIds.length} servicio(s)`,
           user.id
         ).run()
 
-        // Marcar servicios — pagado completo o parcial según montos
+        // Marcar la asignación como 'usado' para evitar doble uso
+        await c.env.DB.prepare(
+          `UPDATE tarjeta_asignaciones SET estado = 'usado', notas = COALESCE(notas,'') || ' [consumido]' WHERE id = ?`
+        ).bind(tcAsignacionId).run()
+
+        // Marcar servicios como pagado o parcial según si el monto cubre el costo
+        const montoPorServicio = serviciosIds.length === 1 ? monto : monto / serviciosIds.length
         for (const sId of serviciosIds) {
           const svc = await c.env.DB.prepare('SELECT costo_original FROM servicios WHERE id = ?').bind(sId).first() as any
           const costo = Number(svc?.costo_original || 0)
-          // Calcular monto asignado a este servicio
-          const montoAsigSvc = serviciosIds.length === 1 ? monto : (monto / serviciosIds.length)
-          const estadoPago = montoAsigSvc >= costo - 0.01 ? 'pagado' : 'parcial'
-          const prepago = montoAsigSvc >= costo - 0.01 ? 1 : 0
+          const estadoPago = montoPorServicio >= costo - 0.01 ? 'pagado' : 'parcial'
+          const prepago    = montoPorServicio >= costo - 0.01 ? 1 : 0
           await c.env.DB.prepare(
             `UPDATE servicios SET prepago_realizado = ?, estado_pago_proveedor = ?
-             ${nroFacturaProv ? ', nro_factura_proveedor = ?, fecha_factura_proveedor = date(\'now\')' : ''}
+             ${nroFacturaProv ? ", nro_factura_proveedor = ?, fecha_factura_proveedor = date('now')" : ''}
              WHERE id = ?`
           ).bind(...(nroFacturaProv ? [prepago, estadoPago, nroFacturaProv, sId] : [prepago, estadoPago, sId])).run()
         }
 
-        const backUrl = `/tesoreria/proveedores?proveedor_id=${proveedorId}&ok=1`
-        return c.redirect(backUrl)
+        return c.redirect(`/tesoreria/proveedores?proveedor_id=${proveedorId}&ok=1`)
       }
 
       // ── Flujo TC nueva (proveedor): crear proveedor_tarjeta ──
@@ -2399,6 +2415,9 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       JOIN clientes c ON c.id = ct.cliente_id
       LEFT JOIN files f ON f.id = ct.file_id
       WHERE ta.proveedor_id = ?
+        AND ta.estado != 'usado'
+        AND ta.estado != 'revertido'
+        AND ta.estado != 'tc_negada'
       ORDER BY ta.created_at DESC
     `).bind(provId).all()
 
@@ -2718,10 +2737,11 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
                     ${(tcClientesSaldo.results as any[]).map((t: any) => {
                       const disponible = t.asig_estado === 'pagado' && t.tc_estado === 'autorizada'
                       const pendiente  = t.tc_estado === 'pendiente'
-                      const bg = disponible ? '#f0fdf4' : pendiente ? '#fffbeb' : '#f9fafb'
-                      const estadoLabel = disponible ? '✓ Disponible' : pendiente ? '⏳ Pendiente auth.' : t.asig_estado
-                      const estadoColor = disponible ? '#059669' : pendiente ? '#d97706' : '#6b7280'
-                      const estadoBg    = disponible ? '#d1fae5' : pendiente ? '#fef3c7' : '#f3f4f6'
+                      const usado      = t.asig_estado === 'usado'
+                      const bg = disponible ? '#f0fdf4' : usado ? '#f3f4f6' : pendiente ? '#fffbeb' : '#f9fafb'
+                      const estadoLabel = disponible ? '✓ Disponible' : usado ? '✓ Utilizada' : pendiente ? '⏳ Pendiente auth.' : t.asig_estado
+                      const estadoColor = disponible ? '#059669' : usado ? '#9ca3af' : pendiente ? '#d97706' : '#6b7280'
+                      const estadoBg    = disponible ? '#d1fae5' : usado ? '#f3f4f6' : pendiente ? '#fef3c7' : '#f3f4f6'
                       return `
                         <tr style="background:${bg};border-bottom:1px solid #e5e7eb;">
                           <td style="padding:8px 10px;font-size:13px;font-weight:600;">${esc(t.cliente_nombre)}</td>
