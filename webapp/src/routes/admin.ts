@@ -391,7 +391,7 @@ admin.post('/usuarios/:id/editar', async (c) => {
     // rol_extendido guarda el valor real; rol mantiene compatibilidad con constraint
     const rolBase = ['vendedor','gerente'].includes(rolNuevo) ? rolNuevo : 'gerente'
     await c.env.DB.prepare(
-      `UPDATE usuarios SET nombre = ?, rol = ?, rol_extendido = ?, updated_at = datetime('now') WHERE id = ?`
+      `UPDATE usuarios SET nombre = ?, rol = ?, rol_extendido = ? WHERE id = ?`
     ).bind(nombre, rolBase, rolNuevo, id).run()
     return c.redirect('/usuarios?ok=usuario_editado')
   } catch (e: any) {
