@@ -1058,17 +1058,35 @@ reportes.get('/reportes/exportar/proveedor/:id', async (c) => {
 
     const rows = await c.env.DB.prepare(`
       SELECT pcc.created_at, pcc.tipo, pcc.metodo, pcc.concepto,
-             pcc.monto, pcc.moneda, pcc.estado, pcc.referencia, u.nombre as usuario
+             pcc.monto, pcc.moneda, pcc.estado, pcc.referencia,
+             pcc.servicios_ids, u.nombre as usuario
       FROM proveedor_cuenta_corriente pcc
       LEFT JOIN usuarios u ON u.id = pcc.usuario_id
       WHERE pcc.proveedor_id = ?
       ORDER BY pcc.created_at ASC
     `).bind(provId).all()
 
-    const headers = ['Fecha','Tipo','Método','Concepto','Monto','Moneda','Estado','Referencia','Usuario']
-    const data = (rows.results as any[]).map((m: any) => [
+    // Resolver facturas de proveedor para cada movimiento
+    const allRows = rows.results as any[]
+    const facturasMap: Record<number, string> = {}
+    for (const mov of allRows) {
+      if (!mov.servicios_ids) continue
+      const ids = String(mov.servicios_ids).split(',').map((s: string) => Number(s.trim())).filter((n: number) => n > 0)
+      if (!ids.length) continue
+      const ph = ids.map(() => '?').join(',')
+      const svcs = await c.env.DB.prepare(
+        `SELECT id, nro_factura_proveedor FROM servicios WHERE id IN (${ph}) AND nro_factura_proveedor IS NOT NULL`
+      ).bind(...ids).all()
+      const facturas = (svcs.results as any[]).map((s: any) => s.nro_factura_proveedor).filter(Boolean)
+      if (facturas.length) facturasMap[allRows.indexOf(mov)] = [...new Set(facturas)].join(' / ')
+    }
+
+    const headers = ['Fecha','Tipo','Método','Concepto','Monto','Moneda','Estado','Referencia','Nº Factura Proveedor','Usuario']
+    const data = allRows.map((m: any, i: number) => [
       (m.created_at||'').substring(0,16), m.tipo, m.metodo, m.concepto||'',
-      Number(m.monto).toFixed(2), m.moneda, m.estado, m.referencia||'', m.usuario||''
+      Number(m.monto).toFixed(2), m.moneda, m.estado, m.referencia||'',
+      facturasMap[i] || '',
+      m.usuario||''
     ])
     const nombre = (proveedor.nombre || 'proveedor').replace(/[^a-z0-9]/gi, '_')
     return csvResponse(`cta_cte_${nombre}.csv`, headers, data)
@@ -1391,6 +1409,7 @@ reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
   try {
     let q = `
       SELECT s.id, s.tipo_servicio, s.descripcion, s.nro_ticket,
+             s.nro_factura_proveedor, s.fecha_factura_proveedor,
              p.nombre as proveedor, o.nombre as operador,
              s.costo_original, s.moneda_origen, s.precio_venta,
              s.fecha_inicio, s.estado_pago_proveedor,
@@ -1416,10 +1435,11 @@ reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
     q += ` ORDER BY s.created_at DESC`
 
     const rows = await c.env.DB.prepare(q).bind(...params).all()
-    const headers = ['ID', 'File', 'Cliente', 'Vendedor', 'Tipo', 'Descripción', 'Ticket/Reserva', 'Proveedor', 'Operador', 'Costo', 'Moneda', 'Venta', 'Fecha Servicio', 'Estado Pago', 'Fecha Registro']
+    const headers = ['ID', 'File', 'Cliente', 'Vendedor', 'Tipo', 'Descripción', 'Ticket/Reserva', 'Nº Factura Proveedor', 'Fecha Factura', 'Proveedor', 'Operador', 'Costo', 'Moneda', 'Venta', 'Fecha Servicio', 'Estado Pago', 'Fecha Registro']
     const data = (rows.results as any[]).map((s: any) => [
       s.id, s.file_numero, s.cliente, s.vendedor,
       s.tipo_servicio, s.descripcion, s.nro_ticket || '',
+      s.nro_factura_proveedor || '', s.fecha_factura_proveedor || '',
       s.proveedor || '', s.operador || '',
       Number(s.costo_original).toFixed(2), s.moneda_origen,
       Number(s.precio_venta).toFixed(2),
