@@ -460,6 +460,7 @@ reportes.get('/reportes', async (c) => {
           </div>` : ''}
           <button type="submit" class="btn btn-primary"><i class="fas fa-chart-bar"></i> Ver Reportes</button>
           <a href="/reportes" class="btn btn-outline"><i class="fas fa-times"></i> Limpiar</a>
+          ${isGerente ? `
           <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
             <a href="/reportes/cuentas-corrientes" class="btn btn-sm" style="background:#0369a1;color:white;border:none;">
               <i class="fas fa-file-invoice-dollar"></i> Ctas. Corrientes
@@ -480,6 +481,7 @@ reportes.get('/reportes', async (c) => {
               <i class="fas fa-file-excel"></i> Servicios Pendientes
             </button>
           </div>
+          ` : ''}
         </div>
       </form>
 
@@ -984,6 +986,7 @@ reportes.get('/reportes', async (c) => {
 reportes.get('/reportes/exportar/ventas', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const mes        = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
   const vendedorId = c.req.query('vendedor_id') || (!canSeeAllFiles(user.rol) ? String(user.id) : '')
 
@@ -1027,6 +1030,7 @@ reportes.get('/reportes/exportar/ventas', async (c) => {
 reportes.get('/reportes/exportar/files', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const mes        = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
   const vendedorId = c.req.query('vendedor_id') || (!canSeeAllFiles(user.rol) ? String(user.id) : '')
 
@@ -1102,6 +1106,7 @@ reportes.get('/reportes/exportar/vendedores', async (c) => {
 reportes.get('/reportes/exportar/destinos', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const mes        = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
   const vendedorId = c.req.query('vendedor_id') || (!canSeeAllFiles(user.rol) ? String(user.id) : '')
 
@@ -1135,6 +1140,7 @@ reportes.get('/reportes/exportar/destinos', async (c) => {
 reportes.get('/reportes/exportar/proveedor/:id', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const provId = c.req.param('id')
 
   try {
@@ -1184,6 +1190,7 @@ reportes.get('/reportes/exportar/proveedor/:id', async (c) => {
 reportes.get('/reportes/exportar/cliente/:id', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const id   = c.req.param('id')
   const tipo = c.req.query('tipo') || 'movimientos' // 'movimientos' | 'files'
 
@@ -1446,6 +1453,7 @@ reportes.get('/reportes/cuentas-corrientes', async (c) => {
 reportes.get('/reportes/exportar/cuentas-corrientes', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const soloDeuda = c.req.query('solo_deuda') === '1'
 
   try {
@@ -1487,6 +1495,7 @@ export default reportes
 reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const desde       = safeDate(c.req.query('desde'), '')
   const hasta       = safeDate(c.req.query('hasta'), '')
   const proveedorId = c.req.query('proveedor_id') || ''
@@ -1542,6 +1551,7 @@ reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
 reportes.get('/reportes/exportar/servicios-pendientes', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/reportes?error=sin_permiso')
   const desde = safeDate(c.req.query('desde'), '')
   const hasta = safeDate(c.req.query('hasta'), '')
 
