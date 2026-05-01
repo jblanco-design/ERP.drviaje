@@ -252,7 +252,7 @@ files.get('/files', async (c) => {
 
     const tableRows = result.results.map((f: any) => `
       <tr>
-        <td><strong style="color:#7B3FA0;">#${esc(f.numero)}</strong></td>
+        <td><strong style="color:#7B3FA0;">#${esc(f.numero).replace(/^\d{4}/,'')}</strong></td>
         <td>${esc(f.cliente_nombre)}</td>
         <td style="font-size:12px;color:#6b7280;">${esc(f.vendedor_nombre)}</td>
         <td>${esc(f.destino_principal) || '—'}</td>
@@ -1165,7 +1165,7 @@ files.get('/files/:id', async (c) => {
           <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
             <div>
               <div style="color:rgba(255,255,255,0.7);font-size:12px;letter-spacing:1px;">FILE DE VIAJE</div>
-              <div style="color:white;font-size:28px;font-weight:800;">#${file.numero}</div>
+              <div style="color:white;font-size:28px;font-weight:800;">#${String(file.numero).replace(/^\d{4}/,'')}</div>
               <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;">
                 <span class="badge badge-${file.estado}">${getLabelEstado(file.estado).toUpperCase()}</span>
                 ${compartidoRow ? `
@@ -1817,7 +1817,7 @@ files.get('/files/:id', async (c) => {
               </div>
               <div class="form-group">
                 <label class="form-label">CONCEPTO *</label>
-                <input type="text" name="concepto" required class="form-control" placeholder="Ej: Cobro parcial File #${file.numero}">
+                <input type="text" name="concepto" required class="form-control" placeholder="Ej: Cobro parcial File #${String(file.numero).replace(/^\d{4}/,'')}">
               </div>
               <div class="grid-2">
                 <div class="form-group">
@@ -3133,7 +3133,7 @@ files.get('/files/:id', async (c) => {
       <div id="modal-devolucion" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:16px;">
         <div style="background:white;border-radius:14px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
           <div style="background:linear-gradient(135deg,#dc2626,#b91c1c);border-radius:14px 14px 0 0;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
-            <div style="color:white;font-size:15px;font-weight:700;"><i class="fas fa-undo-alt"></i> Nueva Devolución — File #${file.numero}</div>
+            <div style="color:white;font-size:15px;font-weight:700;"><i class="fas fa-undo-alt"></i> Nueva Devolución — File #${String(file.numero).replace(/^\d{4}/,'')}</div>
             <button onclick="document.getElementById('modal-devolucion').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:16px;">✕</button>
           </div>
           <form method="POST" action="/files/${id}/devoluciones">
@@ -3289,7 +3289,7 @@ files.get('/files/:id', async (c) => {
         }
       </script>
     `
-    return c.html(baseLayout(`File #${file.numero}`, content, user, 'files'))
+    return c.html(baseLayout(`File #${String(file.numero).replace(/^\d{4}/,'')}`, content, user, 'files'))
   } catch (e: any) {
     console.error('[FILE_DETAIL]', e.message)
     return c.html(baseLayout('File', `<div class="alert alert-danger">Error interno del servidor</div>`, user, 'files'))
@@ -3851,7 +3851,7 @@ files.get('/files/:id/editar', async (c) => {
         <a href="/files/${id}" style="color:#7B3FA0;font-size:13px;margin-bottom:20px;display:block;"><i class="fas fa-arrow-left"></i> Volver</a>
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Editar File #${file.numero}</span>
+            <span class="card-title">Editar File #${String(file.numero).replace(/^\d{4}/,'')}</span>
           </div>
           <div class="card-body">
             <form method="POST" action="/files/${id}/editar" onsubmit="return validarFechaViajeEdit(document.getElementById('inp-fecha-viaje-edit'))">
@@ -4085,7 +4085,7 @@ files.get('/files/:id/voucher', async (c) => {
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Voucher #${file.numero} - Dr. Viaje</title>
+  <title>Voucher #${String(file.numero).replace(/^\d{4}/,'')} - Dr. Viaje</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -4164,7 +4164,7 @@ files.get('/files/:id/voucher', async (c) => {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
         <div>
           <div style="color:rgba(255,255,255,0.75);font-size:11px;letter-spacing:2px;margin-bottom:4px;">SERVICIOS CONTRATADOS</div>
-          <div style="color:#ffffff;font-size:26px;font-weight:800;">File #${file.numero}</div>
+          <div style="color:#ffffff;font-size:26px;font-weight:800;">File #${String(file.numero).replace(/^\d{4}/,'')}</div>
           <div style="color:rgba(255,255,255,0.65);font-size:12px;margin-top:4px;">${new Date().toLocaleDateString('es-UY', {day:'2-digit',month:'long',year:'numeric'})}</div>
         </div>
         <div style="text-align:right;">
@@ -4371,7 +4371,7 @@ files.get('/files/:id/liquidacion-interna', async (c) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Liquidación Interna #${file.numero} - Dr. Viaje</title>
+  <title>Liquidación Interna #${String(file.numero).replace(/^\d{4}/,'')} - Dr. Viaje</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     *, *::before, *::after {
@@ -4490,7 +4490,7 @@ files.get('/files/:id/liquidacion-interna', async (c) => {
         <!-- Código de reserva destacado -->
         <div style="background:rgba(255,255,255,0.15) !important;border:2px solid rgba(255,255,255,0.5);border-radius:10px;padding:10px 20px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
           <div style="color:rgba(255,255,255,0.65);font-size:9px;letter-spacing:2px;margin-bottom:4px;text-transform:uppercase;">Nro. de Reserva</div>
-          <div style="color:white;font-size:28px;font-weight:900;letter-spacing:1px;line-height:1;">#${esc(file.numero)}</div>
+          <div style="color:white;font-size:28px;font-weight:900;letter-spacing:1px;line-height:1;">#${esc(file.numero).replace(/^\d{4}/,'')}</div>
         </div>
         <div style="text-align:right;">
           <div style="font-size:20px;font-weight:900;">
