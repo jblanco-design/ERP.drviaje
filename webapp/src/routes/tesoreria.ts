@@ -276,7 +276,7 @@ tesoreria.get('/tesoreria', async (c) => {
                   <label class="form-label">FILE (opcional)</label>
                   <select name="file_id" class="form-control">
                     <option value="">— Sin file —</option>
-                    ${fileLista.results.map((f: any) => `<option value="${f.id}">#${f.numero}</option>`).join('')}
+                    ${fileLista.results.map((f: any) => `<option value="${f.id}">#${String(f.numero).replace(/^\d{4}/,'')}</option>`).join('')}
                   </select>
                 </div>
                 <div class="form-group">
@@ -815,7 +815,7 @@ tesoreria.get('/tesoreria/recibo/:id', async (c) => {
     </button>
     <a href="/files/${mov.file_id}"
       style="color:white;font-size:13px;text-decoration:none;opacity:0.8;">
-      ← File #${mov.file_numero}
+      ← File #${String(mov.file_numero).replace(/^\d{4}/,'')}
     </a>
     ${mov.cliente_id ? `
     <a href="/clientes/${mov.cliente_id}/cuenta-corriente"
@@ -1244,7 +1244,7 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
               <input type="checkbox" class="servicio-check" value="${s.id}" 
                      data-monto="${s.costo_original}" data-moneda="${s.moneda_origen}"
                      data-desc="${s.descripcion.replace(/"/g,'&quot;')}"
-                     data-file="#${s.file_numero}"
+                     data-file="#${String(s.file_numero).replace(/^\d{4}/,'')}"
                      data-file-id="${s.file_id}"
                      data-saldo-disponible="${saldosPorFile[s.file_id]?.disponible ?? 0}"
                      data-saldo-ingresado="${saldosPorFile[s.file_id]?.ingresado ?? 0}"
@@ -1568,7 +1568,7 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
               <div>
                 <select id="filtro-file-select" class="form-control" style="min-width:160px;padding:7px 10px;font-size:13px;" onchange="filtrarPorFile(this.value)">
                   <option value="">— Todos los files —</option>
-                  ${[...new Map((serviciosPendientes as any[]).map(s => [s.file_id, s])).values()].map((s: any) => `<option value="${s.file_numero.toLowerCase()}">#${s.file_numero}</option>`).join('')}
+                  ${[...new Map((serviciosPendientes as any[]).map(s => [s.file_id, s])).values()].map((s: any) => `<option value="${s.file_numero.toLowerCase()}">#${String(s.file_numero).replace(/^\d{4}/,'')}</option>`).join('')}
                 </select>
               </div>
               <div style="display:flex;gap:6px;align-items:center;">
@@ -2404,7 +2404,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
             : `
               <input type="checkbox" class="svc-check" value="${s.id}"
                 data-monto="${s.costo_original}" data-moneda="${s.moneda_origen}"
-                data-desc="${esc(s.descripcion)}" data-file="#${s.file_numero}"
+                data-desc="${esc(s.descripcion)}" data-file="#${String(s.file_numero).replace(/^\d{4}/,'')}"
                 onchange="recalcPago()"
                 style="width:15px;height:15px;cursor:pointer;accent-color:#7B3FA0;">
             `}
