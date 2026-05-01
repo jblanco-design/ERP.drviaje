@@ -8,7 +8,8 @@ type Bindings = { DB: D1Database }
 const tesoreria = new Hono<{ Bindings: Bindings }>()
 
 // ── Middleware de acceso: gerente, administración y observador (solo lectura) ──
-tesoreria.use('*', async (c, next) => {
+// IMPORTANTE: usar path explícito /tesoreria* para no interceptar otras rutas
+tesoreria.use('/tesoreria/*', async (c, next) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const rolesPermitidos = ['gerente', 'administracion', 'observador']
