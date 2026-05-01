@@ -7,7 +7,7 @@ type Bindings = { DB: D1Database }
 const gastos = new Hono<{ Bindings: Bindings }>()
 
 // ── Middleware: solo gerente y administración ────────────────
-gastos.use('*', async (c, next) => {
+gastos.use('/gastos/*', async (c, next) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   if (!canAccessGastos(user.rol)) {
