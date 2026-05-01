@@ -24,7 +24,7 @@ function safeMonth(val: string | undefined, fallback: string): string {
 const reportes = new Hono<{ Bindings: Bindings }>()
 
 // ── Middleware: reportes solo para supervisor, administración y gerente ──
-reportes.use('*', async (c, next) => {
+reportes.use('/reportes/*', async (c, next) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   // Vendedor puede acceder pero solo verá sus propios datos (filtro forzado abajo)
