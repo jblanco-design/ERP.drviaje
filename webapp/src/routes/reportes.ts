@@ -27,7 +27,10 @@ const reportes = new Hono<{ Bindings: Bindings }>()
 reportes.use('*', async (c, next) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
-  if (!canSeeReportes(user.rol)) {
+  // Vendedor puede acceder pero solo verá sus propios datos (filtro forzado abajo)
+  // Observador puede ver todo en modo lectura
+  const rolesConAcceso = ['gerente', 'administracion', 'supervisor', 'vendedor', 'observador']
+  if (!rolesConAcceso.includes(user.rol)) {
     return c.html(`
       <div style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f3f4f6;">
         <div style="background:white;border-radius:12px;padding:40px;max-width:400px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
@@ -70,10 +73,13 @@ reportes.get('/reportes', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
 
-  const vendedorId   = c.req.query('vendedor_id') || ''
-  const isGerente    = isAdminOrAbove(user.rol)
+  const isGerente    = isAdminOrAbove(user.rol) || user.rol === 'observador'
+  const isVendedor   = user.rol === 'vendedor'
   const ordenRanking = c.req.query('orden') === 'utilidad' ? 'utilidad' : 'facturacion'
   const modoFecha    = c.req.query('modo') === 'rango' ? 'rango' : 'mes'
+
+  // vendedor_id: si es vendedor se fuerza su propio id, si es gerente/admin/observador respeta el query param
+  const vendedorId = isVendedor ? String(user.id) : (c.req.query('vendedor_id') || '')
 
   // Valores de fecha
   const mes   = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
