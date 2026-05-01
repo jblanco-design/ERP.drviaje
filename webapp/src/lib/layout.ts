@@ -10,6 +10,7 @@ export const COLORS = {
 
 export function baseLayout(title: string, content: string, user: { nombre: string; rol: string } | null, activePage: string = ''): string {
   const rol = user?.rol || ''
+  const esObservador = rol === 'observador'
 
   // Items visibles para todos los roles autenticados
   const baseNavItems = [
@@ -19,8 +20,8 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
     { href: '/pasajeros', icon: 'fa-user-friends', label: 'Pasajeros', page: 'pasajeros' },
   ]
 
-  // Tesorería y pagos: solo gerente y administración
-  const tesNaveItems = (rol === 'gerente' || rol === 'administracion') ? [
+  // Tesorería y pagos: gerente, administración y observador (este último solo lectura)
+  const tesNaveItems = (rol === 'gerente' || rol === 'administracion' || rol === 'observador') ? [
     { href: '/tesoreria', icon: 'fa-dollar-sign', label: 'Tesorería', page: 'tesoreria' },
     { href: '/tesoreria/proveedores', icon: 'fa-handshake', label: 'Pagos Proveedores', page: 'pagos-proveedores' },
     { href: '/tesoreria/tarjetas', icon: 'fa-credit-card', label: 'Tarjetas en Cartera', page: 'tarjetas-cartera' },
@@ -31,21 +32,23 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
     ...(rol === 'gerente' ? [{ href: '/tesoreria/desimputar', icon: 'fa-undo', label: 'Desimputar Pagos', page: 'desimputar' }] : []),
   ] : []
 
-  // Reportes: gerente, administración y supervisor
-  const reportesNavItems = (rol === 'gerente' || rol === 'administracion' || rol === 'supervisor') ? [
+  // Reportes: gerente, administración, supervisor, vendedor y observador
+  const reportesNavItems = (rol === 'gerente' || rol === 'administracion' || rol === 'supervisor' || rol === 'vendedor' || rol === 'observador') ? [
     { href: '/reportes', icon: 'fa-chart-bar', label: 'Reportes', page: 'reportes' },
-    { href: '/reportes/cuentas-corrientes', icon: 'fa-file-invoice-dollar', label: 'Ctas. Corrientes', page: 'cuentas-corrientes' },
-    { href: '/cotizaciones', icon: 'fa-exchange-alt', label: 'Cotizaciones', page: 'cotizaciones' },
+    ...(rol !== 'vendedor' ? [
+      { href: '/reportes/cuentas-corrientes', icon: 'fa-file-invoice-dollar', label: 'Ctas. Corrientes', page: 'cuentas-corrientes' },
+      { href: '/cotizaciones', icon: 'fa-exchange-alt', label: 'Cotizaciones', page: 'cotizaciones' },
+    ] : []),
   ] : []
 
-  // Liquidaciones: todos los roles autenticados (vendedor ve las suyas, superiores ven todas)
-  const liquidacionesNavItems = [
-    { href: '/liquidaciones', icon: 'fa-file-invoice-dollar', label: 'Liquidaciones', page: 'liquidaciones' },
-  ]
+  // Liquidaciones: todos excepto observador (no tiene liquidaciones propias)
+  const liquidacionesNavItems = !esObservador ? [
+    { href: rol === 'vendedor' ? '/liquidaciones/pendientes' : '/liquidaciones', icon: 'fa-file-invoice-dollar', label: 'Liquidaciones', page: 'liquidaciones' },
+  ] : []
 
   // Admin: solo gerente ve usuarios; gerente y administración ven proveedores
   const adminNavItems: {href:string;icon:string;label:string;page:string}[] = []
-  if (rol === 'gerente' || rol === 'administracion') {
+  if (rol === 'gerente' || rol === 'administracion' || rol === 'observador') {
     adminNavItems.push({ href: '/proveedores', icon: 'fa-building', label: 'Proveedores', page: 'proveedores' })
   }
   if (rol === 'gerente') {
@@ -77,6 +80,7 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
     administracion: 'linear-gradient(135deg,#1d4ed8,#0ea5e9)',
     supervisor:     'linear-gradient(135deg,#b45309,#f59e0b)',
     vendedor:       '#fff7ed',
+    observador:     'linear-gradient(135deg,#374151,#6b7280)',
   }
   const rolBadgeText: Record<string, string> = {
     gerente: 'white', administracion: 'white', supervisor: 'white', vendedor: '#c2410c'
