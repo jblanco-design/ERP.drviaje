@@ -2307,6 +2307,9 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       WHERE ta.proveedor_id = ?
       ORDER BY ta.created_at DESC
     `).bind(provId).all()
+
+    // Servicios pendientes de pago del proveedor
+    const serviciosPendientes = await c.env.DB.prepare(`
       SELECT
         s.id, s.tipo_servicio, s.descripcion, s.nro_ticket,
         s.costo_original, s.moneda_origen, s.fecha_inicio,
