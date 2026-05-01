@@ -2156,7 +2156,62 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
     // Si el método es tarjeta: registrar en cuenta corriente con estado 'pendiente'
     // y las TCs individuales — el egreso real se registra al autorizar
     if (metodo === 'tarjeta') {
-      // Parsear las TCs enviadas (campo tc_ultimos4[] y tc_monto[])
+      // Detectar si se está usando una TC de cliente ya existente (asignación previa)
+      const tcAsignacionId = body['tc_asignacion_id'] ? Number(body['tc_asignacion_id']) : null
+
+      if (tcAsignacionId) {
+        // ── Flujo TC existente (cruzamiento): usar la asignación ya creada ──
+        // Verificar que la asignación existe y está disponible
+        const asig = await c.env.DB.prepare(`
+          SELECT ta.*, ct.ultimos_4, ct.banco_emisor, ct.monto as tc_monto, ct.moneda as tc_moneda, ct.id as ct_id
+          FROM tarjeta_asignaciones ta
+          JOIN cliente_tarjetas ct ON ct.id = ta.cliente_tarjeta_id
+          WHERE ta.id = ? AND ta.proveedor_id = ? AND ta.estado = 'pagado' AND ct.estado = 'autorizada'
+        `).bind(tcAsignacionId, proveedorId).first() as any
+
+        if (!asig) {
+          const backUrl = `/tesoreria/proveedores?proveedor_id=${proveedorId}&error=tc_no_disponible`
+          return c.redirect(backUrl)
+        }
+
+        // Registrar crédito confirmado en cuenta corriente del proveedor
+        // usando el saldo a favor que ya estaba disponible (débito id=9)
+        const ccResult = await c.env.DB.prepare(`
+          INSERT INTO proveedor_cuenta_corriente
+            (proveedor_id, tipo, metodo, monto, moneda, concepto, referencia, estado, usuario_id, servicios_ids)
+          VALUES (?, 'credito', 'tarjeta', ?, ?, ?, ?, 'confirmado', ?, ?)
+        `).bind(proveedorId, monto, moneda, conceptoCompleto, referencia, user.id, serviciosStr).run()
+
+        // Registrar egreso en caja vinculado a la TC existente
+        await c.env.DB.prepare(`
+          INSERT INTO movimientos_caja
+            (tipo, metodo, moneda, monto, cotizacion, monto_uyu, proveedor_id, concepto, usuario_id, fecha)
+          VALUES ('egreso','tarjeta',?,?,1,?,?,?,?,datetime('now'))
+        `).bind(moneda, monto, monto, proveedorId,
+          `TC autorizada **** ${asig.ultimos_4} (cruzamiento) — ${serviciosIds.length} servicio(s)`,
+          user.id
+        ).run()
+
+        // Marcar servicios — pagado completo o parcial según montos
+        for (const sId of serviciosIds) {
+          const svc = await c.env.DB.prepare('SELECT costo_original FROM servicios WHERE id = ?').bind(sId).first() as any
+          const costo = Number(svc?.costo_original || 0)
+          // Calcular monto asignado a este servicio
+          const montoAsigSvc = serviciosIds.length === 1 ? monto : (monto / serviciosIds.length)
+          const estadoPago = montoAsigSvc >= costo - 0.01 ? 'pagado' : 'parcial'
+          const prepago = montoAsigSvc >= costo - 0.01 ? 1 : 0
+          await c.env.DB.prepare(
+            `UPDATE servicios SET prepago_realizado = ?, estado_pago_proveedor = ?
+             ${nroFacturaProv ? ', nro_factura_proveedor = ?, fecha_factura_proveedor = date(\'now\')' : ''}
+             WHERE id = ?`
+          ).bind(...(nroFacturaProv ? [prepago, estadoPago, nroFacturaProv, sId] : [prepago, estadoPago, sId])).run()
+        }
+
+        const backUrl = `/tesoreria/proveedores?proveedor_id=${proveedorId}&ok=1`
+        return c.redirect(backUrl)
+      }
+
+      // ── Flujo TC nueva (proveedor): crear proveedor_tarjeta ──
       const tc4Raw   = body['tc_ultimos4']
       const tcMRaw   = body['tc_monto']
       const tcBRaw   = body['tc_banco']
@@ -2980,6 +3035,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
                         </div>
                       `).join('')}
                     <div style="font-size:11px;color:#065f46;"><i class="fas fa-info-circle"></i> Al usar una tarjeta, se precarga en el formulario de abajo.</div>
+                    <div id="svc-aviso-tc-existente" style="display:none;margin-top:6px;font-size:12px;font-weight:600;color:#059669;background:#f0fdf4;padding:6px 10px;border-radius:6px;border:1px solid #6ee7b7;"></div>
                   </div>
                 ` : ''}
 
@@ -3212,7 +3268,18 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
         }
 
         function usarTCDisponible(ult4, banco, monto, asigId) {
-          // Precargar el primer campo de TC con los datos de la tarjeta disponible
+          // Marcar que se está usando una TC existente (no crear nueva)
+          let hiddenTcId = document.getElementById('svc-hidden-tc-existente')
+          if (!hiddenTcId) {
+            hiddenTcId = document.createElement('input')
+            hiddenTcId.type = 'hidden'
+            hiddenTcId.id = 'svc-hidden-tc-existente'
+            hiddenTcId.name = 'tc_asignacion_id'
+            document.getElementById('form-pagar-svc').appendChild(hiddenTcId)
+          }
+          hiddenTcId.value = asigId
+
+          // Precargar el campo de TC con los datos para mostrar al usuario
           const lista = document.getElementById('svc-lista-tc')
           if (!lista) return
           const row = lista.querySelector('.svc-fila-tc')
@@ -3220,14 +3287,20 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
             const inpUlt4  = row.querySelector('.svc-tc-ult4')
             const inpBanco = row.querySelector('input[name="tc_banco"]')
             const inpMonto = row.querySelector('.svc-tc-monto')
-            if (inpUlt4)  inpUlt4.value  = ult4
-            if (inpBanco) inpBanco.value = banco
+            if (inpUlt4)  { inpUlt4.value = ult4; inpUlt4.readOnly = true; inpUlt4.style.background='#f0fdf4'; }
+            if (inpBanco) { inpBanco.value = banco; inpBanco.readOnly = true; inpBanco.style.background='#f0fdf4'; }
             if (inpMonto) { inpMonto.value = monto; calcSvcTC() }
           }
           // Precargar monto total
           const elMonto = document.getElementById('svc-monto-total')
           if (elMonto && (!elMonto.value || parseFloat(elMonto.value) === 0)) {
             elMonto.value = monto
+          }
+          // Aviso visual
+          const aviso = document.getElementById('svc-aviso-tc-existente')
+          if (aviso) {
+            aviso.style.display = 'block'
+            aviso.innerHTML = '<i class="fas fa-check-circle" style="color:#059669;"></i> Usando TC **** ' + ult4 + ' ya registrada — no se creará una nueva tarjeta.'
           }
         }
 
