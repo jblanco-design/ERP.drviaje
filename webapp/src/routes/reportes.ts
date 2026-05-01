@@ -868,7 +868,7 @@ reportes.get('/reportes', async (c) => {
 
                 return `
                   <tr>
-                    <td><a href="/files/${f.id}" style="color:#7B3FA0;font-weight:700;">#${esc(f.numero)}</a></td>
+                    <td><a href="/files/${f.id}" style="color:#7B3FA0;font-weight:700;">#${esc(f.numero).replace(/^\d{4}/,'')}</a></td>
                     <td style="font-size:12px;">${(f.fecha_apertura||'').split('T')[0]}</td>
                     <td style="font-size:12px;">${esc(f.cliente)}</td>
                     <td style="font-size:12px;">${esc(f.destino_principal||'—')}</td>
