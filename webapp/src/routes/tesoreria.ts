@@ -387,7 +387,7 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
 
   // ── Validación de monto ──────────────────────────────────────
   const monto = Number(b.monto)
-  const cot   = Math.max(Number(b.cotizacion || 1), 0.0001)
+  let cot     = Math.max(Number(b.cotizacion || 1), 0.0001)
   if (!isFinite(monto) || monto <= 0) {
     return c.redirect('/tesoreria?error=monto_invalido')
   }
@@ -404,6 +404,30 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
     if (!fileCheck) return c.redirect('/tesoreria?error=file_no_encontrado')
     if (!isAdminOrAbove(user.rol) && fileCheck.vendedor_id != user.id) {
       return c.redirect('/tesoreria?error=sin_permiso')
+    }
+  }
+
+  // ── Validación de cotización para transacciones en UYU ───────
+  // Si la moneda es UYU, debe existir cotización del día cargada en el sistema.
+  // Si no existe, se bloquea la transacción para evitar mezcla de monedas.
+  if (moneda === 'UYU') {
+    const hoy = new Date().toISOString().split('T')[0]
+    const cotHoy = await c.env.DB.prepare(`
+      SELECT valor FROM cotizaciones
+      WHERE moneda_origen = 'USD' AND moneda_destino = 'UYU' AND fecha = ?
+      LIMIT 1
+    `).bind(hoy).first() as any
+
+    if (!cotHoy) {
+      const redirectErr = safeFileId
+        ? `/files/${safeFileId}?error=sin_cotizacion`
+        : '/tesoreria?error=sin_cotizacion'
+      return c.redirect(redirectErr)
+    }
+
+    // Si el usuario dejó cotización en blanco o en 1, usar la cotización oficial del día
+    if (!b.cotizacion || Number(b.cotizacion) <= 1.5) {
+      cot = Number(cotHoy.valor)
     }
   }
 
