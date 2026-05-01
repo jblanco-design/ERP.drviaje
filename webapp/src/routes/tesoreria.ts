@@ -1084,6 +1084,7 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
           if (!saldosPorFile[fid]) saldosPorFile[fid] = { ingresado: 0, gastado: 0, disponible: 0, moneda: 'USD' }
         }
       }
+    } // end if (provId)
 
     const totalPendienteProveedor = serviciosPendientes
       .filter((s: any) => !s.prepago_realizado)
