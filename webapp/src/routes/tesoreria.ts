@@ -2294,8 +2294,19 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
     const totalCreditos   = totalPagado
     const totalDeuda      = totalDebitos
 
-    // Servicios pendientes de pago del proveedor
-    const serviciosPendientes = await c.env.DB.prepare(`
+    // TCs de clientes asignadas como saldo a favor a este proveedor
+    const tcClientesSaldo = await c.env.DB.prepare(`
+      SELECT ta.id as asig_id, ta.estado as asig_estado, ta.monto, ta.moneda, ta.notas,
+             ct.id as tc_id, ct.ultimos_4, ct.banco_emisor, ct.estado as tc_estado,
+             COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre,
+             f.numero as file_numero, f.id as file_id
+      FROM tarjeta_asignaciones ta
+      JOIN cliente_tarjetas ct ON ct.id = ta.cliente_tarjeta_id
+      JOIN clientes c ON c.id = ct.cliente_id
+      LEFT JOIN files f ON f.id = ct.file_id
+      WHERE ta.proveedor_id = ?
+      ORDER BY ta.created_at DESC
+    `).bind(provId).all()
       SELECT
         s.id, s.tipo_servicio, s.descripcion, s.nro_ticket,
         s.costo_original, s.moneda_origen, s.fecha_inicio,
@@ -2583,6 +2594,81 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
 
         <!-- Columna derecha: Cuenta Corriente -->
         <div>
+          <!-- Panel: Saldo a Favor por TC de Cliente -->
+          ${(tcClientesSaldo.results as any[]).length > 0 ? `
+            <div class="card" style="margin-bottom:16px;border:2px solid #d1fae5;">
+              <div class="card-header" style="background:#f0fdf4;">
+                <span class="card-title" style="font-size:13px;">
+                  <i class="fas fa-credit-card" style="color:#059669;"></i> Saldo a Favor por TC de Cliente
+                  <span style="background:#059669;color:white;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:6px;">
+                    ${(tcClientesSaldo.results as any[]).filter((t:any) => t.asig_estado === 'pagado').length} disponible(s)
+                  </span>
+                </span>
+                <span style="font-size:11px;color:#059669;font-weight:700;">TC de clientes cobradas y asignadas</span>
+              </div>
+              <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;">
+                  <thead>
+                    <tr style="background:#f0fdf4;font-size:10px;color:#6b7280;text-transform:uppercase;">
+                      <th style="padding:6px 10px;text-align:left;">Cliente</th>
+                      <th style="padding:6px 10px;text-align:left;">Tarjeta</th>
+                      <th style="padding:6px 10px;text-align:left;">File</th>
+                      <th style="padding:6px 10px;text-align:right;">Monto</th>
+                      <th style="padding:6px 10px;text-align:center;">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${(tcClientesSaldo.results as any[]).map((t: any) => {
+                      const disponible = t.asig_estado === 'pagado' && t.tc_estado === 'autorizada'
+                      const pendiente  = t.tc_estado === 'pendiente'
+                      const bg = disponible ? '#f0fdf4' : pendiente ? '#fffbeb' : '#f9fafb'
+                      const estadoLabel = disponible ? '✓ Disponible' : pendiente ? '⏳ Pendiente auth.' : t.asig_estado
+                      const estadoColor = disponible ? '#059669' : pendiente ? '#d97706' : '#6b7280'
+                      const estadoBg    = disponible ? '#d1fae5' : pendiente ? '#fef3c7' : '#f3f4f6'
+                      return `
+                        <tr style="background:${bg};border-bottom:1px solid #e5e7eb;">
+                          <td style="padding:8px 10px;font-size:13px;font-weight:600;">${esc(t.cliente_nombre)}</td>
+                          <td style="padding:8px 10px;font-size:13px;">
+                            <i class="fas fa-credit-card" style="color:#EC008C;"></i>
+                            <strong>**** ${esc(t.ultimos_4)}</strong>
+                            <span style="font-size:11px;color:#9ca3af;"> ${esc(t.banco_emisor||'')}</span>
+                          </td>
+                          <td style="padding:8px 10px;font-size:12px;">
+                            ${t.file_id ? `<a href="/files/${t.file_id}" style="color:#7B3FA0;font-weight:700;">#${esc(t.file_numero)}</a>` : '—'}
+                          </td>
+                          <td style="padding:8px 10px;text-align:right;font-weight:800;font-size:14px;color:#059669;">
+                            $${Number(t.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} <span style="font-size:11px;font-weight:400;">${esc(t.moneda||'USD')}</span>
+                          </td>
+                          <td style="padding:8px 10px;text-align:center;">
+                            <span style="font-size:11px;font-weight:700;color:${estadoColor};background:${estadoBg};padding:3px 8px;border-radius:8px;">
+                              ${estadoLabel}
+                            </span>
+                          </td>
+                        </tr>
+                      `
+                    }).join('')}
+                  </tbody>
+                  <tfoot>
+                    <tr style="background:#f0fdf4;border-top:2px solid #d1fae5;">
+                      <td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:#065f46;">TOTAL SALDO DISPONIBLE</td>
+                      <td style="padding:8px 10px;text-align:right;font-size:15px;font-weight:800;color:#059669;">
+                        $${(tcClientesSaldo.results as any[])
+                          .filter((t:any) => t.asig_estado === 'pagado' && t.tc_estado === 'autorizada')
+                          .reduce((s:number, t:any) => s + Number(t.monto||0), 0)
+                          .toLocaleString('es-UY',{minimumFractionDigits:2, maximumFractionDigits:2})} USD
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div style="padding:10px 14px;background:#ecfdf5;font-size:12px;color:#065f46;border-top:1px solid #d1fae5;">
+                <i class="fas fa-info-circle"></i>
+                Los saldos <strong>Disponibles</strong> pueden usarse al registrar un pago a este proveedor seleccionando el método <strong>"Saldo cuenta corriente"</strong>.
+              </div>
+            </div>
+          ` : ''}
+
           <!-- Panel de Tarjetas (siempre visible si hay alguna) -->
           ${todasTarjetas.results.length > 0 ? `
             <div class="card" style="margin-bottom:16px;border:2px solid ${tarjetasPendientes.results.length > 0 ? '#fde68a' : '#e5e7eb'};">
