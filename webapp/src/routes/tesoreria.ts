@@ -2922,6 +2922,28 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
               <!-- Panel TCs inline -->
               <div id="svc-panel-tc" style="display:none;border:2px solid #c4b5fd;border-radius:10px;padding:12px;margin-bottom:12px;background:#faf7ff;">
                 <div style="font-size:12px;font-weight:700;color:#5a2d75;margin-bottom:8px;"><i class="fas fa-credit-card" style="color:#EC008C;"></i> TARJETAS DE CRÉDITO</div>
+
+                ${(tcClientesSaldo.results as any[]).filter((t: any) => t.asig_estado === 'pagado' && t.tc_estado === 'autorizada').length > 0 ? `
+                  <div style="background:#f0fdf4;border:1px solid #6ee7b7;border-radius:8px;padding:10px;margin-bottom:10px;">
+                    <div style="font-size:11px;font-weight:700;color:#065f46;margin-bottom:8px;"><i class="fas fa-check-circle"></i> TARJETAS DISPONIBLES DE CLIENTES</div>
+                    ${(tcClientesSaldo.results as any[])
+                      .filter((t: any) => t.asig_estado === 'pagado' && t.tc_estado === 'autorizada')
+                      .map((t: any) => `
+                        <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:white;border:1px solid #d1fae5;border-radius:6px;margin-bottom:6px;">
+                          <i class="fas fa-credit-card" style="color:#EC008C;font-size:13px;"></i>
+                          <span style="font-weight:700;font-size:13px;">**** ${esc(t.ultimos_4)}</span>
+                          <span style="font-size:11px;color:#6b7280;">${esc(t.banco_emisor||'')} — ${esc(t.cliente_nombre)}</span>
+                          <span style="margin-left:auto;font-weight:800;color:#059669;font-size:13px;">$${Number(t.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${esc(t.moneda||'USD')}</span>
+                          <button type="button" onclick="usarTCDisponible('${t.ultimos_4}','${esc(t.banco_emisor||'')}','${t.monto}','${t.asig_id}')"
+                            style="padding:4px 12px;background:#059669;color:white;border:none;border-radius:5px;font-size:11px;cursor:pointer;white-space:nowrap;">
+                            <i class="fas fa-check"></i> Usar esta
+                          </button>
+                        </div>
+                      `).join('')}
+                    <div style="font-size:11px;color:#065f46;"><i class="fas fa-info-circle"></i> Al usar una tarjeta, se precarga en el formulario de abajo.</div>
+                  </div>
+                ` : ''}
+
                 <div id="svc-lista-tc">
                   <div class="svc-fila-tc" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:6px;align-items:end;margin-bottom:6px;">
                     <div><label style="font-size:10px;font-weight:700;color:#5a2d75;display:block;margin-bottom:2px;">ÚLTIMOS 4</label>
@@ -3147,6 +3169,26 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
             el.innerHTML = '<span style="color:#059669;font-weight:700;">✅ Saldo cubre el total del pago</span>'
           } else {
             el.innerHTML = ''
+          }
+        }
+
+        function usarTCDisponible(ult4, banco, monto, asigId) {
+          // Precargar el primer campo de TC con los datos de la tarjeta disponible
+          const lista = document.getElementById('svc-lista-tc')
+          if (!lista) return
+          const row = lista.querySelector('.svc-fila-tc')
+          if (row) {
+            const inpUlt4  = row.querySelector('.svc-tc-ult4')
+            const inpBanco = row.querySelector('input[name="tc_banco"]')
+            const inpMonto = row.querySelector('.svc-tc-monto')
+            if (inpUlt4)  inpUlt4.value  = ult4
+            if (inpBanco) inpBanco.value = banco
+            if (inpMonto) { inpMonto.value = monto; calcSvcTC() }
+          }
+          // Precargar monto total
+          const elMonto = document.getElementById('svc-monto-total')
+          if (elMonto && (!elMonto.value || parseFloat(elMonto.value) === 0)) {
+            elMonto.value = monto
           }
         }
 
