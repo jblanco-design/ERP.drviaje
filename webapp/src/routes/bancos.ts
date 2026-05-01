@@ -8,7 +8,7 @@ type Bindings = { DB: D1Database }
 const bancos = new Hono<{ Bindings: Bindings }>()
 
 // ── Middleware: bancos solo para gerente y administración ────
-bancos.use('*', async (c, next) => {
+bancos.use('/bancos/*', async (c, next) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   if (!canAccessTesoreria(user.rol)) {
