@@ -398,7 +398,7 @@ clientes.get('/clientes/:id', async (c) => {
             <div style="background:white;border:1px solid #ede5f5;border-radius:10px;padding:12px;margin-bottom:8px;">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div>
-                  <strong style="color:#7B3FA0;">#${esc(f.numero)}</strong>
+                  <strong style="color:#7B3FA0;">#${esc(f.numero).replace(/^\d{4}/,'')}</strong>
                   <span style="font-size:12px;color:#6b7280;margin-left:6px;">${esc(f.destino_principal)||'—'}</span>
                   ${f.fecha_viaje ? `<span style="font-size:11px;color:#9ca3af;margin-left:6px;"><i class="fas fa-calendar"></i> ${esc(f.fecha_viaje)}</span>` : ''}
                   <br>
@@ -1084,7 +1084,7 @@ clientes.get('/clientes/:id/cuenta-corriente', async (c) => {
       const estColors: Record<string, string> = { en_proceso: '#0369a1', seniado: '#b45309', cerrado: '#065f46', anulado: '#991b1b' }
       return `
         <tr>
-          <td><a href="/files/${f.id}" style="color:#7B3FA0;font-weight:700;">#${esc(f.numero)}</a></td>
+          <td><a href="/files/${f.id}" style="color:#7B3FA0;font-weight:700;">#${esc(f.numero).replace(/^\d{4}/,'')}</a></td>
           <td style="font-size:12px;">${(f.fecha_apertura || '').split('T')[0]}</td>
           <td style="font-size:12px;">${esc(f.destino_principal || '—')}</td>
           <td style="font-size:12px;">${esc(f.vendedor || '—')}</td>
@@ -1150,7 +1150,7 @@ clientes.get('/clientes/:id/cuenta-corriente', async (c) => {
               return `
                 <div style="background:white;border:1.5px solid ${borde};border-radius:10px;padding:12px 14px;min-width:200px;max-width:240px;">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-                    <a href="/files/${f.id}" style="font-weight:700;color:#7B3FA0;text-decoration:none;font-size:13px;">#${esc(f.numero)}</a>
+                    <a href="/files/${f.id}" style="font-weight:700;color:#7B3FA0;text-decoration:none;font-size:13px;">#${esc(f.numero).replace(/^\d{4}/,'')}</a>
                     <span style="font-size:10px;font-weight:700;color:${estColors[f.estado]||'#374151'};background:#f3f4f6;padding:1px 6px;border-radius:6px;">${esc(f.estado)}</span>
                   </div>
                   <div style="font-size:11px;color:#9ca3af;margin-bottom:8px;">
