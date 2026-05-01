@@ -11,6 +11,13 @@ type Bindings = { DB: D1Database }
 
 const api = new Hono<{ Bindings: Bindings }>()
 
+// ── Helper: hash SHA-256 de la API key ────────────────────────
+async function hashApiKey(key: string): Promise<string> {
+  const data = new TextEncoder().encode(key)
+  const buf  = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('')
+}
+
 // ── Helper: verificar API key ─────────────────────────────────
 async function verificarApiKey(c: any): Promise<{ valida: boolean; nombre?: string; error?: string }> {
   const apiKey = c.req.header('X-API-Key') || c.req.header('x-api-key')
@@ -18,14 +25,15 @@ async function verificarApiKey(c: any): Promise<{ valida: boolean; nombre?: stri
   if (!apiKey) return { valida: false, error: 'Header X-API-Key requerido' }
   if (!apiKey.startsWith('drv_')) return { valida: false, error: 'API key con formato inválido' }
 
-  // Verificar que la key existe y está activa
+  // Hashear la key recibida y comparar contra el hash almacenado en BD
+  const keyHash = await hashApiKey(apiKey)
+
   const row = await c.env.DB.prepare(
     `SELECT id, nombre FROM api_keys WHERE key_hash = ? AND activa = 1 LIMIT 1`
-  ).bind(apiKey).first() as any
+  ).bind(keyHash).first() as any
 
   if (!row) return { valida: false, error: 'API key inválida o inactiva' }
 
-  // Actualizar último uso
   await c.env.DB.prepare(
     `UPDATE api_keys SET ultimo_uso = datetime('now') WHERE id = ?`
   ).bind(row.id).run().catch(() => {})
