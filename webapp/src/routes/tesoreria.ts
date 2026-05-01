@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { getUser, canAccessTesoreria, isAdminOrAbove } from '../lib/auth'
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
+import { getOrFetch } from '../lib/cache'
 
 type Bindings = { DB: D1Database }
 const tesoreria = new Hono<{ Bindings: Bindings }>()
@@ -65,9 +66,15 @@ tesoreria.get('/tesoreria', async (c) => {
     const metodoLabel: Record<string,string> = { transferencia:'Transferencia', efectivo:'Efectivo', cheque:'Cheque', tarjeta:'Tarjeta de Crédito', saldo_cc:'Saldo CC' }
 
     const clientes = await c.env.DB.prepare(`SELECT id, COALESCE(nombre || ' ' || apellido, nombre_completo) as nombre_completo FROM clientes ORDER BY apellido, nombre`).all()
-    const proveedores = await c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all()
+    const [proveedores, bancos] = await Promise.all([
+      getOrFetch('proveedores:activos', () =>
+        c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all()
+      ),
+      getOrFetch('bancos:activos', () =>
+        c.env.DB.prepare('SELECT id, nombre_entidad, moneda, activo FROM bancos ORDER BY activo DESC, nombre_entidad ASC').all()
+      ),
+    ])
     const fileLista = await c.env.DB.prepare(`SELECT id, numero FROM files WHERE estado != 'anulado' ORDER BY numero DESC LIMIT 50`).all()
-    const bancos = await c.env.DB.prepare('SELECT id, nombre_entidad, moneda, activo FROM bancos ORDER BY activo DESC, nombre_entidad ASC').all()
 
     const rows = movimientos.results.map((m: any) => `
       <tr>
@@ -984,8 +991,14 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
   const okMsg     = c.req.query('ok') || ''
 
   try {
-    const proveedores = await c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all()
-    const bancos = await c.env.DB.prepare('SELECT id, nombre_entidad, moneda, activo FROM bancos ORDER BY activo DESC, nombre_entidad ASC').all()
+    const [proveedores, bancos] = await Promise.all([
+      getOrFetch('proveedores:activos', () =>
+        c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all()
+      ),
+      getOrFetch('bancos:activos', () =>
+        c.env.DB.prepare('SELECT id, nombre_entidad, moneda, activo FROM bancos ORDER BY activo DESC, nombre_entidad ASC').all()
+      ),
+    ])
 
     // TC Pendientes de autorización (todas, para el panel global)
     const tcPendientesGlobal = await c.env.DB.prepare(`
@@ -1043,27 +1056,34 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
       `).bind(provId).all()
       serviciosPendientes = res.results as any[]
 
-      // Calcular saldo disponible por file (ingresos cobrados - pagos a proveedores ya realizados)
+      // Calcular saldo disponible por file — una sola query agregada
       const fileIds = [...new Set(serviciosPendientes.map((s: any) => s.file_id))] as number[]
-      for (const fid of fileIds) {
-        const saldoRow = await c.env.DB.prepare(`
+      if (fileIds.length > 0) {
+        const ph = fileIds.map(() => '?').join(',')
+        const saldoRows = await c.env.DB.prepare(`
           SELECT
-            COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END), 0) as total_ingresado,
-            COALESCE(SUM(CASE WHEN tipo = 'egreso'  THEN monto ELSE 0 END), 0) as total_gastado,
-            (SELECT moneda FROM files WHERE id = ?) as moneda_file
-          FROM movimientos_caja
-          WHERE file_id = ? AND anulado = 0
-        `).bind(fid, fid).first() as any
-        const ingresado = Number(saldoRow?.total_ingresado || 0)
-        const gastado   = Number(saldoRow?.total_gastado   || 0)
-        saldosPorFile[fid] = {
-          ingresado,
-          gastado,
-          disponible: ingresado - gastado,
-          moneda: saldoRow?.moneda_file || 'USD'
+            m.file_id,
+            COALESCE(SUM(CASE WHEN m.tipo = 'ingreso' THEN m.monto ELSE 0 END), 0) as total_ingresado,
+            COALESCE(SUM(CASE WHEN m.tipo = 'egreso'  THEN m.monto ELSE 0 END), 0) as total_gastado,
+            f.moneda as moneda_file
+          FROM movimientos_caja m
+          JOIN files f ON f.id = m.file_id
+          WHERE m.file_id IN (${ph}) AND m.anulado = 0
+          GROUP BY m.file_id, f.moneda
+        `).bind(...fileIds).all()
+        for (const row of saldoRows.results as any[]) {
+          saldosPorFile[row.file_id] = {
+            ingresado: Number(row.total_ingresado || 0),
+            gastado:   Number(row.total_gastado   || 0),
+            disponible: Number(row.total_ingresado || 0) - Number(row.total_gastado || 0),
+            moneda: row.moneda_file || 'USD'
+          }
+        }
+        // Files sin movimientos quedan con saldo 0
+        for (const fid of fileIds) {
+          if (!saldosPorFile[fid]) saldosPorFile[fid] = { ingresado: 0, gastado: 0, disponible: 0, moneda: 'USD' }
         }
       }
-    }
 
     const totalPendienteProveedor = serviciosPendientes
       .filter((s: any) => !s.prepago_realizado)
@@ -3427,6 +3447,15 @@ tesoreria.post('/tesoreria/tc/autorizar', async (c) => {
             `UPDATE servicios SET estado_pago_proveedor='pagado', prepago_realizado=1 WHERE id=?`
           ).bind(a.servicio_id).run().catch(() => {})
         }
+        // Si es saldo a favor al proveedor (sin servicio_id), confirmar en cuenta corriente
+        if (!a.servicio_id && a.notas === 'Saldo a favor proveedor') {
+          await c.env.DB.prepare(`
+            UPDATE proveedor_cuenta_corriente
+            SET estado = 'confirmado',
+                concepto = REPLACE(concepto, '(pendiente autorización)', '(autorizada)')
+            WHERE referencia = 'tarjeta_asignacion_saldo_' || ? AND estado = 'pendiente'
+          `).bind(a.id).run().catch(() => {})
+        }
       }
 
       // 3. Registrar egreso en caja (si tiene asignaciones con monto)
@@ -5628,12 +5657,13 @@ tesoreria.post('/tesoreria/desimputar', async (c) => {
 
     if (!pago) return c.redirect('/tesoreria/desimputar?error=pago_no_encontrado')
 
-    // 1. Revertir estado de servicios a pendiente
+    // 1. Revertir estado de servicios a pendiente — una sola query
     const svcIds = (pago.servicios_ids || '').split(',').map((s: string) => Number(s.trim())).filter((n: number) => n > 0)
-    for (const svcId of svcIds) {
+    if (svcIds.length > 0) {
+      const ph = svcIds.map(() => '?').join(',')
       await c.env.DB.prepare(
-        `UPDATE servicios SET prepago_realizado = 0, estado_pago_proveedor = 'pendiente', monto_tc_asignado = 0 WHERE id = ?`
-      ).bind(svcId).run().catch(() => {})
+        `UPDATE servicios SET prepago_realizado = 0, estado_pago_proveedor = 'pendiente', monto_tc_asignado = 0 WHERE id IN (${ph})`
+      ).bind(...svcIds).run().catch(() => {})
     }
 
     // 2. Anular movimiento de caja si existe
@@ -5660,21 +5690,22 @@ tesoreria.post('/tesoreria/desimputar', async (c) => {
       user.id, pago.servicios_ids || ''
     ).run()
 
-    // 5. Actualizar totales del file si corresponde
+    // 5. Actualizar totales de los files afectados — en paralelo
     if (svcIds.length > 0) {
+      const ph2 = svcIds.map(() => '?').join(',')
       const fileRows = await c.env.DB.prepare(
-        `SELECT DISTINCT file_id FROM servicios WHERE id IN (${svcIds.map(() => '?').join(',')})` 
+        `SELECT DISTINCT file_id FROM servicios WHERE id IN (${ph2})`
       ).bind(...svcIds).all().catch(() => ({ results: [] }))
-      for (const fr of (fileRows.results as any[])) {
-        if (!fr.file_id) continue
+      const fileIdsAfect = (fileRows.results as any[]).map((r: any) => r.file_id).filter(Boolean)
+      await Promise.all(fileIdsAfect.map(async (fid: number) => {
         const totals = await c.env.DB.prepare(`
           SELECT COALESCE(SUM(precio_venta),0) as tv, COALESCE(SUM(costo_original),0) as tc
           FROM servicios WHERE file_id = ? AND estado != 'cancelado'
-        `).bind(fr.file_id).first() as any
+        `).bind(fid).first() as any
         await c.env.DB.prepare(
           `UPDATE files SET total_venta = ?, total_costo = ?, updated_at = datetime('now') WHERE id = ?`
-        ).bind(totals?.tv || 0, totals?.tc || 0, fr.file_id).run().catch(() => {})
-      }
+        ).bind(totals?.tv || 0, totals?.tc || 0, fid).run().catch(() => {})
+      }))
     }
 
     return c.redirect('/tesoreria/desimputar?ok=1')
