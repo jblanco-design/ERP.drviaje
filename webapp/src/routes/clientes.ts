@@ -497,7 +497,7 @@ clientes.post('/clientes/:id/editar', async (c) => {
     const nroDocumentoE = normalizarDocumento(tipoDoc2, String(b.nro_documento || '').trim())
     const telefonoE     = String(b.telefono || '').trim()
     if (!nroDocumentoE) return c.redirect(`/clientes/${id}/editar?error=documento_requerido`)
-    if (!telefonoE)     return c.redirect(`/clientes/${id}/editar?error=telefono_requerido`)
+    // telefono no es obligatorio en edición
 
     const TIPOS_DOC2 = ['CI', 'DNI', 'PAS', 'RUT', 'NIF', 'OTRO']
     const tipoDocDefault2 = esEmp ? 'RUT' : 'CI'
@@ -557,7 +557,8 @@ clientes.post('/clientes/:id/editar', async (c) => {
     ).run()
     return c.redirect(`/clientes/${id}`)
   } catch (e: any) {
-    return c.redirect(`/clientes/${id}/editar?error=1`)
+    console.error('[EDITAR CLIENTE]', e.message)
+    return c.redirect(`/clientes/${id}/editar?error=${encodeURIComponent(e.message?.substring(0,150) || 'error_interno')}`)
   }
 })
 
