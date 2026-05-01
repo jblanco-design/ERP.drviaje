@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { getUser, canAccessTesoreria, isAdminOrAbove } from '../lib/auth'
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
+import { invalidateCache } from '../lib/cache'
 
 type Bindings = { DB: D1Database }
 const bancos = new Hono<{ Bindings: Bindings }>()
@@ -517,6 +518,7 @@ bancos.post('/bancos', async (c) => {
   await c.env.DB.prepare(
     `INSERT INTO bancos (nombre_entidad, nro_cuenta, moneda, saldo_inicial, descripcion, activo) VALUES (?,?,?,?,?,1)`
   ).bind(nombreEntidad, nroCuenta, moneda, isFinite(saldoInicial) ? saldoInicial : 0, descripcion).run()
+  invalidateCache('bancos:activos')
   return c.redirect('/bancos?success=creada')
 })
 
@@ -544,7 +546,7 @@ bancos.post('/bancos/:id/editar', async (c) => {
   await c.env.DB.prepare(
     `UPDATE bancos SET nombre_entidad=?, nro_cuenta=?, moneda=?, saldo_inicial=?, descripcion=? WHERE id=?`
   ).bind(nombreEntidad, nroCuenta, moneda, isFinite(saldoInicial) ? saldoInicial : 0, descripcion, id).run()
-
+  invalidateCache('bancos:activos')
   return c.redirect('/bancos?success=actualizada')
 })
 
@@ -565,7 +567,7 @@ bancos.post('/bancos/:id/toggle-activo', async (c) => {
     if (!existe) return c.json({ error: 'Cuenta no encontrada' }, 404)
 
     await c.env.DB.prepare(`UPDATE bancos SET activo=? WHERE id=?`).bind(activo, id).run()
-
+    invalidateCache('bancos:activos')
     return c.json({ ok: true, activo })
   } catch (e: any) {
     return c.json({ ok: false, error: e.message }, 500)
