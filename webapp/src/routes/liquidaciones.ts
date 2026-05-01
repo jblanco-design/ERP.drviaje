@@ -344,7 +344,7 @@ liquidaciones.get('/liquidaciones/pendientes', async (c) => {
               <div>
                 <label style="font-size:11px;font-weight:700;color:#6b7280;">PERÍODO</label>
                 <input type="month" name="periodo" class="form-control" style="width:160px;"
-                       value="${new Date().toISOString().substring(0,7)}" required>
+                       value="${(() => { const h = new Date(); return new Date(h.getFullYear(), h.getMonth() - 1, 1).toISOString().substring(0,7) })()}" required>
               </div>
               <div>
                 <label style="font-size:11px;font-weight:700;color:#6b7280;">FECHA DE LIQUIDACIÓN</label>
