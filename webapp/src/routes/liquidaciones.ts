@@ -310,12 +310,17 @@ liquidaciones.get('/liquidaciones/pendientes', async (c) => {
               <tr>
                 <th>File</th><th>Cliente</th><th>Estado</th>
                 <th>Venta Total</th><th>Costo Total</th><th>Util. Total</th>
+                <th style="color:#7B3FA0;">% Util.</th>
                 <th>Util. Vendedor</th><th>Ya Liquidado</th>
                 <th style="color:#F7941D;">PENDIENTE</th><th>Compartido</th>
               </tr>
             </thead>
             <tbody>
-              ${vData.files.map(p => `
+              ${vData.files.map(p => {
+                const venta = Number(p.file.total_venta || 0)
+                const pctUtil = venta > 0 ? (p.utilTotal / venta * 100) : 0
+                const pctColor = pctUtil >= 10 ? '#059669' : pctUtil >= 5 ? '#d97706' : '#dc2626'
+                return `
                 <tr style="${Math.abs(p.pendiente) > 0 && p.pendiente < 0 ? 'background:#fff5f5;' : ''}">
                   <td><a href="/files/${p.file.id}" style="color:#7B3FA0;font-weight:700;">#${esc(p.file.numero)}</a></td>
                   <td style="font-size:12px;">${esc(p.file.cliente)}</td>
@@ -323,6 +328,9 @@ liquidaciones.get('/liquidaciones/pendientes', async (c) => {
                   <td style="font-size:12px;">${fmtUSD(Number(p.file.total_venta||0))}</td>
                   <td style="font-size:12px;color:#6b7280;">${fmtUSD(Number(p.file.total_costo||0))}</td>
                   <td style="font-size:12px;">${fmtUSD(p.utilTotal)}</td>
+                  <td style="font-size:12px;font-weight:700;color:${pctColor};">
+                    ${pctUtil.toFixed(1)}%
+                  </td>
                   <td style="font-size:12px;color:#7B3FA0;font-weight:600;">
                     ${fmtUSD(p.utilVendedor)}
                     ${p.esCompartido ? '<span style="font-size:9px;background:#e0e7ff;color:#3730a3;padding:1px 5px;border-radius:8px;margin-left:3px;">50%</span>' : ''}
@@ -333,7 +341,7 @@ liquidaciones.get('/liquidaciones/pendientes', async (c) => {
                     ${p.esCompartido ? `con ${esc(p.file.vendedor_nombre)}` : (p.file.compartido_con_nombre ? `con ${esc(p.file.compartido_con_nombre)}` : '—')}
                   </td>
                 </tr>
-              `).join('')}
+              `}).join('')}
             </tbody>
           </table>
         </div>
