@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { getUser, canSeeAllFiles, canReopenFile, canCloseAtLoss, canAnularFile, canAccessTesoreria, isSupervisorOrAbove, isAdminOrAbove, isGerente } from '../lib/auth'
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
+import { getOrFetch, invalidateCachePrefix } from '../lib/cache'
 
 type Bindings = { DB: D1Database }
 const files = new Hono<{ Bindings: Bindings }>()
@@ -753,9 +754,15 @@ files.get('/files/:id', async (c) => {
         ORDER BY ct.created_at DESC
       `).bind(id).all(),
 
-      c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all(),
-      c.env.DB.prepare('SELECT id, nombre FROM operadores WHERE activo=1 ORDER BY nombre').all(),
-      c.env.DB.prepare('SELECT id, nombre_entidad, moneda FROM bancos WHERE activo=1 ORDER BY nombre_entidad').all(),
+      getOrFetch('proveedores:activos', () =>
+        c.env.DB.prepare('SELECT id, nombre FROM proveedores WHERE activo=1 ORDER BY nombre').all()
+      ),
+      getOrFetch('operadores:activos', () =>
+        c.env.DB.prepare('SELECT id, nombre FROM operadores WHERE activo=1 ORDER BY nombre').all()
+      ),
+      getOrFetch('bancos:activos', () =>
+        c.env.DB.prepare('SELECT id, nombre_entidad, moneda FROM bancos WHERE activo=1 ORDER BY nombre_entidad').all()
+      ),
 
       c.env.DB.prepare(`
         SELECT atc.*, p.nombre as proveedor_nombre
