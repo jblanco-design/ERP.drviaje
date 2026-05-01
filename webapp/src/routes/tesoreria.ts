@@ -2078,6 +2078,7 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
     const concepto      = String(body.concepto || 'Pago a proveedor').trim().substring(0, 500)
     const referencia    = body.referencia ? String(body.referencia).trim().substring(0, 200) : ''
     const autorizadoPor = body.autorizado_por ? String(body.autorizado_por).trim().substring(0, 200) : null
+    const nroFacturaProv = body.nro_factura_proveedor ? String(body.nro_factura_proveedor).trim().substring(0, 100) : null
 
     if (serviciosIds.length === 0) {
       const baseUrl = proveedorId ? `/tesoreria/proveedores?proveedor_id=${proveedorId}&error=sin_servicios` : '/tesoreria/proveedores?error=sin_servicios'
@@ -2163,8 +2164,10 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
       // Marcar servicios como pagados
       for (const sId of serviciosIds) {
         await c.env.DB.prepare(
-          `UPDATE servicios SET prepago_realizado = 1, estado_pago_proveedor = 'pagado' WHERE id = ?`
-        ).bind(sId).run()
+          `UPDATE servicios SET prepago_realizado = 1, estado_pago_proveedor = 'pagado'
+           ${nroFacturaProv ? ', nro_factura_proveedor = ?, fecha_factura_proveedor = date(\'now\')' : ''}
+           WHERE id = ?`
+        ).bind(...(nroFacturaProv ? [nroFacturaProv, sId] : [sId])).run()
       }
 
       const backUrl = proveedorId
@@ -2191,8 +2194,10 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
 
     for (const sId of serviciosIds) {
       await c.env.DB.prepare(
-        `UPDATE servicios SET prepago_realizado = 1, estado_pago_proveedor = 'pagado' WHERE id = ?`
-      ).bind(sId).run()
+        `UPDATE servicios SET prepago_realizado = 1, estado_pago_proveedor = 'pagado'
+         ${nroFacturaProv ? ', nro_factura_proveedor = ?, fecha_factura_proveedor = date(\'now\')' : ''}
+         WHERE id = ?`
+      ).bind(...(nroFacturaProv ? [nroFacturaProv, sId] : [sId])).run()
     }
 
     const backUrl = proveedorId
@@ -2275,6 +2280,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
         s.costo_original, s.moneda_origen, s.fecha_inicio,
         s.fecha_limite_prepago, s.prepago_realizado,
         s.estado_pago_proveedor, COALESCE(s.monto_tc_asignado,0) as monto_tc_asignado,
+        s.nro_factura_proveedor, s.fecha_factura_proveedor,
         f.numero as file_numero, f.id as file_id,
         COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo, '(sin cliente)') as cliente_nombre,
         COALESCE((
@@ -2337,6 +2343,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
           <td style="padding:8px 12px;">
             <div style="font-weight:600;font-size:13px;">${esc(s.descripcion)}</div>
             ${s.nro_ticket ? `<div style="font-size:11px;color:#7B3FA0;">🎫 ${esc(s.nro_ticket)}</div>` : ''}
+            ${s.nro_factura_proveedor ? `<div style="font-size:11px;color:#065f46;font-weight:700;">🧾 FAC: ${esc(s.nro_factura_proveedor)}${s.fecha_factura_proveedor ? ' · '+s.fecha_factura_proveedor : ''}</div>` : ''}
           </td>
           <td style="padding:8px 12px;font-size:12px;">
             <a href="/files/${s.file_id}" style="color:#7B3FA0;font-weight:700;">#${esc(s.file_numero)}</a>
@@ -2843,6 +2850,10 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
               <div class="form-group">
                 <label class="form-label">CONCEPTO *</label>
                 <input type="text" name="concepto" required class="form-control" value="${esc('Pago a ' + proveedor.nombre)}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nº FACTURA PROVEEDOR</label>
+                <input type="text" name="nro_factura_proveedor" class="form-control" placeholder="Ej: FAC-2026-0042" style="background:#f0fdf4;">
               </div>
               <div class="form-group">
                 <label class="form-label">Nº COMPROBANTE</label>
