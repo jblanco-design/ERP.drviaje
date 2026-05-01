@@ -43,11 +43,6 @@ clientes.get('/clientes', async (c) => {
   const tipoFiltro  = c.req.query('tipo')      || ''  // 'empresa' | 'persona_fisica' | ''
   const conDeuda    = c.req.query('con_deuda') || ''
   try {
-    // Auto-aplicar migración 0017 si columnas no existen aún
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN tipo_cliente TEXT NOT NULL DEFAULT 'persona_fisica'`).run() } catch(_){}
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN vendedor_id INTEGER`).run() } catch(_){}
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN razon_social TEXT`).run() } catch(_){}
-    try { await c.env.DB.prepare(`ALTER TABLE clientes ADD COLUMN persona_contacto TEXT`).run() } catch(_){}
     let q = `SELECT c.*,
       COALESCE((SELECT SUM(f.total_venta) FROM files f WHERE f.cliente_id = c.id AND f.estado != 'anulado'),0) as total_venta,
       COALESCE((SELECT SUM(m.monto) FROM movimientos_caja m JOIN files f ON f.id = m.file_id WHERE f.cliente_id = c.id AND m.tipo='ingreso' AND m.anulado=0),0) as total_cobrado,
