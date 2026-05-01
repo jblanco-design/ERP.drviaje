@@ -38,11 +38,12 @@ function getBadgePago(estadoPago: string) {
 
 // Generar número de file
 async function generarNumeroFile(db: D1Database): Promise<string> {
-  const año = new Date().getFullYear()
-  const last = await db.prepare('SELECT numero FROM files WHERE numero LIKE ? ORDER BY id DESC LIMIT 1').bind(`${año}%`).first() as any
-  if (!last) return `${año}001`
-  const num = parseInt(last.numero.replace(String(año), '')) + 1
-  return `${año}${String(num).padStart(3, '0')}`
+  const last = await db.prepare('SELECT numero FROM files ORDER BY id DESC LIMIT 1').first() as any
+  if (!last) return '001'
+  // Extraer solo la parte numérica (ignorar prefijo de año si existe)
+  const soloNum = last.numero.replace(/^\d{4}/, '')
+  const num = parseInt(soloNum) + 1
+  return String(num).padStart(3, '0')
 }
 
 // ── Búsqueda de destinos (autocompletado) ─────────────────────────────────────
