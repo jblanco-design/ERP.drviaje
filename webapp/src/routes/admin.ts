@@ -26,11 +26,13 @@ admin.get('/usuarios', async (c) => {
       ${okMsg === 'password_cambiado' ? `<div class="alert alert-success" style="margin-bottom:16px;"><i class="fas fa-check-circle"></i> Contraseña actualizada correctamente.</div>` : ''}
       ${okMsg === 'usuario_eliminado' ? `<div class="alert alert-success" style="margin-bottom:16px;"><i class="fas fa-check-circle"></i> Usuario eliminado correctamente.</div>` : ''}
       ${okMsg === 'usuario_creado' ? `<div class="alert alert-success" style="margin-bottom:16px;"><i class="fas fa-check-circle"></i> Usuario creado correctamente.</div>` : ''}
+      ${okMsg === 'usuario_editado' ? `<div class="alert alert-success" style="margin-bottom:16px;"><i class="fas fa-check-circle"></i> Usuario actualizado correctamente.</div>` : ''}
       ${errorMsg === 'email_duplicado' ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> Ya existe un usuario con ese email.</div>` : ''}
       ${errorMsg === 'datos_incompletos' ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> Nombre y email son obligatorios.</div>` : ''}
       ${errorMsg === 'tiene_files' ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> No se puede eliminar el usuario porque tiene files asociados.</div>` : ''}
       ${errorMsg === 'no_self_delete' ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> No puedes eliminarte a ti mismo.</div>` : ''}
-      ${errorMsg && !['email_duplicado','datos_incompletos','password_cambiado','tiene_files','no_self_delete'].includes(errorMsg) ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> ${esc(decodeURIComponent(errorMsg))}</div>` : ''}
+      ${errorMsg === 'no_self_downgrade' ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> No puedes cambiar tu propio rol a uno diferente de Gerente.</div>` : ''}
+      ${errorMsg && !['email_duplicado','datos_incompletos','password_cambiado','tiene_files','no_self_delete','no_self_downgrade'].includes(errorMsg) ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> ${esc(decodeURIComponent(errorMsg))}</div>` : ''}
     `
 
     const rows = usuarios.results.map((u: any) => `
@@ -57,6 +59,12 @@ admin.get('/usuarios', async (c) => {
           <button onclick="resetPassword(${u.id}, '${esc(u.nombre)}')" class="btn btn-outline btn-sm" title="Cambiar contraseña">
             <i class="fas fa-key"></i>
           </button>
+          ${canManageUsers(user.rol) ? `
+            <button onclick="abrirEditarUsuario(${u.id}, '${esc(u.nombre)}', '${esc(u.email)}', '${esc(u.rol)}')"
+              class="btn btn-sm" style="background:#f3e8ff;color:#7B3FA0;border:1px solid #d8b4fe;" title="Editar nombre y rol">
+              <i class="fas fa-edit"></i>
+            </button>
+          ` : ''}
           ${u.id != user.id ? `
             <button onclick="toggleUsuario(${u.id}, ${u.activo})" class="btn btn-sm ${u.activo?'btn-danger':'btn-success'}" title="${u.activo?'Desactivar':'Activar'}">
               <i class="fas fa-${u.activo?'ban':'check'}"></i>
@@ -136,6 +144,7 @@ admin.get('/usuarios', async (c) => {
                   <option value="supervisor">👁 Supervisor — Ve todos los files y puede cerrar a pérdidas</option>
                   <option value="administracion">🔧 Administración — Ve y modifica ventas + admin, puede reabrir files</option>
                   <option value="gerente">⭐ Gerente — Acceso completo, gestión de usuarios</option>
+                  <option value="observador">👁️ Observador — Ve absolutamente todo, sin poder modificar nada</option>
                 </select>
               </div>
               <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:16px;font-size:12px;">
@@ -179,6 +188,46 @@ admin.get('/usuarios', async (c) => {
                 </div>
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-key"></i> Cambiar Contraseña</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal editar usuario (nombre + rol) -->
+      <div class="modal-overlay" id="modal-editar-usuario">
+        <div class="modal" style="max-width:460px;">
+          <div class="modal-header">
+            <span class="modal-title"><i class="fas fa-user-edit" style="color:#7B3FA0"></i> Editar Usuario</span>
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-editar-usuario').classList.remove('active')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" id="form-editar-usuario">
+              <input type="hidden" name="accion" value="editar">
+              <div class="form-group">
+                <label class="form-label">NOMBRE COMPLETO *</label>
+                <input type="text" name="nombre" id="edit-nombre" required class="form-control" placeholder="Nombre del usuario">
+              </div>
+              <div class="form-group">
+                <label class="form-label">EMAIL</label>
+                <input type="text" id="edit-email-display" disabled class="form-control" style="background:#f3f4f6;color:#6b7280;" placeholder="No se puede modificar el email">
+              </div>
+              <div class="form-group">
+                <label class="form-label">ROL *</label>
+                <select name="rol" id="edit-rol" required class="form-control">
+                  <option value="vendedor">🧑‍💼 Vendedor — Ve y gestiona solo sus propios files</option>
+                  <option value="supervisor">👁 Supervisor — Ve todos los files y puede cerrar a pérdidas</option>
+                  <option value="administracion">🔧 Administración — Ve y modifica ventas + admin</option>
+                  <option value="gerente">⭐ Gerente — Acceso completo, gestión de usuarios</option>
+                  <option value="observador">👁️ Observador — Ve absolutamente todo, sin poder modificar nada</option>
+                </select>
+                <div style="font-size:11px;color:#9ca3af;margin-top:4px;">
+                  <i class="fas fa-info-circle"></i> El cambio de rol tiene efecto inmediato al próximo login del usuario.
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:20px;">
+                <button type="submit" class="btn btn-primary" style="flex:1;"><i class="fas fa-save"></i> Guardar Cambios</button>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-editar-usuario').classList.remove('active')">Cancelar</button>
+              </div>
             </form>
           </div>
         </div>
@@ -242,6 +291,14 @@ admin.get('/usuarios', async (c) => {
           const visible = input.type === 'text'
           input.type  = visible ? 'password' : 'text'
           btn.innerHTML = visible ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>'
+        }
+
+        function abrirEditarUsuario(id, nombre, email, rol) {
+          document.getElementById('edit-nombre').value = nombre
+          document.getElementById('edit-email-display').value = email
+          document.getElementById('edit-rol').value = rol
+          document.getElementById('form-editar-usuario').action = '/usuarios/' + id + '/editar'
+          document.getElementById('modal-editar-usuario').classList.add('active')
         }
 
         function resetPassword(id, nombre) {
@@ -309,6 +366,36 @@ admin.post('/usuarios', async (c) => {
       return c.redirect('/usuarios?error=email_duplicado')
     }
     return c.redirect(`/usuarios?error=${encodeURIComponent('Error al crear usuario: ' + msg.substring(0, 120))}`)
+  }
+})
+
+// ── Editar nombre y rol de usuario ───────────────────────────
+admin.post('/usuarios/:id/editar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !canManageUsers(user.rol)) return c.redirect('/usuarios?error=sin_permiso')
+  const id = Number(c.req.param('id'))
+  const body = await c.req.parseBody()
+  const nombre = String(body.nombre || '').trim()
+  const rolNuevo = String(body.rol || '').trim()
+
+  const ROLES_PERMITIDOS = ['vendedor', 'supervisor', 'administracion', 'gerente', 'observador']
+  if (!nombre) return c.redirect('/usuarios?error=nombre_requerido')
+  if (!ROLES_PERMITIDOS.includes(rolNuevo)) return c.redirect('/usuarios?error=rol_invalido')
+
+  // No puede cambiarse a sí mismo a un rol inferior sin perder acceso
+  if (String(id) === String(user.id) && rolNuevo !== 'gerente') {
+    return c.redirect('/usuarios?error=no_self_downgrade')
+  }
+
+  try {
+    // rol_extendido guarda el valor real; rol mantiene compatibilidad con constraint
+    const rolBase = ['vendedor','gerente'].includes(rolNuevo) ? rolNuevo : 'gerente'
+    await c.env.DB.prepare(
+      `UPDATE usuarios SET nombre = ?, rol = ?, rol_extendido = ?, updated_at = datetime('now') WHERE id = ?`
+    ).bind(nombre, rolBase, rolNuevo, id).run()
+    return c.redirect('/usuarios?ok=usuario_editado')
+  } catch (e: any) {
+    return c.redirect(`/usuarios?error=${encodeURIComponent('Error al editar: ' + e.message.substring(0,100))}`)
   }
 })
 
