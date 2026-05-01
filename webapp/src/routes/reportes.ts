@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { getUser, canSeeReportes, canSeeAllFiles, isAdminOrAbove } from '../lib/auth'
 import { baseLayout } from '../lib/layout'
 import { esc } from '../lib/escape'
+import { getOrFetch } from '../lib/cache'
 
 type Bindings = { DB: D1Database }
 const reportes = new Hono<{ Bindings: Bindings }>()
@@ -79,234 +80,296 @@ reportes.get('/reportes', async (c) => {
   const filtroVendedor = !isGerente ? user.id : (vendedorId || null)
 
   try {
-    // Lista de vendedores para el selector (supervisor, admin y gerente)
-    const vendedores = isGerente
-      ? await c.env.DB.prepare(`SELECT id, nombre FROM usuarios WHERE rol IN ('vendedor','supervisor','administracion','gerente') AND email != 'gerente@drviaje.com' ORDER BY nombre`).all()
-      : { results: [] as any[] }
-    const proveedoresList = await c.env.DB.prepare(`SELECT id, nombre FROM proveedores WHERE activo = 1 ORDER BY nombre`).all()
+    // ── Datos estáticos desde caché ───────────────────────────
+    const [vendedores, proveedoresList] = await Promise.all([
+      isGerente
+        ? getOrFetch('vendedores:reporte', () =>
+            c.env.DB.prepare(`SELECT id, nombre FROM usuarios WHERE rol IN ('vendedor','supervisor','administracion','gerente') AND email != 'gerente@drviaje.com' ORDER BY nombre`).all()
+          )
+        : Promise.resolve({ results: [] as any[] }),
+      getOrFetch('proveedores:activos', () =>
+        c.env.DB.prepare(`SELECT id, nombre FROM proveedores WHERE activo = 1 ORDER BY nombre`).all()
+      ),
+    ])
 
-    // ── Métricas del período ─────────────────────────────
-    // Los files compartidos se dividen 50/50:
-    // - El dueño del file cuenta con 50% de venta/costo
-    // - El vendedor compartido cuenta con el otro 50%
-    const whereVendF     = filtroVendedor ? ' AND f.vendedor_id = ?' : ''   // para queries con alias f
-    const whereVendPlain  = filtroVendedor ? ' AND vendedor_id = ?' : ''     // para queries sin alias
+    const whereVendF     = filtroVendedor ? ' AND f.vendedor_id = ?' : ''
+    const whereVendPlain  = filtroVendedor ? ' AND vendedor_id = ?' : ''
     const paramVend: any[] = filtroVendedor ? [filtroVendedor] : []
 
-    let ventasMes: any
-    if (!filtroVendedor) {
-      // Sin filtro de vendedor: totales globales sin duplicar los compartidos
-      ventasMes = await c.env.DB.prepare(
-        `SELECT COALESCE(SUM(total_venta),0) as venta, COALESCE(SUM(total_costo),0) as costo,
-                COUNT(*) as total_files
-         FROM files WHERE estado NOT IN ('anulado') AND ${fechaCondPlain}`
-      ).first() as any
-    } else {
-      // Con filtro vendedor: suma files propios al 50% si están compartidos,
-      // más files compartidos con este vendedor al 50%
-      const vId = filtroVendedor
-      const [propios, compartidos] = await Promise.all([
-        c.env.DB.prepare(`
-          SELECT
-            COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as venta,
-            COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as costo,
-            COUNT(f.id) as total_files
-          FROM files f
-          LEFT JOIN file_compartido fc ON fc.file_id = f.id
-          WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCondPlain}
-        `).bind(vId).first() as any,
-        c.env.DB.prepare(`
-          SELECT
-            COALESCE(SUM(f.total_venta*0.5),0) as venta,
-            COALESCE(SUM(f.total_costo*0.5),0) as costo,
-            COUNT(f.id) as total_files
-          FROM files f
-          JOIN file_compartido fc ON fc.file_id = f.id AND fc.vendedor_id = ?
-          WHERE f.estado NOT IN ('anulado') AND ${fechaCondPlain}
-        `).bind(vId).first() as any,
-      ])
-      ventasMes = {
-        venta:       Number(propios?.venta||0) + Number(compartidos?.venta||0),
-        costo:       Number(propios?.costo||0) + Number(compartidos?.costo||0),
-        total_files: Number(propios?.total_files||0) + Number(compartidos?.total_files||0),
-      }
-    }
-
+    // ── Queries del período — todas en paralelo ───────────────
     const gastosCond = modoFecha === 'rango'
       ? `date(fecha) BETWEEN '${desde}' AND '${hasta}'`
       : `strftime('%Y-%m', fecha) = '${mes}'`
-    const gastosMes = (isGerente && !filtroVendedor)
-      ? await c.env.DB.prepare(`SELECT COALESCE(SUM(monto),0) as total FROM gastos_admin WHERE ${gastosCond} AND moneda='USD'`).first() as any
-      : { total: 0 }
+
+    // Evolución 6 meses: una sola query con GROUP BY en vez de 6 queries secuenciales
+    const [año, mesNum] = mes.split('-')
+    const meses6: string[] = []
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(parseInt(año), parseInt(mesNum) - 1 - i, 1)
+      meses6.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
+    }
+    const mesMin = meses6[0] + '-01'
+    const mesMaxDate = new Date(parseInt(meses6[5].split('-')[0]), parseInt(meses6[5].split('-')[1]), 0)
+    const mesMax = meses6[5] + '-' + String(mesMaxDate.getDate()).padStart(2, '0')
+
+    const evolucionQuery = !filtroVendedor
+      ? c.env.DB.prepare(`
+          SELECT strftime('%Y-%m', fecha_apertura) as mes,
+                 COALESCE(SUM(total_venta),0) as v,
+                 COALESCE(SUM(total_costo),0) as c,
+                 COUNT(*) as n
+          FROM files
+          WHERE estado NOT IN ('anulado')
+            AND date(fecha_apertura) BETWEEN '${mesMin}' AND '${mesMax}'
+          GROUP BY strftime('%Y-%m', fecha_apertura)
+        `).all()
+      : c.env.DB.prepare(`
+          SELECT strftime('%Y-%m', f.fecha_apertura) as mes,
+                 COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as v,
+                 COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as c,
+                 COUNT(f.id) as n
+          FROM files f
+          LEFT JOIN file_compartido fc ON fc.file_id = f.id
+          WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado')
+            AND date(f.fecha_apertura) BETWEEN '${mesMin}' AND '${mesMax}'
+          GROUP BY strftime('%Y-%m', f.fecha_apertura)
+        `).bind(filtroVendedor).all()
+
+    const evolucionCompQuery = filtroVendedor
+      ? c.env.DB.prepare(`
+          SELECT strftime('%Y-%m', f.fecha_apertura) as mes,
+                 COALESCE(SUM(f.total_venta*0.5),0) as v,
+                 COALESCE(SUM(f.total_costo*0.5),0) as c,
+                 COUNT(f.id) as n
+          FROM file_compartido fc
+          JOIN files f ON f.id = fc.file_id
+          WHERE fc.vendedor_id = ? AND f.estado NOT IN ('anulado')
+            AND date(f.fecha_apertura) BETWEEN '${mesMin}' AND '${mesMax}'
+          GROUP BY strftime('%Y-%m', f.fecha_apertura)
+        `).bind(filtroVendedor).all()
+      : Promise.resolve({ results: [] as any[] })
+
+    // Todas las queries del período en paralelo
+    const [
+      ventasMesRaw,
+      ventasMesComp,
+      gastosMesRaw,
+      filesPorEstadoRaw,
+      destinosData,
+      evolucionRaw,
+      evolucionCompRaw,
+      propiosRankRaw,
+      compartidosRankRaw,
+      filesDetalleRaw,
+      filesDetalleCompRaw,
+    ] = await Promise.all([
+      // Ventas propias del período
+      !filtroVendedor
+        ? c.env.DB.prepare(
+            `SELECT COALESCE(SUM(total_venta),0) as venta, COALESCE(SUM(total_costo),0) as costo, COUNT(*) as total_files
+             FROM files WHERE estado NOT IN ('anulado') AND ${fechaCondPlain}`
+          ).first()
+        : c.env.DB.prepare(`
+            SELECT
+              COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as venta,
+              COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as costo,
+              COUNT(f.id) as total_files
+            FROM files f
+            LEFT JOIN file_compartido fc ON fc.file_id = f.id
+            WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCondPlain}
+          `).bind(filtroVendedor).first(),
+
+      // Ventas compartidas del período
+      filtroVendedor
+        ? c.env.DB.prepare(`
+            SELECT
+              COALESCE(SUM(f.total_venta*0.5),0) as venta,
+              COALESCE(SUM(f.total_costo*0.5),0) as costo,
+              COUNT(f.id) as total_files
+            FROM files f
+            JOIN file_compartido fc ON fc.file_id = f.id AND fc.vendedor_id = ?
+            WHERE f.estado NOT IN ('anulado') AND ${fechaCondPlain}
+          `).bind(filtroVendedor).first()
+        : Promise.resolve(null),
+
+      // Gastos admin
+      (isGerente && !filtroVendedor)
+        ? c.env.DB.prepare(`SELECT COALESCE(SUM(monto),0) as total FROM gastos_admin WHERE ${gastosCond} AND moneda='USD'`).first()
+        : Promise.resolve({ total: 0 }),
+
+      // Files por estado
+      c.env.DB.prepare(
+        `SELECT estado, COUNT(*) as cantidad, COALESCE(SUM(total_venta),0) as total
+         FROM files WHERE estado NOT IN ('anulado') AND ${fechaCondPlain}${whereVendPlain} GROUP BY estado`
+      ).bind(...paramVend).all(),
+
+      // Top destinos
+      c.env.DB.prepare(`
+        SELECT s.destino_codigo, COUNT(*) as cantidad,
+               SUM(s.precio_venta) as total_venta, SUM(s.costo_original) as total_costo
+        FROM servicios s JOIN files f ON s.file_id = f.id
+        WHERE s.destino_codigo IS NOT NULL AND s.destino_codigo != ''
+          AND f.estado NOT IN ('anulado') AND ${fechaCond}${whereVendF}
+        GROUP BY s.destino_codigo ORDER BY total_venta DESC LIMIT 10
+      `).bind(...paramVend).all(),
+
+      // Evolución 6 meses (propios)
+      evolucionQuery,
+
+      // Evolución 6 meses (compartidos)
+      evolucionCompQuery,
+
+      // Ranking propios (solo gerente sin filtro)
+      (isGerente && !filtroVendedor)
+        ? c.env.DB.prepare(`
+            SELECT u.id, u.nombre,
+                   COUNT(f.id) as total_files,
+                   COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as total_venta,
+                   COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as total_costo
+            FROM usuarios u
+            LEFT JOIN files f ON f.vendedor_id = u.id
+              AND f.estado NOT IN ('anulado') AND ${fechaCond}
+            LEFT JOIN file_compartido fc ON fc.file_id = f.id
+            WHERE u.rol IN ('vendedor','supervisor','administracion','gerente') AND u.email != 'gerente@drviaje.com'
+            GROUP BY u.id, u.nombre
+          `).all()
+        : Promise.resolve({ results: [] as any[] }),
+
+      // Ranking compartidos (solo gerente sin filtro)
+      (isGerente && !filtroVendedor)
+        ? c.env.DB.prepare(`
+            SELECT fc.vendedor_id as id,
+                   COUNT(f.id) as total_files,
+                   COALESCE(SUM(f.total_venta*0.5),0) as total_venta,
+                   COALESCE(SUM(f.total_costo*0.5),0) as total_costo
+            FROM file_compartido fc
+            JOIN files f ON f.id = fc.file_id
+              AND f.estado NOT IN ('anulado') AND ${fechaCond}
+            GROUP BY fc.vendedor_id
+          `).all()
+        : Promise.resolve({ results: [] as any[] }),
+
+      // Files detalle propios
+      !filtroVendedor
+        ? c.env.DB.prepare(`
+            SELECT f.id, f.numero, f.estado, f.fecha_apertura, f.destino_principal,
+                   f.total_venta, f.total_costo, f.moneda,
+                   COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
+                   u.nombre as vendedor,
+                   fc2.vendedor_id as compartido_con_id,
+                   uc.nombre as compartido_con_nombre,
+                   NULL as es_compartido_con_yo
+            FROM files f
+            LEFT JOIN clientes cl ON f.cliente_id = cl.id
+            LEFT JOIN usuarios u ON f.vendedor_id = u.id
+            LEFT JOIN file_compartido fc2 ON fc2.file_id = f.id
+            LEFT JOIN usuarios uc ON uc.id = fc2.vendedor_id
+            WHERE f.estado NOT IN ('anulado') AND ${fechaCond}
+            ORDER BY f.fecha_apertura DESC LIMIT 200
+          `).all()
+        : c.env.DB.prepare(`
+            SELECT f.id, f.numero, f.estado, f.fecha_apertura, f.destino_principal,
+                   CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END as total_venta,
+                   CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END as total_costo,
+                   f.moneda,
+                   COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
+                   u.nombre as vendedor,
+                   fc.vendedor_id as compartido_con_id,
+                   uc.nombre as compartido_con_nombre,
+                   0 as es_compartido_con_yo
+            FROM files f
+            LEFT JOIN clientes cl ON f.cliente_id = cl.id
+            LEFT JOIN usuarios u ON f.vendedor_id = u.id
+            LEFT JOIN file_compartido fc ON fc.file_id = f.id
+            LEFT JOIN usuarios uc ON uc.id = fc.vendedor_id
+            WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCond}
+            ORDER BY f.fecha_apertura DESC LIMIT 200
+          `).bind(filtroVendedor).all(),
+
+      // Files detalle compartidos con el vendedor
+      filtroVendedor
+        ? c.env.DB.prepare(`
+            SELECT f.id, f.numero, f.estado, f.fecha_apertura, f.destino_principal,
+                   f.total_venta*0.5 as total_venta, f.total_costo*0.5 as total_costo,
+                   f.moneda,
+                   COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
+                   u.nombre as vendedor,
+                   NULL as compartido_con_id, NULL as compartido_con_nombre,
+                   1 as es_compartido_con_yo
+            FROM file_compartido fc
+            JOIN files f ON f.id = fc.file_id
+            LEFT JOIN clientes cl ON f.cliente_id = cl.id
+            LEFT JOIN usuarios u ON f.vendedor_id = u.id
+            WHERE fc.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCond}
+            ORDER BY f.fecha_apertura DESC LIMIT 200
+          `).bind(filtroVendedor).all()
+        : Promise.resolve({ results: [] as any[] }),
+    ])
+
+    // ── Procesar resultados ───────────────────────────────────
+    const ventasMesP = ventasMesRaw as any
+    const ventasMesC = ventasMesComp as any
+    const ventasMes = filtroVendedor
+      ? {
+          venta:       Number(ventasMesP?.venta||0) + Number(ventasMesC?.venta||0),
+          costo:       Number(ventasMesP?.costo||0) + Number(ventasMesC?.costo||0),
+          total_files: Number(ventasMesP?.total_files||0) + Number(ventasMesC?.total_files||0),
+        }
+      : ventasMesP
+
+    const gastosMes = gastosMesRaw as any
 
     const utilidadBruta = Number(ventasMes?.venta || 0) - Number(ventasMes?.costo || 0)
     const utilidadNeta  = utilidadBruta - Number(gastosMes?.total || 0)
 
-    // ── Files por estado ───────────────────────────────────
-    const filesPorEstado = await c.env.DB.prepare(
-      `SELECT estado, COUNT(*) as cantidad, COALESCE(SUM(total_venta),0) as total
-       FROM files WHERE estado NOT IN ('anulado') AND ${fechaCondPlain}${whereVendPlain} GROUP BY estado`
-    ).bind(...paramVend).all()
+    // Files por estado
     const estadosMap: Record<string, any> = {}
-    filesPorEstado.results.forEach((e: any) => { estadosMap[e.estado] = e })
+    filesPorEstadoRaw.results.forEach((e: any) => { estadosMap[e.estado] = e })
 
-    // ── Top destinos ────────────────────────────────────────
-    const destinosData = await c.env.DB.prepare(`
-      SELECT s.destino_codigo, COUNT(*) as cantidad,
-             SUM(s.precio_venta) as total_venta, SUM(s.costo_original) as total_costo
-      FROM servicios s JOIN files f ON s.file_id = f.id
-      WHERE s.destino_codigo IS NOT NULL AND s.destino_codigo != ''
-        AND f.estado NOT IN ('anulado') AND ${fechaCond}${whereVendF}
-      GROUP BY s.destino_codigo ORDER BY total_venta DESC LIMIT 10`
-    ).bind(...paramVend).all()
-
-    // ── Evolución últimos 6 meses (siempre por mes calendario) ────
-    const [año, mesNum] = mes.split('-')
-    const ultimosMeses: any[] = []
-    for (let i = 5; i >= 0; i--) {
-      const d  = new Date(parseInt(año), parseInt(mesNum) - 1 - i, 1)
-      const m  = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-      if (!filtroVendedor) {
-        const row = await c.env.DB.prepare(
-          `SELECT COALESCE(SUM(total_venta),0) as v, COALESCE(SUM(total_costo),0) as c, COUNT(*) as n
-           FROM files WHERE estado NOT IN ('anulado') AND strftime('%Y-%m', fecha_apertura) = '${m}'`
-        ).first() as any
-        ultimosMeses.push({ mes: m, venta: Number(row?.v || 0), costo: Number(row?.c || 0), files: Number(row?.n || 0) })
+    // Evolución 6 meses — construir desde resultados agregados
+    const evMap: Record<string, any> = {}
+    ;(evolucionRaw.results as any[]).forEach((r: any) => { evMap[r.mes] = { v: Number(r.v), c: Number(r.c), n: Number(r.n) } })
+    ;(evolucionCompRaw.results as any[]).forEach((r: any) => {
+      if (evMap[r.mes]) {
+        evMap[r.mes].v += Number(r.v); evMap[r.mes].c += Number(r.c); evMap[r.mes].n += Number(r.n)
       } else {
-        const [p, comp] = await Promise.all([
-          c.env.DB.prepare(`
-            SELECT COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as v,
-                   COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as c,
-                   COUNT(f.id) as n
-            FROM files f LEFT JOIN file_compartido fc ON fc.file_id = f.id
-            WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado') AND strftime('%Y-%m', f.fecha_apertura) = '${m}'
-          `).bind(filtroVendedor).first() as any,
-          c.env.DB.prepare(`
-            SELECT COALESCE(SUM(f.total_venta*0.5),0) as v, COALESCE(SUM(f.total_costo*0.5),0) as c, COUNT(f.id) as n
-            FROM file_compartido fc JOIN files f ON f.id = fc.file_id
-            WHERE fc.vendedor_id = ? AND f.estado NOT IN ('anulado') AND strftime('%Y-%m', f.fecha_apertura) = '${m}'
-          `).bind(filtroVendedor).first() as any,
-        ])
-        ultimosMeses.push({
-          mes, venta: Number(p?.v||0)+Number(comp?.v||0),
-          costo: Number(p?.c||0)+Number(comp?.c||0),
-          files: Number(p?.n||0)+Number(comp?.n||0)
-        })
+        evMap[r.mes] = { v: Number(r.v), c: Number(r.c), n: Number(r.n) }
       }
-    }
+    })
+    const ultimosMeses = meses6.map(m => ({
+      mes: m,
+      venta: evMap[m]?.v || 0,
+      costo: evMap[m]?.c || 0,
+      files: evMap[m]?.n || 0,
+    }))
 
-    // ── Ranking vendedores (solo gerente sin filtro) ──────────
+    // Ranking vendedores
     let vendedoresRanking: any[] = []
     if (isGerente && !filtroVendedor) {
-      // Files propios: si está compartido → 50%, si no → 100%
-      const propiosRank = await c.env.DB.prepare(`
-        SELECT u.id, u.nombre,
-               COUNT(f.id) as total_files,
-               COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as total_venta,
-               COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as total_costo
-        FROM usuarios u
-        LEFT JOIN files f ON f.vendedor_id = u.id
-          AND f.estado NOT IN ('anulado')
-          AND ${fechaCond}
-        LEFT JOIN file_compartido fc ON fc.file_id = f.id
-        WHERE u.rol IN ('vendedor','supervisor','administracion','gerente') AND u.email != 'gerente@drviaje.com'
-        GROUP BY u.id, u.nombre
-      `).all()
-
-      // Files donde este vendedor es el compartido (siempre 50%)
-      const compartidosRank = await c.env.DB.prepare(`
-        SELECT fc.vendedor_id as id,
-               COUNT(f.id) as total_files,
-               COALESCE(SUM(f.total_venta*0.5),0) as total_venta,
-               COALESCE(SUM(f.total_costo*0.5),0) as total_costo
-        FROM file_compartido fc
-        JOIN files f ON f.id = fc.file_id
-          AND f.estado NOT IN ('anulado')
-          AND ${fechaCond}
-        GROUP BY fc.vendedor_id
-      `).all()
-
-      // Fusionar ambas consultas
       const rankMap: Record<number, any> = {}
-      ;(propiosRank.results as any[]).forEach((r: any) => {
+      ;(propiosRankRaw.results as any[]).forEach((r: any) => {
         rankMap[r.id] = { id: r.id, nombre: r.nombre, total_files: Number(r.total_files), total_venta: Number(r.total_venta), total_costo: Number(r.total_costo) }
       })
-      ;(compartidosRank.results as any[]).forEach((r: any) => {
+      ;(compartidosRankRaw.results as any[]).forEach((r: any) => {
         if (rankMap[r.id]) {
           rankMap[r.id].total_files += Number(r.total_files)
           rankMap[r.id].total_venta += Number(r.total_venta)
           rankMap[r.id].total_costo += Number(r.total_costo)
         }
       })
-
-      vendedoresRanking = Object.values(rankMap).sort((a, b) => {
-        if (ordenRanking === 'utilidad') return (b.total_venta - b.total_costo) - (a.total_venta - a.total_costo)
-        return b.total_venta - a.total_venta
-      })
+      vendedoresRanking = Object.values(rankMap).sort((a, b) =>
+        ordenRanking === 'utilidad'
+          ? (b.total_venta - b.total_costo) - (a.total_venta - a.total_costo)
+          : b.total_venta - a.total_venta
+      )
     }
 
-    // ── Detalle de files del período ─────────────────────────
-    // Incluye files propios + files donde este vendedor es el compartido
+    // Files detalle
     let filesDetalle: any
     if (!filtroVendedor) {
-      filesDetalle = await c.env.DB.prepare(`
-        SELECT f.id, f.numero, f.estado, f.fecha_apertura, f.destino_principal,
-               f.total_venta, f.total_costo, f.moneda,
-               COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
-               u.nombre as vendedor,
-               fc2.vendedor_id as compartido_con_id,
-               uc.nombre as compartido_con_nombre,
-               NULL as es_compartido_con_yo
-        FROM files f
-        LEFT JOIN clientes cl ON f.cliente_id = cl.id
-        LEFT JOIN usuarios u ON f.vendedor_id = u.id
-        LEFT JOIN file_compartido fc2 ON fc2.file_id = f.id
-        LEFT JOIN usuarios uc ON uc.id = fc2.vendedor_id
-        WHERE f.estado NOT IN ('anulado') AND ${fechaCond}
-        ORDER BY f.fecha_apertura DESC LIMIT 200
-      `).all()
+      filesDetalle = filesDetalleRaw
     } else {
-      // Files propios del vendedor
-      const propiosDetalle = await c.env.DB.prepare(`
-        SELECT f.id, f.numero, f.estado, f.fecha_apertura, f.destino_principal,
-               CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END as total_venta,
-               CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END as total_costo,
-               f.moneda,
-               COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
-               u.nombre as vendedor,
-               fc.vendedor_id as compartido_con_id,
-               uc.nombre as compartido_con_nombre,
-               0 as es_compartido_con_yo
-        FROM files f
-        LEFT JOIN clientes cl ON f.cliente_id = cl.id
-        LEFT JOIN usuarios u ON f.vendedor_id = u.id
-        LEFT JOIN file_compartido fc ON fc.file_id = f.id
-        LEFT JOIN usuarios uc ON uc.id = fc.vendedor_id
-        WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCond}
-        ORDER BY f.fecha_apertura DESC LIMIT 200
-      `).bind(filtroVendedor).all()
-
-      // Files compartidos con este vendedor (él es el vendedor secundario)
-      const compartidosDetalle = await c.env.DB.prepare(`
-        SELECT f.id, f.numero, f.estado, f.fecha_apertura, f.destino_principal,
-               f.total_venta*0.5 as total_venta,
-               f.total_costo*0.5 as total_costo,
-               f.moneda,
-               COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '—') as cliente,
-               u.nombre as vendedor,
-               NULL as compartido_con_id,
-               NULL as compartido_con_nombre,
-               1 as es_compartido_con_yo
-        FROM file_compartido fc
-        JOIN files f ON f.id = fc.file_id
-        LEFT JOIN clientes cl ON f.cliente_id = cl.id
-        LEFT JOIN usuarios u ON f.vendedor_id = u.id
-        WHERE fc.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCond}
-        ORDER BY f.fecha_apertura DESC LIMIT 200
-      `).bind(filtroVendedor).all()
-
-      // Unir y ordenar
-      const todos = [...(propiosDetalle.results as any[]), ...(compartidosDetalle.results as any[])]
+      const todos = [...(filesDetalleRaw.results as any[]), ...(filesDetalleCompRaw.results as any[])]
       todos.sort((a, b) => (b.fecha_apertura || '').localeCompare(a.fecha_apertura || ''))
       filesDetalle = { results: todos.slice(0, 200) }
     }
