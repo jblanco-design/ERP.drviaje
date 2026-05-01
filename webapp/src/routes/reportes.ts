@@ -79,10 +79,10 @@ reportes.get('/reportes', async (c) => {
   const mes   = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
   const desde = safeDate(c.req.query('desde'), mes + '-01')
   const hastaRaw = c.req.query('hasta') || ''
-  const hasta = safeDate(hastaRaw || undefined, (() => {
+  const hasta = safeDate(hastaRaw || '', (() => {
     const [y, m2] = mes.split('-').map(Number)
     return `${mes}-${String(new Date(y, m2, 0).getDate()).padStart(2,'0')}`
-  })()
+  })())
 
   // Condición WHERE dinámica por fecha
   const fechaCond = modoFecha === 'rango'
