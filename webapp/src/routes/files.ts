@@ -1110,6 +1110,17 @@ files.get('/files/:id', async (c) => {
           <div><strong>No se puede cerrar el file</strong> — La utilidad es negativa (costo supera la venta). Solo un supervisor, administrador o gerente puede autorizar el cierre.</div>
         </div>
       ` : ''}
+      ${errorParam === 'sin_cotizacion' ? `
+        <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i class="fas fa-exchange-alt" style="font-size:18px;"></i>
+          <div>
+            <strong>No hay tipo de cambio cargado para hoy</strong> — 
+            Para registrar una transacción en pesos (UYU) es necesario que el tipo de cambio USD/UYU del día esté cargado en el sistema.
+            Pedile al gerente o administrador que actualice la cotización en 
+            <a href="/bancos/cotizaciones" style="color:#dc2626;font-weight:700;">Cotizaciones</a> antes de continuar.
+          </div>
+        </div>
+      ` : ''}
       ${errorParam === 'sin_permiso' ? `
         <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
           <i class="fas fa-lock" style="font-size:18px;"></i>
