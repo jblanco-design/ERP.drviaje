@@ -5,6 +5,22 @@ import { esc } from '../lib/escape'
 import { getOrFetch } from '../lib/cache'
 
 type Bindings = { DB: D1Database }
+
+// ── Validación de fechas — previene SQL injection via interpolación ──────────
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+const MONTH_REGEX = /^\d{4}-\d{2}$/
+
+function safeDate(val: string | undefined, fallback: string): string {
+  if (!val) return fallback
+  const clean = val.trim().substring(0, 10)
+  return DATE_REGEX.test(clean) ? clean : fallback
+}
+
+function safeMonth(val: string | undefined, fallback: string): string {
+  if (!val) return fallback
+  const clean = val.trim().substring(0, 7)
+  return MONTH_REGEX.test(clean) ? clean : fallback
+}
 const reportes = new Hono<{ Bindings: Bindings }>()
 
 // ── Middleware: reportes solo para supervisor, administración y gerente ──
@@ -60,10 +76,10 @@ reportes.get('/reportes', async (c) => {
   const modoFecha    = c.req.query('modo') === 'rango' ? 'rango' : 'mes'
 
   // Valores de fecha
-  const mes   = c.req.query('mes') || new Date().toISOString().substring(0, 7)
-  const desde = c.req.query('desde') || (mes + '-01')
+  const mes   = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
+  const desde = safeDate(c.req.query('desde'), mes + '-01')
   const hastaRaw = c.req.query('hasta') || ''
-  const hasta = hastaRaw || (() => {
+  const hasta = safeDate(hastaRaw || undefined, (() => {
     const [y, m2] = mes.split('-').map(Number)
     return `${mes}-${String(new Date(y, m2, 0).getDate()).padStart(2,'0')}`
   })()
@@ -962,13 +978,13 @@ reportes.get('/reportes', async (c) => {
 reportes.get('/reportes/exportar/ventas', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
-  const mes        = c.req.query('mes') || new Date().toISOString().substring(0, 7)
+  const mes        = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
   const vendedorId = c.req.query('vendedor_id') || (!canSeeAllFiles(user.rol) ? String(user.id) : '')
 
   try {
     const modoFecha  = c.req.query('modo') === 'rango' ? 'rango' : 'mes'
-    const desde      = c.req.query('desde') || (mes + '-01')
-    const hasta      = c.req.query('hasta') || (() => { const [y,m2]=mes.split('-').map(Number); return mes+'-'+String(new Date(y,m2,0).getDate()).padStart(2,'0') })()
+    const desde      = safeDate(c.req.query('desde'), mes + '-01')
+    const hasta      = safeDate(c.req.query('hasta') || '', (() => { const [y,m2]=mes.split('-').map(Number); return mes+'-'+String(new Date(y,m2,0).getDate()).padStart(2,'0') })())
     const fechaCond  = modoFecha === 'rango'
       ? `date(f.fecha_apertura) BETWEEN '${desde}' AND '${hasta}'`
       : `strftime('%Y-%m', f.fecha_apertura) = '${mes}'`
@@ -1005,13 +1021,13 @@ reportes.get('/reportes/exportar/ventas', async (c) => {
 reportes.get('/reportes/exportar/files', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
-  const mes        = c.req.query('mes') || new Date().toISOString().substring(0, 7)
+  const mes        = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
   const vendedorId = c.req.query('vendedor_id') || (!canSeeAllFiles(user.rol) ? String(user.id) : '')
 
   try {
     const modoFecha  = c.req.query('modo') === 'rango' ? 'rango' : 'mes'
-    const desde      = c.req.query('desde') || (mes + '-01')
-    const hasta      = c.req.query('hasta') || (() => { const [y,m2]=mes.split('-').map(Number); return mes+'-'+String(new Date(y,m2,0).getDate()).padStart(2,'0') })()
+    const desde      = safeDate(c.req.query('desde'), mes + '-01')
+    const hasta      = safeDate(c.req.query('hasta') || '', (() => { const [y,m2]=mes.split('-').map(Number); return mes+'-'+String(new Date(y,m2,0).getDate()).padStart(2,'0') })())
     const fechaCond  = modoFecha === 'rango'
       ? `date(f.fecha_apertura) BETWEEN '${desde}' AND '${hasta}'`
       : `strftime('%Y-%m', f.fecha_apertura) = '${mes}'`
@@ -1049,7 +1065,7 @@ reportes.get('/reportes/exportar/files', async (c) => {
 reportes.get('/reportes/exportar/vendedores', async (c) => {
   const user = await getUser(c)
   if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/login')
-  const mes = c.req.query('mes') || new Date().toISOString().substring(0, 7)
+  const mes = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
 
   try {
     const rows = await c.env.DB.prepare(`
@@ -1080,7 +1096,7 @@ reportes.get('/reportes/exportar/vendedores', async (c) => {
 reportes.get('/reportes/exportar/destinos', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
-  const mes        = c.req.query('mes') || new Date().toISOString().substring(0, 7)
+  const mes        = safeMonth(c.req.query('mes'), new Date().toISOString().substring(0, 7))
   const vendedorId = c.req.query('vendedor_id') || (!canSeeAllFiles(user.rol) ? String(user.id) : '')
 
   try {
@@ -1465,8 +1481,8 @@ export default reportes
 reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
-  const desde       = c.req.query('desde') || ''
-  const hasta       = c.req.query('hasta') || ''
+  const desde       = safeDate(c.req.query('desde'), '')
+  const hasta       = safeDate(c.req.query('hasta'), '')
   const proveedorId = c.req.query('proveedor_id') || ''
 
   try {
@@ -1520,8 +1536,8 @@ reportes.get('/reportes/exportar/servicios-pagados', async (c) => {
 reportes.get('/reportes/exportar/servicios-pendientes', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
-  const desde = c.req.query('desde') || ''
-  const hasta = c.req.query('hasta') || ''
+  const desde = safeDate(c.req.query('desde'), '')
+  const hasta = safeDate(c.req.query('hasta'), '')
 
   try {
     let q = `
