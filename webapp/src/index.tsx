@@ -20,17 +20,11 @@ const app = new Hono<{ Bindings: Bindings }>()
 // ── Middleware 1: Security headers (todas las respuestas) ────
 app.use('*', async (c, next) => {
   await next()
-  // Previene que el navegador renderice la respuesta en un iframe (clickjacking)
   c.res.headers.set('X-Frame-Options', 'DENY')
-  // Previene MIME-type sniffing
   c.res.headers.set('X-Content-Type-Options', 'nosniff')
-  // Fuerza HTTPS por 1 año (solo activo en producción HTTPS)
   c.res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
-  // Limita info del referrer
   c.res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  // Deshabilita características de navegador no necesarias
   c.res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-  // Content Security Policy — solo recursos de orígenes conocidos
   c.res.headers.set('Content-Security-Policy', [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
@@ -42,7 +36,6 @@ app.use('*', async (c, next) => {
     "base-uri 'self'",
     "form-action 'self'",
   ].join('; '))
-  // Eliminar header que revela tecnología
   c.res.headers.delete('X-Powered-By')
 })
 
@@ -53,6 +46,43 @@ app.use('*', async (c, next) => {
   if (status >= 400) {
     const ip = c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown'
     console.warn(`[ACCESS] ${status} ${c.req.method} ${c.req.path} — IP: ${ip}`)
+  }
+})
+
+// ── Middleware 3: D1 Sessions API (Read Replication) ─────────
+// Usa la réplica más cercana para lecturas, manteniendo consistencia
+// por sesión mediante bookmarks guardados en cookie.
+app.use('*', async (c, next) => {
+  try {
+    const bookmark = c.req.header('cookie')
+      ?.split(';')
+      .map(s => s.trim())
+      .find(s => s.startsWith('d1_bookmark='))
+      ?.split('=')[1] ?? 'first-unconstrained'
+
+    // Crear sesión D1 con bookmark — rutas lecturas a la réplica más cercana
+    const session = (c.env.DB as any).withSession?.(bookmark)
+    if (session) {
+      c.env.DB = session as D1Database
+      await next()
+      // Guardar el bookmark actualizado en cookie (1 hora)
+      const newBookmark = (session as any).getBookmark?.()
+      if (newBookmark) {
+        const existing = c.res.headers.get('Set-Cookie') || ''
+        const bookmarkCookie = `d1_bookmark=${newBookmark}; Path=/; HttpOnly; SameSite=Strict; Max-Age=3600`
+        if (existing) {
+          c.res.headers.append('Set-Cookie', bookmarkCookie)
+        } else {
+          c.res.headers.set('Set-Cookie', bookmarkCookie)
+        }
+      }
+    } else {
+      // withSession no disponible (entorno local/dev) — continúa normal
+      await next()
+    }
+  } catch {
+    // Si Sessions API falla por cualquier razón, continúa sin replication
+    await next()
   }
 })
 
