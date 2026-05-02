@@ -485,18 +485,18 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
           const tbanco = tcBList[i]?.trim() || null
           if (!ult4 || tmonto <= 0) continue
           await c.env.DB.prepare(`
-            INSERT INTO cliente_tarjetas (cliente_id, movimiento_id, file_id, ultimos_4, banco_emisor, tipo_tarjeta, monto, moneda, concepto)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).bind(clienteIdRaw, movId, safeFileId, ult4, tbanco, tcTipoList[i]?.trim()||null, tmonto, moneda, concepto).run()
+            INSERT INTO cliente_tarjetas (cliente_id, movimiento_id, file_id, ultimos_4, banco_emisor, tipo_tarjeta, monto, moneda, concepto, monto_total, monto_disponible, monto_usado)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+          `).bind(clienteIdRaw, movId, safeFileId, ult4, tbanco, tcTipoList[i]?.trim()||null, tmonto, moneda, concepto, tmonto, tmonto).run()
         }
       } else {
         // Registrar como una sola tarjeta con los datos del movimiento
         const ultimos4Simple = String(b['tc_ultimos4_simple'] || b['tc_ultimos4'] || '????').trim().substring(0,4)
         const bancoSimple    = String(b['tc_banco_simple']    || b['tc_banco']    || '').trim() || null
         await c.env.DB.prepare(`
-          INSERT INTO cliente_tarjetas (cliente_id, movimiento_id, file_id, ultimos_4, banco_emisor, tipo_tarjeta, monto, moneda, concepto)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).bind(clienteIdRaw, movId, safeFileId, ultimos4Simple, bancoSimple, String(b['tc_tipo_tarjeta']||'').trim()||null, monto, moneda, concepto).run()
+          INSERT INTO cliente_tarjetas (cliente_id, movimiento_id, file_id, ultimos_4, banco_emisor, tipo_tarjeta, monto, moneda, concepto, monto_total, monto_disponible, monto_usado)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        `).bind(clienteIdRaw, movId, safeFileId, ultimos4Simple, bancoSimple, String(b['tc_tipo_tarjeta']||'').trim()||null, monto, moneda, concepto, monto, monto).run()
       }
     }
 
@@ -2188,6 +2188,23 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
           return c.redirect(`/tesoreria/proveedores?proveedor_id=${proveedorId}&error=tc_monto_excedido`)
         }
 
+        // Leer montos por servicio del panel de distribución
+        const distSvcRaw   = body['dist_svc_id[]']
+        const distMontoRaw = body['dist_monto[]']
+        const distSvcIds   = (Array.isArray(distSvcRaw)   ? distSvcRaw   : distSvcRaw   ? [distSvcRaw]   : []).map(Number)
+        const distMontos   = (Array.isArray(distMontoRaw) ? distMontoRaw : distMontoRaw ? [distMontoRaw] : []).map(Number)
+        const usarDistribucion = distSvcIds.length > 0 && distSvcIds.length === distMontos.length
+
+        // Validar que la suma de distribución no supere el monto de la TC
+        if (usarDistribucion) {
+          const totalDist = distMontos.reduce((s, m) => s + m, 0)
+          if (totalDist > Number(asig.monto) + 0.001) {
+            return c.redirect(`/tesoreria/proveedores?proveedor_id=${proveedorId}&error=tc_monto_excedido`)
+          }
+          // Usar el total real distribuido como monto del egreso
+          Object.assign(body, { monto: totalDist.toFixed(2) })
+        }
+
         // Registrar crédito confirmado en cuenta corriente del proveedor
         await c.env.DB.prepare(`
           INSERT INTO proveedor_cuenta_corriente
@@ -2205,18 +2222,35 @@ tesoreria.post('/tesoreria/pago-proveedor', async (c) => {
           user.id
         ).run()
 
-        // Marcar la asignación como 'usado' para evitar doble uso
+        // Marcar la asignación como 'usado'
         await c.env.DB.prepare(
           `UPDATE tarjeta_asignaciones SET estado = 'usado', notas = COALESCE(notas,'') || ' [consumido]' WHERE id = ?`
         ).bind(tcAsignacionId).run()
 
-        // Marcar servicios como pagado o parcial según si el monto cubre el costo
-        const montoPorServicio = serviciosIds.length === 1 ? monto : monto / serviciosIds.length
+        // Actualizar saldos en cliente_tarjetas
+        await c.env.DB.prepare(`
+          UPDATE cliente_tarjetas 
+          SET monto_usado = monto_usado + ?,
+              monto_disponible = monto_disponible - ?,
+              estado = CASE WHEN (monto_disponible - ?) <= 0.001 THEN 'agotada' ELSE estado END
+          WHERE id = ?
+        `).bind(monto, monto, monto, asig.ct_id).run()
+
+        // Actualizar cada servicio según el monto asignado individualmente
         for (const sId of serviciosIds) {
+          // Buscar el monto asignado a este servicio específico
+          let montoSvc = 0
+          if (usarDistribucion) {
+            const idx = distSvcIds.indexOf(sId)
+            montoSvc = idx >= 0 ? distMontos[idx] : 0
+          } else {
+            montoSvc = monto / serviciosIds.length
+          }
+
           const svc = await c.env.DB.prepare('SELECT costo_original FROM servicios WHERE id = ?').bind(sId).first() as any
           const costo = Number(svc?.costo_original || 0)
-          const estadoPago = montoPorServicio >= costo - 0.01 ? 'pagado' : 'parcial'
-          const prepago    = montoPorServicio >= costo - 0.01 ? 1 : 0
+          const estadoPago = montoSvc >= costo - 0.01 ? 'pagado' : 'parcial'
+          const prepago    = montoSvc >= costo - 0.01 ? 1 : 0
           await c.env.DB.prepare(
             `UPDATE servicios SET prepago_realizado = ?, estado_pago_proveedor = ?
              ${nroFacturaProv ? ", nro_factura_proveedor = ?, fecha_factura_proveedor = date('now')" : ''}
@@ -3054,10 +3088,23 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
                           </button>
                         </div>
                       `).join('')}
-                    <div style="font-size:11px;color:#065f46;"><i class="fas fa-info-circle"></i> Al usar una tarjeta, se precarga en el formulario de abajo.</div>
+                    <div style="font-size:11px;color:#065f46;"><i class="fas fa-info-circle"></i> Hacé clic en "Usar esta" para distribuir el monto entre los servicios seleccionados.</div>
                     <div id="svc-aviso-tc-existente" style="display:none;margin-top:6px;font-size:12px;font-weight:600;color:#059669;background:#f0fdf4;padding:6px 10px;border-radius:6px;border:1px solid #6ee7b7;"></div>
                   </div>
                 ` : ''}
+
+                <!-- Panel de distribución por servicio (aparece al usar TC disponible) -->
+                <div id="svc-panel-distribucion" style="display:none;background:#f0fdf4;border:2px solid #6ee7b7;border-radius:8px;padding:12px;margin-bottom:10px;">
+                  <div style="font-size:12px;font-weight:700;color:#065f46;margin-bottom:10px;">
+                    <i class="fas fa-sliders-h"></i> ¿CUÁNTO PAGÁS DE CADA SERVICIO CON ESTA TARJETA?
+                  </div>
+                  <div id="svc-distribucion-lista"></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #d1fae5;">
+                    <span style="font-size:12px;color:#065f46;">Total asignado:</span>
+                    <span id="svc-dist-total" style="font-size:14px;font-weight:800;color:#059669;">$0,00</span>
+                  </div>
+                  <div id="svc-dist-alerta" style="display:none;margin-top:6px;font-size:12px;color:#dc2626;font-weight:600;"></div>
+                </div>
 
                 <div id="svc-lista-tc">
                   <div class="svc-fila-tc" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:6px;align-items:end;margin-bottom:6px;">
@@ -3288,7 +3335,16 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
         }
 
         function usarTCDisponible(ult4, banco, monto, asigId) {
-          // Marcar que se está usando una TC existente (no crear nueva)
+          // Obtener los servicios seleccionados actualmente
+          const checks = Array.from(document.querySelectorAll('.svc-check:checked'))
+          if (checks.length === 0) {
+            alert('Primero seleccioná los servicios que querés pagar con esta tarjeta.')
+            return
+          }
+
+          const tcMonto = parseFloat(monto)
+
+          // Guardar referencia a la asignación
           let hiddenTcId = document.getElementById('svc-hidden-tc-existente')
           if (!hiddenTcId) {
             hiddenTcId = document.createElement('input')
@@ -3299,29 +3355,76 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
           }
           hiddenTcId.value = asigId
 
-          // Precargar el campo de TC con los datos para mostrar al usuario
-          const lista = document.getElementById('svc-lista-tc')
-          if (!lista) return
-          const row = lista.querySelector('.svc-fila-tc')
-          if (row) {
-            const inpUlt4  = row.querySelector('.svc-tc-ult4')
-            const inpBanco = row.querySelector('input[name="tc_banco"]')
-            const inpMonto = row.querySelector('.svc-tc-monto')
-            if (inpUlt4)  { inpUlt4.value = ult4; inpUlt4.readOnly = true; inpUlt4.style.background='#f0fdf4'; }
-            if (inpBanco) { inpBanco.value = banco; inpBanco.readOnly = true; inpBanco.style.background='#f0fdf4'; }
-            if (inpMonto) { inpMonto.value = monto; calcSvcTC() }
-          }
-          // Precargar monto total
-          const elMonto = document.getElementById('svc-monto-total')
-          if (elMonto && (!elMonto.value || parseFloat(elMonto.value) === 0)) {
-            elMonto.value = monto
-          }
-          // Aviso visual
+          // Ocultar el panel de TC manual y mostrar el de distribución
+          const panelTC = document.getElementById('svc-panel-tc')
+          const panelDist = document.getElementById('svc-panel-distribucion')
+          const lista = document.getElementById('svc-distribucion-lista')
+          if (!panelDist || !lista) return
+
+          lista.innerHTML = ''
+
+          // Crear una fila por servicio con campo de monto editable
+          checks.forEach((chk, i) => {
+            const desc    = chk.dataset.desc || 'Servicio'
+            const fileNum = chk.dataset.file || ''
+            const costo   = parseFloat(chk.dataset.monto || '0')
+            const moneda  = chk.dataset.moneda || 'USD'
+            const svcId   = chk.value
+
+            // Campo hidden con el id del servicio
+            const hidSvc = document.createElement('input')
+            hidSvc.type = 'hidden'
+            hidSvc.name = 'dist_svc_id[]'
+            hidSvc.value = svcId
+            document.getElementById('form-pagar-svc').appendChild(hidSvc)
+
+            const row = document.createElement('div')
+            row.style.cssText = 'display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:8px;padding:8px;background:white;border:1px solid #d1fae5;border-radius:6px;'
+            row.innerHTML = `
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#374151;">${fileNum} — ${desc}</div>
+                <div style="font-size:11px;color:#6b7280;">Costo: <strong>$${costo.toLocaleString('es-UY',{minimumFractionDigits:2})} ${moneda}</strong></div>
+              </div>
+              <div style="font-size:11px;color:#6b7280;">¿Cuánto pagás?</div>
+              <input type="number" name="dist_monto[]" class="form-control svc-dist-monto"
+                min="0.01" step="0.01" max="${Math.min(costo, tcMonto).toFixed(2)}"
+                value="${Math.min(costo, tcMonto).toFixed(2)}"
+                style="width:110px;padding:5px 8px;font-weight:700;color:#059669;"
+                oninput="recalcDistribucion(${tcMonto})">
+            `
+            lista.appendChild(row)
+          })
+
+          panelDist.style.display = 'block'
+
+          // Aviso
           const aviso = document.getElementById('svc-aviso-tc-existente')
           if (aviso) {
             aviso.style.display = 'block'
-            aviso.innerHTML = '<i class="fas fa-check-circle" style="color:#059669;"></i> Usando TC **** ' + ult4 + ' ya registrada — no se creará una nueva tarjeta.'
+            aviso.innerHTML = '<i class="fas fa-credit-card" style="color:#EC008C;"></i> Usando TC **** ' + ult4 + ' ($' + tcMonto.toLocaleString('es-UY',{minimumFractionDigits:2}) + ' disponibles)'
           }
+
+          recalcDistribucion(tcMonto)
+        }
+
+        function recalcDistribucion(tcMonto) {
+          const inputs = document.querySelectorAll('.svc-dist-monto')
+          let total = 0
+          inputs.forEach(inp => { total += parseFloat(inp.value || '0') || 0 })
+          const elTotal = document.getElementById('svc-dist-total')
+          const elAlerta = document.getElementById('svc-dist-alerta')
+          if (elTotal) elTotal.textContent = '$' + total.toLocaleString('es-UY',{minimumFractionDigits:2})
+          if (elAlerta) {
+            if (total > tcMonto + 0.001) {
+              elAlerta.style.display = 'block'
+              elAlerta.textContent = '⚠ El total ($' + total.toFixed(2) + ') supera el saldo de la tarjeta ($' + tcMonto.toFixed(2) + '). Reducí los montos.'
+            } else {
+              elAlerta.style.display = 'none'
+            }
+          }
+          // Actualizar campo monto total
+          const elMonto = document.getElementById('svc-monto-total')
+          if (elMonto) elMonto.value = total.toFixed(2)
         }
 
         function addSvcTC() {
@@ -3971,13 +4074,12 @@ tesoreria.get('/tesoreria/tarjetas', async (c) => {
 
     const rowsTC = todasTC.map((t: any) => {
       const esProveedor = t.origen === 'proveedor'
-      const estadoColor = t.estado === 'pendiente' ? '#d97706' : t.estado === 'autorizada' ? '#059669' : '#dc2626'
-      const estadoBg    = t.estado === 'pendiente' ? '#fef3c7' : t.estado === 'autorizada' ? '#d1fae5'  : '#fee2e2'
-      const estadoLabel = t.estado === 'pendiente' ? '⏳ Pendiente' : t.estado === 'autorizada' ? '✓ Autorizada' : '✗ Rechazada'
+      const estadoColor = t.estado === 'pendiente' ? '#d97706' : t.estado === 'autorizada' ? '#059669' : t.estado === 'agotada' ? '#6b7280' : '#dc2626'
+      const estadoBg    = t.estado === 'pendiente' ? '#fef3c7' : t.estado === 'autorizada' ? '#d1fae5'  : t.estado === 'agotada' ? '#f3f4f6' : '#fee2e2'
+      const estadoLabel = t.estado === 'pendiente' ? '⏳ Pendiente' : t.estado === 'autorizada' ? '✓ Autorizada' : t.estado === 'agotada' ? '✓ Agotada' : '✗ Rechazada'
       const accionUrl   = esProveedor
         ? `/tesoreria/proveedor/${t.proveedor_id}/cuenta/autorizar-tc`
         : `/tesoreria/tarjetas/autorizar-cliente`
-      // Valores seguros para usar en onclick (sin esc() que rompe JS)
       const tcOrigenTipo  = esProveedor ? 'proveedor' : 'cliente'
       const tcUlt4Safe    = String(t.ultimos_4 || '').replace(/[^0-9]/g, '')
       const tcMonedaSafe  = String(t.moneda || 'USD').replace(/[^A-Z]/g, '')
@@ -3985,8 +4087,13 @@ tesoreria.get('/tesoreria/tarjetas', async (c) => {
       const tcIdNum       = Number(t.id)
       const tcFileIdNum   = Number(t.file_id || 0)
       const tcFileNumSafe = String(t.file_numero || '').replace(/[^0-9]/g, '')
+      // Saldos — para TCs de cliente usar los campos nuevos, para proveedor usar monto
+      const montoTotal     = esProveedor ? Number(t.monto||0) : Number(t.monto_total||t.monto||0)
+      const montoDisp      = esProveedor ? Number(t.monto||0) : Number(t.monto_disponible??t.monto??0)
+      const montoUsado     = esProveedor ? 0                  : Number(t.monto_usado||0)
+      const provAsignado   = !esProveedor && t.proveedor_asignado_nombre ? esc(t.proveedor_asignado_nombre) : null
       return `
-        <tr style="border-bottom:1px solid #f3f4f6;${t.estado==='pendiente'?'background:#fffbeb;':''}">
+        <tr style="border-bottom:1px solid #f3f4f6;${t.estado==='pendiente'?'background:#fffbeb;':t.estado==='agotada'?'background:#f9fafb;opacity:0.8;':''}">
           <td style="padding:9px 12px;font-size:12px;color:#6b7280;">${(t.fecha_cargo||t.created_at||'').substring(0,10)}</td>
           <td style="padding:9px 12px;">
             <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;
@@ -4000,12 +4107,25 @@ tesoreria.get('/tesoreria/tarjetas', async (c) => {
             ${t.tipo_tarjeta ? `<span style="font-size:10px;font-weight:700;color:#7B3FA0;margin-left:4px;">${esc(t.tipo_tarjeta)}</span>` : ''}
             ${t.banco_emisor ? `<div style="font-size:11px;color:#9ca3af;">${esc(t.banco_emisor)}</div>` : ''}
           </td>
-          <td style="padding:9px 12px;font-size:14px;font-weight:800;color:${estadoColor};">
-            $${Number(t.monto).toLocaleString('es-UY',{minimumFractionDigits:2})}
-            <span style="font-size:11px;font-weight:400;color:#6b7280;">${esc(t.moneda||'USD')}</span>
+          <td style="padding:9px 12px;">
+            <div style="font-size:13px;font-weight:800;color:#374151;">
+              $${montoTotal.toLocaleString('es-UY',{minimumFractionDigits:2})}
+              <span style="font-size:10px;font-weight:400;color:#9ca3af;">${esc(t.moneda||'USD')} total</span>
+            </div>
+            ${!esProveedor ? `
+            <div style="display:flex;gap:8px;margin-top:3px;">
+              <span style="font-size:11px;color:#059669;font-weight:700;">
+                ↓ $${montoDisp.toLocaleString('es-UY',{minimumFractionDigits:2})} disp.
+              </span>
+              ${montoUsado > 0 ? `<span style="font-size:11px;color:#6b7280;">
+                ✓ $${montoUsado.toLocaleString('es-UY',{minimumFractionDigits:2})} usado
+              </span>` : ''}
+            </div>
+            ${provAsignado ? `<div style="font-size:11px;color:#7B3FA0;margin-top:2px;">→ ${provAsignado}</div>` : ''}
+            ` : ''}
           </td>
           <td style="padding:9px 12px;">
-            ${t.file_numero ? `<a href="/files/${t.file_id||''}" style="font-size:12px;color:#7B3FA0;font-weight:600;">#${esc(t.file_numero)}</a>` : '<span style="color:#9ca3af;font-size:11px;">—</span>'}
+            ${t.file_numero ? `<a href="/files/${t.file_id||''}" style="font-size:12px;color:#7B3FA0;font-weight:600;">#${esc(t.file_numero).replace(/^\d{4}/,'')}</a>` : '<span style="color:#9ca3af;font-size:11px;">—</span>'}
           </td>
           <td style="padding:9px 12px;">
             <span style="font-size:11px;font-weight:700;color:${estadoColor};background:${estadoBg};padding:3px 9px;border-radius:8px;">${estadoLabel}</span>
@@ -5590,6 +5710,16 @@ tesoreria.post('/api/tarjetas/asignar-proveedor', async (c) => {
         `tarjeta_asignacion_saldo_${asigIds[asigIds.length-1]}`,
         user.id
       ).run().catch(() => {})
+    }
+
+    // Actualizar la TC con el proveedor asignado
+    if (provId) {
+      const provNombre = entidadNombre
+      await c.env.DB.prepare(`
+        UPDATE cliente_tarjetas 
+        SET proveedor_asignado_id = ?, proveedor_asignado_nombre = ?
+        WHERE id = ?
+      `).bind(provId, provNombre, tcId).run().catch(() => {})
     }
 
     return c.json({ ok: true, asignaciones: asigIds, saldo_favor: Math.max(0, saldoFavor) })
