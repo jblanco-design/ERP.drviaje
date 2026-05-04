@@ -3391,18 +3391,17 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
 
             const row = document.createElement('div')
             row.style.cssText = 'display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:8px;padding:8px;background:white;border:1px solid #d1fae5;border-radius:6px;'
-            row.innerHTML = `
-              <div>
-                <div style="font-size:12px;font-weight:700;color:#374151;">${fileNum} — ${desc}</div>
-                <div style="font-size:11px;color:#6b7280;">Costo: <strong>$${costo.toLocaleString('es-UY',{minimumFractionDigits:2})} ${moneda}</strong></div>
-              </div>
-              <div style="font-size:11px;color:#6b7280;">¿Cuánto pagás?</div>
-              <input type="number" name="dist_monto[]" class="form-control svc-dist-monto"
-                min="0.01" step="0.01" max="${Math.min(costo, tcMonto).toFixed(2)}"
-                value="${Math.min(costo, tcMonto).toFixed(2)}"
-                style="width:110px;padding:5px 8px;font-weight:700;color:#059669;"
-                oninput="recalcDistribucion(${tcMonto})">
-            `
+            row.innerHTML =
+              '<div>' +
+                '<div style="font-size:12px;font-weight:700;color:#374151;">' + fileNum + ' \u2014 ' + desc + '</div>' +
+                '<div style="font-size:11px;color:#6b7280;">Costo: <strong>$' + costo.toLocaleString('es-UY',{minimumFractionDigits:2}) + ' ' + moneda + '</strong></div>' +
+              '</div>' +
+              '<div style="font-size:11px;color:#6b7280;">\u00bfCu\u00e1nto pag\u00e1s?</div>' +
+              '<input type="number" name="dist_monto[]" class="form-control svc-dist-monto"' +
+                ' min="0.01" step="0.01" max="' + Math.min(costo, tcMonto).toFixed(2) + '"' +
+                ' value="' + Math.min(costo, tcMonto).toFixed(2) + '"' +
+                ' style="width:110px;padding:5px 8px;font-weight:700;color:#059669;"' +
+                ' oninput="recalcDistribucion(' + tcMonto + ')">'
             lista.appendChild(row)
           })
 
