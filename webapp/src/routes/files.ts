@@ -3349,26 +3349,74 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
     ).bind(did, Number(id)).first() as any
     if (!dev) return c.redirect(`/files/${id}?error=devolucion_no_encontrada`)
 
+    // Para devoluciones en efectivo: verificar caja abierta
+    let cajaSesionId: number | null = null
+    if (dev.metodo === 'efectivo') {
+      const hoy = new Date().toISOString().split('T')[0]
+      const cajaVencida = await c.env.DB.prepare(`
+        SELECT id, fecha FROM caja_sesiones WHERE moneda = ? AND estado = 'abierta' AND fecha < ? LIMIT 1
+      `).bind(dev.moneda, hoy).first() as any
+      if (cajaVencida) return c.redirect(`/files/${id}?error=caja_vencida`)
+
+      const cajaHoy = await c.env.DB.prepare(`
+        SELECT id FROM caja_sesiones WHERE moneda = ? AND estado = 'abierta' AND fecha = ? LIMIT 1
+      `).bind(dev.moneda, hoy).first() as any
+      if (!cajaHoy) return c.redirect(`/files/${id}?error=caja_cerrada`)
+      cajaSesionId = cajaHoy.id
+    }
+
+    // Obtener cotización si es UYU
+    let cotizacion = 1
+    let montoUyu   = dev.moneda === 'UYU' ? dev.monto : 0
+    if (dev.moneda === 'USD' && dev.metodo === 'efectivo') {
+      const hoy = new Date().toISOString().split('T')[0]
+      const cotHoy = await c.env.DB.prepare(`
+        SELECT valor FROM cotizaciones WHERE moneda_origen='USD' AND moneda_destino='UYU' AND fecha=? LIMIT 1
+      `).bind(hoy).first() as any
+      if (cotHoy) { cotizacion = cotHoy.valor; montoUyu = dev.monto * cotHoy.valor }
+    }
+
+    // Banco para efectivo (caja chica)
+    let bancoId: number | null = null
+    if (dev.metodo === 'efectivo') {
+      const cajaChica = await c.env.DB.prepare(`
+        SELECT id FROM bancos WHERE nombre_entidad LIKE '%Caja Chica%' AND moneda = ? AND activo = 1 LIMIT 1
+      `).bind(dev.moneda).first() as any
+      if (cajaChica) bancoId = cajaChica.id
+    }
+
     // 1. Registrar egreso en movimientos_caja
     const movRes = await c.env.DB.prepare(`
-      INSERT INTO movimientos_caja (tipo, metodo, monto, moneda, concepto, file_id, usuario_id, fecha, anulado)
-      VALUES ('egreso', ?, ?, ?, ?, ?, ?, datetime('now'), 0)
-    `).bind(dev.metodo, dev.monto, dev.moneda,
-      'Devolución aprobada: ' + (dev.motivo || ''), Number(id), user.id).run()
+      INSERT INTO movimientos_caja
+        (tipo, metodo, monto, moneda, cotizacion, monto_uyu, concepto, file_id, banco_id, usuario_id, caja_sesion_id, fecha, anulado)
+      VALUES ('egreso', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), 0)
+    `).bind(
+      dev.metodo, dev.monto, dev.moneda, cotizacion, montoUyu,
+      'Devolución aprobada: ' + (dev.motivo || ''),
+      Number(id), bancoId, user.id, cajaSesionId
+    ).run()
 
-    // 2. Reducir total_venta del file
+    // 2. Si hay sesión de caja, actualizar egresos
+    if (cajaSesionId) {
+      await c.env.DB.prepare(
+        `UPDATE caja_sesiones SET monto_egresos = monto_egresos + ? WHERE id = ?`
+      ).bind(dev.monto, cajaSesionId).run()
+    }
+
+    // 3. Reducir total_venta del file
     await c.env.DB.prepare(
       `UPDATE files SET total_venta = MAX(0, total_venta - ?), updated_at = datetime('now') WHERE id = ?`
     ).bind(dev.monto, Number(id)).run()
 
-    // 3. Marcar devolución como aprobada
+    // 4. Marcar devolución como aprobada
     await c.env.DB.prepare(
-      `UPDATE devoluciones SET estado = 'aprobada', aprobado_por = ?, movimiento_caja_id = ?, updated_at = datetime('now') WHERE id = ?`
+      `UPDATE devoluciones SET estado='aprobada', aprobado_por=?, movimiento_caja_id=?, updated_at=datetime('now') WHERE id=?`
     ).bind(user.id, movRes.meta?.last_row_id || null, did).run()
 
     return c.redirect(`/files/${id}?ok=devolucion_aprobada`)
   } catch (e: any) {
-    return c.redirect(`/files/${id}?error=1`)
+    console.error('[DEVOLUCION APROBAR]', e.message)
+    return c.redirect(`/files/${id}?error=${encodeURIComponent(e.message?.substring(0,150)||'error_interno')}`)
   }
 })
 
