@@ -834,7 +834,7 @@ bancos.get('/bancos/caja', async (c) => {
     `).join('')}
   `
 
-  return c.html(baseLayout('Caja Chica', content, user, 'bancos'))
+  return c.html(baseLayout('Caja Diaria', content, user, 'bancos'))
 })
 
 // ── POST /bancos/caja/abrir ───────────────────────────────────
