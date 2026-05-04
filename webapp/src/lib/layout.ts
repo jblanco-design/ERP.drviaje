@@ -50,7 +50,7 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
   const adminNavItems: {href:string;icon:string;label:string;page:string}[] = []
   if (rol === 'gerente' || rol === 'administracion' || rol === 'observador') {
     adminNavItems.push({ href: '/proveedores', icon: 'fa-building', label: 'Proveedores', page: 'proveedores' })
-    adminNavItems.push({ href: '/bancos/caja', icon: 'fa-cash-register', label: 'Caja Chica', page: 'caja' })
+    adminNavItems.push({ href: '/bancos/caja', icon: 'fa-cash-register', label: 'Caja Diaria', page: 'caja' })
   }
   if (rol === 'gerente') {
     adminNavItems.push({ href: '/usuarios', icon: 'fa-user-cog', label: 'Usuarios', page: 'usuarios' })
