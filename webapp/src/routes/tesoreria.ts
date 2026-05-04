@@ -493,16 +493,8 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
       Object.assign(body, { _caja_sesion_id: String(cajaHoy.id) })
     }
 
-    // Si el método es efectivo y no se especificó banco,
-    // asignar automáticamente a la Caja Chica según la moneda
-    if (metodo === 'efectivo' && !bancoIdRaw) {
-      const cajaChica = await c.env.DB.prepare(`
-        SELECT id FROM bancos 
-        WHERE nombre_entidad LIKE '%Caja Chica%' AND moneda = ? AND activo = 1
-        LIMIT 1
-      `).bind(moneda).first() as any
-      if (cajaChica) bancoIdRaw = cajaChica.id
-    }
+    // Banco para efectivo: ya no se usa "Caja Chica" como banco
+    // Los movimientos de efectivo se vinculan a caja_sesiones directamente
 
     const cajaSesionId = body['_caja_sesion_id'] ? Number(body['_caja_sesion_id']) : null
 
