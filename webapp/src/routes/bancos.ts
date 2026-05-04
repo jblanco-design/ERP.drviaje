@@ -619,6 +619,105 @@ bancos.post('/bancos/conciliacion/:id/toggle', async (c) => {
 // CAJA CHICA — Apertura, cierre y vista diaria
 // ══════════════════════════════════════════════════════════════
 
+// ── GET /bancos/caja/exportar — Exportar historial a CSV ──────
+bancos.get('/bancos/caja/exportar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/bancos/caja')
+
+  const moneda = c.req.query('moneda') || ''
+  const desde  = c.req.query('desde')  || ''
+  const hasta  = c.req.query('hasta')  || ''
+
+  let q = `
+    SELECT cs.id, cs.fecha, cs.moneda, cs.monto_inicial, cs.monto_ingresos, cs.monto_egresos,
+           cs.monto_inicial + cs.monto_ingresos - cs.monto_egresos as monto_esperado,
+           cs.monto_real, cs.diferencia, cs.estado,
+           cs.created_at as hora_apertura, cs.closed_at as hora_cierre,
+           u1.nombre as abierta_por, u2.nombre as cerrada_por,
+           cs.notas_cierre
+    FROM caja_sesiones cs
+    LEFT JOIN usuarios u1 ON u1.id = cs.abierta_por
+    LEFT JOIN usuarios u2 ON u2.id = cs.cerrada_por
+    WHERE 1=1`
+  const params: any[] = []
+  if (moneda) { q += ' AND cs.moneda = ?';         params.push(moneda) }
+  if (desde)  { q += ' AND cs.fecha >= ?';          params.push(desde) }
+  if (hasta)  { q += ' AND cs.fecha <= ?';          params.push(hasta) }
+  q += ' ORDER BY cs.fecha DESC, cs.id DESC LIMIT 1000'
+
+  const sesiones = await c.env.DB.prepare(q).bind(...params).all()
+
+  // Para cada sesión, traer el detalle de movimientos
+  const csvLines: string[] = []
+  const escCsv = (v: any) => {
+    const s = String(v ?? '').replace(/"/g, '""')
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s}"` : s
+  }
+
+  // Encabezado resumen
+  csvLines.push('=== RESUMEN DE SESIONES ===')
+  csvLines.push(['Fecha','Moneda','Estado','Inicial','Ingresos','Egresos','Esperado','Real','Diferencia','Abrió','Cerró','Hora Apertura','Hora Cierre','Notas'].join(','))
+
+  for (const s of sesiones.results as any[]) {
+    csvLines.push([
+      escCsv(s.fecha),
+      escCsv(s.moneda),
+      escCsv(s.estado),
+      escCsv(Number(s.monto_inicial).toFixed(2)),
+      escCsv(Number(s.monto_ingresos).toFixed(2)),
+      escCsv(Number(s.monto_egresos).toFixed(2)),
+      escCsv(Number(s.monto_esperado).toFixed(2)),
+      escCsv(s.monto_real != null ? Number(s.monto_real).toFixed(2) : ''),
+      escCsv(s.diferencia != null ? Number(s.diferencia).toFixed(2) : ''),
+      escCsv(s.abierta_por || ''),
+      escCsv(s.cerrada_por || ''),
+      escCsv((s.hora_apertura || '').substring(0, 16)),
+      escCsv((s.hora_cierre  || '').substring(0, 16)),
+      escCsv(s.notas_cierre || ''),
+    ].join(','))
+  }
+
+  // Detalle de movimientos por sesión
+  csvLines.push('')
+  csvLines.push('=== DETALLE DE MOVIMIENTOS ===')
+  csvLines.push(['Fecha Sesión','Moneda','Hora','Tipo','Monto','Concepto','File','Operador'].join(','))
+
+  for (const s of sesiones.results as any[]) {
+    const movs = await c.env.DB.prepare(`
+      SELECT mc.fecha, mc.tipo, mc.monto, mc.concepto,
+             f.numero as file_numero, u.nombre as operador
+      FROM movimientos_caja mc
+      LEFT JOIN files f ON f.id = mc.file_id
+      LEFT JOIN usuarios u ON u.id = mc.usuario_id
+      WHERE mc.caja_sesion_id = ? AND mc.anulado = 0
+      ORDER BY mc.fecha
+    `).bind(s.id).all()
+
+    for (const m of movs.results as any[]) {
+      csvLines.push([
+        escCsv(s.fecha),
+        escCsv(s.moneda),
+        escCsv((m.fecha || '').substring(11, 16)),
+        escCsv(m.tipo === 'ingreso' ? 'Ingreso' : 'Egreso'),
+        escCsv((m.tipo === 'egreso' ? '-' : '+') + Number(m.monto).toFixed(2)),
+        escCsv(m.concepto || ''),
+        escCsv(m.file_numero ? String(m.file_numero).replace(/^\d{4}/, '') : ''),
+        escCsv(m.operador || ''),
+      ].join(','))
+    }
+  }
+
+  const fechaHoy = new Date().toISOString().split('T')[0]
+  const nombre   = `caja_diaria${moneda ? '_' + moneda : ''}${desde ? '_' + desde : ''}${hasta ? '_al_' + hasta : ''}_${fechaHoy}.csv`
+
+  return new Response('\uFEFF' + csvLines.join('\n'), {
+    headers: {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${nombre}"`,
+    }
+  })
+})
+
 // ── GET /bancos/caja ─ Vista principal de caja chica ──────────
 bancos.get('/bancos/caja', async (c) => {
   const user = await getUser(c)
@@ -755,6 +854,23 @@ bancos.get('/bancos/caja', async (c) => {
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="fas fa-history" style="color:#7B3FA0;"></i> Historial de Sesiones</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <form method="GET" action="/bancos/caja" style="display:flex;gap:6px;align-items:center;">
+            <input type="date" name="desde" value="${c.req.query('desde')||''}" class="form-control" style="width:130px;padding:4px 8px;font-size:12px;">
+            <span style="font-size:12px;color:#6b7280;">al</span>
+            <input type="date" name="hasta" value="${c.req.query('hasta')||''}" class="form-control" style="width:130px;padding:4px 8px;font-size:12px;">
+            <select name="moneda" class="form-control" style="width:80px;padding:4px 8px;font-size:12px;">
+              <option value="">Ambas</option>
+              <option value="USD" ${c.req.query('moneda')==='USD'?'selected':''}>USD</option>
+              <option value="UYU" ${c.req.query('moneda')==='UYU'?'selected':''}>UYU</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter"></i></button>
+          </form>
+          <a href="/bancos/caja/exportar?moneda=${encodeURIComponent(c.req.query('moneda')||'')}&desde=${encodeURIComponent(c.req.query('desde')||'')}&hasta=${encodeURIComponent(c.req.query('hasta')||'')}"
+             class="btn btn-sm" style="background:#1d6f42;color:white;border:none;white-space:nowrap;">
+            <i class="fas fa-file-excel"></i> Exportar CSV
+          </a>
+        </div>
       </div>
       <div class="table-wrapper">
         <table>
