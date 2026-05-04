@@ -614,4 +614,431 @@ bancos.post('/bancos/conciliacion/:id/toggle', async (c) => {
   return c.json({ ok: true })
 })
 
+
+// ══════════════════════════════════════════════════════════════
+// CAJA CHICA — Apertura, cierre y vista diaria
+// ══════════════════════════════════════════════════════════════
+
+// ── GET /bancos/caja ─ Vista principal de caja chica ──────────
+bancos.get('/bancos/caja', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/bancos?error=sin_permiso')
+
+  const hoy = new Date().toISOString().split('T')[0]
+  const ok  = c.req.query('ok') || ''
+  const err = c.req.query('error') || ''
+
+  // Sesiones activas (abiertas)
+  const sesionesAbiertas = await c.env.DB.prepare(`
+    SELECT cs.*, u.nombre as abierta_por_nombre
+    FROM caja_sesiones cs
+    LEFT JOIN usuarios u ON u.id = cs.abierta_por
+    WHERE cs.estado = 'abierta'
+    ORDER BY cs.fecha DESC
+  `).all()
+
+  // Alerta: cajas abiertas de días anteriores
+  const cajasVencidas = (sesionesAbiertas.results as any[]).filter((s: any) => s.fecha < hoy)
+
+  // Historial de sesiones cerradas (últimas 30)
+  const historial = await c.env.DB.prepare(`
+    SELECT cs.*, u1.nombre as abierta_por_nombre, u2.nombre as cerrada_por_nombre
+    FROM caja_sesiones cs
+    LEFT JOIN usuarios u1 ON u1.id = cs.abierta_por
+    LEFT JOIN usuarios u2 ON u2.id = cs.cerrada_por
+    WHERE cs.estado = 'cerrada'
+    ORDER BY cs.fecha DESC LIMIT 30
+  `).all()
+
+  const okMsg  = ok  === 'abierta'  ? 'Caja abierta correctamente.'
+               : ok  === 'cerrada'  ? 'Caja cerrada correctamente.'
+               : ''
+  const errMsg = err === 'ya_abierta'     ? 'Ya existe una caja abierta para esa moneda hoy.'
+               : err === 'caja_vencida'   ? 'Hay una caja abierta de un día anterior. Cerrala antes de continuar.'
+               : err === 'no_encontrada'  ? 'Sesión de caja no encontrada.'
+               : err === 'ya_cerrada'     ? 'Esa caja ya fue cerrada.'
+               : err === 'monto_invalido' ? 'El monto ingresado no es válido.'
+               : err
+
+  const fmtMonto = (m: number, moneda: string) =>
+    `$${Number(m).toLocaleString('es-UY', { minimumFractionDigits: 2 })} ${moneda}`
+
+  const content = `
+    ${cajasVencidas.length > 0 ? `
+      <div class="alert alert-danger" style="margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
+        <i class="fas fa-exclamation-triangle" style="font-size:20px;margin-top:2px;"></i>
+        <div>
+          <strong>⚠ Caja sin cerrar de días anteriores</strong>
+          <ul style="margin:6px 0 0 16px;font-size:13px;">
+            ${cajasVencidas.map((s: any) => `
+              <li>
+                Caja <strong>${s.moneda}</strong> del <strong>${s.fecha}</strong>
+                abierta por ${esc(s.abierta_por_nombre)} —
+                <a href="/bancos/caja/${s.id}/cerrar" style="color:#dc2626;font-weight:700;">Cerrar ahora →</a>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      </div>
+    ` : ''}
+
+    ${okMsg ? `<div class="alert alert-success" style="margin-bottom:16px;"><i class="fas fa-check-circle"></i> ${okMsg}</div>` : ''}
+    ${errMsg ? `<div class="alert alert-danger" style="margin-bottom:16px;"><i class="fas fa-exclamation-circle"></i> ${errMsg}</div>` : ''}
+
+    <!-- Cajas abiertas hoy -->
+    <div class="grid-2" style="margin-bottom:24px;">
+      ${['USD','UYU'].map((moneda: string) => {
+        const sesion = (sesionesAbiertas.results as any[]).find((s: any) => s.moneda === moneda && s.fecha === hoy)
+        const vencida = (sesionesAbiertas.results as any[]).find((s: any) => s.moneda === moneda && s.fecha < hoy)
+        const cajaActual = sesion || vencida
+        return `
+          <div class="card" style="border:2px solid ${cajaActual ? '#059669' : '#e5e7eb'};">
+            <div class="card-header" style="background:${cajaActual ? '#f0fdf4' : '#f9fafb'};">
+              <span class="card-title">
+                <i class="fas fa-cash-register" style="color:${cajaActual ? '#059669' : '#9ca3af'};"></i>
+                Caja ${moneda}
+              </span>
+              ${cajaActual ? `
+                <span style="font-size:11px;font-weight:700;color:#059669;background:#d1fae5;padding:3px 10px;border-radius:8px;">
+                  ● ABIERTA ${cajaActual.fecha !== hoy ? `<span style="color:#dc2626;">(${cajaActual.fecha})</span>` : 'HOY'}
+                </span>
+              ` : `
+                <span style="font-size:11px;color:#9ca3af;background:#f3f4f6;padding:3px 10px;border-radius:8px;">
+                  ○ CERRADA
+                </span>
+              `}
+            </div>
+            <div style="padding:16px;">
+              ${cajaActual ? `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                  <div style="text-align:center;padding:10px;background:#f9fafb;border-radius:8px;">
+                    <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">INICIAL</div>
+                    <div style="font-size:16px;font-weight:800;">${fmtMonto(cajaActual.monto_inicial, moneda)}</div>
+                  </div>
+                  <div style="text-align:center;padding:10px;background:#f0fdf4;border-radius:8px;">
+                    <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">ESPERADO</div>
+                    <div style="font-size:16px;font-weight:800;color:#059669;">
+                      ${fmtMonto(cajaActual.monto_inicial + cajaActual.monto_ingresos - cajaActual.monto_egresos, moneda)}
+                    </div>
+                  </div>
+                  <div style="text-align:center;padding:10px;background:#dbeafe;border-radius:8px;">
+                    <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">INGRESOS</div>
+                    <div style="font-size:14px;font-weight:700;color:#1d4ed8;">+${fmtMonto(cajaActual.monto_ingresos, moneda)}</div>
+                  </div>
+                  <div style="text-align:center;padding:10px;background:#fee2e2;border-radius:8px;">
+                    <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">EGRESOS</div>
+                    <div style="font-size:14px;font-weight:700;color:#dc2626;">-${fmtMonto(cajaActual.monto_egresos, moneda)}</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">
+                  Abierta por <strong>${esc(cajaActual.abierta_por_nombre)}</strong>
+                </div>
+                <a href="/bancos/caja/${cajaActual.id}/cerrar"
+                   class="btn btn-danger" style="width:100%;text-align:center;">
+                  <i class="fas fa-lock"></i> Cerrar Caja ${moneda}
+                </a>
+              ` : `
+                <p style="color:#9ca3af;font-size:13px;margin-bottom:16px;">No hay caja abierta para hoy.</p>
+                <button onclick="document.getElementById('modal-abrir-${moneda}').classList.add('active')"
+                  class="btn btn-primary" style="width:100%;">
+                  <i class="fas fa-lock-open"></i> Abrir Caja ${moneda}
+                </button>
+              `}
+            </div>
+          </div>
+        `
+      }).join('')}
+    </div>
+
+    <!-- Historial -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-history" style="color:#7B3FA0;"></i> Historial de Sesiones</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th><th>Moneda</th><th>Inicial</th><th>Ingresos</th>
+              <th>Egresos</th><th>Esperado</th><th>Real</th><th>Diferencia</th>
+              <th>Abrió</th><th>Cerró</th><th>Notas</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(historial.results as any[]).length === 0
+              ? `<tr><td colspan="11" style="text-align:center;padding:20px;color:#9ca3af;">Sin historial aún.</td></tr>`
+              : (historial.results as any[]).map((s: any) => {
+                  const esperado = s.monto_inicial + s.monto_ingresos - s.monto_egresos
+                  const diff = s.monto_real != null ? s.monto_real - esperado : null
+                  return `
+                    <tr>
+                      <td style="font-size:12px;">${s.fecha}</td>
+                      <td><span style="font-weight:700;color:#7B3FA0;">${esc(s.moneda)}</span></td>
+                      <td style="font-size:12px;">${fmtMonto(s.monto_inicial, s.moneda)}</td>
+                      <td style="font-size:12px;color:#1d4ed8;">+${fmtMonto(s.monto_ingresos, s.moneda)}</td>
+                      <td style="font-size:12px;color:#dc2626;">-${fmtMonto(s.monto_egresos, s.moneda)}</td>
+                      <td style="font-size:12px;font-weight:700;">${fmtMonto(esperado, s.moneda)}</td>
+                      <td style="font-size:12px;color:#059669;">${s.monto_real != null ? fmtMonto(s.monto_real, s.moneda) : '—'}</td>
+                      <td style="font-size:12px;font-weight:700;color:${diff == null ? '#9ca3af' : diff < -0.001 ? '#dc2626' : diff > 0.001 ? '#d97706' : '#059669'};">
+                        ${diff == null ? '—' : (diff >= 0 ? '+' : '') + fmtMonto(diff, s.moneda)}
+                      </td>
+                      <td style="font-size:11px;color:#6b7280;">${esc(s.abierta_por_nombre || '')}</td>
+                      <td style="font-size:11px;color:#6b7280;">${esc(s.cerrada_por_nombre || '')}</td>
+                      <td style="font-size:11px;color:#6b7280;">${esc(s.notas_cierre || '—')}</td>
+                    </tr>
+                  `
+                }).join('')
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modales de apertura USD y UYU -->
+    ${['USD','UYU'].map((moneda: string) => `
+      <div class="modal-overlay" id="modal-abrir-${moneda}">
+        <div class="modal" style="max-width:400px;">
+          <div class="modal-header">
+            <span class="modal-title">
+              <i class="fas fa-lock-open" style="color:#059669;"></i> Abrir Caja ${moneda} — ${hoy}
+            </span>
+            <button type="button" class="modal-close"
+              onclick="document.getElementById('modal-abrir-${moneda}').classList.remove('active')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/bancos/caja/abrir">
+              <input type="hidden" name="moneda" value="${moneda}">
+              <div class="form-group">
+                <label class="form-label">MONTO INICIAL EN CAJA (${moneda}) *</label>
+                <input type="number" name="monto_inicial" min="0" step="0.01" value="0"
+                  required class="form-control" placeholder="0.00"
+                  style="font-size:20px;font-weight:800;text-align:center;">
+                <div style="font-size:11px;color:#6b7280;margin-top:4px;">
+                  Ingresá el efectivo físico disponible al inicio del día.
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:16px;">
+                <button type="submit" class="btn btn-primary" style="flex:1;">
+                  <i class="fas fa-lock-open"></i> Abrir Caja
+                </button>
+                <button type="button" class="btn btn-outline"
+                  onclick="document.getElementById('modal-abrir-${moneda}').classList.remove('active')">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  `
+
+  return c.html(baseLayout('Caja Chica', content, user, 'bancos'))
+})
+
+// ── POST /bancos/caja/abrir ───────────────────────────────────
+bancos.post('/bancos/caja/abrir', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/bancos/caja?error=sin_permiso')
+
+  const body   = await c.req.parseBody()
+  const moneda = String(body.moneda || '').trim()
+  const monto  = Number(body.monto_inicial || 0)
+  const hoy    = new Date().toISOString().split('T')[0]
+
+  if (!['USD','UYU'].includes(moneda)) return c.redirect('/bancos/caja?error=moneda_invalida')
+  if (!isFinite(monto) || monto < 0)  return c.redirect('/bancos/caja?error=monto_invalido')
+
+  // Verificar que no haya una caja vencida sin cerrar para esta moneda
+  const cajasAbiertas = await c.env.DB.prepare(`
+    SELECT id, fecha FROM caja_sesiones WHERE moneda = ? AND estado = 'abierta' LIMIT 1
+  `).bind(moneda).first() as any
+
+  if (cajasAbiertas) {
+    if (cajasAbiertas.fecha < hoy) return c.redirect('/bancos/caja?error=caja_vencida')
+    return c.redirect('/bancos/caja?error=ya_abierta')
+  }
+
+  await c.env.DB.prepare(`
+    INSERT INTO caja_sesiones (moneda, fecha, monto_inicial, estado, abierta_por)
+    VALUES (?, ?, ?, 'abierta', ?)
+  `).bind(moneda, hoy, monto, user.id).run()
+
+  return c.redirect('/bancos/caja?ok=abierta')
+})
+
+// ── GET /bancos/caja/:id/cerrar ─ Formulario de cierre ────────
+bancos.get('/bancos/caja/:id/cerrar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/bancos/caja')
+
+  const id = Number(c.req.param('id'))
+  const sesion = await c.env.DB.prepare(`
+    SELECT cs.*, u.nombre as abierta_por_nombre
+    FROM caja_sesiones cs LEFT JOIN usuarios u ON u.id = cs.abierta_por
+    WHERE cs.id = ?
+  `).bind(id).first() as any
+
+  if (!sesion)                   return c.redirect('/bancos/caja?error=no_encontrada')
+  if (sesion.estado === 'cerrada') return c.redirect('/bancos/caja?error=ya_cerrada')
+
+  const esperado = sesion.monto_inicial + sesion.monto_ingresos - sesion.monto_egresos
+  const fmtMonto = (m: number) =>
+    `$${Number(m).toLocaleString('es-UY', { minimumFractionDigits: 2 })} ${sesion.moneda}`
+
+  // Movimientos del día
+  const movimientos = await c.env.DB.prepare(`
+    SELECT mc.*, f.numero as file_numero,
+           COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo) as cliente_nombre,
+           u.nombre as operador_nombre
+    FROM movimientos_caja mc
+    LEFT JOIN files f ON f.id = mc.file_id
+    LEFT JOIN clientes cl ON cl.id = mc.cliente_id
+    LEFT JOIN usuarios u ON u.id = mc.usuario_id
+    WHERE mc.caja_sesion_id = ? AND mc.anulado = 0
+    ORDER BY mc.fecha DESC
+  `).bind(id).all()
+
+  const content = `
+    <div style="max-width:700px;margin:0 auto;">
+      ${sesion.fecha < new Date().toISOString().split('T')[0] ? `
+        <div class="alert alert-danger" style="margin-bottom:16px;">
+          <i class="fas fa-exclamation-triangle"></i>
+          <strong>Caja del ${sesion.fecha} sin cerrar</strong> — Es obligatorio cerrar la caja del día antes de abrir una nueva.
+        </div>
+      ` : ''}
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header" style="background:#f0fdf4;">
+          <span class="card-title">
+            <i class="fas fa-lock" style="color:#dc2626;"></i>
+            Cerrar Caja ${esc(sesion.moneda)} — ${sesion.fecha}
+          </span>
+        </div>
+        <div style="padding:16px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+            <div style="text-align:center;padding:12px;background:#f9fafb;border-radius:8px;">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">MONTO INICIAL</div>
+              <div style="font-size:16px;font-weight:800;">${fmtMonto(sesion.monto_inicial)}</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:#dbeafe;border-radius:8px;">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">INGRESOS DEL DÍA</div>
+              <div style="font-size:16px;font-weight:800;color:#1d4ed8;">+${fmtMonto(sesion.monto_ingresos)}</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:#fee2e2;border-radius:8px;">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">EGRESOS DEL DÍA</div>
+              <div style="font-size:16px;font-weight:800;color:#dc2626;">-${fmtMonto(sesion.monto_egresos)}</div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:16px;background:#f0fdf4;border-radius:10px;margin-bottom:20px;">
+            <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">TOTAL ESPERADO EN CAJA</div>
+            <div style="font-size:28px;font-weight:800;color:#059669;">${fmtMonto(esperado)}</div>
+          </div>
+
+          <form method="POST" action="/bancos/caja/${id}/cerrar">
+            <div class="form-group">
+              <label class="form-label">MONTO CONTADO FÍSICAMENTE (${esc(sesion.moneda)}) *</label>
+              <input type="number" name="monto_real" min="0" step="0.01"
+                value="${esperado.toFixed(2)}" required class="form-control"
+                style="font-size:22px;font-weight:800;text-align:center;"
+                oninput="calcDif(this.value, ${esperado})">
+              <div id="dif-display" style="text-align:center;margin-top:8px;font-size:14px;font-weight:700;"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">NOTAS DE CIERRE (opcional)</label>
+              <textarea name="notas_cierre" class="form-control" rows="2"
+                placeholder="Observaciones, diferencias, etc."></textarea>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:16px;">
+              <button type="submit" class="btn btn-danger" style="flex:1;">
+                <i class="fas fa-lock"></i> Confirmar Cierre
+              </button>
+              <a href="/bancos/caja" class="btn btn-outline">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Movimientos del día -->
+      ${movimientos.results.length > 0 ? `
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Movimientos del día (${movimientos.results.length})</span>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Hora</th><th>Tipo</th><th>Concepto</th><th>File</th><th>Monto</th><th>Operador</th></tr></thead>
+              <tbody>
+                ${(movimientos.results as any[]).map((m: any) => `
+                  <tr>
+                    <td style="font-size:11px;color:#6b7280;">${(m.fecha||'').substring(11,16)}</td>
+                    <td><span class="badge ${m.tipo === 'ingreso' ? 'badge-seniado' : 'badge-en_proceso'}">${m.tipo}</span></td>
+                    <td style="font-size:12px;">${esc(m.concepto)}</td>
+                    <td style="font-size:12px;">${m.file_numero ? '#' + String(m.file_numero).replace(/^\d{4}/,'') : '—'}</td>
+                    <td style="font-weight:700;color:${m.tipo==='ingreso'?'#059669':'#dc2626'};">
+                      ${m.tipo==='ingreso'?'+':'-'}$${Number(m.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${m.moneda}
+                    </td>
+                    <td style="font-size:11px;color:#6b7280;">${esc(m.operador_nombre||'')}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ` : ''}
+    </div>
+
+    <script>
+      function calcDif(val, esperado) {
+        const real = parseFloat(val) || 0
+        const dif  = real - esperado
+        const el   = document.getElementById('dif-display')
+        if (!el) return
+        if (Math.abs(dif) < 0.001) {
+          el.innerHTML = '<span style="color:#059669;">✓ Sin diferencia</span>'
+        } else if (dif > 0) {
+          el.innerHTML = '<span style="color:#d97706;">Sobrante: +$' + dif.toLocaleString('es-UY',{minimumFractionDigits:2}) + '</span>'
+        } else {
+          el.innerHTML = '<span style="color:#dc2626;">Faltante: $' + dif.toLocaleString('es-UY',{minimumFractionDigits:2}) + '</span>'
+        }
+      }
+      calcDif(${esperado.toFixed(2)}, ${esperado})
+    </script>
+  `
+  return c.html(baseLayout(`Cerrar Caja ${sesion.moneda}`, content, user, 'bancos'))
+})
+
+// ── POST /bancos/caja/:id/cerrar ──────────────────────────────
+bancos.post('/bancos/caja/:id/cerrar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/bancos/caja')
+
+  const id   = Number(c.req.param('id'))
+  const body = await c.req.parseBody()
+  const montoReal = Number(body.monto_real)
+  const notas     = String(body.notas_cierre || '').trim()
+
+  if (!isFinite(montoReal) || montoReal < 0) return c.redirect(`/bancos/caja/${id}/cerrar?error=monto_invalido`)
+
+  const sesion = await c.env.DB.prepare(
+    `SELECT * FROM caja_sesiones WHERE id = ?`
+  ).bind(id).first() as any
+
+  if (!sesion)                     return c.redirect('/bancos/caja?error=no_encontrada')
+  if (sesion.estado === 'cerrada') return c.redirect('/bancos/caja?error=ya_cerrada')
+
+  const esperado   = sesion.monto_inicial + sesion.monto_ingresos - sesion.monto_egresos
+  const diferencia = montoReal - esperado
+
+  await c.env.DB.prepare(`
+    UPDATE caja_sesiones
+    SET estado = 'cerrada', monto_real = ?, diferencia = ?,
+        notas_cierre = ?, cerrada_por = ?, closed_at = datetime('now')
+    WHERE id = ?
+  `).bind(montoReal, diferencia, notas || null, user.id, id).run()
+
+  return c.redirect('/bancos/caja?ok=cerrada')
+})
+
 export default bancos
