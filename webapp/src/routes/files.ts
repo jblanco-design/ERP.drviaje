@@ -1111,6 +1111,24 @@ files.get('/files/:id', async (c) => {
           <div><strong>No se puede cerrar el file</strong> — La utilidad es negativa (costo supera la venta). Solo un supervisor, administrador o gerente puede autorizar el cierre.</div>
         </div>
       ` : ''}
+      ${errorParam === 'caja_cerrada' ? `
+        <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i class="fas fa-cash-register" style="font-size:18px;"></i>
+          <div>
+            <strong>Caja no abierta</strong> — Para registrar cobros en efectivo es necesario abrir la caja del día primero.
+            <a href="/bancos/caja" style="color:#dc2626;font-weight:700;margin-left:6px;">Ir a Caja Chica →</a>
+          </div>
+        </div>
+      ` : ''}
+      ${errorParam === 'caja_vencida' ? `
+        <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i class="fas fa-exclamation-triangle" style="font-size:18px;"></i>
+          <div>
+            <strong>Caja sin cerrar de días anteriores</strong> — Cerrá la caja del día anterior antes de registrar nuevos movimientos.
+            <a href="/bancos/caja" style="color:#dc2626;font-weight:700;margin-left:6px;">Ir a Caja Chica →</a>
+          </div>
+        </div>
+      ` : ''}
       ${errorParam === 'sin_cotizacion' ? `
         <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
           <i class="fas fa-exchange-alt" style="font-size:18px;"></i>
