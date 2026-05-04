@@ -452,9 +452,20 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
       ? Number(b.pasajero_pagador_id) || null
       : null
     const concepto = String(b.concepto || '').trim().substring(0, 500)
-    const clienteIdRaw  = b.cliente_id  ? Number(b.cliente_id)  : null
+    const clienteIdRaw   = b.cliente_id   ? Number(b.cliente_id)   : null
     const proveedorIdRaw = b.proveedor_id ? Number(b.proveedor_id) : null
-    const bancoIdRaw    = b.banco_id    ? Number(b.banco_id)    : null
+    let   bancoIdRaw     = b.banco_id     ? Number(b.banco_id)     : null
+
+    // Si el método es efectivo y no se especificó banco,
+    // asignar automáticamente a la Caja Chica según la moneda
+    if (metodo === 'efectivo' && !bancoIdRaw) {
+      const cajaChica = await c.env.DB.prepare(`
+        SELECT id FROM bancos 
+        WHERE nombre_entidad LIKE '%Caja Chica%' AND moneda = ? AND activo = 1
+        LIMIT 1
+      `).bind(moneda).first() as any
+      if (cajaChica) bancoIdRaw = cajaChica.id
+    }
 
     const res = await c.env.DB.prepare(`
       INSERT INTO movimientos_caja (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, proveedor_id, banco_id, concepto, usuario_id, pasajero_pagador_id, fecha)
