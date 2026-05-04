@@ -184,6 +184,11 @@ tesoreria.get('/tesoreria', async (c) => {
         </div>
         <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filtrar</button>
         <a href="/tesoreria" class="btn btn-outline">Limpiar</a>
+        ${hayFiltroActivo || movimientos.results.length > 0 ? `
+        <a href="/tesoreria/exportar?tipo=${encodeURIComponent(tipo)}&metodo=${encodeURIComponent(metodoF)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}"
+           class="btn btn-sm" style="background:#1d6f42;color:white;border:none;">
+          <i class="fas fa-file-excel"></i> Exportar CSV
+        </a>` : ''}
         <a href="/tesoreria/proveedores" class="btn btn-outline" style="margin-left:auto;">
           <i class="fas fa-handshake"></i> Pagos a Proveedores
         </a>
@@ -456,6 +461,38 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
     const proveedorIdRaw = b.proveedor_id ? Number(b.proveedor_id) : null
     let   bancoIdRaw     = b.banco_id     ? Number(b.banco_id)     : null
 
+    // Si el método es efectivo: verificar caja abierta del día
+    if (metodo === 'efectivo') {
+      const hoy = new Date().toISOString().split('T')[0]
+
+      // Verificar caja vencida (abierta de días anteriores)
+      const cajaVencida = await c.env.DB.prepare(`
+        SELECT id, fecha FROM caja_sesiones
+        WHERE moneda = ? AND estado = 'abierta' AND fecha < ?
+        LIMIT 1
+      `).bind(moneda, hoy).first() as any
+
+      if (cajaVencida) {
+        const redirectErr = safeFileId ? `/files/${safeFileId}?error=caja_vencida` : '/tesoreria?error=caja_vencida'
+        return c.redirect(redirectErr)
+      }
+
+      // Verificar caja abierta hoy
+      const cajaHoy = await c.env.DB.prepare(`
+        SELECT id FROM caja_sesiones
+        WHERE moneda = ? AND estado = 'abierta' AND fecha = ?
+        LIMIT 1
+      `).bind(moneda, hoy).first() as any
+
+      if (!cajaHoy) {
+        const redirectErr = safeFileId ? `/files/${safeFileId}?error=caja_cerrada` : '/tesoreria?error=caja_cerrada'
+        return c.redirect(redirectErr)
+      }
+
+      // Guardamos el id para vincularlo al movimiento
+      Object.assign(body, { _caja_sesion_id: String(cajaHoy.id) })
+    }
+
     // Si el método es efectivo y no se especificó banco,
     // asignar automáticamente a la Caja Chica según la moneda
     if (metodo === 'efectivo' && !bancoIdRaw) {
@@ -467,13 +504,23 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
       if (cajaChica) bancoIdRaw = cajaChica.id
     }
 
+    const cajaSesionId = body['_caja_sesion_id'] ? Number(body['_caja_sesion_id']) : null
+
     const res = await c.env.DB.prepare(`
-      INSERT INTO movimientos_caja (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, proveedor_id, banco_id, concepto, usuario_id, pasajero_pagador_id, fecha)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'))
+      INSERT INTO movimientos_caja (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, proveedor_id, banco_id, concepto, usuario_id, pasajero_pagador_id, fecha, caja_sesion_id)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'),?)
     `).bind(tipo, metodo, moneda, monto, cot, monto * cot,
       safeFileId, clienteIdRaw, proveedorIdRaw, bancoIdRaw,
-      concepto, user.id, pagadorId
+      concepto, user.id, pagadorId, cajaSesionId
     ).run()
+
+    // Si hay sesión de caja, actualizar los totales
+    if (cajaSesionId) {
+      const campo = tipo === 'ingreso' ? 'monto_ingresos' : 'monto_egresos'
+      await c.env.DB.prepare(`
+        UPDATE caja_sesiones SET ${campo} = ${campo} + ? WHERE id = ?
+      `).bind(monto, cajaSesionId).run().catch(() => {})
+    }
 
     const movId = res.meta?.last_row_id as number
 
@@ -523,7 +570,87 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
 })
 
 // ══════════════════════════════════════════════════════════════
-// GET /tesoreria/recibo/:id  — Recibo de pago imprimible
+// ── GET /tesoreria/exportar — Exportar movimientos a CSV ─────
+tesoreria.get('/tesoreria/exportar', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+  const isGerente = isAdminOrAbove(user.rol)
+
+  const tipo    = c.req.query('tipo')   || ''
+  const metodoF = c.req.query('metodo') || ''
+  const desde   = c.req.query('desde')  || ''
+  const hasta   = c.req.query('hasta')  || ''
+
+  let q = `SELECT m.id, m.fecha, m.tipo, m.metodo, m.moneda, m.monto, m.cotizacion, m.monto_uyu,
+             m.concepto, m.referencia, m.nro_factura,
+             f.numero as file_numero,
+             COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo, '') as cliente,
+             COALESCE(pr.nombre, '') as proveedor,
+             COALESCE(b.nombre_entidad, '') as banco,
+             COALESCE(u.nombre, '') as operador
+           FROM movimientos_caja m
+           LEFT JOIN files f ON m.file_id = f.id
+           LEFT JOIN clientes cl ON m.cliente_id = cl.id
+           LEFT JOIN proveedores pr ON m.proveedor_id = pr.id
+           LEFT JOIN bancos b ON m.banco_id = b.id
+           LEFT JOIN usuarios u ON m.usuario_id = u.id
+           WHERE m.anulado = 0`
+  const params: any[] = []
+  if (!isGerente) { q += ' AND m.usuario_id = ?'; params.push(user.id) }
+  if (tipo)    { q += ' AND m.tipo = ?';          params.push(tipo) }
+  if (metodoF) { q += ' AND m.metodo = ?';        params.push(metodoF) }
+  if (desde)   { q += ' AND DATE(m.fecha) >= ?';  params.push(desde) }
+  if (hasta)   { q += ' AND DATE(m.fecha) <= ?';  params.push(hasta) }
+  q += ' ORDER BY m.fecha DESC LIMIT 5000'
+
+  const rows = await c.env.DB.prepare(q).bind(...params).all()
+
+  const metodoLabel: Record<string,string> = {
+    transferencia: 'Transferencia', efectivo: 'Efectivo',
+    cheque: 'Cheque', tarjeta: 'Tarjeta', saldo_cc: 'Saldo CC'
+  }
+
+  const headers = ['Fecha','Tipo','Método','Moneda','Monto','Cotización','Monto UYU',
+                   'Concepto','Referencia','Nº Factura','File','Cliente','Proveedor','Banco','Operador']
+
+  const escCsv = (v: any) => {
+    const s = String(v ?? '').replace(/"/g, '""')
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s}"` : s
+  }
+
+  const csvLines = [
+    headers.join(','),
+    ...(rows.results as any[]).map(r => [
+      escCsv(r.fecha?.substring(0,16) || ''),
+      escCsv(r.tipo === 'ingreso' ? 'Ingreso' : 'Egreso'),
+      escCsv(metodoLabel[r.metodo] || r.metodo || ''),
+      escCsv(r.moneda || ''),
+      escCsv(Number(r.monto || 0).toFixed(2)),
+      escCsv(Number(r.cotizacion || 1).toFixed(4)),
+      escCsv(Number(r.monto_uyu || 0).toFixed(2)),
+      escCsv(r.concepto || ''),
+      escCsv(r.referencia || ''),
+      escCsv(r.nro_factura || ''),
+      escCsv(r.file_numero ? String(r.file_numero).replace(/^\d{4}/, '') : ''),
+      escCsv(r.cliente || ''),
+      escCsv(r.proveedor || ''),
+      escCsv(r.banco || ''),
+      escCsv(r.operador || ''),
+    ].join(','))
+  ]
+
+  const fechaHoy = new Date().toISOString().split('T')[0]
+  const nombreArchivo = `movimientos${metodoF ? '_' + metodoF : ''}${desde ? '_' + desde : ''}${hasta ? '_al_' + hasta : ''}_${fechaHoy}.csv`
+
+  return new Response(csvLines.join('\n'), {
+    headers: {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${nombreArchivo}"`,
+    }
+  })
+})
+
+
 // ══════════════════════════════════════════════════════════════
 tesoreria.get('/tesoreria/recibo/:id', async (c) => {
   const user = await getUser(c)
