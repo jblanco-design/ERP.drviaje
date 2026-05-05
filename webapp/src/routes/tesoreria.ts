@@ -490,13 +490,13 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
       }
 
       // Guardamos el id para vincularlo al movimiento
-      Object.assign(body, { _caja_sesion_id: String(cajaHoy.id) })
+      Object.assign(b, { _caja_sesion_id: String(cajaHoy.id) })
     }
 
     // Banco para efectivo: ya no se usa "Caja Chica" como banco
     // Los movimientos de efectivo se vinculan a caja_sesiones directamente
 
-    const cajaSesionId = body['_caja_sesion_id'] ? Number(body['_caja_sesion_id']) : null
+    const cajaSesionId = b['_caja_sesion_id'] ? Number(b['_caja_sesion_id']) : null
 
     const res = await c.env.DB.prepare(`
       INSERT INTO movimientos_caja (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, proveedor_id, banco_id, concepto, usuario_id, pasajero_pagador_id, fecha, caja_sesion_id)
