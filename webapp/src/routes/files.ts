@@ -3405,11 +3405,10 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
       if (cotHoy) { cotizacion = cotHoy.valor; montoUyu = dev.monto * cotHoy.valor }
     }
 
-    // Banco para efectivo (caja chica)
-    let bancoId: number | null = null
-    if (dev.metodo === 'efectivo') {
+    // Banco para efectivo: usar caja chica si no viene banco_id en la devolución
+    if (dev.metodo === 'efectivo' && !bancoId) {
       const cajaChica = await c.env.DB.prepare(`
-        SELECT id FROM bancos WHERE nombre_entidad LIKE '%Caja Chica%' AND moneda = ? AND activo = 1 LIMIT 1
+        SELECT id FROM bancos WHERE nombre_entidad LIKE '%Caja%' AND moneda = ? AND activo = 1 LIMIT 1
       `).bind(dev.moneda).first() as any
       if (cajaChica) bancoId = cajaChica.id
     }
