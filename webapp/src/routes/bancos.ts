@@ -724,7 +724,7 @@ bancos.get('/bancos/caja', async (c) => {
   if (!user) return c.redirect('/login')
   if (!isAdminOrAbove(user.rol)) return c.redirect('/bancos?error=sin_permiso')
 
-  const hoy = new Date().toISOString().split('T')[0]
+  const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
   const ok  = c.req.query('ok') || ''
   const err = c.req.query('error') || ''
 
