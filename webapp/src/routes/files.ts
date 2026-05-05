@@ -1446,26 +1446,34 @@ files.get('/files/:id', async (c) => {
               ${(devoluciones.results as any[]).map((d: any) => {
                 const estadoColor = d.estado === 'aprobada' ? '#059669' : d.estado === 'rechazada' ? '#6b7280' : '#d97706'
                 const estadoLabel = d.estado === 'aprobada' ? '✓ Aprobada' : d.estado === 'rechazada' ? '✗ Rechazada' : '⏳ Pendiente'
-                return '<tr style="border-bottom:1px solid #fee2e2;">' +
-                  '<td style="padding:8px 12px;color:#6b7280;">' + (d.created_at||'').substring(0,10) + '</td>' +
-                  '<td style="padding:8px 12px;font-weight:700;color:#dc2626;">-$' + Number(d.monto).toLocaleString('es-UY',{minimumFractionDigits:2}) + ' ' + (d.moneda||'USD') + '</td>' +
-                  '<td style="padding:8px 12px;">' + esc(d.metodo||'') + '</td>' +
-                  '<td style="padding:8px 12px;font-size:12px;max-width:200px;">' + esc(d.motivo||'—') + '</td>' +
-                  '<td style="padding:8px 12px;font-size:12px;">' + esc(d.solicitado_nombre||'—') + '</td>' +
-                  '<td style="padding:8px 12px;"><span style="font-weight:700;color:' + estadoColor + ';">' + estadoLabel + '</span>' +
-                    (d.aprobado_nombre ? '<br><span style="font-size:10px;color:#9ca3af;">por ' + esc(d.aprobado_nombre) + '</span>' : '') + '</td>' +
-                  (isGerente(user.rol) && d.estado === 'pendiente' ?
-                    '<td style="padding:8px 12px;">' +
-                      '<form method="POST" action="/files/${id}/devoluciones/' + d.id + '/aprobar" style="display:inline;" onsubmit="return confirm(\'¿Aprobar esta devolución de $' + Number(d.monto).toLocaleString() + '?\')">' +
-                        '<button type="submit" style="padding:3px 8px;background:#059669;color:white;border:none;border-radius:5px;font-size:11px;cursor:pointer;margin-right:4px;"><i class="fas fa-check"></i> Aprobar</button>' +
-                      '</form>' +
-                      '<form method="POST" action="/files/${id}/devoluciones/' + d.id + '/rechazar" style="display:inline;" onsubmit="return confirm(\'¿Rechazar esta devolución?\')">' +
-                        '<button type="submit" style="padding:3px 8px;background:#6b7280;color:white;border:none;border-radius:5px;font-size:11px;cursor:pointer;"><i class="fas fa-times"></i> Rechazar</button>' +
-                      '</form>' +
-                    '</td>'
-                    : (isGerente(user.rol) ? '<td></td>' : '')
-                  ) +
-                  '</tr>'
+                const accionHtml = isGerente(user.rol) && d.estado === 'pendiente' ? `
+                  <td style="padding:8px 12px;">
+                    <form method="POST" action="/files/${id}/devoluciones/${d.id}/aprobar" style="display:inline;"
+                      onsubmit="return confirm('¿Aprobar esta devolución?')">
+                      <button type="submit" class="btn btn-sm" style="background:#059669;color:white;border:none;margin-right:4px;">
+                        <i class="fas fa-check"></i> Aprobar
+                      </button>
+                    </form>
+                    <form method="POST" action="/files/${id}/devoluciones/${d.id}/rechazar" style="display:inline;"
+                      onsubmit="return confirm('¿Rechazar esta devolución?')">
+                      <button type="submit" class="btn btn-sm" style="background:#6b7280;color:white;border:none;">
+                        <i class="fas fa-times"></i> Rechazar
+                      </button>
+                    </form>
+                  </td>` : (isGerente(user.rol) ? '<td></td>' : '')
+                return `
+                <tr style="border-bottom:1px solid #fee2e2;">
+                  <td style="padding:8px 12px;color:#6b7280;">${(d.created_at||'').substring(0,10)}</td>
+                  <td style="padding:8px 12px;font-weight:700;color:#dc2626;">-$${Number(d.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${d.moneda||'USD'}</td>
+                  <td style="padding:8px 12px;">${esc(d.metodo||'')}</td>
+                  <td style="padding:8px 12px;font-size:12px;">${esc(d.motivo||'—')}</td>
+                  <td style="padding:8px 12px;font-size:12px;">${esc(d.solicitado_nombre||'—')}</td>
+                  <td style="padding:8px 12px;">
+                    <span style="font-weight:700;color:${estadoColor};">${estadoLabel}</span>
+                    ${d.aprobado_nombre ? `<span style="font-size:10px;color:#9ca3af;"> por ${esc(d.aprobado_nombre)}</span>` : ''}
+                  </td>
+                  ${accionHtml}
+                </tr>`
               }).join('')}
             </tbody>
           </table>
