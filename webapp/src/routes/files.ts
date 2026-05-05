@@ -3360,7 +3360,7 @@ files.post('/files/:id/devoluciones', async (c) => {
 // ── POST /files/:id/devoluciones/:did/aprobar — Solo gerente ──
 files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
   const user = await getUser(c)
-  if (!user || !isGerente(user.rol)) return c.redirect(`/files/${c.req.param('id')}?error=sin_permiso`)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect(`/files/${c.req.param('id')}?error=sin_permiso`)
   const id  = c.req.param('id')
   const did = Number(c.req.param('did'))
   try {
@@ -3449,7 +3449,7 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
 // ── POST /files/:id/devoluciones/:did/rechazar — Solo gerente ─
 files.post('/files/:id/devoluciones/:did/rechazar', async (c) => {
   const user = await getUser(c)
-  if (!user || !isGerente(user.rol)) return c.redirect(`/files/${c.req.param('id')}?error=sin_permiso`)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect(`/files/${c.req.param('id')}?error=sin_permiso`)
   const id  = c.req.param('id')
   const did = Number(c.req.param('did'))
   try {
