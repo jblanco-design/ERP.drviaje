@@ -169,8 +169,8 @@ files.get('/files', async (c) => {
   const fechaDesde = c.req.query('fecha_desde') || ''
   const fechaHasta = c.req.query('fecha_hasta') || ''
   const conSaldo   = c.req.query('con_saldo')   || ''
-  const sortBy     = c.req.query('sort')        || 'fecha_viaje'
-  const sortDir    = c.req.query('dir')         === 'desc' ? 'DESC' : 'ASC'
+  const sortBy     = c.req.query('sort')        || 'apertura'
+  const sortDir    = c.req.query('dir')         === 'asc' ? 'ASC' : 'DESC'
   const isGerente = canSeeAllFiles(user.rol)  // supervisor, admin y gerente ven todos
 
   try {
