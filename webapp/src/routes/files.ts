@@ -3174,11 +3174,19 @@ files.get('/files/:id', async (c) => {
               </div>
               <div>
                 <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">MÉTODO DE DEVOLUCIÓN</label>
-                <select name="metodo" class="form-control" style="font-size:13px;">
+                <select name="metodo" id="dev-metodo" class="form-control" style="font-size:13px;" onchange="toggleDevBanco(this.value)">
                   <option value="transferencia">Transferencia bancaria</option>
                   <option value="efectivo">Efectivo</option>
                   <option value="tarjeta">Tarjeta</option>
                 </select>
+              </div>
+              <div id="dev-banco-row" style="">
+                <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">BANCO ORIGEN DE LA DEVOLUCIÓN *</label>
+                <select name="banco_id" id="dev-banco" class="form-control" style="font-size:13px;">
+                  <option value="">— Seleccioná un banco —</option>
+                  ${bancosActivos.map((b: any) => `<option value="${b.id}">${esc(b.nombre_entidad)} (${esc(b.moneda)})</option>`).join('')}
+                </select>
+                <div style="font-size:11px;color:#6b7280;margin-top:3px;">¿Desde qué cuenta se realizará la transferencia?</div>
               </div>
               <div>
                 <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">MOTIVO *</label>
@@ -3249,6 +3257,16 @@ files.get('/files/:id', async (c) => {
         function abrirModalCliente() {
           document.getElementById('modal-editar-cliente').style.display = 'flex'
         }
+        function toggleDevBanco(metodo) {
+          const row = document.getElementById('dev-banco-row')
+          if (!row) return
+          row.style.display = metodo === 'transferencia' ? 'block' : 'none'
+          const sel = document.getElementById('dev-banco')
+          if (sel) sel.required = metodo === 'transferencia'
+        }
+        // Inicializar al cargar
+        toggleDevBanco('transferencia')
+
         function cerrarModalCliente() {
           document.getElementById('modal-editar-cliente').style.display = 'none'
         }
@@ -3326,10 +3344,12 @@ files.post('/files/:id/devoluciones', async (c) => {
     const motivo = String(b.motivo || '').trim()
     if (!motivo) return c.redirect(`/files/${id}?error=motivo_requerido`)
 
+    const bancoDevId = b.banco_id ? Number(b.banco_id) : null
+
     await c.env.DB.prepare(`
-      INSERT INTO devoluciones (file_id, monto, moneda, motivo, metodo, estado, solicitado_por)
-      VALUES (?, ?, ?, ?, ?, 'pendiente', ?)
-    `).bind(Number(id), monto, b.moneda || 'USD', motivo, b.metodo || 'transferencia', user.id).run()
+      INSERT INTO devoluciones (file_id, monto, moneda, motivo, metodo, estado, solicitado_por, banco_id)
+      VALUES (?, ?, ?, ?, ?, 'pendiente', ?, ?)
+    `).bind(Number(id), monto, b.moneda || 'USD', motivo, b.metodo || 'transferencia', user.id, bancoDevId).run()
 
     return c.redirect(`/files/${id}?ok=devolucion_solicitada`)
   } catch (e: any) {
@@ -3365,7 +3385,16 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
       cajaSesionId = cajaHoy.id
     }
 
-    // Obtener cotización si es UYU
+    // Para transferencias: usar el banco seleccionado al solicitar la devolución
+    let bancoId: number | null = dev.banco_id ? Number(dev.banco_id) : null
+
+    // Para efectivo: usar caja chica si no viene banco
+    if (dev.metodo === 'efectivo' && !bancoId) {
+      const cajaChica = await c.env.DB.prepare(`
+        SELECT id FROM bancos WHERE nombre_entidad LIKE '%Caja%' AND moneda = ? AND activo = 1 LIMIT 1
+      `).bind(dev.moneda).first() as any
+      if (cajaChica) bancoId = cajaChica.id
+    }
     let cotizacion = 1
     let montoUyu   = dev.moneda === 'UYU' ? dev.monto : 0
     if (dev.moneda === 'USD' && dev.metodo === 'efectivo') {
@@ -3395,8 +3424,6 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
       'Devolución aprobada: ' + (dev.motivo || ''),
       Number(id), bancoId, user.id, cajaSesionId
     ).run()
-
-    // 2. Si hay sesión de caja, actualizar egresos
     if (cajaSesionId) {
       await c.env.DB.prepare(
         `UPDATE caja_sesiones SET monto_egresos = monto_egresos + ? WHERE id = ?`
