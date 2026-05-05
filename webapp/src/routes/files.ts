@@ -841,7 +841,7 @@ files.get('/files/:id', async (c) => {
     // Puede editar: dueño del file, supervisor, admin, gerente (NO el vendedor compartido)
     const puedeEditarFile = esDuenioFile || (canSeeAllFiles(user.rol) && !esVendedorCompartido) || isAdminOrAbove(user.rol)
 
-    const hoy = new Date().toISOString().split('T')[0]
+    const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
 
     const tiposServicio = ['aereo', 'hotel', 'traslado', 'tour', 'seguro', 'otro']
     const iconoServicio: Record<string, string> = {
@@ -3352,7 +3352,7 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
     // Para devoluciones en efectivo: verificar caja abierta
     let cajaSesionId: number | null = null
     if (dev.metodo === 'efectivo') {
-      const hoy = new Date().toISOString().split('T')[0]
+      const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
       const cajaVencida = await c.env.DB.prepare(`
         SELECT id, fecha FROM caja_sesiones WHERE moneda = ? AND estado = 'abierta' AND fecha < ? LIMIT 1
       `).bind(dev.moneda, hoy).first() as any
@@ -3369,7 +3369,7 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
     let cotizacion = 1
     let montoUyu   = dev.moneda === 'UYU' ? dev.monto : 0
     if (dev.moneda === 'USD' && dev.metodo === 'efectivo') {
-      const hoy = new Date().toISOString().split('T')[0]
+      const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
       const cotHoy = await c.env.DB.prepare(`
         SELECT valor FROM cotizaciones WHERE moneda_origen='USD' AND moneda_destino='UYU' AND fecha=? LIMIT 1
       `).bind(hoy).first() as any
