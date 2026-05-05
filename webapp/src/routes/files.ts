@@ -3184,7 +3184,7 @@ files.get('/files/:id', async (c) => {
                 <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">BANCO ORIGEN DE LA DEVOLUCIÓN *</label>
                 <select name="banco_id" id="dev-banco" class="form-control" style="font-size:13px;">
                   <option value="">— Seleccioná un banco —</option>
-                  ${bancosActivos.map((b: any) => `<option value="${b.id}">${esc(b.nombre_entidad)} (${esc(b.moneda)})</option>`).join('')}
+                  ${(bancos.results as any[]).filter((b: any) => b.nombre_entidad && !b.nombre_entidad.includes('Caja')).map((b: any) => `<option value="${b.id}">${esc(b.nombre_entidad)} (${esc(b.moneda)})</option>`).join('')}
                 </select>
                 <div style="font-size:11px;color:#6b7280;margin-top:3px;">¿Desde qué cuenta se realizará la transferencia?</div>
               </div>
