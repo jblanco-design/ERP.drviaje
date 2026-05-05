@@ -431,7 +431,7 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
   // Si la moneda es UYU, debe existir cotización del día cargada en el sistema.
   // Si no existe, se bloquea la transacción para evitar mezcla de monedas.
   if (moneda === 'UYU') {
-    const hoy = new Date().toISOString().split('T')[0]
+    const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
     const cotHoy = await c.env.DB.prepare(`
       SELECT valor FROM cotizaciones
       WHERE moneda_origen = 'USD' AND moneda_destino = 'UYU' AND fecha = ?
@@ -463,7 +463,7 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
 
     // Si el método es efectivo: verificar caja abierta del día
     if (metodo === 'efectivo') {
-      const hoy = new Date().toISOString().split('T')[0]
+      const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
 
       // Verificar caja vencida (abierta de días anteriores)
       const cajaVencida = await c.env.DB.prepare(`
@@ -1312,7 +1312,7 @@ tesoreria.get('/tesoreria/proveedores', async (c) => {
       tour: 'fa-map-marked-alt', seguro: 'fa-shield-alt', otro: 'fa-concierge-bell'
     }
 
-    const hoy = new Date().toISOString().split('T')[0]
+    const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
 
     // Tarjetas de resumen por proveedor
     const resumenCards = resumenDeuda.results.map((r: any) => `
@@ -2617,7 +2617,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       .filter((s: any) => s.prepago_realizado)
       .reduce((acc: number, s: any) => acc + Number(s.costo_original || 0), 0)
 
-    const hoy = new Date().toISOString().split('T')[0]
+    const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
 
     const iconoServicio: Record<string, string> = {
       aereo: 'fa-plane', hotel: 'fa-bed', traslado: 'fa-car',
