@@ -63,12 +63,11 @@ function getBadgePago(estadoPago: string) {
 
 // Generar número de file
 async function generarNumeroFile(db: D1Database): Promise<string> {
-  const last = await db.prepare('SELECT numero FROM files ORDER BY id DESC LIMIT 1').first() as any
-  if (!last) return '001'
-  // Extraer solo la parte numérica (ignorar prefijo de año si existe)
-  const soloNum = last.numero.replace(/^\d{4}/, '')
-  const num = parseInt(soloNum) + 1
-  return String(num).padStart(3, '0')
+  // El número de file = ID de la BD (a partir del file 84)
+  // Los files anteriores (2026XXX) mantienen su numeración histórica
+  const last = await db.prepare('SELECT id FROM files ORDER BY id DESC LIMIT 1').first() as any
+  const nextId = (last?.id || 0) + 1
+  return String(nextId)
 }
 
 // ── Búsqueda de destinos (autocompletado) ─────────────────────────────────────
@@ -683,9 +682,11 @@ files.post('/files', async (c) => {
       `UPDATE clientes SET vendedor_id = ? WHERE id = ?`
     ).bind(vendedorDelFile, body.cliente_id).run().catch(() => {})
 
+    // numero = id a partir del file 84
     const newFile = await c.env.DB.prepare('SELECT id FROM files WHERE numero = ?').bind(numero).first() as any
-    await audit(c.env.DB, newFile.id, user.id, 'Creó el file', `File #${numero} creado`)
-    return c.redirect(`/files/${newFile.id}`)
+    const fileId  = newFile?.id || numero
+    await audit(c.env.DB, Number(fileId), user.id, 'Creó el file', `File #${numero} creado`)
+    return c.redirect(`/files/${fileId}`)
   } catch (e: any) {
     return c.redirect('/files?error=1')
   }
