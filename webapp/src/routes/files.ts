@@ -4402,6 +4402,7 @@ files.get('/servicios/:id/voucher-traslado', async (c) => {
                         border: none; padding: 12px 32px; border-radius: 8px; font-size: 14px;
                         font-weight: 700; cursor: pointer; }
     @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
       body { background: white; }
       .page { box-shadow: none; margin: 0; border-radius: 0; }
       .print-btn { display: none; }
