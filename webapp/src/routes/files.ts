@@ -4270,6 +4270,7 @@ files.get('/servicios/:id/voucher-traslado', async (c) => {
   const svcId = Number(c.req.param('id'))
 
   try {
+    const svc = await c.env.DB.prepare(`
     SELECT s.*, f.numero as file_numero, f.id as file_id,
            COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre,
            c.telefono as cliente_tel,
