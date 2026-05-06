@@ -1008,6 +1008,7 @@ files.get('/files/:id', async (c) => {
           </td>
           <td>
             <div style="display:flex;gap:4px;flex-wrap:wrap;">
+              ${s.tipo_servicio === 'traslado' ? `<button onclick="abrirModalVoucherTraslado(${s.id})" class="btn btn-sm" style="background:#7B3FA0;color:white;border:none;" title="Generar Voucher Traslado"><i class="fas fa-file-alt"></i></button>` : ''}
               ${puedeEditar
                 ? `<button onclick="editarServicio(${JSON.stringify(s).replace(/"/g,'&quot;')})" class="btn btn-outline btn-sm" title="Editar"><i class="fas fa-edit"></i></button>`
                 : `<span title="No editable: servicio pagado al proveedor" style="color:#9ca3af;font-size:18px;padding:4px 6px;"><i class="fas fa-lock"></i></span>`
@@ -1501,6 +1502,81 @@ files.get('/files/:id', async (c) => {
       </div>
 
       <!-- Modal Nuevo/Editar Servicio -->
+      <!-- Modal Voucher Traslado -->
+      <div class="modal-overlay" id="modal-voucher-traslado">
+        <div class="modal" style="max-width:520px;">
+          <div class="modal-header" style="background:linear-gradient(135deg,#7B3FA0,#EC008C);">
+            <span class="modal-title" style="color:white;">
+              <i class="fas fa-file-alt"></i> Generar Voucher de Traslado
+            </span>
+            <button type="button" class="modal-close" style="color:white;"
+              onclick="document.getElementById('modal-voucher-traslado').classList.remove('active')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="voucher-svc-id">
+            <div class="grid-2" style="gap:12px;margin-bottom:14px;">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">TIPO DE TRASLADO *</label>
+                <select id="voucher-tipo-traslado" class="form-control">
+                  <option value="IN">IN (Llegada)</option>
+                  <option value="OUT">OUT (Salida)</option>
+                  <option value="IN/OUT">IN / OUT</option>
+                  <option value="Triangular">Triangular</option>
+                  <option value="Inter Hotel">Inter Hotel</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">TIPO DE SERVICIO *</label>
+                <select id="voucher-tipo-servicio" class="form-control">
+                  <option value="Privado">Privado</option>
+                  <option value="Regular">Regular</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="voucher-vuelos-section">
+              <div class="grid-2" style="gap:12px;margin-bottom:14px;" id="voucher-vuelo-llegada-row">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Nº VUELO LLEGADA</label>
+                  <input type="text" id="voucher-vuelo-llegada" class="form-control" placeholder="Ej: CM123">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">HORA LLEGADA</label>
+                  <input type="time" id="voucher-hora-llegada" class="form-control">
+                </div>
+              </div>
+              <div class="grid-2" style="gap:12px;margin-bottom:14px;" id="voucher-vuelo-salida-row">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Nº VUELO SALIDA</label>
+                  <input type="text" id="voucher-vuelo-salida" class="form-control" placeholder="Ej: CM456">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">HORA SALIDA</label>
+                  <input type="time" id="voucher-hora-salida" class="form-control">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">OBSERVACIÓN</label>
+              <textarea id="voucher-observacion" class="form-control" rows="3"
+                placeholder="Información adicional para el trasladista..."></textarea>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:16px;">
+              <button type="button" onclick="generarVoucherTraslado()"
+                class="btn btn-primary" style="flex:1;background:linear-gradient(135deg,#7B3FA0,#EC008C);">
+                <i class="fas fa-file-alt"></i> Generar Voucher
+              </button>
+              <button type="button" class="btn btn-outline"
+                onclick="document.getElementById('modal-voucher-traslado').classList.remove('active')">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="modal-overlay" id="modal-servicio">
         <div class="modal" style="max-width:760px;max-height:90vh;overflow-y:auto;">
           <div class="modal-header">
@@ -3265,6 +3341,58 @@ files.get('/files/:id', async (c) => {
         function abrirModalCliente() {
           document.getElementById('modal-editar-cliente').style.display = 'flex'
         }
+        function abrirModalVoucherTraslado(svcId) {
+          document.getElementById('voucher-svc-id').value = svcId
+          // Reset campos
+          document.getElementById('voucher-vuelo-llegada').value = ''
+          document.getElementById('voucher-hora-llegada').value = ''
+          document.getElementById('voucher-vuelo-salida').value = ''
+          document.getElementById('voucher-hora-salida').value = ''
+          document.getElementById('voucher-observacion').value = ''
+          document.getElementById('voucher-tipo-traslado').value = 'IN'
+          document.getElementById('voucher-tipo-servicio').value = 'Privado'
+          actualizarCamposVuelo('IN')
+          document.getElementById('modal-voucher-traslado').classList.add('active')
+        }
+
+        function actualizarCamposVuelo(tipo) {
+          const llegada = document.getElementById('voucher-vuelo-llegada-row')
+          const salida  = document.getElementById('voucher-vuelo-salida-row')
+          const section = document.getElementById('voucher-vuelos-section')
+          if (!llegada || !salida || !section) return
+          if (tipo === 'Inter Hotel') {
+            section.style.display = 'none'
+          } else {
+            section.style.display = 'block'
+            llegada.style.display = (tipo === 'IN' || tipo === 'IN/OUT' || tipo === 'Triangular') ? 'grid' : 'none'
+            salida.style.display  = (tipo === 'OUT' || tipo === 'IN/OUT' || tipo === 'Triangular') ? 'grid' : 'none'
+          }
+        }
+
+        document.getElementById('voucher-tipo-traslado')?.addEventListener('change', function() {
+          actualizarCamposVuelo(this.value)
+        })
+
+        function generarVoucherTraslado() {
+          const svcId    = document.getElementById('voucher-svc-id').value
+          const tipo     = document.getElementById('voucher-tipo-traslado').value
+          const servicio = document.getElementById('voucher-tipo-servicio').value
+          const vLlegada = document.getElementById('voucher-vuelo-llegada').value
+          const hLlegada = document.getElementById('voucher-hora-llegada').value
+          const vSalida  = document.getElementById('voucher-vuelo-salida').value
+          const hSalida  = document.getElementById('voucher-hora-salida').value
+          const obs      = document.getElementById('voucher-observacion').value
+
+          const params = new URLSearchParams({
+            tipo, servicio,
+            vuelo_llegada: vLlegada, hora_llegada: hLlegada,
+            vuelo_salida: vSalida, hora_salida: hSalida,
+            observacion: obs
+          })
+          window.open('/servicios/' + svcId + '/voucher-traslado?' + params.toString(), '_blank')
+          document.getElementById('modal-voucher-traslado').classList.remove('active')
+        }
+
         function toggleDevBanco(metodo) {
           const row = document.getElementById('dev-banco-row')
           if (!row) return
@@ -4132,6 +4260,261 @@ files.post('/files/:id/estado', async (c) => {
   } catch {
     return c.redirect(`/files/${id}`)
   }
+})
+
+// ── GET /servicios/:id/voucher-traslado ──────────────────────
+files.get('/servicios/:id/voucher-traslado', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+
+  const svcId = Number(c.req.param('id'))
+  const q = c.req.query
+
+  const svc = await c.env.DB.prepare(`
+    SELECT s.*, f.numero as file_numero, f.id as file_id,
+           COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre,
+           c.telefono as cliente_tel,
+           p.nombre as proveedor_nombre,
+           o.nombre as operador_nombre, o.telefono as operador_tel, o.contacto as operador_contacto
+    FROM servicios s
+    JOIN files f ON f.id = s.file_id
+    JOIN clientes c ON c.id = f.cliente_id
+    LEFT JOIN proveedores p ON p.id = s.proveedor_id
+    LEFT JOIN operadores o ON o.id = s.operador_id
+    WHERE s.id = ?
+  `).bind(svcId).first() as any
+
+  if (!svc) return c.text('Servicio no encontrado', 404)
+
+  // Pasajeros del servicio diferenciados
+  const paxRows = await c.env.DB.prepare(`
+    SELECT p.nombre, p.apellido, p.nombre_completo, p.fecha_nacimiento
+    FROM servicio_pasajeros sp
+    JOIN pasajeros p ON p.id = sp.pasajero_id
+    WHERE sp.servicio_id = ?
+  `).bind(svcId).all()
+
+  const hoy = new Date()
+  let adultos = 0, chd = 0, inf = 0
+  for (const p of paxRows.results as any[]) {
+    if (!p.fecha_nacimiento) { adultos++; continue }
+    const edad = hoy.getFullYear() - new Date(p.fecha_nacimiento).getFullYear()
+    if (edad < 2) inf++
+    else if (edad < 12) chd++
+    else adultos++
+  }
+  // Si no hay pasajeros asignados, usar cantidad_pasajeros del servicio como adultos
+  if (adultos + chd + inf === 0) adultos = svc.cantidad_pasajeros || 1
+
+  const tipoTraslado = q('tipo') || 'IN'
+  const tipoServicio = q('servicio') || 'Privado'
+  const vueloLlegada = q('vuelo_llegada') || ''
+  const horaLlegada  = q('hora_llegada') || ''
+  const vueloSalida  = q('vuelo_salida') || ''
+  const horaSalida   = q('hora_salida') || ''
+  const observacion  = q('observacion') || ''
+
+  const fileNum = String(svc.file_numero).replace(/^\d{4}/, '')
+  const fecha   = svc.fecha_inicio || ''
+
+  // Construir sección de vuelos
+  let vuelosHtml = ''
+  if (tipoTraslado !== 'Inter Hotel') {
+    if (vueloLlegada || horaLlegada) {
+      vuelosHtml += `
+        <div class="info-row">
+          <span class="info-label">Vuelo Llegada:</span>
+          <span class="info-value"><strong>${esc(vueloLlegada)}</strong>${horaLlegada ? ` — ${horaLlegada} hs` : ''}</span>
+        </div>`
+    }
+    if (vueloSalida || horaSalida) {
+      vuelosHtml += `
+        <div class="info-row">
+          <span class="info-label">Vuelo Salida:</span>
+          <span class="info-value"><strong>${esc(vueloSalida)}</strong>${horaSalida ? ` — ${horaSalida} hs` : ''}</span>
+        </div>`
+    }
+  }
+
+  const paxStr = [
+    adultos > 0 ? `${adultos} Adulto${adultos > 1 ? 's' : ''}` : '',
+    chd > 0     ? `${chd} Niño${chd > 1 ? 's' : ''}` : '',
+    inf > 0     ? `${inf} Infante${inf > 1 ? 's' : ''}` : '',
+  ].filter(Boolean).join(' / ')
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voucher Traslado #${fileNum} — ${esc(svc.cliente_nombre)}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f3f4f6; }
+
+    .page { max-width: 700px; margin: 30px auto; background: white; border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12); overflow: hidden; }
+
+    .header { background: linear-gradient(135deg, #5a2d75 0%, #7B3FA0 50%, #EC008C 100%);
+              padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; }
+    .logo   { color: white; }
+    .logo-dr { font-size: 28px; font-weight: 800; color: #F7941D; }
+    .logo-viaje { font-size: 24px; font-weight: 700; color: white; }
+    .logo-com { font-size: 20px; font-weight: 800; color: #EC008C; }
+    .logo-sub { font-size: 11px; color: rgba(255,255,255,0.7); letter-spacing: 2px; margin-top: 2px; }
+
+    .header-right { text-align: right; color: white; }
+    .voucher-title { font-size: 22px; font-weight: 800; letter-spacing: 1px; }
+    .file-badge { background: rgba(255,255,255,0.2); border-radius: 20px;
+                  padding: 4px 14px; font-size: 13px; font-weight: 700; margin-top: 6px; display: inline-block; }
+
+    .badges { display: flex; gap: 10px; padding: 14px 32px; background: #faf5ff; border-bottom: 1px solid #ede9fe; }
+    .badge { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
+    .badge-tipo  { background: #7B3FA0; color: white; }
+    .badge-serv  { background: #F7941D; color: white; }
+    .badge-dest  { background: #dbeafe; color: #1d4ed8; }
+
+    .body { padding: 28px 32px; }
+
+    .section { margin-bottom: 22px; }
+    .section-title { font-size: 10px; font-weight: 800; color: #9ca3af; letter-spacing: 2px;
+                     text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; }
+
+    .info-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .info-label { font-size: 12px; color: #6b7280; min-width: 140px; font-weight: 600; }
+    .info-value { font-size: 14px; color: #111827; }
+    .info-value strong { color: #7B3FA0; }
+
+    .pax-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .pax-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+                 background: #f3e8ff; color: #7B3FA0; border: 1px solid #d8b4fe; }
+
+    .obs-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
+               padding: 12px 16px; font-size: 13px; color: #92400e; line-height: 1.6; }
+
+    .footer { background: #f9fafb; padding: 16px 32px; border-top: 1px solid #e5e7eb;
+              display: flex; justify-content: space-between; align-items: center; }
+    .footer-left { font-size: 11px; color: #9ca3af; }
+    .footer-right { font-size: 11px; color: #9ca3af; text-align: right; }
+
+    .print-btn { display: block; text-align: center; margin: 20px auto; }
+    .print-btn button { background: linear-gradient(135deg,#7B3FA0,#EC008C); color: white;
+                        border: none; padding: 12px 32px; border-radius: 8px; font-size: 14px;
+                        font-weight: 700; cursor: pointer; }
+    @media print {
+      body { background: white; }
+      .page { box-shadow: none; margin: 0; border-radius: 0; }
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-btn">
+    <button onclick="window.print()"><i>🖨</i> Imprimir / Guardar PDF</button>
+  </div>
+
+  <div class="page">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <div><span class="logo-dr">Dr.</span><span class="logo-viaje">Viaje</span><span class="logo-com">.com</span></div>
+        <div class="logo-sub">AGENCIA DE VIAJES</div>
+      </div>
+      <div class="header-right">
+        <div class="voucher-title">VOUCHER DE TRASLADO</div>
+        <div class="file-badge">File #${fileNum}</div>
+      </div>
+    </div>
+
+    <!-- Badges de tipo -->
+    <div class="badges">
+      <span class="badge badge-tipo">${esc(tipoTraslado)}</span>
+      <span class="badge badge-serv">Servicio ${esc(tipoServicio)}</span>
+      ${svc.destino_codigo ? `<span class="badge badge-dest">${esc(svc.destino_codigo.toUpperCase())}</span>` : ''}
+    </div>
+
+    <div class="body">
+      <!-- Para -->
+      <div class="section">
+        <div class="section-title">Para (Trasladista / Operador)</div>
+        <div class="info-row">
+          <span class="info-label">Empresa:</span>
+          <span class="info-value"><strong>${esc(svc.operador_nombre || svc.proveedor_nombre || '—')}</strong></span>
+        </div>
+        ${svc.operador_tel ? `
+        <div class="info-row">
+          <span class="info-label">Teléfono operador:</span>
+          <span class="info-value">${esc(svc.operador_tel)}</span>
+        </div>` : ''}
+      </div>
+
+      <!-- Pasajero -->
+      <div class="section">
+        <div class="section-title">Titular de la Reserva</div>
+        <div class="info-row">
+          <span class="info-label">Pasajero:</span>
+          <span class="info-value"><strong>${esc(svc.cliente_nombre)}</strong></span>
+        </div>
+        ${svc.cliente_tel ? `
+        <div class="info-row">
+          <span class="info-label">Teléfono:</span>
+          <span class="info-value">${esc(svc.cliente_tel)}</span>
+        </div>` : ''}
+        <div class="info-row">
+          <span class="info-label">Pasajeros:</span>
+          <span class="info-value">
+            <div class="pax-badges">
+              ${adultos > 0 ? `<span class="pax-badge">${adultos} Adulto${adultos > 1 ? 's' : ''}</span>` : ''}
+              ${chd > 0 ? `<span class="pax-badge">${chd} Niño${chd > 1 ? 's' : ''}</span>` : ''}
+              ${inf > 0 ? `<span class="pax-badge">${inf} Infante${inf > 1 ? 's' : ''}</span>` : ''}
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <!-- Servicio -->
+      <div class="section">
+        <div class="section-title">Detalle del Servicio</div>
+        <div class="info-row">
+          <span class="info-label">Descripción:</span>
+          <span class="info-value"><strong>${esc(svc.descripcion)}</strong></span>
+        </div>
+        ${svc.nro_ticket && svc.nro_ticket !== 'sin ph' ? `
+        <div class="info-row">
+          <span class="info-label">Nº Reserva / Ticket:</span>
+          <span class="info-value">${esc(svc.nro_ticket)}</span>
+        </div>` : ''}
+        <div class="info-row">
+          <span class="info-label">Fecha:</span>
+          <span class="info-value"><strong>${esc(fecha)}</strong></span>
+        </div>
+        ${vuelosHtml}
+      </div>
+
+      <!-- Observación -->
+      ${observacion ? `
+      <div class="section">
+        <div class="section-title">Observación</div>
+        <div class="obs-box">${esc(observacion)}</div>
+      </div>` : ''}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-left">
+        Dr. Viaje · Colonia 820, Montevideo, Uruguay<br>
+        +598 9668 3276 · info@drviaje.com
+      </div>
+      <div class="footer-right">
+        Voucher generado el ${new Date(Date.now() - 3*60*60*1000).toLocaleDateString('es-UY')}<br>
+        <strong>Este voucher no tiene valor económico</strong>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`
+
+  return c.html(html)
 })
 
 // Voucher
