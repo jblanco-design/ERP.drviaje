@@ -7,7 +7,25 @@ import { getOrFetch, invalidateCachePrefix } from '../lib/cache'
 type Bindings = { DB: D1Database }
 const files = new Hono<{ Bindings: Bindings }>()
 
-// ── Helper de auditoría ───────────────────────────────────────
+// Observador: solo lectura — bloquear todos los POST
+files.use('*', async (c, next) => {
+  if (c.req.method !== 'GET') {
+    const user = await getUser(c)
+    if (user?.rol === 'observador') {
+      return c.html(`
+        <div style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f3f4f6;">
+          <div style="background:white;border-radius:12px;padding:40px;max-width:400px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+            <div style="font-size:48px;margin-bottom:16px;">👁️</div>
+            <h2 style="color:#d97706;margin-bottom:12px;">Modo lectura</h2>
+            <p style="color:#6b7280;margin-bottom:24px;">El rol <strong>Observador</strong> solo tiene permisos de visualización.</p>
+            <a href="/dashboard" style="background:#7B3FA0;color:white;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:600;">← Volver al Dashboard</a>
+          </div>
+        </div>
+      `, 403)
+    }
+  }
+  return next()
+})
 async function audit(db: D1Database, fileId: number, userId: number, accion: string, detalle?: string) {
   await db.prepare(
     `INSERT INTO file_auditoria (file_id, usuario_id, accion, detalle) VALUES (?, ?, ?, ?)`
