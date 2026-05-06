@@ -7,6 +7,13 @@ import { getOrFetch, invalidateCachePrefix } from '../lib/cache'
 type Bindings = { DB: D1Database }
 const files = new Hono<{ Bindings: Bindings }>()
 
+// ── Helper de auditoría ───────────────────────────────────────
+async function audit(db: D1Database, fileId: number, userId: number, accion: string, detalle?: string) {
+  await db.prepare(
+    `INSERT INTO file_auditoria (file_id, usuario_id, accion, detalle) VALUES (?, ?, ?, ?)`
+  ).bind(fileId, userId, accion, detalle || null).run().catch(() => {})
+}
+
 // Badges de estado del file
 function getBadge(estado: string) {
   const m: Record<string, string> = {
@@ -659,6 +666,7 @@ files.post('/files', async (c) => {
     ).bind(vendedorDelFile, body.cliente_id).run().catch(() => {})
 
     const newFile = await c.env.DB.prepare('SELECT id FROM files WHERE numero = ?').bind(numero).first() as any
+    await audit(c.env.DB, newFile.id, user.id, 'Creó el file', `File #${numero} creado`)
     return c.redirect(`/files/${newFile.id}`)
   } catch (e: any) {
     return c.redirect('/files?error=1')
@@ -704,6 +712,7 @@ files.get('/files/:id', async (c) => {
       compartidoRes,
       vendedoresCompartirRes,
       liquidacionesFileRes,
+      auditoriaRes,
     ] = await Promise.all([
       c.env.DB.prepare(`
         SELECT s.*, p.nombre as proveedor_nombre, o.nombre as operador_nombre
@@ -796,6 +805,14 @@ files.get('/files/:id', async (c) => {
         WHERE lf.file_id = ? AND l.estado IN ('aprobada','pagada')
         LIMIT 1
       `).bind(id).first().catch(() => null),
+
+      c.env.DB.prepare(`
+        SELECT fa.accion, fa.detalle, fa.created_at, u.nombre as usuario_nombre
+        FROM file_auditoria fa
+        LEFT JOIN usuarios u ON u.id = fa.usuario_id
+        WHERE fa.file_id = ?
+        ORDER BY fa.created_at DESC LIMIT 100
+      `).bind(id).all().catch(() => ({ results: [] })),
     ])
 
     const servicios            = serviciosRes
@@ -810,6 +827,7 @@ files.get('/files/:id', async (c) => {
     const compartidoRow        = compartidoRes as any
     const vendedoresParaCompartir = vendedoresCompartirRes
     const liquidacionesFile    = liquidacionesFileRes as any
+    const auditoria            = (auditoriaRes as any).results || []
 
     // Pasajeros por servicio — una sola query en vez de N queries
     const serviciosPasajeros: Record<number, number[]> = {}
@@ -3460,6 +3478,81 @@ files.get('/files/:id', async (c) => {
           }
         }
       </script>
+
+      ${isAdminOrAbove(user.rol) || user.rol === 'observador' ? `
+      <!-- Historial de cambios -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+          <span class="card-title" style="font-size:13px;">
+            <i class="fas fa-history" style="color:#9ca3af;"></i> Historial de cambios
+            <span style="font-size:11px;color:#9ca3af;font-weight:400;margin-left:6px;">(${auditoria.length} registros)</span>
+          </span>
+          <span style="font-size:11px;color:#9ca3af;"><i class="fas fa-chevron-down"></i> Click para expandir</span>
+        </div>
+        <div style="display:none;">
+          ${auditoria.length === 0 ? `
+            <div style="padding:16px 20px;color:#9ca3af;font-size:13px;">Sin registros de cambios aún.</div>
+          ` : `
+            <div style="max-height:350px;overflow-y:auto;">
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead>
+                  <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb;">
+                    <th style="padding:8px 14px;text-align:left;color:#6b7280;font-weight:600;white-space:nowrap;">Fecha y hora</th>
+                    <th style="padding:8px 14px;text-align:left;color:#6b7280;font-weight:600;">Usuario</th>
+                    <th style="padding:8px 14px;text-align:left;color:#6b7280;font-weight:600;">Acción</th>
+                    <th style="padding:8px 14px;text-align:left;color:#6b7280;font-weight:600;">Detalle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${auditoria.map((a: any) => {
+                    const iconMap: Record<string,string> = {
+                      'Creó el file':        'fa-plus-circle',
+                      'Agregó un servicio':  'fa-plane',
+                      'Editó un servicio':   'fa-edit',
+                      'Eliminó un servicio': 'fa-trash',
+                      'Cambió estado':       'fa-exchange-alt',
+                      'Registró ingreso':    'fa-arrow-down',
+                      'Registró egreso':     'fa-arrow-up',
+                      'Solicitó devolución': 'fa-undo',
+                      'Aprobó devolución':   'fa-check',
+                      'Rechazó devolución':  'fa-times',
+                      'Compartió el file':   'fa-share-alt',
+                    }
+                    const colorMap: Record<string,string> = {
+                      'Creó el file':        '#7B3FA0',
+                      'Agregó un servicio':  '#059669',
+                      'Editó un servicio':   '#d97706',
+                      'Eliminó un servicio': '#dc2626',
+                      'Cambió estado':       '#3b82f6',
+                      'Registró ingreso':    '#059669',
+                      'Registró egreso':     '#dc2626',
+                      'Solicitó devolución': '#d97706',
+                      'Aprobó devolución':   '#059669',
+                      'Rechazó devolución':  '#6b7280',
+                      'Compartió el file':   '#7B3FA0',
+                    }
+                    const accionKey = Object.keys(iconMap).find(k => (a.accion||'').startsWith(k)) || ''
+                    const icon  = iconMap[accionKey]  || 'fa-circle'
+                    const color = colorMap[accionKey] || '#9ca3af'
+                    return `
+                      <tr style="border-bottom:1px solid #f3f4f6;">
+                        <td style="padding:7px 14px;color:#9ca3af;white-space:nowrap;">${(a.created_at||'').substring(0,16).replace('T',' ')}</td>
+                        <td style="padding:7px 14px;font-weight:600;color:#374151;">${esc(a.usuario_nombre||'—')}</td>
+                        <td style="padding:7px 14px;">
+                          <span style="color:${color};">
+                            <i class="fas ${icon}" style="font-size:10px;margin-right:4px;"></i>${esc(a.accion||'')}
+                          </span>
+                        </td>
+                        <td style="padding:7px 14px;color:#6b7280;">${esc(a.detalle||'')}</td>
+                      </tr>`
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          `}
+        </div>
+      </div>
+      ` : ''}
     `
     return c.html(baseLayout(`File #${String(file.numero).replace(/^\d{4}/,'')}`, content, user, 'files'))
   } catch (e: any) {
@@ -3487,6 +3580,7 @@ files.post('/files/:id/devoluciones', async (c) => {
       VALUES (?, ?, ?, ?, ?, 'pendiente', ?, ?)
     `).bind(Number(id), monto, b.moneda || 'USD', motivo, b.metodo || 'transferencia', user.id, bancoDevId).run()
 
+    await audit(c.env.DB, Number(id), user.id, 'Solicitó devolución', `$${monto} ${b.moneda||'USD'} — ${motivo}`)
     return c.redirect(`/files/${id}?ok=devolucion_solicitada`)
   } catch (e: any) {
     return c.redirect(`/files/${id}?error=1`)
@@ -3575,6 +3669,7 @@ files.post('/files/:id/devoluciones/:did/aprobar', async (c) => {
       `UPDATE devoluciones SET estado='aprobada', aprobado_por=?, movimiento_caja_id=?, updated_at=datetime('now') WHERE id=?`
     ).bind(user.id, movRes.meta?.last_row_id || null, did).run()
 
+    await audit(c.env.DB, Number(id), user.id, 'Aprobó devolución', `$${dev.monto} ${dev.moneda} (${dev.metodo})`)
     return c.redirect(`/files/${id}?ok=devolucion_aprobada`)
   } catch (e: any) {
     console.error('[DEVOLUCION APROBAR]', e.message)
@@ -3592,6 +3687,7 @@ files.post('/files/:id/devoluciones/:did/rechazar', async (c) => {
     await c.env.DB.prepare(
       `UPDATE devoluciones SET estado = 'rechazada', aprobado_por = ?, updated_at = datetime('now') WHERE id = ? AND file_id = ? AND estado = 'pendiente'`
     ).bind(user.id, did, Number(id)).run()
+    await audit(c.env.DB, Number(id), user.id, 'Rechazó devolución', '')
     return c.redirect(`/files/${id}?ok=devolucion_rechazada`)
   } catch (e: any) {
     return c.redirect(`/files/${id}?error=1`)
@@ -3669,7 +3765,7 @@ files.post('/files/:id/compartir', async (c) => {
     INSERT OR REPLACE INTO file_compartido (file_id, vendedor_id, porcentaje, compartido_por)
     VALUES (?, ?, 50.0, ?)
   `).bind(id, vendedorId, user.id).run()
-
+  await audit(c.env.DB, id, user.id, 'Compartió el file', `Con ${vendedor.nombre}`)
   return c.redirect(`/files/${id}`)
 })
 
@@ -3882,9 +3978,9 @@ files.post('/servicios/:id/editar', async (c) => {
     }
 
     await recalcularTotalesFile(c.env.DB, Number(fileId))
+    await audit(c.env.DB, Number(fileId), user.id, 'Editó un servicio',
+      String(body.descripcion || '').trim().substring(0, 100))
     return c.redirect(`/files/${fileId}`)
-  } catch (e: any) {
-    console.error('[EDITAR SERVICIO]', e.message)
     const svc2 = await c.env.DB.prepare('SELECT file_id FROM servicios WHERE id=?').bind(svcId).first() as any
     return c.redirect(`/files/${svc2?.file_id || ''}?error=error_interno`)
   }
@@ -4038,6 +4134,8 @@ files.post('/files/:id/servicios', async (c) => {
 
     // Actualizar totales del file
     await recalcularTotalesFile(c.env.DB, Number(id))
+    await audit(c.env.DB, Number(id), user.id, 'Agregó un servicio',
+      String(body.descripcion || '').trim().substring(0, 100))
     return c.redirect(`/files/${id}`)
   } catch (e: any) {
     console.error('[SERVICIO]', e.message)
@@ -4256,6 +4354,9 @@ files.post('/files/:id/estado', async (c) => {
     }
 
     await c.env.DB.prepare(`UPDATE files SET estado=?, updated_at=datetime('now') WHERE id=?`).bind(nuevoEstado, id).run()
+    const estadoLabels: Record<string,string> = { en_proceso: 'En Proceso', seniado: 'Señado', cerrado: 'Cerrado', anulado: 'Anulado' }
+    await audit(c.env.DB, id, user.id, 'Cambió estado del file',
+      `${estadoLabels[file.estado] || file.estado} → ${estadoLabels[nuevoEstado] || nuevoEstado}`)
     return c.redirect(`/files/${id}`)
   } catch {
     return c.redirect(`/files/${id}`)
@@ -4755,6 +4856,8 @@ files.delete('/servicios/:id', async (c) => {
 
   await c.env.DB.prepare('DELETE FROM servicios WHERE id = ?').bind(id).run()
   await recalcularTotalesFile(c.env.DB, servicio.file_id)
+  await audit(c.env.DB, servicio.file_id, user.id, 'Eliminó un servicio',
+    String(servicio.descripcion || '').substring(0, 100))
   return c.json({ ok: true })
 })
 
