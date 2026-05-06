@@ -4268,9 +4268,8 @@ files.get('/servicios/:id/voucher-traslado', async (c) => {
   if (!user) return c.redirect('/login')
 
   const svcId = Number(c.req.param('id'))
-  const q = c.req.query
 
-  const svc = await c.env.DB.prepare(`
+  try {
     SELECT s.*, f.numero as file_numero, f.id as file_id,
            COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre,
            c.telefono as cliente_tel,
@@ -4306,13 +4305,13 @@ files.get('/servicios/:id/voucher-traslado', async (c) => {
   // Si no hay pasajeros asignados, usar cantidad_pasajeros del servicio como adultos
   if (adultos + chd + inf === 0) adultos = svc.cantidad_pasajeros || 1
 
-  const tipoTraslado = q('tipo') || 'IN'
-  const tipoServicio = q('servicio') || 'Privado'
-  const vueloLlegada = q('vuelo_llegada') || ''
-  const horaLlegada  = q('hora_llegada') || ''
-  const vueloSalida  = q('vuelo_salida') || ''
-  const horaSalida   = q('hora_salida') || ''
-  const observacion  = q('observacion') || ''
+  const tipoTraslado = c.req.query('tipo') || 'IN'
+  const tipoServicio = c.req.query('servicio') || 'Privado'
+  const vueloLlegada = c.req.query('vuelo_llegada') || ''
+  const horaLlegada  = c.req.query('hora_llegada') || ''
+  const vueloSalida  = c.req.query('vuelo_salida') || ''
+  const horaSalida   = c.req.query('hora_salida') || ''
+  const observacion  = c.req.query('observacion') || ''
 
   const fileNum = String(svc.file_numero).replace(/^\d{4}/, '')
   const fecha   = svc.fecha_inicio || ''
@@ -4515,6 +4514,9 @@ files.get('/servicios/:id/voucher-traslado', async (c) => {
 </html>`
 
   return c.html(html)
+  } catch (e: any) {
+    return c.html(`<pre style="font-family:monospace;padding:20px;color:red;">Error: ${e.message}</pre>`, 500)
+  }
 })
 
 // Voucher
