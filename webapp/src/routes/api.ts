@@ -312,14 +312,12 @@ api.post('/api/v1/files', async (c) => {
     ).bind(sellerId).first() as any
     if (!vendedor) return c.json({ error: 'Not Found', message: `Seller with id ${sellerId} not found or inactive` }, 404)
 
-    // Generar número de file
-    const año  = new Date().getFullYear()
-    const last = await c.env.DB.prepare(
-      `SELECT numero FROM files WHERE numero LIKE ? ORDER BY id DESC LIMIT 1`
-    ).bind(`${año}%`).first() as any
-    const numero = last
-      ? `${año}${String(parseInt(last.numero.replace(String(año), '')) + 1).padStart(3, '0')}`
-      : `${año}001`
+    // Generar número de file = próximo ID de la BD
+    const lastFile = await c.env.DB.prepare(
+      `SELECT id FROM files ORDER BY id DESC LIMIT 1`
+    ).first() as any
+    const nextId = (lastFile?.id || 0) + 1
+    const numero = String(nextId)
 
     // Crear el file
     await c.env.DB.prepare(`
