@@ -550,6 +550,15 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
       }
     }
 
+    // Auditoría si está vinculado a un file
+    if (safeFileId) {
+      const tipoLabel = tipo === 'ingreso' ? 'Registró ingreso' : 'Registró egreso'
+      const det = `${concepto} — $${monto} ${moneda} (${metodo})`
+      await c.env.DB.prepare(
+        `INSERT INTO file_auditoria (file_id, usuario_id, accion, detalle) VALUES (?, ?, ?, ?)`
+      ).bind(safeFileId, user.id, tipoLabel, det).run().catch(() => {})
+    }
+
     // Si es un INGRESO vinculado a un file → redirigir al recibo
     if (tipo === 'ingreso' && safeFileId && movId) {
       return c.redirect(`/tesoreria/recibo/${movId}`)
