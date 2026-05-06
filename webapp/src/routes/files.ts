@@ -3981,6 +3981,8 @@ files.post('/servicios/:id/editar', async (c) => {
     await audit(c.env.DB, Number(fileId), user.id, 'Editó un servicio',
       String(body.descripcion || '').trim().substring(0, 100))
     return c.redirect(`/files/${fileId}`)
+  } catch (e: any) {
+    console.error('[EDITAR SERVICIO]', e.message)
     const svc2 = await c.env.DB.prepare('SELECT file_id FROM servicios WHERE id=?').bind(svcId).first() as any
     return c.redirect(`/files/${svc2?.file_id || ''}?error=error_interno`)
   }
