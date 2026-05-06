@@ -19,6 +19,26 @@ import { esc } from '../lib/escape'
 type Bindings = { DB: D1Database }
 const clientes = new Hono<{ Bindings: Bindings }>()
 
+// Observador: solo lectura — bloquear todos los POST
+clientes.use('*', async (c, next) => {
+  if (c.req.method !== 'GET') {
+    const user = await getUser(c)
+    if (user?.rol === 'observador') {
+      return c.html(`
+        <div style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f3f4f6;">
+          <div style="background:white;border-radius:12px;padding:40px;max-width:400px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+            <div style="font-size:48px;margin-bottom:16px;">👁️</div>
+            <h2 style="color:#d97706;margin-bottom:12px;">Modo lectura</h2>
+            <p style="color:#6b7280;margin-bottom:24px;">El rol <strong>Observador</strong> solo tiene permisos de visualización.</p>
+            <a href="/clientes" style="background:#7B3FA0;color:white;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:600;">← Volver</a>
+          </div>
+        </div>
+      `, 403)
+    }
+  }
+  return next()
+})
+
 // Helper: nombre completo desde campos separados
 function nombreCompleto(cl: any): string {
   if (cl?.tipo_cliente === 'empresa') {
