@@ -6090,7 +6090,7 @@ tesoreria.get('/tesoreria/tarjetas/reporte', async (c) => {
 // ── GET: Ver pagos desimputables (solo gerente) ───────────────
 tesoreria.get('/tesoreria/desimputar', async (c) => {
   const user = await getUser(c)
-  if (!user || !isGerente(user.rol)) return c.redirect('/tesoreria?error=sin_permiso')
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/tesoreria?error=sin_permiso')
 
   const ok  = c.req.query('ok')    || ''
   const err = c.req.query('error') || ''
@@ -6175,7 +6175,7 @@ tesoreria.get('/tesoreria/desimputar', async (c) => {
 // ── POST: Desimputar un pago (solo gerente) ───────────────────
 tesoreria.post('/tesoreria/desimputar', async (c) => {
   const user = await getUser(c)
-  if (!user || !isGerente(user.rol)) return c.redirect('/tesoreria?error=sin_permiso')
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/tesoreria?error=sin_permiso')
 
   try {
     const body   = await c.req.parseBody()
