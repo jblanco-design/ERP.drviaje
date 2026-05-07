@@ -5,7 +5,6 @@ import { baseLayout } from '../lib/layout'
 type Bindings = { DB: D1Database }
 const academia = new Hono<{ Bindings: Bindings }>()
 
-// Auth guard
 academia.use('/academia/*', async (c, next) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
@@ -17,10 +16,26 @@ academia.get('/academia', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     /* ── Reset base ── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -668,82 +683,6 @@ academia.get('/academia', async (c) => {
     </style>
     
     <div class="academia-page"><!-- ══════════════════════════════════════
-       NAVBAR GLOBAL
-  ══════════════════════════════════════ -->
-  
-
-  <!-- Menú móvil overlay -->
-  <div class="drv-mobile-menu" role="dialog" aria-modal="true" aria-label="Menú de navegación">
-    <div class="drv-mobile-menu__header">
-      <img src="/academia/images/logo-color.png" alt="Dr.Viaje" />
-      <button class="drv-mobile-menu__close" aria-label="Cerrar menú">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-    <div class="drv-mobile-menu__body">
-      <a href="/academia" class="drv-mobile-link active-m">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Inicio
-      </a>
-
-      <span class="drv-mobile-section-title">🌍 Destinos — Sudamérica</span>
-      <a href="/academia/destinos/bariloche" class="drv-mobile-link"><span class="flag">🇦🇷</span> Bariloche</a>
-      <a href="/academia/destinos/mendoza" class="drv-mobile-link"><span class="flag">🇦🇷</span> Mendoza</a>
-      <a href="/academia/destinos/ushuaia" class="drv-mobile-link"><span class="flag">🇦🇷</span> Ushuaia + El Calafate</a>
-      <a href="/academia/destinos/santiago" class="drv-mobile-link"><span class="flag">🇨🇱</span> Santiago de Chile</a>
-
-      <button class="drv-mobile-brasil-toggle">
-        <span class="flag">🇧🇷</span> Brasil
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="drv-mobile-brasil-sub">
-        <a href="/academia/destinos/brasil-rio">🏖️ Río de Janeiro</a>
-        <a href="/academia/destinos/brasil-bahia">🥁 Bahía</a>
-        <a href="/academia/destinos/brasil-ceara">🌊 Ceará</a>
-        <a href="/academia/destinos/brasil-nordeste">🌴 Nordeste</a>
-        <a href="/academia/destinos/brasil-maranhao">🏜️ Maranhão</a>
-      </div>
-
-      <span class="drv-mobile-section-title">🏝️ Destinos — Caribe</span>
-      <a href="/academia/destinos/cancun" class="drv-mobile-link"><span class="flag">🇲🇽</span> Cancún / Riviera Maya</a>
-      <a href="/academia/destinos/dominicana" class="drv-mobile-link"><span class="flag">🇩🇴</span> República Dominicana</a>
-      <a href="/academia/destinos/jamaica" class="drv-mobile-link"><span class="flag">🇯🇲</span> Jamaica</a>
-      <a href="/academia/destinos/aruba" class="drv-mobile-link"><span class="flag">🇦🇼</span> Aruba</a>
-      <a href="/academia/destinos/curazao" class="drv-mobile-link"><span class="flag">🇨🇼</span> Curaçao</a>
-      <a href="/academia/destinos/saint-martin" class="drv-mobile-link"><span class="flag">🇫🇷</span> Saint Martin</a>
-      <a href="/academia/destinos/san-andres" class="drv-mobile-link"><span class="flag">🇨🇴</span> San Andrés</a>
-      <a href="/academia/destinos/cartagena" class="drv-mobile-link"><span class="flag">🇨🇴</span> Cartagena de Indias</a>
-      <a href="/academia/destinos/santa-marta" class="drv-mobile-link"><span class="flag">🇨🇴</span> Santa Marta · Tayrona</a>
-
-      <span class="drv-mobile-section-title">🇺🇸 EE.UU. — Costa Este</span>
-      <a href="/academia/destinos/nueva-york" class="drv-mobile-link">🗽 Nueva York</a>
-      <a href="/academia/destinos/miami-orlando" class="drv-mobile-link">🌴 Miami + Orlando</a>
-      <a href="/academia/destinos/parques-orlando" class="drv-mobile-link">🎢 Parques de Orlando</a>
-      <span class="drv-mobile-section-title">🇺🇸 EE.UU. — Costa Oeste</span>
-      <a href="/academia/destinos/los-angeles" class="drv-mobile-link">🎬 Los Ángeles</a>
-      <a href="/academia/destinos/las-vegas" class="drv-mobile-link">🎰 Las Vegas</a>
-      <a href="/academia/destinos/san-francisco" class="drv-mobile-link">🌉 San Francisco</a>
-
-      <span class="drv-mobile-section-title">✈️ Amadeus</span>
-      <a href="/academia/amadeus/guia-rapida" class="drv-mobile-link">📋 Guía Rápida de Reservas</a>
-      <a href="/academia/amadeus/fxd" class="drv-mobile-link">🔍 FXD · Master Pricer</a>
-      <a href="/academia/amadeus/aerolineas" class="drv-mobile-link">✈️ Cotización por Aerolínea</a>
-      <a href="/academia/amadeus/reservas-basico.pdf" target="_blank" class="drv-mobile-link">📄 Manual Básico PDF</a>
-
-      <span class="drv-mobile-section-title">🧰 Herramientas</span>
-      <a href="/academia/hoteles/index" class="drv-mobile-link">🏨 Hoteles Recomendados</a>
-      <a href="/academia/hoteles/cancun-riviera" class="drv-mobile-link"><span class="flag">🇲🇽</span> Cancún &amp; Riviera Maya</a>
-      <a href="/academia/hoteles/punta-cana" class="drv-mobile-link"><span class="flag">🇩🇴</span> Punta Cana</a>
-      <a href="/academia/herramientas/traslados" class="drv-mobile-link">🚌 Buscador de Traslados 2026</a>
-      <a href="/academia/info-util" class="drv-mobile-link">🌊 Sargazo &amp; Huracanes</a>
-      <a href="info-util.html?tab=docs" class="drv-mobile-link">📄 Documentación</a>
-    </div>
-  </div>
-
-
-  <!-- ══════════════════════════════════════
        HERO
   ══════════════════════════════════════ -->
   <section class="hero">
@@ -809,7 +748,6 @@ academia.get('/academia', async (c) => {
       <polyline points="0,40 100,40 140,10 160,70 180,5 200,75 220,40 400,40 440,10 460,70 480,5 500,75 520,40 700,40 740,10 760,70 780,5 800,75 820,40 1000,40 1040,10 1060,70 1080,5 1100,75 1120,40 1200,40" stroke="white" stroke-width="2.5"/>
     </svg>
   </section>
-
 
   <!-- ══════════════════════════════════════
        SECCIÓN DESTINOS
@@ -1395,7 +1333,6 @@ academia.get('/academia', async (c) => {
     </div>
   </section>
 
-
   <!-- ══════════════════════════════════════
        HOW TO USE
   ══════════════════════════════════════ -->
@@ -1434,7 +1371,6 @@ academia.get('/academia', async (c) => {
       </div>
     </div>
   </section>
-
 
   <!-- ══════════════════════════════════════
        AMADEUS SECTION
@@ -1515,7 +1451,6 @@ academia.get('/academia', async (c) => {
     </div>
   </section>
 
-
   <!-- ══════════════════════════════════════
        RESOURCES SECTION
   ══════════════════════════════════════ -->
@@ -1580,7 +1515,6 @@ academia.get('/academia', async (c) => {
     </div>
   </section>
 
-
   <!-- ══════════════════════════════════════
        FOOTER
   ══════════════════════════════════════ -->
@@ -1592,37 +1526,9 @@ academia.get('/academia', async (c) => {
     </p>
   </footer>
 
-
   <!-- ══════════════════════════════════════
        SCRIPTS
-  ══════════════════════════════════════ -->
-  
-  <script>
-    // Filtro de destinos por región
-    (function () {
-      var tabs   = document.querySelectorAll('.region-tab');
-      var cards  = document.querySelectorAll('#destinosGrid [data-region]');
-
-      tabs.forEach(function (tab) {
-        tab.addEventListener('click', function () {
-          var region = tab.dataset.region;
-
-          // Activar tab
-          tabs.forEach(function (t) { t.classList.remove('active'); });
-          tab.classList.add('active');
-
-          // Filtrar cards
-          cards.forEach(function (card) {
-            if (region === 'all' || card.dataset.region === region) {
-              card.style.display = '';
-            } else {
-              card.style.display = 'none';
-            }
-          });
-        });
-      });
-    })();
-  </script></div>
+  ══════════════════════════════════════ --></div>
   `
   return c.html(baseLayout('Academia · Dr.Viaje', content, user, 'academia'))
 })
@@ -1632,10 +1538,26 @@ academia.get('/academia/info-util', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary-purple: #7B2D8E;
@@ -2091,22 +2013,7 @@ academia.get('/academia/info-util', async (c) => {
     <img src="/academia/images/logo-white.png" alt="Dr.Viaje">
     <p>Centro de Capacitación · <a href="/academia">Volver al inicio</a></p>
     <p style="margin-top:6px;">La información de esta sección es orientativa. Verificar siempre con fuentes oficiales antes de viajar.</p>
-  </footer>
-
-  <script>
-    const btns = document.querySelectorAll('.tab-btn');
-    const panels = document.querySelectorAll('.tab-panel');
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.dataset.tab;
-        btns.forEach(b => b.classList.remove('active'));
-        panels.forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('panel-' + tab).classList.add('active');
-        document.querySelector('.content-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-  </script></div>
+  </footer></div>
   `
   return c.html(baseLayout('Info Útil', content, user, 'academia'))
 })
@@ -2116,10 +2023,26 @@ academia.get('/academia/destinos/aruba', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --primary-purple:#7B2D8E;
@@ -2632,7 +2555,7 @@ academia.get('/academia/destinos/aruba', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header class="hero">
     <div class="container hero-inner">
       <div>
@@ -3331,23 +3254,7 @@ academia.get('/academia/destinos/aruba', async (c) => {
     </div>
   </footer>
 
-  <button id="scrollTopBtn" aria-label="Subir">↑</button>
-
-  <script>
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        scrollTopBtn.style.display = 'block';
-      } else {
-        scrollTopBtn.style.display = 'none';
-      }
-    });
-
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script></div>
+  <button id="scrollTopBtn" aria-label="Subir">↑</button></div>
   `
   return c.html(baseLayout('Aruba', content, user, 'academia'))
 })
@@ -3357,10 +3264,26 @@ academia.get('/academia/destinos/bariloche', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -3784,11 +3707,8 @@ academia.get('/academia/destinos/bariloche', async (c) => {
         }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
-    <div class="academia-page"><!-- NAVBAR GLOBAL (inyectado automáticamente) -->
-  
-
-<header>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
+    <div class="academia-page"><header>
     <div class="container header-content">
 
         <div class="logo-section">
@@ -3802,8 +3722,6 @@ academia.get('/academia/destinos/bariloche', async (c) => {
         </div>
     </div>
 </header>
-
-
 
 <main>
     <div class="container">
@@ -4386,10 +4304,26 @@ academia.get('/academia/destinos/brasil-bahia', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -4775,7 +4709,7 @@ academia.get('/academia/destinos/brasil-bahia', async (c) => {
         }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
         <div class="header-content">
             <div class="logo-section">
@@ -5192,42 +5126,7 @@ academia.get('/academia/destinos/brasil-bahia', async (c) => {
         <p>Capacitación Profesional 2024</p>
     </footer>
 
-    <div class="scroll-top" id="scrollTop">↑</div>
-
-    <script>
-        const scrollTop = document.getElementById('scrollTop');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTop.classList.add('visible');
-            } else {
-                scrollTop.classList.remove('visible');
-            }
-        });
-
-        scrollTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const headerHeight = 180;
-                    const elementPosition = target.offsetTop - headerHeight;
-                    
-                    window.scrollTo({
-                        top: elementPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script></div>
+    <div class="scroll-top" id="scrollTop">↑</div></div>
   `
   return c.html(baseLayout('Brasil · Bahía', content, user, 'academia'))
 })
@@ -5237,10 +5136,26 @@ academia.get('/academia/destinos/brasil-ceara', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -5642,7 +5557,7 @@ academia.get('/academia/destinos/brasil-ceara', async (c) => {
         }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
         <div class="header-content">
             <div class="logo-section">
@@ -6175,42 +6090,7 @@ academia.get('/academia/destinos/brasil-ceara', async (c) => {
         <p>Capacitación Profesional 2024</p>
     </footer>
 
-    <div class="scroll-top" id="scrollTop">↑</div>
-
-    <script>
-        const scrollTop = document.getElementById('scrollTop');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTop.classList.add('visible');
-            } else {
-                scrollTop.classList.remove('visible');
-            }
-        });
-
-        scrollTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const headerHeight = 180;
-                    const elementPosition = target.offsetTop - headerHeight;
-                    
-                    window.scrollTo({
-                        top: elementPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script></div>
+    <div class="scroll-top" id="scrollTop">↑</div></div>
   `
   return c.html(baseLayout('Brasil · Ceará', content, user, 'academia'))
 })
@@ -6220,10 +6100,26 @@ academia.get('/academia/destinos/brasil-maranhao', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -6625,7 +6521,7 @@ academia.get('/academia/destinos/brasil-maranhao', async (c) => {
         }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
         <div class="header-content">
             <div class="logo-section">
@@ -6960,42 +6856,7 @@ academia.get('/academia/destinos/brasil-maranhao', async (c) => {
         <p>Capacitación Profesional 2024</p>
     </footer>
 
-    <div class="scroll-top" id="scrollTop">↑</div>
-
-    <script>
-        const scrollTop = document.getElementById('scrollTop');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTop.classList.add('visible');
-            } else {
-                scrollTop.classList.remove('visible');
-            }
-        });
-
-        scrollTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const headerHeight = 180;
-                    const elementPosition = target.offsetTop - headerHeight;
-                    
-                    window.scrollTo({
-                        top: elementPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script></div>
+    <div class="scroll-top" id="scrollTop">↑</div></div>
   `
   return c.html(baseLayout('Brasil · Maranhão', content, user, 'academia'))
 })
@@ -7005,10 +6866,26 @@ academia.get('/academia/destinos/brasil-nordeste', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -7410,7 +7287,7 @@ academia.get('/academia/destinos/brasil-nordeste', async (c) => {
         }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
         <div class="header-content">
             <div class="logo-section">
@@ -7840,42 +7717,7 @@ academia.get('/academia/destinos/brasil-nordeste', async (c) => {
         <p>Capacitación Profesional 2024</p>
     </footer>
 
-    <div class="scroll-top" id="scrollTop">↑</div>
-
-    <script>
-        const scrollTop = document.getElementById('scrollTop');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTop.classList.add('visible');
-            } else {
-                scrollTop.classList.remove('visible');
-            }
-        });
-
-        scrollTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const headerHeight = 180;
-                    const elementPosition = target.offsetTop - headerHeight;
-                    
-                    window.scrollTo({
-                        top: elementPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script></div>
+    <div class="scroll-top" id="scrollTop">↑</div></div>
   `
   return c.html(baseLayout('Brasil · Nordeste', content, user, 'academia'))
 })
@@ -7885,10 +7727,26 @@ academia.get('/academia/destinos/brasil-rio', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -8272,7 +8130,7 @@ academia.get('/academia/destinos/brasil-rio', async (c) => {
         strong { color: var(--text-dark); font-weight: 600; }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><!-- Header -->
     <header>
         <div class="header-content">
@@ -8895,65 +8753,7 @@ academia.get('/academia/destinos/brasil-rio', async (c) => {
     <!-- Scroll to top button -->
     <div class="scroll-top" id="scrollTop">
         ↑
-    </div>
-
-    <script>
-        // Scroll to top functionality
-        const scrollTop = document.getElementById('scrollTop');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                scrollTop.classList.add('visible');
-            } else {
-                scrollTop.classList.remove('visible');
-            }
-        });
-
-        scrollTop.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const headerHeight = 180; // Ajuste para la navegación sticky
-                    const elementPosition = target.offsetTop - headerHeight;
-                    
-                    window.scrollTo({
-                        top: elementPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Highlight active navigation
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('.destination-card');
-            const navLinks = document.querySelectorAll('.nav-links a');
-            
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 200;
-                if (window.pageYOffset >= sectionTop) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            navLinks.forEach(link => {
-                link.style.backgroundColor = 'rgba(255,255,255,0.1)';
-                if (link.getAttribute('href') === '#' + current) {
-                    link.style.backgroundColor = 'rgba(255,255,255,0.3)';
-                }
-            });
-        });
-    </script></div>
+    </div></div>
   `
   return c.html(baseLayout('Brasil · Río', content, user, 'academia'))
 })
@@ -8963,10 +8763,26 @@ academia.get('/academia/destinos/cancun', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --bg:#fff7fb;
@@ -9388,7 +9204,7 @@ academia.get('/academia/destinos/cancun', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header class="hero">
     <div class="wrap">
       <div class="hero-card">
@@ -10130,10 +9946,26 @@ academia.get('/academia/destinos/cartagena', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --primary-purple:#7B2D8E;
@@ -10397,7 +10229,7 @@ academia.get('/academia/destinos/cartagena', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><!-- ══ HERO ══ -->
   <header class="hero">
     <div class="container hero-inner">
@@ -11309,17 +11141,7 @@ academia.get('/academia/destinos/cartagena', async (c) => {
     </div>
   </footer>
 
-  <button id="scrollTopBtn" aria-label="Subir">↑</button>
-
-  <script>
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', () => {
-      scrollTopBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
-    });
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script></div>
+  <button id="scrollTopBtn" aria-label="Subir">↑</button></div>
   `
   return c.html(baseLayout('Cartagena', content, user, 'academia'))
 })
@@ -11329,10 +11151,26 @@ academia.get('/academia/destinos/curazao', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --primary-purple:#7B2D8E;
@@ -11845,7 +11683,7 @@ academia.get('/academia/destinos/curazao', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header class="hero">
     <div class="container hero-inner">
       <div>
@@ -12635,23 +12473,7 @@ academia.get('/academia/destinos/curazao', async (c) => {
     </div>
   </footer>
 
-  <button id="scrollTopBtn" aria-label="Subir">↑</button>
-
-  <script>
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        scrollTopBtn.style.display = 'block';
-      } else {
-        scrollTopBtn.style.display = 'none';
-      }
-    });
-
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script></div>
+  <button id="scrollTopBtn" aria-label="Subir">↑</button></div>
   `
   return c.html(baseLayout('Curazao', content, user, 'academia'))
 })
@@ -12661,10 +12483,26 @@ academia.get('/academia/destinos/dominicana', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary-purple: #7B2D8E;
@@ -13036,7 +12874,7 @@ academia.get('/academia/destinos/dominicana', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
     <div class="container hero">
       <div>
@@ -13736,10 +13574,26 @@ academia.get('/academia/destinos/jamaica', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --primary-purple:#7B2D8E;
@@ -14253,7 +14107,7 @@ section[id]{
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header class="hero">
     <div class="container hero-inner">
       <div>
@@ -14963,23 +14817,7 @@ section[id]{
     </div>
   </footer>
 
-  <button id="scrollTopBtn" aria-label="Subir">↑</button>
-
-  <script>
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        scrollTopBtn.style.display = 'block';
-      } else {
-        scrollTopBtn.style.display = 'none';
-      }
-    });
-
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script></div>
+  <button id="scrollTopBtn" aria-label="Subir">↑</button></div>
   `
   return c.html(baseLayout('Jamaica', content, user, 'academia'))
 })
@@ -14989,10 +14827,26 @@ academia.get('/academia/destinos/las-vegas', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -15148,7 +15002,7 @@ academia.get('/academia/destinos/las-vegas', async (c) => {
         @media (max-width: 680px) { .kpi-row, .grid-2, .grid-3 { grid-template-columns: 1fr; } .destination-card { padding: 22px; } header { padding: 36px 0 30px; } }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
     <div class="container header-content">
         <span class="badge">Dr. Viaje · Guía comercial definitiva</span>
@@ -15180,8 +15034,6 @@ academia.get('/academia/destinos/las-vegas', async (c) => {
         </div>
     </div>
 </header>
-
-
 
 <main>
 <div class="container">
@@ -16273,25 +16125,7 @@ academia.get('/academia/destinos/las-vegas', async (c) => {
 
 <button class="scroll-top" id="scrollTop"
     onclick="window.scrollTo({top:0,behavior:'smooth'})"
-    aria-label="Volver arriba">↑</button>
-
-<script>
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const offset = target.getBoundingClientRect().top + window.pageYOffset - 140;
-            window.scrollTo({ top: offset, behavior: 'smooth' });
-        }
-    });
-});
-
-const scrollTopBtn = document.getElementById('scrollTop');
-window.addEventListener('scroll', () => {
-    scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
-});
-</script></div>
+    aria-label="Volver arriba">↑</button></div>
   `
   return c.html(baseLayout('Las Vegas', content, user, 'academia'))
 })
@@ -16301,10 +16135,26 @@ academia.get('/academia/destinos/los-angeles', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -16473,7 +16323,7 @@ academia.get('/academia/destinos/los-angeles', async (c) => {
         @media (max-width: 680px) { .kpi-row, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .destination-card { padding: 22px; } header { padding: 36px 0 30px; } }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
     <div class="container header-content">
         <span class="badge">Dr. Viaje · Guía comercial definitiva</span>
@@ -16504,8 +16354,6 @@ academia.get('/academia/destinos/los-angeles', async (c) => {
         </div>
     </div>
 </header>
-
-
 
 <main>
 <div class="container">
@@ -17663,25 +17511,7 @@ academia.get('/academia/destinos/los-angeles', async (c) => {
 
 <button class="scroll-top" id="scrollTop"
     onclick="window.scrollTo({top:0,behavior:'smooth'})"
-    aria-label="Volver arriba">↑</button>
-
-<script>
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const offset = target.getBoundingClientRect().top + window.pageYOffset - 140;
-            window.scrollTo({ top: offset, behavior: 'smooth' });
-        }
-    });
-});
-
-const scrollTopBtn = document.getElementById('scrollTop');
-window.addEventListener('scroll', () => {
-    scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
-});
-</script></div>
+    aria-label="Volver arriba">↑</button></div>
   `
   return c.html(baseLayout('Los Ángeles', content, user, 'academia'))
 })
@@ -17691,10 +17521,26 @@ academia.get('/academia/destinos/mendoza', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary-purple: #7B2D8E;
@@ -18089,7 +17935,7 @@ academia.get('/academia/destinos/mendoza', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
     <div class="container hero">
       <div>
@@ -18644,10 +18490,26 @@ academia.get('/academia/destinos/miami-orlando', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary-purple: #7B2D8E;
@@ -18827,7 +18689,7 @@ academia.get('/academia/destinos/miami-orlando', async (c) => {
     .chip.orange { background: rgba(255,152,0,0.12); color: #e65100; }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><!-- ══════════════════════════════════════
      HEADER
 ══════════════════════════════════════ -->
@@ -18848,7 +18710,6 @@ academia.get('/academia/destinos/miami-orlando', async (c) => {
 </header>
 
 <!-- ══ INTERNAL NAVIGATION ══ -->
-
 
 <!-- ══ MAIN ══ -->
 <main>
@@ -19426,10 +19287,26 @@ academia.get('/academia/destinos/nueva-york', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -20010,7 +19887,7 @@ academia.get('/academia/destinos/nueva-york', async (c) => {
         }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><!-- ══════════════════════════════════════════
      HEADER
 ══════════════════════════════════════════ -->
@@ -20048,7 +19925,6 @@ academia.get('/academia/destinos/nueva-york', async (c) => {
 <!-- ══════════════════════════════════════════
      NAV
 ══════════════════════════════════════════ -->
-
 
 <!-- ══════════════════════════════════════════
      MAIN CONTENT
@@ -21386,39 +21262,7 @@ academia.get('/academia/destinos/nueva-york', async (c) => {
 <!-- ══════════════════════════════════════════
      SCROLL TOP BUTTON
 ══════════════════════════════════════════ -->
-<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
-
-<script>
-// Smooth scroll para navegación
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const headerOffset = 100;
-            const elementPosition = target.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-            
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// Mostrar/ocultar botón scroll top
-window.addEventListener('scroll', () => {
-    const scrollTop = document.querySelector('.scroll-top');
-    if (window.pageYOffset > 300) {
-        scrollTop.style.opacity = '1';
-        scrollTop.style.visibility = 'visible';
-    } else {
-        scrollTop.style.opacity = '0';
-        scrollTop.style.visibility = 'hidden';
-    }
-});
-</script></div>
+<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button></div>
   `
   return c.html(baseLayout('Nueva York', content, user, 'academia'))
 })
@@ -21428,10 +21272,26 @@ academia.get('/academia/destinos/parques-orlando', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary-purple: #7B2D8E;
@@ -21640,7 +21500,7 @@ academia.get('/academia/destinos/parques-orlando', async (c) => {
     .price-badge.expensive { background: rgba(204,0,0,0.1); color: var(--magic-red); }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><!-- ══════════════════════════════════════
      HEADER
 ══════════════════════════════════════ -->
@@ -21661,7 +21521,6 @@ academia.get('/academia/destinos/parques-orlando', async (c) => {
 </header>
 
 <!-- ══ INTERNAL NAV ══ -->
-
 
 <!-- ══ MAIN ══ -->
 <main>
@@ -22309,10 +22168,26 @@ academia.get('/academia/destinos/saint-martin', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --primary-purple:#7B2D8E;
@@ -22833,7 +22708,7 @@ academia.get('/academia/destinos/saint-martin', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header class="hero">
     <div class="container hero-inner">
       <div>
@@ -23514,23 +23389,7 @@ academia.get('/academia/destinos/saint-martin', async (c) => {
     </div>
   </footer>
 
-  <button id="scrollTopBtn" aria-label="Subir">↑</button>
-
-  <script>
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        scrollTopBtn.style.display = 'block';
-      } else {
-        scrollTopBtn.style.display = 'none';
-      }
-    });
-
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script></div>
+  <button id="scrollTopBtn" aria-label="Subir">↑</button></div>
   `
   return c.html(baseLayout('Saint Martin', content, user, 'academia'))
 })
@@ -23540,10 +23399,26 @@ academia.get('/academia/destinos/san-andres', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --primary-purple:#7B2D8E;
@@ -24073,7 +23948,7 @@ academia.get('/academia/destinos/san-andres', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header class="hero">
     <div class="container hero-inner">
       <div>
@@ -24821,23 +24696,7 @@ academia.get('/academia/destinos/san-andres', async (c) => {
     </div>
   </footer>
 
-  <button id="scrollTopBtn" aria-label="Subir">↑</button>
-
-  <script>
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        scrollTopBtn.style.display = 'block';
-      } else {
-        scrollTopBtn.style.display = 'none';
-      }
-    });
-
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script></div>
+  <button id="scrollTopBtn" aria-label="Subir">↑</button></div>
   `
   return c.html(baseLayout('San Andrés', content, user, 'academia'))
 })
@@ -24847,10 +24706,26 @@ academia.get('/academia/destinos/san-francisco', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -25007,7 +24882,7 @@ academia.get('/academia/destinos/san-francisco', async (c) => {
         @media (max-width: 680px) { .kpi-row, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .destination-card { padding: 22px; } header { padding: 36px 0 30px; } }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
     <div class="container header-content">
         <span class="badge">Dr. Viaje · Guía comercial definitiva</span>
@@ -25038,8 +24913,6 @@ academia.get('/academia/destinos/san-francisco', async (c) => {
         </div>
     </div>
 </header>
-
-
 
 <main>
 <div class="container">
@@ -26112,25 +25985,7 @@ academia.get('/academia/destinos/san-francisco', async (c) => {
 
 <button class="scroll-top" id="scrollTop"
     onclick="window.scrollTo({top:0,behavior:'smooth'})"
-    aria-label="Volver arriba">↑</button>
-
-<script>
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const offset = target.getBoundingClientRect().top + window.pageYOffset - 140;
-            window.scrollTo({ top: offset, behavior: 'smooth' });
-        }
-    });
-});
-
-const scrollTopBtn = document.getElementById('scrollTop');
-window.addEventListener('scroll', () => {
-    scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
-});
-</script></div>
+    aria-label="Volver arriba">↑</button></div>
   `
   return c.html(baseLayout('San Francisco', content, user, 'academia'))
 })
@@ -26140,10 +25995,26 @@ academia.get('/academia/destinos/santa-marta', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{
       --primary-purple:#7B2D8E;
@@ -26352,7 +26223,7 @@ academia.get('/academia/destinos/santa-marta', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><!-- ══ HERO ══ -->
   <header class="hero">
     <div class="container hero-inner">
@@ -27266,17 +27137,7 @@ academia.get('/academia/destinos/santa-marta', async (c) => {
     </div>
   </footer>
 
-  <button id="scrollTopBtn" aria-label="Subir">↑</button>
-
-  <script>
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', () => {
-      scrollTopBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
-    });
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  </script></div>
+  <button id="scrollTopBtn" aria-label="Subir">↑</button></div>
   `
   return c.html(baseLayout('Santa Marta', content, user, 'academia'))
 })
@@ -27286,10 +27147,26 @@ academia.get('/academia/destinos/santiago', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary-purple: #7B2D8E;
@@ -27720,7 +27597,7 @@ academia.get('/academia/destinos/santiago', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header>
     <div class="header-content">
       <a href="#" class="back-link">← Volver a guías</a>
@@ -28268,10 +28145,26 @@ academia.get('/academia/destinos/ushuaia', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
         :root {
             --primary-purple: #7B2D8E;
@@ -28765,7 +28658,7 @@ academia.get('/academia/destinos/ushuaia', async (c) => {
         }
     
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Caribe:</span><a href="/academia/destinos/cancun" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/destinos/dominicana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Dominicana</a><a href="/academia/destinos/jamaica" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Jamaica</a><a href="/academia/destinos/aruba" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aruba</a><a href="/academia/destinos/curazao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Curazao</a><a href="/academia/destinos/saint-martin" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Saint Martin</a><a href="/academia/destinos/san-andres" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Andrés</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Colombia:</span><a href="/academia/destinos/cartagena" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cartagena</a><a href="/academia/destinos/santa-marta" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santa Marta</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bahía</a><a href="/academia/destinos/brasil-ceara" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Maranhão</a><a href="/academia/destinos/brasil-rio" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Río</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Nueva York</a><a href="/academia/destinos/miami-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Parques Orlando</a><a href="/academia/destinos/los-angeles" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Los Ángeles</a><a href="/academia/destinos/las-vegas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Las Vegas</a><a href="/academia/destinos/san-francisco" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">San Francisco</a><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Bariloche</a><a href="/academia/destinos/mendoza" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Mendoza</a><a href="/academia/destinos/ushuaia" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Ushuaia</a><a href="/academia/destinos/santiago" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Santiago</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Caribe:</span><a href="/academia/destinos/cancun" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún</a><a href="/academia/destinos/dominicana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Dominicana</a><a href="/academia/destinos/jamaica" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Jamaica</a><a href="/academia/destinos/aruba" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aruba</a><a href="/academia/destinos/curazao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Curazao</a><a href="/academia/destinos/saint-martin" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Saint Martin</a><a href="/academia/destinos/san-andres" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Andrés</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Colombia:</span><a href="/academia/destinos/cartagena" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cartagena</a><a href="/academia/destinos/santa-marta" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santa Marta</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Brasil:</span><a href="/academia/destinos/brasil-nordeste" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nordeste</a><a href="/academia/destinos/brasil-bahia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bahía</a><a href="/academia/destinos/brasil-ceara" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ceará</a><a href="/academia/destinos/brasil-maranhao" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Maranhão</a><a href="/academia/destinos/brasil-rio" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Río</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">EE.UU.:</span><a href="/academia/destinos/nueva-york" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Nueva York</a><a href="/academia/destinos/miami-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Miami/Orlando</a><a href="/academia/destinos/parques-orlando" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Parques</a><a href="/academia/destinos/los-angeles" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">L.A.</a><a href="/academia/destinos/las-vegas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Las Vegas</a><a href="/academia/destinos/san-francisco" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">San Francisco</a><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Sudamérica:</span><a href="/academia/destinos/bariloche" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Bariloche</a><a href="/academia/destinos/mendoza" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Mendoza</a><a href="/academia/destinos/ushuaia" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Ushuaia</a><a href="/academia/destinos/santiago" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Santiago</a></div>
     <div class="academia-page"><header id="top">
     <div class="container header-content">
         <a href="#" class="back-link">← Volver al índice de guías</a>
@@ -28778,8 +28671,6 @@ academia.get('/academia/destinos/ushuaia', async (c) => {
         </p>
     </div>
 </header>
-
-
 
 <main>
     <div class="container">
@@ -29660,10 +29551,26 @@ academia.get('/academia/amadeus/guia-rapida', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary:#7B2D8E;
@@ -29935,7 +29842,7 @@ academia.get('/academia/amadeus/guia-rapida', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Amadeus:</span><a href="/academia/amadeus/guia-rapida" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Guía Rápida</a><a href="/academia/amadeus/fxd" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">FXD Master Pricer</a><a href="/academia/amadeus/aerolineas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aerolíneas</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Amadeus:</span><a href="/academia/amadeus/guia-rapida" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Guía Rápida</a><a href="/academia/amadeus/fxd" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">FXD</a><a href="/academia/amadeus/aerolineas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aerolíneas</a></div>
     <div class="academia-page"><!-- HERO -->
   <div class="aq-hero">
     <span class="eyebrow">✈️ Amadeus · Ayuda memoria</span>
@@ -30258,10 +30165,26 @@ academia.get('/academia/amadeus/aerolineas', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary:#7B2D8E;
@@ -30489,11 +30412,8 @@ academia.get('/academia/amadeus/aerolineas', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Amadeus:</span><a href="/academia/amadeus/guia-rapida" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Guía Rápida</a><a href="/academia/amadeus/fxd" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">FXD Master Pricer</a><a href="/academia/amadeus/aerolineas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aerolíneas</a></div>
-    <div class="academia-page"><!-- navbar global -->
-
-
-<!-- ══════════════════════════ HERO ══════════════════════════ -->
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Amadeus:</span><a href="/academia/amadeus/guia-rapida" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Guía Rápida</a><a href="/academia/amadeus/fxd" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">FXD</a><a href="/academia/amadeus/aerolineas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aerolíneas</a></div>
+    <div class="academia-page"><!-- ══════════════════════════ HERO ══════════════════════════ -->
 <header class="aq-hero">
   <span class="eyebrow">✈️ Amadeus GDS · Dr.Viaje</span>
   <h1>Cotización por Aerolínea</h1>
@@ -31377,25 +31297,7 @@ academia.get('/academia/amadeus/aerolineas', async (c) => {
 </footer>
 
 <!-- SCROLL TOP -->
-<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button>
-
-<script>
-  // Scroll suave con offset para doble navbar
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => {
-      const target = document.querySelector(a.getAttribute('href'));
-      if (!target) return;
-      e.preventDefault();
-      const top = target.getBoundingClientRect().top + window.pageYOffset - 140;
-      window.scrollTo({ top, behavior: 'smooth' });
-    });
-  });
-
-  // Botón scroll top
-  const btn = document.getElementById('scrollTop');
-  window.addEventListener('scroll', () => btn.classList.toggle('visible', window.pageYOffset > 300));
-  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-</script></div>
+<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button></div>
   `
   return c.html(baseLayout('Aerolíneas en Amadeus', content, user, 'academia'))
 })
@@ -31405,10 +31307,26 @@ academia.get('/academia/amadeus/fxd', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary:#7B2D8E;
@@ -31700,7 +31618,7 @@ academia.get('/academia/amadeus/fxd', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Amadeus:</span><a href="/academia/amadeus/guia-rapida" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Guía Rápida</a><a href="/academia/amadeus/fxd" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">FXD Master Pricer</a><a href="/academia/amadeus/aerolineas" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Aerolíneas</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Amadeus:</span><a href="/academia/amadeus/guia-rapida" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Guía Rápida</a><a href="/academia/amadeus/fxd" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">FXD</a><a href="/academia/amadeus/aerolineas" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Aerolíneas</a></div>
     <div class="academia-page"><!-- HERO -->
   <div class="fxd-hero">
     <span class="eyebrow">✈️ Amadeus · FXD / Master Pricer</span>
@@ -32270,10 +32188,26 @@ academia.get('/academia/hoteles', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -32339,7 +32273,7 @@ academia.get('/academia/hoteles', async (c) => {
     @media(max-width:600px){.info-banner{flex-direction:column;text-align:center;} .hotels-grid{grid-template-columns:1fr;}}
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Hoteles:</span><a href="/academia/hoteles/cancun-riviera" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/hoteles/punta-cana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Punta Cana</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Hoteles:</span><a href="/academia/hoteles/cancun-riviera" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún/Riviera</a><a href="/academia/hoteles/punta-cana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Punta Cana</a></div>
     <div class="academia-page"><!-- PAGE HERO -->
   <div class="page-hero">
     <span class="eyebrow">Guías Comerciales · Hoteles por Destino</span>
@@ -32439,10 +32373,26 @@ academia.get('/academia/hoteles/cancun-riviera', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -32533,7 +32483,7 @@ academia.get('/academia/hoteles/cancun-riviera', async (c) => {
     .page-footer a:hover{color:#fff;}
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Hoteles:</span><a href="/academia/hoteles/cancun-riviera" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/hoteles/punta-cana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Punta Cana</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Hoteles:</span><a href="/academia/hoteles/cancun-riviera" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún/Riviera</a><a href="/academia/hoteles/punta-cana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Punta Cana</a></div>
     <div class="academia-page"><!-- PAGE HERO -->
   <div class="page-hero">
     <span class="eyebrow">Hoteles Recomendados · Caribe Mexicano</span>
@@ -32859,22 +32809,7 @@ academia.get('/academia/hoteles/cancun-riviera', async (c) => {
     <img src="/academia/images/logo-white.png" alt="Dr.Viaje">
     <p><a href="/academia">← Hoteles Recomendados</a> · <a href="/academia">Inicio</a></p>
     <p style="margin-top:6px;">Centro de Capacitación Dr.Viaje · Guía comercial consultiva</p>
-  </footer>
-
-  <script>
-    const btns = document.querySelectorAll('.dest-btn');
-    const panels = document.querySelectorAll('.dest-panel');
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const dest = btn.dataset.dest;
-        btns.forEach(b => b.classList.remove('active'));
-        panels.forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('panel-' + dest).classList.add('active');
-        document.querySelector('.content-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-  </script></div>
+  </footer></div>
   `
   return c.html(baseLayout('Hoteles Cancún/Riviera', content, user, 'academia'))
 })
@@ -32884,10 +32819,26 @@ academia.get('/academia/hoteles/punta-cana', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root{--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -32983,7 +32934,7 @@ academia.get('/academia/hoteles/punta-cana', async (c) => {
     .page-footer a:hover{color:#fff;}
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Hoteles:</span><a href="/academia/hoteles/cancun-riviera" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Cancún/Riviera</a><a href="/academia/hoteles/punta-cana" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Punta Cana</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Hoteles:</span><a href="/academia/hoteles/cancun-riviera" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Cancún/Riviera</a><a href="/academia/hoteles/punta-cana" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Punta Cana</a></div>
     <div class="academia-page"><!-- PAGE HERO -->
   <div class="page-hero">
     <span class="eyebrow">Hoteles Recomendados · República Dominicana</span>
@@ -33227,22 +33178,7 @@ academia.get('/academia/hoteles/punta-cana', async (c) => {
     <img src="/academia/images/logo-white.png" alt="Dr.Viaje">
     <p><a href="/academia">← Hoteles Recomendados</a> · <a href="/academia">Inicio</a></p>
     <p style="margin-top:6px;">Centro de Capacitación Dr.Viaje · Guía comercial consultiva</p>
-  </footer>
-
-  <script>
-    const btns = document.querySelectorAll('.dest-btn');
-    const panels = document.querySelectorAll('.dest-panel');
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const dest = btn.dataset.dest;
-        btns.forEach(b => b.classList.remove('active'));
-        panels.forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('panel-' + dest).classList.add('active');
-        document.querySelector('.content-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-  </script></div>
+  </footer></div>
   `
   return c.html(baseLayout('Hoteles Punta Cana', content, user, 'academia'))
 })
@@ -33252,10 +33188,26 @@ academia.get('/academia/herramientas/traslados', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary:#7B2D8E;
@@ -33521,7 +33473,7 @@ academia.get('/academia/herramientas/traslados', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Herramientas:</span><a href="/academia/herramientas/traslados" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Traslados</a><a href="/academia/herramientas/traslados-brasil" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Traslados Brasil</a></div>
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Herramientas:</span><a href="/academia/herramientas/traslados" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Traslados</a><a href="/academia/herramientas/traslados-brasil" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Traslados Brasil</a></div>
     <div class="academia-page"><!-- ══════════════════ HERO ══════════════════ -->
 <header class="hero">
   <span class="eyebrow">🚌 Herramientas · Dr.Viaje</span>
@@ -33638,392 +33590,7 @@ academia.get('/academia/herramientas/traslados', async (c) => {
 
 </main>
 
-<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button>
-
-<script>
-// ═══════════════════════════════════════════════════════════
-// BASE DE DATOS
-// ═══════════════════════════════════════════════════════════
-
-// ── BRASIL ──────────────────────────────────────────────────
-const brasilData = [
-  // RIO DE JANEIRO
-  { zone:"RIO DE JANEIRO", route:"Arpt GIG → Hotel Zona Sur → Arpt GIG", adultPrice:35, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Mín. 2 pax. No válida feriados." },
-  { zone:"RIO DE JANEIRO", route:"Arpt GIG → Hotel Barra da Tijuca → Arpt GIG", adultPrice:35, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Mín. 2 pax. No válida feriados." },
-
-  // BÚZIOS | CABO FRIO | ARRAIAL DO CABO
-  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Arpt GIG → Búzios → Arpt GIG", adultPrice:49, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Hotel Zona Sur → Búzios → Hotel Zona Sur", adultPrice:49, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Hotel Barra da Tijuca → Búzios → Hotel Barra da Tijuca", adultPrice:71, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Arpt GIG → Cabo Frio → Arpt GIG", adultPrice:76, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Arpt GIG → Arraial do Cabo → Arpt GIG", adultPrice:78, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-
-  // ANGRA DOS REIS | PARATY | ILHA GRANDE
-  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Angra dos Reis → Arpt GIG", adultPrice:118, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"" },
-  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Paraty → Arpt GIG", adultPrice:120, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"" },
-  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Ilha Grande → Arpt GIG", adultPrice:151, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Incluye lancha" },
-  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Ilha Grande (Araçatiba / Praia Vermelha) → Arpt GIG", adultPrice:176, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Incluye lancha" },
-
-  // SÃO PAULO
-  { zone:"SÃO PAULO", route:"Arpt GRU → Hotel Centro → Arpt GRU (Privado)", adultPrice:89, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/02/2026 - 30/06/2026", notes:"Servicio privado" },
-
-  // SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Hotel SSA → Arpt SSA", adultPrice:20, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"" },
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Hotel SSA → Arpt SSA + City Tour Histórico", adultPrice:33, childPrice:null, pvt:[null,null,null,null], type:"citytour", validity:"01/04/2026 - 30/03/2027", notes:"City tour incluido" },
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Hotel SSA (Solo ida)", adultPrice:11, childPrice:null, pvt:[null,null,null,null], type:"oneway", validity:"01/04/2026 - 30/03/2027", notes:"" },
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Hotel SSA → Hotel Litoral Norte (o viceversa)", adultPrice:40, childPrice:null, pvt:[null,null,null,null], type:"hotel", validity:"01/04/2026 - 30/03/2027", notes:"" },
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Litoral Norte (Praia do Forte, Imbassaí, Costa do Sauípe, Guarajuba) → Arpt SSA", adultPrice:40, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"" },
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Litoral Norte (Solo ida)", adultPrice:29, childPrice:null, pvt:[null,null,null,null], type:"oneway", validity:"01/04/2026 - 30/03/2027", notes:"" },
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Hotel SSA → Morro de São Paulo → Hotel SSA (Semiterrestre)", adultPrice:75, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"Bus + Lancha. Salida 8:30am, retorno 4:30pm" },
-  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Hotel SSA → Morro de São Paulo → Hotel SSA (Catamarã)", adultPrice:88, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"Bus + Catamarã. Salida 8:30am, retorno 4:30pm" },
-
-  // PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ
-  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Hotel Porto Seguro → Arpt BPS", adultPrice:24, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Hotel Arraial D'Ajuda → Arpt BPS", adultPrice:35, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa" },
-  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Hotel Santo André (Sta. Cruz Cabrália) → Arpt BPS", adultPrice:53, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Trancoso → Arpt BPS", adultPrice:71, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa" },
-  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Santo André → Arpt BPS", adultPrice:84, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-
-  // NATAL | PIPA | TOUROS
-  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Hotel Natal → Arpt NAT", adultPrice:31, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Hotel Natal → Arpt NAT + City Tour Playa Carnaupiim", adultPrice:37, childPrice:null, pvt:[null,null,null,null], type:"citytour", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Pipa → Hotel NAT → Arpt NAT", adultPrice:78, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Touros → Arpt NAT", adultPrice:85, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"NATAL | PIPA | TOUROS", route:"Transfer Triangular: Arpt NAT / FH NAT / FH Pipa / Arpt NAT", adultPrice:83, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular" },
-  { zone:"NATAL | PIPA | TOUROS", route:"Transfer Triangular: Arpt NAT / FH Pipa / FH NAT / Arpt NAT", adultPrice:100, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular" },
-
-  // JOÃO PESSOA | CONDE
-  { zone:"JOÃO PESSOA | CONDE", route:"Arpt JPA → Hotel João Pessoa → Arpt JPA", adultPrice:29, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"JOÃO PESSOA | CONDE", route:"Arpt JPA → Arpt JPA (circuito)", adultPrice:80, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-
-  // FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS
-  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel FLN Centro → Arpt FLN", adultPrice:29, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel FLN Canasvieiras → Arpt FLN", adultPrice:33, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Canasvieiras do Santinho → Arpt FLN", adultPrice:33, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel Balneário Camboriú (Camboriú, Praia dos Carnés, Itajaí) → Arpt FLN", adultPrice:62, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
-  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel Bombinhas / Itapema / Mariscal / Porto Belo → Arpt FLN", adultPrice:94, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" }
-];
-
-// ── REPÚBLICA DOMINICANA ─────────────────────────────────────
-// pvt = [1-6pax, 7-21pax, 22-33pax, 34-54pax]
-// adultPrice / childPrice: null = no hay regular
-const rdData = [
-  // PUNTA CANA AIRPORT (PUJ)
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Punta Cana", adultPrice:13, childPrice:8, pvt:[45,120,160,210], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Uvero Alto", adultPrice:26, childPrice:13, pvt:[69,159,199,299], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[69,159,199,299], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Bayahibe", adultPrice:39, childPrice:20, pvt:[99,179,359,459], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl La Romana", adultPrice:49, childPrice:25, pvt:[119,209,399,499], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[149,279,439,499], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[149,279,439,499], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Puerto de La Romana (LRM)", adultPrice:null, childPrice:null, pvt:[119,209,399,499], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[159,279,499,599], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[359,559,799,959], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[319,519,759,859], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[359,559,799,899], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[359,559,799,859], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Miches", adultPrice:null, childPrice:null, pvt:[159,249,359,409], validity:"2026", notes:"Solo privado" },
-
-  // SANTO DOMINGO AIRPORT (SDQ)
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Punta Cana", adultPrice:49, childPrice:30, pvt:[149,219,399,599], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Uvero Alto", adultPrice:60, childPrice:39, pvt:[169,229,399,599], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[169,229,399,599], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Bayahibe", adultPrice:49, childPrice:25, pvt:[119,199,319,499], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl La Romana", adultPrice:40, childPrice:20, pvt:[119,199,319,499], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Juan Dolio", adultPrice:39, childPrice:20, pvt:[89,199,439,489], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Boca Chica", adultPrice:39, childPrice:20, pvt:[69,139,199,259], validity:"2026", notes:"" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[69,139,199,259], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[239,399,499,699], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[199,269,489,689], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[199,269,489,689], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[259,449,609,789], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Miches", adultPrice:null, childPrice:null, pvt:[309,489,599,1219], validity:"2026", notes:"Solo privado" },
-
-  // PUERTO PLATA AIRPORT (POP)
-  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[259,549,699,799], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[99,159,199,249], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[99,199,429,529], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[99,209,429,529], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[229,489,689,799], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[199,279,499,689], validity:"2026", notes:"Solo privado" },
-  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[399,499,699,799], validity:"2026", notes:"Solo privado" },
-
-  // STGO DE LOS CABALLEROS (STI)
-  { zone:"STGO DE LOS CABALLEROS (STI)", route:"Stgo de los Caballeros (STI) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[99,199,429,529], validity:"2026", notes:"Solo privado" },
-
-  // PUERTO DE LA ROMANA (LRM)
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[129,145,315,415], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Uvero Alto", adultPrice:null, childPrice:null, pvt:[149,209,389,489], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[139,259,359,459], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[99,129,199,249], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl La Romana", adultPrice:null, childPrice:null, pvt:[89,119,189,229], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[119,145,315,415], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[119,145,315,415], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[129,209,389,489], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[299,589,998,1109], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[269,499,789,1199], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[269,499,789,1199], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[349,659,998,1249], validity:"2026", notes:"Solo privado" },
-  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Miches", adultPrice:null, childPrice:null, pvt:[299,459,589,1199], validity:"2026", notes:"Solo privado" },
-
-  // ENTRE HOTELES (selección principal)
-  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Punta Cana → Htl Uvero Alto", adultPrice:null, childPrice:null, pvt:[65,159,199,259], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Punta Cana → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[65,159,199,259], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Uvero Alto → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[65,139,199,259], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Uvero Alto → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[99,130,190,450], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Cap Cana → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[49,89,129,199], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Cap Cana → Htl Uvero Alto", adultPrice:null, childPrice:null, pvt:[99,130,190,450], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl Punta Cana → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[109,145,315,415], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl Punta Cana → Htl La Romana", adultPrice:null, childPrice:null, pvt:[129,145,315,415], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl Bayahibe → Htl La Romana", adultPrice:null, childPrice:null, pvt:[55,150,208,335], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl La Romana → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[55,150,208,335], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Juan Dolio → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[89,219,439,489], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Juan Dolio → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[49,139,199,299], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Boca Chica → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[89,219,439,489], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Boca Chica → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[49,139,199,299], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Santo Domingo → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[89,219,439,489], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Santo Domingo → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[49,139,199,299], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[199,399,629,789], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[199,399,629,789], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[259,429,609,799], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Samaná", adultPrice:null, childPrice:null, pvt:[199,489,599,699], validity:"2026", notes:"Solo privado" },
-  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[159,279,439,489], validity:"2026", notes:"Solo privado" },
-];
-
-// ═══════════════════════════════════════════════════════════
-// ESTADO DE LA APP
-// ═══════════════════════════════════════════════════════════
-let state = {
-  country: null,   // 'brasil' | 'rd'
-  service: null,   // 'regular' | 'privado'
-  paxRange: 0,     // 0=1-6, 1=7-21, 2=22-33, 3=34-54
-};
-
-const paxLabels = ['1 – 6 pax','7 – 21 pax','22 – 33 pax','34 – 54 pax'];
-
-// ═══════════════════════════════════════════════════════════
-// INICIALIZACIÓN
-// ═══════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  const total = brasilData.length + rdData.length;
-  document.getElementById('statTotal').textContent = total;
-});
-
-// ═══════════════════════════════════════════════════════════
-// SELECCIÓN DE PAÍS
-// ═══════════════════════════════════════════════════════════
-function selectCountry(country) {
-  state.country = country;
-  state.service = null;
-  state.paxRange = 0;
-
-  // UI país
-  document.querySelectorAll('.country-card').forEach(c => c.classList.remove('active'));
-  document.querySelector(\`[data-country="\${country}"]\`).classList.add('active');
-
-  // Mostrar step 2
-  document.getElementById('serviceStep').classList.add('visible');
-  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
-
-  // nota especial RD
-  document.getElementById('rdRegularNote').style.display = country === 'rd' ? 'block' : 'none';
-
-  // Ocultar pasos siguientes
-  document.getElementById('filtersStep').classList.remove('visible');
-  document.getElementById('resultsPanel').classList.remove('visible');
-  document.getElementById('placeholderMsg').classList.add('visible');
-
-  // Scroll al step 2
-  setTimeout(() => document.getElementById('serviceStep').scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
-}
-
-// ═══════════════════════════════════════════════════════════
-// SELECCIÓN DE SERVICIO
-// ═══════════════════════════════════════════════════════════
-function selectService(service) {
-  state.service = service;
-  state.paxRange = 0;
-
-  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
-  document.querySelector(\`[data-service="\${service}"]\`).classList.add('active');
-
-  // pax selector solo para privado
-  document.getElementById('paxSelectorWrap').style.display = service === 'privado' ? 'block' : 'none';
-  document.querySelectorAll('.pax-btn').forEach((b,i) => b.classList.toggle('active', i === 0));
-
-  // Poblar select de zonas
-  populateZoneFilter();
-
-  // Mostrar step 3 y resultados
-  document.getElementById('filtersStep').classList.add('visible');
-  document.getElementById('placeholderMsg').classList.remove('visible');
-  document.getElementById('resultsPanel').classList.add('visible');
-
-  // Reset filtros
-  document.getElementById('zoneFilter').value = '';
-  document.getElementById('searchInput').value = '';
-
-  applyFilters();
-  setTimeout(() => document.getElementById('filtersStep').scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
-}
-
-// ═══════════════════════════════════════════════════════════
-// SELECCIÓN DE RANGO PAX
-// ═══════════════════════════════════════════════════════════
-function selectPax(el) {
-  document.querySelectorAll('.pax-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  state.paxRange = parseInt(el.dataset.pax) - 1;
-  applyFilters();
-}
-
-// ═══════════════════════════════════════════════════════════
-// POBLAR SELECT DE ZONAS
-// ═══════════════════════════════════════════════════════════
-function populateZoneFilter() {
-  const data = state.country === 'brasil' ? brasilData : rdData;
-  const select = document.getElementById('zoneFilter');
-  select.innerHTML = '<option value="">Todas las zonas</option>';
-
-  const zones = [...new Set(data.map(i => i.zone))];
-  zones.forEach(z => {
-    const opt = document.createElement('option');
-    opt.value = z; opt.textContent = z;
-    select.appendChild(opt);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════
-// NORMALIZAR TEXTO
-// ═══════════════════════════════════════════════════════════
-function normalize(t) {
-  return t.toString().toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');
-}
-
-// ═══════════════════════════════════════════════════════════
-// APLICAR FILTROS
-// ═══════════════════════════════════════════════════════════
-function applyFilters() {
-  if (!state.country || !state.service) return;
-
-  const data = state.country === 'brasil' ? brasilData : rdData;
-  const zoneVal  = normalize(document.getElementById('zoneFilter').value);
-  const searchVal= normalize(document.getElementById('searchInput').value.trim());
-  const isPrivado= state.service === 'privado';
-
-  let filtered = data.filter(item => {
-    // Filtro de servicio
-    if (!isPrivado && item.adultPrice === null) return false; // regular: solo con precio de adulto
-    // Para privado: siempre incluir (todos tienen precios privados)
-
-    // Filtro de zona
-    const matchZone = !zoneVal || normalize(item.zone).includes(zoneVal);
-
-    // Filtro búsqueda libre
-    const matchSearch = !searchVal ||
-      normalize(item.zone).includes(searchVal) ||
-      normalize(item.route).includes(searchVal) ||
-      normalize(item.notes || '').includes(searchVal);
-
-    return matchZone && matchSearch;
-  });
-
-  renderResults(filtered, isPrivado);
-}
-
-// ═══════════════════════════════════════════════════════════
-// RENDERIZAR RESULTADOS
-// ═══════════════════════════════════════════════════════════
-function renderResults(filtered, isPrivado) {
-  const container = document.getElementById('resultsContainer');
-  const countEl   = document.getElementById('resultsCount');
-  const titleEl   = document.getElementById('resultsTitle');
-  const footerEl  = document.getElementById('footerNotes');
-
-  countEl.textContent = \`\${filtered.length} traslado\${filtered.length !== 1 ? 's' : ''}\`;
-
-  const countryName = state.country === 'brasil' ? '🇧🇷 Brasil' : '🇩🇴 Rep. Dominicana';
-  const svcName     = isPrivado ? 'Privado' : 'Regular (compartido)';
-  titleEl.textContent = \`\${countryName} · \${svcName}\`;
-
-  if (isPrivado) {
-    titleEl.textContent += \` · \${paxLabels[state.paxRange]}\`;
-  }
-
-  // Footer notas
-  if (state.country === 'brasil') {
-    footerEl.innerHTML = '<strong>Brasil:</strong> Tarifas netas en USD por persona, base servicio regular. Mín. 2 pax. No válidas en feriados, Carnaval, Rock in Rio, F1, Navidad ni Año Nuevo.';
-  } else {
-    footerEl.innerHTML = isPrivado
-      ? \`<strong>Rep. Dominicana — Privado:</strong> Precio por vehículo/ruta para <strong>\${paxLabels[state.paxRange]}</strong>. No incluye propinas ni extras. Sujeto a disponibilidad.\`
-      : '<strong>Rep. Dominicana — Regular:</strong> Tarifa neta por persona. Precio adulto y niño (2–10 años). Mín. 2 pax. Servicio compartido.';
-  }
-
-  if (filtered.length === 0) {
-    container.innerHTML = \`
-      <div class="no-results">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <h3>Sin resultados</h3>
-        <p>Probá con otros filtros o términos de búsqueda más generales.</p>
-      </div>\`;
-    return;
-  }
-
-  // Agrupar por zona
-  const groups = {};
-  filtered.forEach(item => {
-    if (!groups[item.zone]) groups[item.zone] = [];
-    groups[item.zone].push(item);
-  });
-
-  let html = '';
-  const flag = state.country === 'brasil' ? '🇧🇷' : '🇩🇴';
-
-  Object.entries(groups).forEach(([zone, items]) => {
-    html += \`<div class="region-header">\${flag} \${zone}</div>\`;
-    items.forEach(item => {
-      let priceHtml = '';
-      if (isPrivado) {
-        const pvtPrice = item.pvt[state.paxRange];
-        priceHtml = \`
-          <div class="price-box-pvt">
-            <div class="price-amount-pvt">USD \${pvtPrice}</div>
-            <div class="price-label-pvt">por ruta · \${paxLabels[state.paxRange]}</div>
-          </div>\`;
-      } else {
-        priceHtml = \`
-          <div class="price-box">
-            <div class="price-amount">USD \${item.adultPrice}</div>
-            \${item.childPrice !== null ? \`<div class="price-child">Niño: USD \${item.childPrice}</div>\` : ''}
-            <div class="price-label">por persona</div>
-          </div>\`;
-      }
-
-      const validityHtml = item.validity ? \`<strong>Validez:</strong> \${item.validity}\` : '';
-      const notesHtml    = item.notes    ? \`<br><strong>Obs.:</strong> \${item.notes}\`   : '';
-
-      html += \`
-        <div class="transfer-item">
-          <div class="transfer-info">
-            <h3>\${item.route}</h3>
-            <div class="transfer-details">\${validityHtml}\${notesHtml}</div>
-          </div>
-          \${priceHtml}
-        </div>\`;
-    });
-  });
-
-  container.innerHTML = html;
-}
-
-// ── SCROLL TOP ────────────────────────────────────────────
-const scrollBtn = document.getElementById('scrollTop');
-window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.pageYOffset > 300));
-scrollBtn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
-</script></div>
+<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button></div>
   `
   return c.html(baseLayout('Traslados', content, user, 'academia'))
 })
@@ -34033,10 +33600,26 @@ academia.get('/academia/herramientas/traslados-brasil', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
+    <script>
+// Neutralize academia navbar injector — ERP nav handles navigation
+(function(){
+  var _origCreate = document.createElement.bind(document);
+  document.createElement = function(tag){
+    var el = _origCreate(tag);
+    if(tag.toLowerCase()==='script'){
+      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
+    }
+    return el;
+  };
+  // Also hide any drv-navbar that gets injected
+  var style = _origCreate('style');
+  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
+  document.head.appendChild(style);
+})();
+</script>
     <style>
-      /* Reset top padding for academia pages */
-      .academia-page { margin: 0; padding: 0; }
-      .academia-page nav { display: none !important; }
+      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
+      .academia-page{padding-top:0;}
       
     :root {
       --primary:#7B2D8E;
@@ -34256,11 +33839,8 @@ academia.get('/academia/herramientas/traslados-brasil', async (c) => {
     }
   
     </style>
-    <div style="background:#f8f5ff;border-bottom:2px solid #e8e0f5;padding:8px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;"><a href="/academia" style="font-size:12px;color:#7B3FA0;font-weight:700;text-decoration:none;"><i class="fas fa-home"></i> Academia</a><span style="color:#d1d5db;">›</span><span style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;">Herramientas:</span><a href="/academia/herramientas/traslados" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Traslados</a><a href="/academia/herramientas/traslados-brasil" style="font-size:12px;color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 6px;border-radius:4px;" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='transparent'">Traslados Brasil</a></div>
-    <div class="academia-page"><!-- navbar global -->
-
-
-<!-- ══════════════════════════ HERO ══════════════════════════ -->
+    <div style="background:#faf5ff;border-bottom:2px solid #ede9fe;padding:8px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:Inter,sans-serif;font-size:12px;"><a href="/academia" style="color:#7B3FA0;font-weight:700;text-decoration:none;white-space:nowrap;"><i class="fas fa-graduation-cap"></i> Academia</a><span style="color:#c4b5fd;">›</span><span style="font-weight:700;color:#9ca3af;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;white-space:nowrap;">Herramientas:</span><a href="/academia/herramientas/traslados" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Traslados</a><a href="/academia/herramientas/traslados-brasil" style="color:#5a2d75;text-decoration:none;white-space:nowrap;padding:2px 8px;border-radius:12px;background:#ede9fe;">Traslados Brasil</a></div>
+    <div class="academia-page"><!-- ══════════════════════════ HERO ══════════════════════════ -->
 <header class="hero">
   <span class="eyebrow">🇧🇷 Herramientas · Dr.Viaje</span>
   <h1>Traslados Brasil 2026</h1>
@@ -34336,176 +33916,7 @@ academia.get('/academia/herramientas/traslados-brasil', async (c) => {
 </main>
 
 <!-- SCROLL TOP -->
-<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button>
-
-<script>
-  // ── BASE DE DATOS COMPLETA DE TRASLADOS BRASIL 2026 ──────────────────
-  const trasladosData = [
-    // RIO DE JANEIRO
-    { region:"RIO DE JANEIRO", service:"Transfer In + Out (Arpt GIG / Hotel Zona Sur / Arpt GIG)", price:35, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Tarifas NET. Mínimo 2 pax. No válidas para feriados.", type:"roundtrip" },
-    { region:"RIO DE JANEIRO", service:"Transfer In + Out (Arpt GIG / Hotel Barra da Tijuca / Arpt GIG)", price:49, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Tarifas NET. Mínimo 2 pax. No válidas para feriados.", type:"roundtrip" },
-
-    // BÚZIOS | CABO FRIO | ARRAIAL DO CABO
-    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Arpt GIG / Búzios / Arpt GIG)", price:49, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Hotel Zona Sur / Búzios / Hotel Zona Sur)", price:49, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Hotel Barra da Tijuca / Búzios / Hotel Barra da Tijuca)", price:71, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Arpt GIG / Cabo Frio / Arpt GIG)", price:76, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Arpt GIG / Arraial do Cabo / Arpt GIG)", price:78, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-
-    // ANGRA DOS REIS | PARATY | ILHA GRANDE
-    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / Angra dos Reis / Arpt GIG)", price:118, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / Paraty / Arpt GIG)", price:120, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / Ilha Grande / Arpt GIG)*", price:151, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"*Incluye lancha", type:"roundtrip" },
-    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / I.G. (Araçatiba o Praia Vermelha) / Arpt GIG)*", price:176, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"*Incluye lancha", type:"roundtrip" },
-
-    // SÃO PAULO
-    { region:"SÃO PAULO", service:"Transfer In + Out (Arpt GRU / Hotel Centro / Arpt GRU) - PVT", price:89, currency:"USD", validity:"01/02/2026 - 30/06/2026", notes:"Servicio privado", type:"roundtrip" },
-
-    // SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Arpt SSA / Hotel SSA / Arpt SSA)", price:20, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"Por persona, base regular", type:"roundtrip" },
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out + City Tour Histórico (Arpt SSA / Hotel SSA / Arpt SSA)*", price:33, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"*City tour incluido", type:"citytour" },
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In or Out (Arpt SSA / Hotel SSA) - One Way", price:11, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"Solo ida", type:"oneway" },
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer Hotel en Salvador / Hotel Litoral Norte o viceversa", price:40, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"Entre hoteles", type:"hotel" },
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Arpt SSA / Litoral Norte** / Arpt SSA)", price:40, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"**Praia do Forte, Imbassaí, Costa do Sauípe, Guarajuba", type:"roundtrip" },
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In or Out (Arpt SSA / Litoral Norte**) - One Way", price:29, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"**Praia do Forte, Imbassaí, Costa do Sauípe, Guarajuba", type:"oneway" },
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Hotel SSA / MSP / Hotel SSA) Semiterrestre***", price:75, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"***Bus+Lancha. Salida 8:30am Hoteles SSA, retorno 4:30pm Terminal Marítimo MSP", type:"roundtrip" },
-    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Hotel SSA / MSP / Hotel SSA) Catamarã***", price:88, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"***Bus+Catamarã. Salida 8:30am Hoteles SSA, retorno 4:30pm Terminal Marítimo MSP", type:"roundtrip" },
-
-    // PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ
-    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Hotel Porto Seguro / Arpt BPS)", price:24, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Hotel Arraial D'Ajuda / Arpt BPS)", price:35, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa", type:"roundtrip" },
-    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Hotel Santo André (Sta Cruz Cabrália) / Arpt BPS)", price:53, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Santa Cruz Cabrália", type:"roundtrip" },
-    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Trancoso / Arpt BPS)", price:71, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa", type:"roundtrip" },
-    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Santo André / Arpt BPS)", price:84, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-
-    // NATAL | PIPA | TOUROS
-    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (Arpt NAT / Hotel Natal / Arpt NAT)", price:31, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (NAT) + City Tour d'Playa Carnaupiim", price:37, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Con city tour", type:"citytour" },
-    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (Arpt NAT / Pipa / Hotel NAT)", price:78, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (Arpt NAT / Touros / Arpt NAT)", price:85, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"NATAL | PIPA | TOUROS", service:"Transfer Triangular (Arpt NAT / FH NAT / FH Pipa / Arpt NAT)", price:83, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular", type:"roundtrip" },
-    { region:"NATAL | PIPA | TOUROS", service:"Transfer Triangular (Arpt NAT / FH Pipa / FH NAT / Arpt NAT)", price:100, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular", type:"roundtrip" },
-
-    // JOÃO PESSOA | CONDE
-    { region:"JOÃO PESSOA | CONDE", service:"Transfer In + Out (Arpt JPA / Hotel JP / Arpt JPA)", price:29, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-    { region:"JOÃO PESSOA | CONDE", service:"Transfer In + Out (Arpt JPA / Arpt JPA)", price:80, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
-
-    // FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS
-    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel FLN Centro / Arpt FLN)", price:29, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Centro de Florianópolis", type:"roundtrip" },
-    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel FLN Canasvieiras / Arpt FLN)", price:33, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Canasvieiras", type:"roundtrip" },
-    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Canasvieiras do Santinho / Arpt FLN)", price:33, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Canasvieiras do Santinho", type:"roundtrip" },
-    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel Balneário Camboriú* / Arpt FLN)", price:62, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"*Camboriú, Praia dos Carnés, Camboriú do Santo Amaro, Itajaí y alrededores", type:"roundtrip" },
-    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel Bombinhas** / Arpt FLN)", price:94, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"**Bombinhas, Itapema, Mariscal, Piçarras, Porto Belo, Praia y alrededores", type:"roundtrip" }
-  ];
-
-  // ── REFERENCIAS DOM ───────────────────────────────────────
-  const regionFilter    = document.getElementById('regionFilter');
-  const serviceFilter   = document.getElementById('serviceFilter');
-  const searchInput     = document.getElementById('searchInput');
-  const resultsContainer= document.getElementById('resultsContainer');
-  const resultsCount    = document.getElementById('resultsCount');
-  const statTotal       = document.getElementById('statTotal');
-  let filteredData = [...trasladosData];
-
-  // ── NORMALIZAR TEXTO (sin tildes, minúsculas) ─────────────
-  function normalize(text) {
-    return text.toString().toLowerCase()
-      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
-  }
-
-  // ── POBLAR SELECT DE REGIONES ─────────────────────────────
-  function populateRegionFilter() {
-    const regions = [...new Set(trasladosData.map(i => i.region))]
-      .sort((a, b) => normalize(a).localeCompare(normalize(b)));
-    regions.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r; opt.textContent = r;
-      regionFilter.appendChild(opt);
-    });
-  }
-
-  // ── APLICAR FILTROS ───────────────────────────────────────
-  function applyFilters() {
-    const rVal = normalize(regionFilter.value);
-    const sVal = serviceFilter.value;
-    const qVal = normalize(searchInput.value.trim());
-
-    filteredData = trasladosData.filter(item => {
-      const ir = normalize(item.region);
-      const is = normalize(item.service);
-      const in_ = normalize(item.notes || '');
-      const matchRegion  = !rVal || ir.includes(rVal);
-      const matchService = !sVal || item.type === sVal;
-      const matchSearch  = !qVal || ir.includes(qVal) || is.includes(qVal) || in_.includes(qVal);
-      return matchRegion && matchService && matchSearch;
-    });
-    renderResults();
-  }
-
-  // ── RENDERIZAR RESULTADOS ─────────────────────────────────
-  function renderResults() {
-    resultsCount.textContent = \`\${filteredData.length} traslado\${filteredData.length !== 1 ? 's' : ''}\`;
-
-    if (filteredData.length === 0) {
-      resultsContainer.innerHTML = \`
-        <div class="no-results">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <h3>Sin resultados</h3>
-          <p>Probá con otros filtros o términos de búsqueda más generales.</p>
-        </div>\`;
-      return;
-    }
-
-    // Agrupar por región (manteniendo orden de aparición)
-    const groups = {};
-    filteredData.forEach(item => {
-      if (!groups[item.region]) groups[item.region] = [];
-      groups[item.region].push(item);
-    });
-
-    let html = '';
-    Object.entries(groups).forEach(([region, items]) => {
-      html += \`<div class="region-header">🇧🇷 \${region}</div>\`;
-      items.forEach(item => {
-        html += \`
-          <div class="transfer-item">
-            <div class="transfer-info">
-              <h3>\${item.service}</h3>
-              <div class="transfer-details">
-                <strong>Validez:</strong> \${item.validity}
-                \${item.notes ? \`<br><strong>Obs.:</strong> \${item.notes}\` : ''}
-              </div>
-            </div>
-            <div class="price-box">
-              <div class="price-amount">\${item.currency} \${item.price}</div>
-              <div class="price-label">por persona</div>
-            </div>
-          </div>\`;
-      });
-    });
-    resultsContainer.innerHTML = html;
-  }
-
-  // ── INICIALIZAR ───────────────────────────────────────────
-  function init() {
-    statTotal.textContent = trasladosData.length;
-    populateRegionFilter();
-    renderResults();
-    regionFilter.addEventListener('change', applyFilters);
-    serviceFilter.addEventListener('change', applyFilters);
-    searchInput.addEventListener('input', applyFilters);
-  }
-
-  document.addEventListener('DOMContentLoaded', init);
-
-  // ── SCROLL TOP ────────────────────────────────────────────
-  const scrollBtn = document.getElementById('scrollTop');
-  window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.pageYOffset > 300));
-  scrollBtn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
-</script></div>
+<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button></div>
   `
   return c.html(baseLayout('Traslados Brasil', content, user, 'academia'))
 })
