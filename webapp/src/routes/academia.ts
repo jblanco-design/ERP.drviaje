@@ -16,31 +16,20 @@ academia.get('/academia', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
+      
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
       
     /* ── Reset base ── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
+    .academia-page { scroll-behavior: smooth; }
+    .academia-page {
       font-family: 'Inter', sans-serif;
       background: #f8f9fa;
       color: #333;
@@ -1538,28 +1527,17 @@ academia.get('/academia/info-util', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple: #7B2D8E;
       --primary-orange: #FF9800;
       --primary-pink: #E91E63;
@@ -1568,7 +1546,7 @@ academia.get('/academia/info-util', async (c) => {
       --white: #ffffff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding-top: 0; }
+    .academia-page { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding-top: 0; }
 
     .page-hero {
       background: linear-gradient(135deg, var(--primary-purple) 0%, #9c27b0 50%, var(--primary-pink) 100%);
@@ -2023,28 +2001,17 @@ academia.get('/academia/destinos/aruba', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple:#7B2D8E;
       --primary-orange:#FF9800;
       --primary-pink:#E91E63;
@@ -2062,8 +2029,8 @@ academia.get('/academia/destinos/aruba', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       color:var(--text-dark);
@@ -2397,7 +2364,7 @@ academia.get('/academia/destinos/aruba', async (c) => {
       max-width:940px;
     }
 
-    .destination-body{
+    .destination-.academia-page {
       padding:24px 30px 30px;
     }
 
@@ -3264,28 +3231,17 @@ academia.get('/academia/destinos/bariloche', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -3307,11 +3263,11 @@ academia.get('/academia/destinos/bariloche', async (c) => {
             padding: 0;
         }
 
-        html {
+        .academia-page {
             scroll-behavior: smooth;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
             color: var(--text-dark);
@@ -4304,28 +4260,17 @@ academia.get('/academia/destinos/brasil-bahia', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -4343,7 +4288,7 @@ academia.get('/academia/destinos/brasil-bahia', async (c) => {
             box-sizing: border-box;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
@@ -4408,7 +4353,7 @@ academia.get('/academia/destinos/brasil-bahia', async (c) => {
             padding: 15px 0;
             position: sticky;
             top: 120px;
-            z-index: 999;
+            z-index: 50;
             box-shadow: var(--shadow);
         }
 
@@ -5136,28 +5081,17 @@ academia.get('/academia/destinos/brasil-ceara', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -5175,7 +5109,7 @@ academia.get('/academia/destinos/brasil-ceara', async (c) => {
             box-sizing: border-box;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
@@ -5240,7 +5174,7 @@ academia.get('/academia/destinos/brasil-ceara', async (c) => {
             padding: 15px 0;
             position: sticky;
             top: 120px;
-            z-index: 999;
+            z-index: 50;
             box-shadow: var(--shadow);
         }
 
@@ -6100,28 +6034,17 @@ academia.get('/academia/destinos/brasil-maranhao', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -6139,7 +6062,7 @@ academia.get('/academia/destinos/brasil-maranhao', async (c) => {
             box-sizing: border-box;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
@@ -6204,7 +6127,7 @@ academia.get('/academia/destinos/brasil-maranhao', async (c) => {
             padding: 15px 0;
             position: sticky;
             top: 120px;
-            z-index: 999;
+            z-index: 50;
             box-shadow: var(--shadow);
         }
 
@@ -6866,28 +6789,17 @@ academia.get('/academia/destinos/brasil-nordeste', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -6905,7 +6817,7 @@ academia.get('/academia/destinos/brasil-nordeste', async (c) => {
             box-sizing: border-box;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
@@ -6970,7 +6882,7 @@ academia.get('/academia/destinos/brasil-nordeste', async (c) => {
             padding: 15px 0;
             position: sticky;
             top: 120px;
-            z-index: 999;
+            z-index: 50;
             box-shadow: var(--shadow);
         }
 
@@ -7727,28 +7639,17 @@ academia.get('/academia/destinos/brasil-rio', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -7766,7 +7667,7 @@ academia.get('/academia/destinos/brasil-rio', async (c) => {
             box-sizing: border-box;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
@@ -8763,28 +8664,17 @@ academia.get('/academia/destinos/cancun', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --bg:#fff7fb;
       --white:#ffffff;
       --ink:#231942;
@@ -8805,8 +8695,8 @@ academia.get('/academia/destinos/cancun', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family: Inter, Segoe UI, Arial, Helvetica, sans-serif;
       color:var(--ink);
@@ -8939,7 +8829,7 @@ academia.get('/academia/destinos/cancun', async (c) => {
     .sticky-nav{
       position:sticky;
       top:0;
-      z-index:999;
+      z-index:50;
       backdrop-filter:blur(14px);
       -webkit-backdrop-filter:blur(14px);
       background:rgba(255,255,255,.9);
@@ -9195,7 +9085,7 @@ academia.get('/academia/destinos/cancun', async (c) => {
     }
 
     @media (max-width: 680px){
-      :root{--nav-h:76px}
+      .academia-page {--nav-h:76px}
       .hero-card{padding:24px}
       .kpis{grid-template-columns:1fr}
       .grid-4{grid-template-columns:1fr}
@@ -9946,28 +9836,17 @@ academia.get('/academia/destinos/cartagena', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple:#7B2D8E;
       --primary-orange:#FF9800;
       --primary-pink:#E91E63;
@@ -9990,8 +9869,8 @@ academia.get('/academia/destinos/cartagena', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       color:var(--text-dark);
@@ -10135,7 +10014,7 @@ academia.get('/academia/destinos/cartagena', async (c) => {
     }
     .destination h3{margin:0 0 8px;font-size:28px;line-height:1.12;letter-spacing:-.03em;}
     .destination-subtitle{margin:0;color:var(--text-medium);max-width:940px;}
-    .destination-body{padding:24px 30px 30px;}
+    .destination-.academia-page {padding:24px 30px 30px;}
 
     .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px;}
     .mini-card{background:#fcfcfd;border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:18px;}
@@ -11151,28 +11030,17 @@ academia.get('/academia/destinos/curazao', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple:#7B2D8E;
       --primary-orange:#FF9800;
       --primary-pink:#E91E63;
@@ -11190,8 +11058,8 @@ academia.get('/academia/destinos/curazao', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       color:var(--text-dark);
@@ -11525,7 +11393,7 @@ academia.get('/academia/destinos/curazao', async (c) => {
       max-width:940px;
     }
 
-    .destination-body{
+    .destination-.academia-page {
       padding:24px 30px 30px;
     }
 
@@ -12483,28 +12351,17 @@ academia.get('/academia/destinos/dominicana', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple: #7B2D8E;
       --primary-orange: #FF9800;
       --primary-pink: #E91E63;
@@ -12521,9 +12378,9 @@ academia.get('/academia/destinos/dominicana', async (c) => {
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    .academia-page { scroll-behavior: smooth; }
 
-    body {
+    .academia-page {
       font-family: 'Inter', sans-serif;
       background: var(--bg-light);
       color: var(--text-dark);
@@ -13574,28 +13431,17 @@ academia.get('/academia/destinos/jamaica', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple:#7B2D8E;
       --primary-orange:#FF9800;
       --primary-pink:#E91E63;
@@ -13613,8 +13459,8 @@ academia.get('/academia/destinos/jamaica', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       color:var(--text-dark);
@@ -13948,7 +13794,7 @@ section[id]{
       max-width:940px;
     }
 
-    .destination-body{
+    .destination-.academia-page {
       padding:24px 30px 30px;
     }
 
@@ -14827,28 +14673,17 @@ academia.get('/academia/destinos/las-vegas', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -14866,8 +14701,8 @@ academia.get('/academia/destinos/las-vegas', async (c) => {
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+        .academia-page { scroll-behavior: smooth; }
+        .academia-page { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
         a { color: inherit; text-decoration: none; }
         .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
 
@@ -14989,7 +14824,7 @@ academia.get('/academia/destinos/las-vegas', async (c) => {
             position: fixed; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
             border: none; cursor: pointer; background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
             color: var(--white); font-size: 1.2rem; font-weight: 700; box-shadow: var(--shadow-hover);
-            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 999;
+            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 50;
             opacity: 0; visibility: hidden;
         }
         .scroll-top.visible { opacity: 1; visibility: visible; }
@@ -16135,28 +15970,17 @@ academia.get('/academia/destinos/los-angeles', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -16174,8 +15998,8 @@ academia.get('/academia/destinos/los-angeles', async (c) => {
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+        .academia-page { scroll-behavior: smooth; }
+        .academia-page { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
         a { color: inherit; text-decoration: none; }
         .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
 
@@ -16310,7 +16134,7 @@ academia.get('/academia/destinos/los-angeles', async (c) => {
             position: fixed; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
             border: none; cursor: pointer; background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
             color: var(--white); font-size: 1.2rem; font-weight: 700; box-shadow: var(--shadow-hover);
-            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 999;
+            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 50;
             opacity: 0; visibility: hidden;
         }
         .scroll-top.visible { opacity: 1; visibility: visible; }
@@ -17521,28 +17345,17 @@ academia.get('/academia/destinos/mendoza', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple: #7B2D8E;
       --primary-orange: #FF9800;
       --primary-pink: #E91E63;
@@ -17564,11 +17377,11 @@ academia.get('/academia/destinos/mendoza', async (c) => {
       padding: 0;
     }
 
-    html {
+    .academia-page {
       scroll-behavior: smooth;
     }
 
-    body {
+    .academia-page {
       font-family: 'Inter', sans-serif;
       background: var(--bg-light);
       color: var(--text-dark);
@@ -17661,7 +17474,7 @@ academia.get('/academia/destinos/mendoza', async (c) => {
       padding: 15px 0;
       position: sticky;
       top: 0;
-      z-index: 999;
+      z-index: 50;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
 
@@ -18490,28 +18303,17 @@ academia.get('/academia/destinos/miami-orlando', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple: #7B2D8E;
       --primary-orange: #FF9800;
       --primary-pink:   #E91E63;
@@ -18530,8 +18332,8 @@ academia.get('/academia/destinos/miami-orlando', async (c) => {
       --transition:     all 0.3s ease;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+    .academia-page { scroll-behavior: smooth; }
+    .academia-page { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
     a { color: inherit; text-decoration: none; }
     .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
 
@@ -19287,28 +19089,17 @@ academia.get('/academia/destinos/nueva-york', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -19331,11 +19122,11 @@ academia.get('/academia/destinos/nueva-york', async (c) => {
             padding: 0;
         }
 
-        html {
+        .academia-page {
             scroll-behavior: smooth;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
             color: var(--text-dark);
@@ -19838,7 +19629,7 @@ academia.get('/academia/destinos/nueva-york', async (c) => {
             align-items: center;
             justify-content: center;
             transition: var(--transition);
-            z-index: 999;
+            z-index: 50;
         }
 
         .scroll-top:hover {
@@ -21272,28 +21063,17 @@ academia.get('/academia/destinos/parques-orlando', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple: #7B2D8E;
       --primary-orange: #FF9800;
       --primary-pink:   #E91E63;
@@ -21313,8 +21093,8 @@ academia.get('/academia/destinos/parques-orlando', async (c) => {
       --transition:     all 0.3s ease;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+    .academia-page { scroll-behavior: smooth; }
+    .academia-page { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
     a { color: inherit; text-decoration: none; }
     .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
 
@@ -22168,28 +21948,17 @@ academia.get('/academia/destinos/saint-martin', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple:#7B2D8E;
       --primary-orange:#FF9800;
       --primary-pink:#E91E63;
@@ -22207,8 +21976,8 @@ academia.get('/academia/destinos/saint-martin', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       color:var(--text-dark);
@@ -22550,7 +22319,7 @@ academia.get('/academia/destinos/saint-martin', async (c) => {
       max-width:940px;
     }
 
-    .destination-body{
+    .destination-.academia-page {
       padding:24px 30px 30px;
     }
 
@@ -23399,28 +23168,17 @@ academia.get('/academia/destinos/san-andres', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple:#7B2D8E;
       --primary-orange:#FF9800;
       --primary-pink:#E91E63;
@@ -23438,8 +23196,8 @@ academia.get('/academia/destinos/san-andres', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       color:var(--text-dark);
@@ -23790,7 +23548,7 @@ academia.get('/academia/destinos/san-andres', async (c) => {
       max-width:940px;
     }
 
-    .destination-body{
+    .destination-.academia-page {
       padding:24px 30px 30px;
     }
 
@@ -24706,28 +24464,17 @@ academia.get('/academia/destinos/san-francisco', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -24745,8 +24492,8 @@ academia.get('/academia/destinos/san-francisco', async (c) => {
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+        .academia-page { scroll-behavior: smooth; }
+        .academia-page { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
         a { color: inherit; text-decoration: none; }
         .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
 
@@ -24869,7 +24616,7 @@ academia.get('/academia/destinos/san-francisco', async (c) => {
             position: fixed; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
             border: none; cursor: pointer; background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
             color: var(--white); font-size: 1.2rem; font-weight: 700; box-shadow: var(--shadow-hover);
-            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 999;
+            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 50;
             opacity: 0; visibility: hidden;
         }
         .scroll-top.visible { opacity: 1; visibility: visible; }
@@ -25995,28 +25742,17 @@ academia.get('/academia/destinos/santa-marta', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple:#7B2D8E;
       --primary-orange:#FF9800;
       --primary-pink:#E91E63;
@@ -26040,8 +25776,8 @@ academia.get('/academia/destinos/santa-marta', async (c) => {
     }
 
     *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
+    .academia-page {scroll-behavior:smooth}
+    .academia-page {
       margin:0;
       font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       color:var(--text-dark);
@@ -26146,7 +25882,7 @@ academia.get('/academia/destinos/santa-marta', async (c) => {
     .destination-number{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--white);font-weight:800;margin-bottom:12px;box-shadow:var(--shadow);}
     .destination h3{margin:0 0 8px;font-size:28px;line-height:1.12;letter-spacing:-.03em;}
     .destination-subtitle{margin:0;color:var(--text-medium);max-width:940px;}
-    .destination-body{padding:24px 30px 30px;}
+    .destination-.academia-page {padding:24px 30px 30px;}
     .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px;}
     .mini-card{background:#fcfcfd;border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:18px;}
     .mini-card h4{margin:0 0 10px;font-size:16px;color:var(--c1);}
@@ -27147,28 +26883,17 @@ academia.get('/academia/destinos/santiago', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary-purple: #7B2D8E;
       --primary-orange: #FF9800;
       --primary-pink: #E91E63;
@@ -27188,11 +26913,11 @@ academia.get('/academia/destinos/santiago', async (c) => {
       box-sizing: border-box;
     }
 
-    html {
+    .academia-page {
       scroll-behavior: smooth;
     }
 
-    body {
+    .academia-page {
       font-family: 'Inter', sans-serif;
       background: var(--bg-light);
       color: var(--text-dark);
@@ -28145,28 +27870,17 @@ academia.get('/academia/destinos/ushuaia', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-        :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+        .academia-page {
             --primary-purple: #7B2D8E;
             --primary-orange: #FF9800;
             --primary-pink: #E91E63;
@@ -28188,11 +27902,11 @@ academia.get('/academia/destinos/ushuaia', async (c) => {
             padding: 0;
         }
 
-        html {
+        .academia-page {
             scroll-behavior: smooth;
         }
 
-        body {
+        .academia-page {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
             color: var(--text-dark);
@@ -29551,28 +29265,17 @@ academia.get('/academia/amadeus/guia-rapida', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary:#7B2D8E;
       --pink:#E91E63;
       --orange:#FF9800;
@@ -29592,8 +29295,8 @@ academia.get('/academia/amadeus/guia-rapida', async (c) => {
       --shadow:0 10px 30px rgba(22,50,79,.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{
+    .academia-page {scroll-behavior:smooth;}
+    .academia-page {
       font-family:'Inter',sans-serif;
       background:#f4f7fb;
       color:var(--text);
@@ -30165,28 +29868,17 @@ academia.get('/academia/amadeus/aerolineas', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary:#7B2D8E;
       --pink:#E91E63;
       --orange:#FF9800;
@@ -30206,8 +29898,8 @@ academia.get('/academia/amadeus/aerolineas', async (c) => {
       --shadow:0 10px 30px rgba(22,50,79,.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
+    .academia-page {scroll-behavior:smooth;}
+    .academia-page {font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
 
     /* ── HERO ── */
     .aq-hero{
@@ -30396,7 +30088,7 @@ academia.get('/academia/amadeus/aerolineas', async (c) => {
       border-radius:50%;border:none;cursor:pointer;
       background:var(--primary);color:#fff;font-size:1.2rem;
       box-shadow:0 6px 20px rgba(0,0,0,.2);
-      opacity:0;visibility:hidden;transition:.3s ease;z-index:999;
+      opacity:0;visibility:hidden;transition:.3s ease;z-index:50;
     }
     .scroll-top.visible{opacity:1;visibility:visible;}
     .scroll-top:hover{background:var(--pink);transform:translateY(-3px);}
@@ -31307,28 +30999,17 @@ academia.get('/academia/amadeus/fxd', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary:#7B2D8E;
       --pink:#E91E63;
       --orange:#FF9800;
@@ -31351,8 +31032,8 @@ academia.get('/academia/amadeus/fxd', async (c) => {
       --shadow:0 12px 32px rgba(22,50,79,.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{
+    .academia-page {scroll-behavior:smooth;}
+    .academia-page {
       font-family:'Inter',sans-serif;
       background:
         radial-gradient(circle at top left, rgba(123,45,142,.07), transparent 26%),
@@ -32188,30 +31869,19 @@ academia.get('/academia/hoteles', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:#333;padding-top:0;}
+    .academia-page {font-family:'Inter',sans-serif;background:var(--bg);color:#333;padding-top:0;}
 
     .page-hero{background:linear-gradient(135deg,var(--primary-purple) 0%,#9c27b0 50%,var(--primary-pink) 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden;}
     .page-hero::before{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.06);top:-100px;right:-100px;}
@@ -32238,7 +31908,7 @@ academia.get('/academia/hoteles', async (c) => {
 
     .hotel-card-zone{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px;}
 
-    .hotel-card-body{padding:24px;flex:1;display:flex;flex-direction:column;}
+    .hotel-card-.academia-page {padding:24px;flex:1;display:flex;flex-direction:column;}
     .hotel-card-body h3{font-family:'Playfair Display',serif;font-size:1.35rem;color:#1a1a2e;margin-bottom:8px;}
     .hotel-card-body p{color:#555;font-size:.94rem;line-height:1.65;flex:1;margin-bottom:16px;}
 
@@ -32373,30 +32043,19 @@ academia.get('/academia/hoteles/cancun-riviera', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:#333;padding-top:0;}
+    .academia-page {font-family:'Inter',sans-serif;background:var(--bg);color:#333;padding-top:0;}
 
     .page-hero{background:linear-gradient(135deg,#1f2a56 0%,#3346a8 55%,#6d78da 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden;}
     .page-hero::before{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.06);top:-100px;right:-100px;}
@@ -32819,30 +32478,19 @@ academia.get('/academia/hoteles/punta-cana', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root{--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {--primary-purple:#7B2D8E;--primary-orange:#FF9800;--primary-pink:#E91E63;--bg:#f8f9fa;}
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:#333;padding-top:0;}
+    .academia-page {font-family:'Inter',sans-serif;background:var(--bg);color:#333;padding-top:0;}
 
     .page-hero{background:linear-gradient(135deg,#1f2a56 0%,#1a5276 55%,#117a65 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden;}
     .page-hero::before{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.06);top:-100px;right:-100px;}
@@ -33188,28 +32836,17 @@ academia.get('/academia/herramientas/traslados', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary:#7B2D8E;
       --pink:#E91E63;
       --orange:#FF9800;
@@ -33229,8 +32866,8 @@ academia.get('/academia/herramientas/traslados', async (c) => {
       --shadow:0 10px 30px rgba(22,50,79,.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
+    .academia-page {scroll-behavior:smooth;}
+    .academia-page {font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
 
     /* ── HERO ── */
     .hero{
@@ -33457,7 +33094,7 @@ academia.get('/academia/herramientas/traslados', async (c) => {
       border-radius:50%;border:none;cursor:pointer;
       background:var(--primary);color:#fff;font-size:1.2rem;
       box-shadow:0 6px 20px rgba(0,0,0,.2);
-      opacity:0;visibility:hidden;transition:.3s ease;z-index:999;
+      opacity:0;visibility:hidden;transition:.3s ease;z-index:50;
     }
     .scroll-top.visible{opacity:1;visibility:visible;}
     .scroll-top:hover{background:var(--pink);transform:translateY(-3px);}
@@ -33600,28 +33237,17 @@ academia.get('/academia/herramientas/traslados-brasil', async (c) => {
   const user = await getUser(c)
   if (!user) return c.redirect('/login')
   const content = `
-    <script>
-// Neutralize academia navbar injector — ERP nav handles navigation
-(function(){
-  var _origCreate = document.createElement.bind(document);
-  document.createElement = function(tag){
-    var el = _origCreate(tag);
-    if(tag.toLowerCase()==='script'){
-      Object.defineProperty(el,'src',{set:function(v){if(v&&(v.indexOf('nav')!==-1||v.indexOf('navbar')!==-1)){return;}this.setAttribute('src',v);}});
-    }
-    return el;
-  };
-  // Also hide any drv-navbar that gets injected
-  var style = _origCreate('style');
-  style.textContent = '.drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}';
-  document.head.appendChild(style);
-})();
-</script>
     <style>
-      .drv-navbar,.drv-mobile-menu,.drv-navbar__inner,.sticky-nav,.quick-nav{display:none!important;}
-      .academia-page{padding-top:0;}
       
-    :root {
+.academia-page { position: relative; }
+.academia-page .scroll-top,
+.academia-page [style*="position:fixed"],
+.academia-page [class*="scroll-top"] { z-index: 50 !important; }
+.drv-navbar, .drv-mobile-menu, .drv-navbar__inner,
+.sticky-nav, .quick-nav { display: none !important; }
+
+      
+    .academia-page {
       --primary:#7B2D8E;
       --pink:#E91E63;
       --orange:#FF9800;
@@ -33641,8 +33267,8 @@ academia.get('/academia/herramientas/traslados-brasil', async (c) => {
       --shadow:0 10px 30px rgba(22,50,79,.08);
     }
     *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
+    .academia-page {scroll-behavior:smooth;}
+    .academia-page {font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
 
     /* ── HERO ── */
     .hero{
@@ -33820,7 +33446,7 @@ academia.get('/academia/herramientas/traslados-brasil', async (c) => {
       border-radius:50%;border:none;cursor:pointer;
       background:var(--primary);color:#fff;font-size:1.2rem;
       box-shadow:0 6px 20px rgba(0,0,0,.2);
-      opacity:0;visibility:hidden;transition:.3s ease;z-index:999;
+      opacity:0;visibility:hidden;transition:.3s ease;z-index:50;
     }
     .scroll-top.visible{opacity:1;visibility:visible;}
     .scroll-top:hover{background:var(--pink);transform:translateY(-3px);}
