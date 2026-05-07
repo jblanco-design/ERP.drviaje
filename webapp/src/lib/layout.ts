@@ -46,6 +46,11 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
     { href: rol === 'vendedor' ? '/liquidaciones/pendientes' : '/liquidaciones', icon: 'fa-file-invoice-dollar', label: 'Liquidaciones', page: 'liquidaciones' },
   ] : []
 
+  // Academia: todos los roles autenticados
+  const academiaNavItems = [
+    { href: '/academia', icon: 'fa-graduation-cap', label: 'Academia', page: 'academia' },
+  ]
+
   // Admin: solo gerente ve usuarios; gerente y administración ven proveedores
   const adminNavItems: {href:string;icon:string;label:string;page:string}[] = []
   if (rol === 'gerente' || rol === 'administracion' || rol === 'observador') {
@@ -56,7 +61,7 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
     adminNavItems.push({ href: '/usuarios', icon: 'fa-user-cog', label: 'Usuarios', page: 'usuarios' })
   }
 
-  const allNavItems = [...baseNavItems, ...tesNaveItems, ...reportesNavItems, ...liquidacionesNavItems]
+  const allNavItems = [...baseNavItems, ...tesNaveItems, ...reportesNavItems, ...liquidacionesNavItems, ...academiaNavItems]
 
   const navHtml = allNavItems.map(item => `
     <a href="${item.href}" class="nav-item ${activePage === item.page ? 'active' : ''}">
