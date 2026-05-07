@@ -12,6 +12,7 @@ import reportes from './routes/reportes'
 import admin from './routes/admin'
 import pasajeros from './routes/pasajeros'
 import liquidaciones from './routes/liquidaciones'
+import academia from './routes/academia'
 
 type Bindings = { DB: D1Database; JWT_SECRET?: string }
 
@@ -110,5 +111,6 @@ app.route('/', reportes)
 app.route('/', admin)
 app.route('/', pasajeros)
 app.route('/', liquidaciones)
+app.route('/', academia)
 
 export default app
