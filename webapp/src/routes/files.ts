@@ -732,6 +732,7 @@ files.get('/files/:id', async (c) => {
       vendedoresCompartirRes,
       liquidacionesFileRes,
       auditoriaRes,
+      ccFileRes,
     ] = await Promise.all([
       c.env.DB.prepare(`
         SELECT s.*, p.nombre as proveedor_nombre, o.nombre as operador_nombre
@@ -832,6 +833,14 @@ files.get('/files/:id', async (c) => {
         WHERE fa.file_id = ?
         ORDER BY fa.created_at DESC LIMIT 100
       `).bind(id).all().catch(() => ({ results: [] })),
+
+      c.env.DB.prepare(`
+        SELECT cc.*, u.nombre as usuario_nombre
+        FROM cliente_cuenta_corriente cc
+        LEFT JOIN usuarios u ON u.id = cc.usuario_id
+        WHERE cc.file_id = ?
+        ORDER BY cc.created_at DESC
+      `).bind(id).all().catch(() => ({ results: [] })),
     ])
 
     const servicios            = serviciosRes
@@ -847,6 +856,7 @@ files.get('/files/:id', async (c) => {
     const vendedoresParaCompartir = vendedoresCompartirRes
     const liquidacionesFile    = liquidacionesFileRes as any
     const auditoria            = (auditoriaRes as any).results || []
+    const ccFile               = ccFileRes as any
 
     // Pasajeros por servicio — una sola query en vez de N queries
     const serviciosPasajeros: Record<number, number[]> = {}
@@ -1167,6 +1177,22 @@ files.get('/files/:id', async (c) => {
           </div>
         </div>
       ` : ''}
+      ${errorParam === 'cliente_no_corporativo' ? `
+        <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i class="fas fa-building" style="font-size:18px;"></i>
+          <div><strong>Solo clientes corporativos</strong> pueden usar crédito en cuenta corriente.</div>
+        </div>
+      ` : ''}
+      ${errorParam === 'vencimiento_requerido' ? `
+        <div class="alert alert-danger" style="margin-bottom:16px;">
+          <i class="fas fa-calendar"></i> Debés ingresar una fecha de vencimiento para el crédito.
+        </div>
+      ` : ''}
+      ${ok === 'cc_registrada' ? `
+        <div class="alert alert-success" style="margin-bottom:16px;">
+          <i class="fas fa-check-circle"></i> Crédito registrado en cuenta corriente. El file quedó en estado <strong>Señado</strong>.
+        </div>
+      ` : ''}
       ${errorParam === 'sin_cotizacion' ? `
         <div class="alert alert-danger" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
           <i class="fas fa-exchange-alt" style="font-size:18px;"></i>
@@ -1454,6 +1480,67 @@ files.get('/files/:id', async (c) => {
           </div>
         `
       })() : ''}
+
+      <!-- Cuenta Corriente del cliente (solo si hay CC o si es corporativo) -->
+      ${(() => {
+        if (file.tipo_cliente !== 'empresa') return ''
+        const ccRows = (ccFile?.results || []) as any[]
+        if (ccRows.length === 0 && !isAdminOrAbove(user.rol)) return ''
+        const totalPendiente = ccRows.filter((r:any) => r.estado !== 'pagado').reduce((s:number,r:any) => s + Number(r.monto_pendiente||0), 0)
+        const hoy = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
+        return `
+        <div class="card" style="margin-bottom:20px;border:2px solid #fde68a;">
+          <div class="card-header" style="background:#fffbeb;display:flex;justify-content:space-between;align-items:center;">
+            <span class="card-title">
+              <i class="fas fa-file-invoice-dollar" style="color:#d97706;"></i> Cuenta Corriente
+              ${totalPendiente > 0 ? `<span style="margin-left:8px;font-size:12px;font-weight:700;color:#d97706;background:#fef3c7;padding:2px 10px;border-radius:10px;">$${totalPendiente.toLocaleString('es-UY',{minimumFractionDigits:2})} pendiente</span>` : ''}
+            </span>
+          </div>
+          <div style="padding:12px 16px;">
+            ${ccRows.length === 0 ? `
+              <p style="color:#9ca3af;font-size:13px;margin:0;">Sin movimientos en cuenta corriente.</p>
+            ` : `
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead>
+                  <tr style="background:#fffbeb;border-bottom:1px solid #fde68a;">
+                    <th style="padding:7px 12px;text-align:left;color:#92400e;">Emisión</th>
+                    <th style="padding:7px 12px;text-align:left;color:#92400e;">Vencimiento</th>
+                    <th style="padding:7px 12px;text-align:left;color:#92400e;">Original</th>
+                    <th style="padding:7px 12px;text-align:left;color:#92400e;">Pendiente</th>
+                    <th style="padding:7px 12px;text-align:left;color:#92400e;">Estado</th>
+                    <th style="padding:7px 12px;text-align:left;color:#92400e;">Referencia</th>
+                    ${isAdminOrAbove(user.rol) ? '<th style="padding:7px 12px;color:#92400e;">Acción</th>' : ''}
+                  </tr>
+                </thead>
+                <tbody>
+                  ${ccRows.map((cc:any) => {
+                    const vencido = cc.fecha_vencimiento < hoy && cc.estado !== 'pagado'
+                    const porVencer = !vencido && cc.fecha_vencimiento <= new Date(Date.now() - 3*60*60*1000 + 7*24*60*60*1000).toISOString().split('T')[0] && cc.estado !== 'pagado'
+                    const estadoColor = cc.estado === 'pagado' ? '#059669' : vencido ? '#dc2626' : porVencer ? '#d97706' : '#6b7280'
+                    const estadoBg    = cc.estado === 'pagado' ? '#d1fae5' : vencido ? '#fee2e2' : porVencer ? '#fef3c7' : '#f3f4f6'
+                    const estadoLabel = cc.estado === 'pagado' ? '✓ Pagado' : vencido ? '⚠ Vencida' : cc.estado === 'parcial' ? '◑ Parcial' : '⏳ Pendiente'
+                    return `
+                      <tr style="border-bottom:1px solid #fef3c7;">
+                        <td style="padding:8px 12px;">${(cc.fecha_emision||'').substring(0,10)}</td>
+                        <td style="padding:8px 12px;font-weight:600;color:${vencido?'#dc2626':porVencer?'#d97706':'#374151'}">${cc.fecha_vencimiento||''}</td>
+                        <td style="padding:8px 12px;">$${Number(cc.monto_original).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</td>
+                        <td style="padding:8px 12px;font-weight:700;color:#d97706;">$${Number(cc.monto_pendiente).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</td>
+                        <td style="padding:8px 12px;"><span style="font-size:11px;font-weight:700;color:${estadoColor};background:${estadoBg};padding:2px 8px;border-radius:8px;">${estadoLabel}</span></td>
+                        <td style="padding:8px 12px;font-size:11px;color:#6b7280;">${esc(cc.referencia||'—')}</td>
+                        ${isAdminOrAbove(user.rol) && cc.estado !== 'pagado' ? `
+                          <td style="padding:8px 12px;">
+                            <a href="/tesoreria/cc/${cc.id}/cobrar" class="btn btn-sm" style="background:#059669;color:white;border:none;font-size:11px;">
+                              <i class="fas fa-dollar-sign"></i> Cobrar
+                            </a>
+                          </td>` : (isAdminOrAbove(user.rol) ? '<td></td>' : '')}
+                      </tr>`
+                  }).join('')}
+                </tbody>
+              </table>
+            `}
+          </div>
+        </div>`
+      })()}
 
       <!-- Devoluciones al cliente -->
       ${(devoluciones.results as any[]).length > 0 || isAdminOrAbove(user.rol) ? `
@@ -1929,6 +2016,7 @@ files.get('/files/:id', async (c) => {
                     <option value="efectivo">Efectivo</option>
                     <option value="tarjeta">Tarjeta</option>
                     <option value="cheque">Cheque</option>
+                    ${file.tipo_cliente === 'empresa' ? `<option value="cuenta_corriente">Crédito (Cuenta Corriente)</option>` : ''}
                   </select>
                 </div>
               </div>
@@ -2001,6 +2089,37 @@ files.get('/files/:id', async (c) => {
                     ).join('')}
                   </select>
                   <div style="font-size:11px;color:#047857;margin-top:3px;"><i class="fas fa-info-circle"></i> Seleccioná la cuenta donde se acredita / debita el importe.</div>
+                </div>
+              </div>
+
+              <!-- Panel Cuenta Corriente (aparece cuando método = cuenta_corriente) -->
+              <div id="mov-panel-cc" style="display:none;background:#fffbeb;border:2px solid #fde68a;border-radius:10px;padding:14px;margin-bottom:14px;">
+                <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:12px;">
+                  <i class="fas fa-file-invoice-dollar" style="color:#d97706;"></i> CRÉDITO EN CUENTA CORRIENTE
+                  <span style="font-size:11px;font-weight:400;margin-left:6px;">Solo disponible para clientes corporativos</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#92400e;display:block;margin-bottom:4px;">PLAZO *</label>
+                    <select name="cc_plazo" id="mov-cc-plazo" class="form-control" onchange="calcCCVencimiento(this.value)">
+                      <option value="15">15 días</option>
+                      <option value="30" selected>30 días</option>
+                      <option value="60">60 días</option>
+                      <option value="90">90 días</option>
+                      <option value="custom">Fecha específica</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#92400e;display:block;margin-bottom:4px;">VENCE EL *</label>
+                    <input type="date" name="cc_vencimiento" id="mov-cc-vencimiento" class="form-control" required>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#92400e;display:block;margin-bottom:4px;">REFERENCIA (Nro. Factura / Nota)</label>
+                  <input type="text" name="cc_referencia" class="form-control" placeholder="Ej: FC-001234">
+                </div>
+                <div style="margin-top:8px;padding:8px 12px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">
+                  <i class="fas fa-info-circle"></i> El file quedará en estado <strong>Señado</strong>. Se cerrará automáticamente al registrar el cobro completo de la CC.
                 </div>
               </div>
 
@@ -2869,11 +2988,32 @@ files.get('/files/:id', async (c) => {
           const panelBanco = document.getElementById('mov-panel-banco')
           if (panelBanco) panelBanco.style.display = (val === 'transferencia' || val === 'cheque') ? 'block' : 'none'
 
+          // Panel cuenta corriente
+          const panelCC = document.getElementById('mov-panel-cc')
+          if (panelCC) panelCC.style.display = val === 'cuenta_corriente' ? 'block' : 'none'
+          if (val === 'cuenta_corriente') calcCCVencimiento(document.getElementById('mov-cc-plazo')?.value || '30')
+
           // Limpiar banco_id si no aplica
           if (val !== 'transferencia' && val !== 'cheque') {
             const sel = document.getElementById('mov-banco-id')
             if (sel) sel.value = ''
           }
+        }
+
+        function calcCCVencimiento(plazo) {
+          const campo = document.getElementById('mov-cc-vencimiento')
+          if (!campo) return
+          if (plazo === 'custom') {
+            campo.readOnly = false
+            campo.style.background = 'white'
+            return
+          }
+          const dias = parseInt(plazo) || 30
+          const vence = new Date()
+          vence.setDate(vence.getDate() + dias)
+          campo.value = vence.toISOString().split('T')[0]
+          campo.readOnly = true
+          campo.style.background = '#f9fafb'
         }
 
         // Mostrar panel banco si el método inicial ya es transferencia
