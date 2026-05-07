@@ -396,13 +396,81 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
 
   // ── Validación de enums ──────────────────────────────────────
   const TIPOS_VALIDOS   = ['ingreso', 'egreso']
-  const METODOS_VALIDOS = ['transferencia', 'efectivo', 'tarjeta', 'cheque']
+  const METODOS_VALIDOS = ['transferencia', 'efectivo', 'tarjeta', 'cheque', 'cuenta_corriente']
   const MONEDAS_VALIDAS = ['USD', 'UYU']
   const tipo   = String(b.tipo   || '').trim()
   const metodo = String(b.metodo || '').trim()
   const moneda = String(b.moneda || 'USD').trim()
   if (!TIPOS_VALIDOS.includes(tipo) || !METODOS_VALIDOS.includes(metodo) || !MONEDAS_VALIDAS.includes(moneda)) {
     return c.redirect('/tesoreria?error=datos_invalidos')
+  }
+
+  // ── Flujo especial: Cuenta Corriente de cliente corporativo ──
+  if (metodo === 'cuenta_corriente') {
+    const monto = Number(b.monto)
+    const fileIdCC = b.file_id ? Number(b.file_id) : null
+    if (!fileIdCC || !isFinite(monto) || monto <= 0) {
+      return c.redirect(`/files/${fileIdCC || ''}?error=datos_invalidos`)
+    }
+
+    // Verificar que el cliente es corporativo
+    const fileCC = await c.env.DB.prepare(`
+      SELECT f.id, f.cliente_id, c.tipo_cliente, c.nombre_completo
+      FROM files f JOIN clientes c ON c.id = f.cliente_id
+      WHERE f.id = ?
+    `).bind(fileIdCC).first() as any
+
+    if (!fileCC) return c.redirect(`/files/${fileIdCC}?error=file_no_encontrado`)
+    if (fileCC.tipo_cliente !== 'empresa') {
+      return c.redirect(`/files/${fileIdCC}?error=cliente_no_corporativo`)
+    }
+
+    const vencimiento = String(b.cc_vencimiento || '').trim()
+    const referencia  = String(b.cc_referencia  || '').trim() || null
+    const concepto    = String(b.concepto        || '').trim() || `Crédito CC — ${fileCC.nombre_completo}`
+    if (!vencimiento) return c.redirect(`/files/${fileIdCC}?error=vencimiento_requerido`)
+
+    // Verificar si ya existe una CC abierta para este file
+    const ccExistente = await c.env.DB.prepare(`
+      SELECT id FROM cliente_cuenta_corriente
+      WHERE file_id = ? AND estado IN ('pendiente','parcial')
+      LIMIT 1
+    `).bind(fileIdCC).first() as any
+
+    if (ccExistente) {
+      // Sumar al saldo pendiente existente
+      await c.env.DB.prepare(`
+        UPDATE cliente_cuenta_corriente
+        SET monto_original = monto_original + ?,
+            monto_pendiente = monto_pendiente + ?,
+            updated_at = datetime('now')
+        WHERE id = ?
+      `).bind(monto, monto, ccExistente.id).run()
+    } else {
+      // Crear nueva CC
+      await c.env.DB.prepare(`
+        INSERT INTO cliente_cuenta_corriente
+          (file_id, cliente_id, monto_original, monto_pendiente, moneda,
+           fecha_vencimiento, referencia, notas, usuario_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(fileIdCC, fileCC.cliente_id, monto, monto, moneda,
+        vencimiento, referencia, concepto, user.id).run()
+    }
+
+    // Cambiar estado del file a señado
+    await c.env.DB.prepare(`
+      UPDATE files SET estado = 'seniado', updated_at = datetime('now') WHERE id = ?
+    `).bind(fileIdCC).run()
+
+    // Registrar en auditoría
+    await c.env.DB.prepare(`
+      INSERT INTO file_auditoria (file_id, usuario_id, accion, detalle)
+      VALUES (?, ?, 'Registró crédito CC', ?)
+    `).bind(fileIdCC, user.id,
+      `$${monto.toLocaleString('es-UY',{minimumFractionDigits:2})} ${moneda} — vence ${vencimiento}${referencia ? ' · ' + referencia : ''}`
+    ).run().catch(() => {})
+
+    return c.redirect(`/files/${fileIdCC}?ok=cc_registrada`)
   }
 
   // ── Validación de monto ──────────────────────────────────────
@@ -6084,6 +6152,250 @@ tesoreria.get('/tesoreria/tarjetas/reporte', async (c) => {
     </div>
   `
   return c.html(baseLayout('Reporte TCs', content, user, 'tesoreria'))
+})
+
+
+// ── GET /tesoreria/cc/:id/cobrar — Formulario de cobro CC ────
+tesoreria.get('/tesoreria/cc/:id/cobrar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/login')
+
+  const id = Number(c.req.param('id'))
+  const cc = await c.env.DB.prepare(`
+    SELECT cc.*, f.numero as file_numero, f.id as file_id,
+           COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo) as cliente_nombre
+    FROM cliente_cuenta_corriente cc
+    JOIN files f ON f.id = cc.file_id
+    JOIN clientes cl ON cl.id = cc.cliente_id
+    WHERE cc.id = ?
+  `).bind(id).first() as any
+
+  if (!cc) return c.redirect('/tesoreria?error=cc_no_encontrada')
+
+  const fileNum = String(cc.file_numero).replace(/^\d{4}/, '')
+  const hoy = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
+  const vencida = cc.fecha_vencimiento < hoy
+
+  const bancos = await c.env.DB.prepare(
+    `SELECT id, nombre_entidad, moneda FROM bancos WHERE activo=1 ORDER BY nombre_entidad`
+  ).all()
+
+  const content = `
+    <div style="max-width:600px;margin:0 auto;">
+      <div class="card">
+        <div class="card-header" style="background:#f0fdf4;">
+          <span class="card-title">
+            <i class="fas fa-dollar-sign" style="color:#059669;"></i>
+            Cobrar Cuenta Corriente — File #${fileNum}
+          </span>
+        </div>
+        <div style="padding:20px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+            <div style="padding:12px;background:#f9fafb;border-radius:8px;">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">CLIENTE</div>
+              <div style="font-weight:700;">${esc(cc.cliente_nombre)}</div>
+            </div>
+            <div style="padding:12px;background:#fffbeb;border-radius:8px;">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">VENCIMIENTO</div>
+              <div style="font-weight:700;color:${vencida?'#dc2626':'#374151'};">${cc.fecha_vencimiento}${vencida?' ⚠ VENCIDA':''}</div>
+            </div>
+            <div style="padding:12px;background:#f0fdf4;border-radius:8px;">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">MONTO ORIGINAL</div>
+              <div style="font-weight:700;">$${Number(cc.monto_original).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</div>
+            </div>
+            <div style="padding:12px;background:#fef3c7;border-radius:8px;">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">PENDIENTE</div>
+              <div style="font-size:20px;font-weight:800;color:#d97706;">$${Number(cc.monto_pendiente).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</div>
+            </div>
+          </div>
+          <form method="POST" action="/tesoreria/cc/${id}/cobrar">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">MONTO A COBRAR *</label>
+                <input type="number" name="monto" min="0.01" step="0.01"
+                  max="${cc.monto_pendiente}" value="${cc.monto_pendiente}"
+                  required class="form-control" style="font-size:18px;font-weight:700;">
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label">MÉTODO *</label>
+                <select name="metodo" required class="form-control">
+                  <option value="transferencia">Transferencia</option>
+                  <option value="efectivo">Efectivo</option>
+                  <option value="cheque">Cheque</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">BANCO / CUENTA</label>
+              <select name="banco_id" class="form-control">
+                <option value="">— Sin banco específico —</option>
+                ${(bancos.results as any[]).map((b: any) =>
+                  `<option value="${b.id}">${esc(b.nombre_entidad)} (${b.moneda})</option>`
+                ).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">REFERENCIA / COMPROBANTE</label>
+              <input type="text" name="referencia" class="form-control" placeholder="Nro. transferencia, cheque, etc.">
+            </div>
+            <div style="display:flex;gap:10px;margin-top:16px;">
+              <button type="submit" class="btn btn-primary" style="flex:1;background:#059669;">
+                <i class="fas fa-check"></i> Confirmar Cobro
+              </button>
+              <a href="/files/${cc.file_id}" class="btn btn-outline">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  `
+  return c.html(baseLayout('Cobrar CC', content, user, 'tesoreria'))
+})
+
+// ── POST /tesoreria/cc/:id/cobrar ────────────────────────────
+tesoreria.post('/tesoreria/cc/:id/cobrar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/login')
+
+  const id   = Number(c.req.param('id'))
+  const body = await c.req.parseBody()
+  const monto      = Number(body.monto)
+  const metodo     = String(body.metodo || 'transferencia')
+  const bancoId    = body.banco_id ? Number(body.banco_id) : null
+  const referencia = String(body.referencia || '').trim() || null
+
+  try {
+    const cc = await c.env.DB.prepare(
+      `SELECT * FROM cliente_cuenta_corriente WHERE id = ? AND estado != 'pagado'`
+    ).bind(id).first() as any
+    if (!cc) return c.redirect('/tesoreria?error=cc_no_encontrada')
+    if (!isFinite(monto) || monto <= 0 || monto > cc.monto_pendiente + 0.001) {
+      return c.redirect(`/tesoreria/cc/${id}/cobrar?error=monto_invalido`)
+    }
+
+    // Registrar ingreso en caja
+    const movRes = await c.env.DB.prepare(`
+      INSERT INTO movimientos_caja
+        (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, banco_id, concepto, referencia, usuario_id, fecha)
+      VALUES ('ingreso', ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    `).bind(
+      metodo, cc.moneda, monto, cc.moneda === 'UYU' ? monto : 0,
+      cc.file_id, cc.cliente_id, bancoId,
+      `Cobro CC — ${referencia || 'sin ref'}`,
+      referencia, user.id
+    ).run()
+
+    // Registrar en cc_pagos
+    await c.env.DB.prepare(`
+      INSERT INTO cliente_cc_pagos (cc_id, movimiento_id, monto, moneda, usuario_id)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(id, movRes.meta?.last_row_id, monto, cc.moneda, user.id).run()
+
+    // Actualizar saldo
+    const nuevoPendiente = Math.max(0, cc.monto_pendiente - monto)
+    const nuevoEstado    = nuevoPendiente <= 0.001 ? 'pagado' : 'parcial'
+    await c.env.DB.prepare(`
+      UPDATE cliente_cuenta_corriente
+      SET monto_pendiente = ?, estado = ?, updated_at = datetime('now') WHERE id = ?
+    `).bind(nuevoPendiente, nuevoEstado, id).run()
+
+    // Si totalmente pagada → cerrar file
+    if (nuevoEstado === 'pagado') {
+      await c.env.DB.prepare(
+        `UPDATE files SET estado = 'cerrado', updated_at = datetime('now') WHERE id = ?`
+      ).bind(cc.file_id).run()
+    }
+
+    // Auditoría
+    await c.env.DB.prepare(`
+      INSERT INTO file_auditoria (file_id, usuario_id, accion, detalle) VALUES (?, ?, 'Cobro CC', ?)
+    `).bind(cc.file_id, user.id,
+      `$${monto.toFixed(2)} ${cc.moneda} (${metodo})${referencia?' · '+referencia:''} — pendiente: $${nuevoPendiente.toFixed(2)}`
+    ).run().catch(() => {})
+
+    return c.redirect(`/files/${cc.file_id}?ok=cc_cobrada`)
+  } catch (e: any) {
+    return c.redirect(`/tesoreria/cc/${id}/cobrar?error=${encodeURIComponent(e.message||'error')}`)
+  }
+})
+
+// ── GET /tesoreria/cc — Vista general CC ─────────────────────
+tesoreria.get('/tesoreria/cc', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/tesoreria')
+
+  const hoy    = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
+  const en7    = new Date(Date.now() - 3*60*60*1000 + 7*24*60*60*1000).toISOString().split('T')[0]
+
+  const ccs = await c.env.DB.prepare(`
+    SELECT cc.*, f.numero as file_numero, f.id as file_id,
+           COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo) as cliente_nombre
+    FROM cliente_cuenta_corriente cc
+    JOIN files f ON f.id = cc.file_id
+    JOIN clientes cl ON cl.id = cc.cliente_id
+    WHERE cc.estado != 'pagado'
+    ORDER BY cc.fecha_vencimiento ASC
+  `).all()
+
+  const totalVencido   = (ccs.results as any[]).filter((r:any) => r.fecha_vencimiento < hoy).reduce((s:number,r:any) => s+Number(r.monto_pendiente),0)
+  const totalPorVencer = (ccs.results as any[]).filter((r:any) => r.fecha_vencimiento >= hoy && r.fecha_vencimiento <= en7).reduce((s:number,r:any) => s+Number(r.monto_pendiente),0)
+  const totalVigente   = (ccs.results as any[]).filter((r:any) => r.fecha_vencimiento > en7).reduce((s:number,r:any) => s+Number(r.monto_pendiente),0)
+
+  const rows = (ccs.results as any[]).map((cc: any) => {
+    const vencida   = cc.fecha_vencimiento < hoy
+    const porVencer = !vencida && cc.fecha_vencimiento <= en7
+    const fileNum   = String(cc.file_numero).replace(/^\d{4}/, '')
+    const clr = vencida ? '#dc2626' : porVencer ? '#d97706' : '#059669'
+    const bg  = vencida ? '#fee2e2' : porVencer ? '#fef3c7' : '#d1fae5'
+    const lbl = vencida ? '⚠ Vencida' : porVencer ? '⏰ Por vencer' : '✓ Vigente'
+    return `
+      <tr style="border-bottom:1px solid #f3f4f6;${vencida?'background:#fff5f5;':''}">
+        <td style="padding:10px 12px;font-weight:600;">${esc(cc.cliente_nombre)}</td>
+        <td style="padding:10px 12px;"><a href="/files/${cc.file_id}" style="color:#7B3FA0;font-weight:600;">#${fileNum}</a></td>
+        <td style="padding:10px 12px;">$${Number(cc.monto_original).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</td>
+        <td style="padding:10px 12px;font-weight:700;color:#d97706;">$${Number(cc.monto_pendiente).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</td>
+        <td style="padding:10px 12px;font-weight:600;color:${vencida?'#dc2626':porVencer?'#d97706':'#374151'}">${cc.fecha_vencimiento}</td>
+        <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:700;color:${clr};background:${bg};padding:3px 10px;border-radius:8px;">${lbl}</span></td>
+        <td style="padding:10px 12px;font-size:11px;color:#6b7280;">${esc(cc.referencia||'—')}</td>
+        <td style="padding:10px 12px;">
+          <a href="/tesoreria/cc/${cc.id}/cobrar" class="btn btn-sm" style="background:#059669;color:white;border:none;font-size:11px;">
+            <i class="fas fa-dollar-sign"></i> Cobrar
+          </a>
+        </td>
+      </tr>`
+  }).join('')
+
+  const content = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h2 style="margin:0;"><i class="fas fa-file-invoice-dollar" style="color:#d97706;"></i> Cuentas Corrientes</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
+      <div style="background:#fee2e2;border-radius:10px;padding:16px;border:1px solid #fca5a5;">
+        <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;margin-bottom:6px;">⚠ Vencidas</div>
+        <div style="font-size:22px;font-weight:800;color:#dc2626;">$${totalVencido.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
+      </div>
+      <div style="background:#fef3c7;border-radius:10px;padding:16px;border:1px solid #fde68a;">
+        <div style="font-size:11px;font-weight:700;color:#d97706;text-transform:uppercase;margin-bottom:6px;">⏰ Vencen en 7 días</div>
+        <div style="font-size:22px;font-weight:800;color:#d97706;">$${totalPorVencer.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
+      </div>
+      <div style="background:#d1fae5;border-radius:10px;padding:16px;border:1px solid #6ee7b7;">
+        <div style="font-size:11px;font-weight:700;color:#059669;text-transform:uppercase;margin-bottom:6px;">✓ Vigentes</div>
+        <div style="font-size:22px;font-weight:800;color:#059669;">$${totalVigente.toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-list"></i> CC Pendientes (${ccs.results.length})</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Cliente</th><th>File</th><th>Original</th><th>Pendiente</th><th>Vencimiento</th><th>Estado</th><th>Referencia</th><th>Acción</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="8" style="text-align:center;padding:30px;color:#9ca3af;">Sin cuentas corrientes pendientes</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+  `
+  return c.html(baseLayout('Cuentas Corrientes', content, user, 'tesoreria'))
 })
 
 
