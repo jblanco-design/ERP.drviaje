@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de Saint Martin / Sint Maarten</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary-purple:#7B2D8E;
+      --primary-orange:#FF9800;
+      --primary-pink:#E91E63;
+      --bg-light:#f8f9fa;
+      --text-dark:#333333;
+      --text-medium:#666666;
+      --white:#ffffff;
+      --shadow:0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover:0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --radius-sm:10px;
+      --max-width:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      color:var(--text-dark);
+      background:var(--bg-light);
+      line-height:1.65;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max-width),calc(100% - 32px));margin:0 auto}
+
+    header.hero{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.14), transparent 35%),
+        linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:72px 0 48px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      z-index:0;
+    }
+    .hero::before{
+      width:280px;height:280px;top:-80px;right:-80px;
+    }
+    .hero::after{
+      width:180px;height:180px;bottom:-40px;left:-40px;
+    }
+
+    .hero-inner{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.3fr .9fr;
+      gap:28px;
+      align-items:stretch;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(8px);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.2px;
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0 0 14px;
+      font-size:clamp(34px,5vw,56px);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .hero p.lead{
+      margin:0;
+      font-size:18px;
+      max-width:760px;
+      color:rgba(255,255,255,.92);
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:var(--radius-xl);
+      padding:26px;
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+      align-self:stretch;
+    }
+
+    .hero-card h3{
+      margin:0 0 12px;
+      font-size:18px;
+    }
+
+    .hero-card p{
+      margin:0 0 14px;
+      color:rgba(255,255,255,.92);
+      font-size:15px;
+    }
+
+    .hero-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:13px;
+      font-weight:600;
+      color:var(--white);
+    }
+
+    nav.sticky-nav{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:var(--primary-orange);
+      box-shadow:var(--shadow);
+    }
+
+    .nav-inner{
+      width:min(var(--max-width),calc(100% - 32px));
+      margin:0 auto;
+      display:flex;
+      gap:12px;
+      overflow:auto;
+      padding:15px 0;
+      scrollbar-width:none;
+    }
+
+    .nav-inner::-webkit-scrollbar{display:none}
+
+    .nav-link{
+      white-space:nowrap;
+      padding:10px 16px;
+      border-radius:25px;
+      background:rgba(255,255,255,.18);
+      color:var(--white);
+      font-size:14px;
+      font-weight:700;
+      transition:.25s ease;
+    }
+
+    .nav-link:hover{
+      background:var(--white);
+      color:var(--primary-orange);
+      transform:translateY(-1px);
+    }
+
+    section[id]{
+      scroll-margin-top:90px;
+    }
+
+    main{padding:28px 0 72px}
+
+    .section{
+      margin:22px 0;
+      background:var(--white);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:34px;
+    }
+
+    .section-header{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .eyebrow{
+      display:inline-block;
+      margin-bottom:8px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--primary-pink);
+    }
+
+    .section h2{
+      margin:0;
+      font-size:30px;
+      line-height:1.15;
+      letter-spacing:-.03em;
+    }
+
+    .section-intro{
+      color:var(--text-medium);
+      max-width:920px;
+      margin:0;
+    }
+
+    .kpi-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:26px;
+    }
+
+    .kpi{
+      background:linear-gradient(180deg,#fff,#faf6fc);
+      border:1px solid rgba(123,45,142,.08);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+
+    .kpi .label{
+      display:block;
+      font-size:12px;
+      color:var(--text-medium);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:8px;
+    }
+
+    .kpi strong{
+      display:block;
+      font-size:24px;
+      line-height:1.1;
+      color:var(--primary-purple);
+      margin-bottom:6px;
+    }
+
+    .kpi span{
+      font-size:14px;
+      color:var(--text-medium);
+    }
+
+    .info-box{
+      margin-top:22px;
+      border-left:6px solid var(--primary-purple);
+      background:#faf5fc;
+      border-radius:16px;
+      padding:18px 20px;
+    }
+
+    .info-box.orange{
+      border-left-color:var(--primary-orange);
+      background:#fff8ef;
+    }
+
+    .info-box.pink{
+      border-left-color:var(--primary-pink);
+      background:#fff3f8;
+    }
+
+    .info-box strong{
+      color:var(--primary-purple);
+    }
+
+    .info-box.orange strong{
+      color:#b35900;
+    }
+
+    .info-box.pink strong{
+      color:var(--primary-pink);
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .cards-2,
+    .cards-3{
+      display:grid;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+
+    .card{
+      background:var(--white);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+      transition:.25s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-hover);
+    }
+
+    .card h3,
+    .card h4{
+      margin:0 0 10px;
+      line-height:1.2;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--text-medium);
+      font-size:15px;
+    }
+
+    .destination{
+      padding:0;
+      overflow:hidden;
+    }
+
+    .destination-top{
+      padding:28px 30px 14px;
+      background:
+        linear-gradient(135deg, rgba(123,45,142,.08), rgba(233,30,99,.05));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+
+    .destination-number{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;height:40px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      font-weight:800;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .destination h3{
+      margin:0 0 8px;
+      font-size:28px;
+      line-height:1.12;
+      letter-spacing:-.03em;
+    }
+
+    .destination-subtitle{
+      margin:0;
+      color:var(--text-medium);
+      max-width:940px;
+    }
+
+    .destination-body{
+      padding:24px 30px 30px;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .mini-card{
+      background:#fcfcfd;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .mini-card h4{
+      margin:0 0 10px;
+      font-size:16px;
+      color:var(--primary-purple);
+    }
+
+    ul.clean{
+      margin:0;
+      padding-left:18px;
+    }
+
+    ul.clean li{margin:0 0 8px}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      margin-top:18px;
+    }
+
+    thead th{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:15px 16px;
+      text-align:left;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    tbody td{
+      background:var(--white);
+      padding:15px 16px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      vertical-align:top;
+      font-size:15px;
+    }
+
+    tbody tr:last-child td{border-bottom:none}
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#f2eef8;
+      color:var(--primary-purple);
+    }
+
+    .script-box{
+      background:linear-gradient(135deg,#fff7ef,#fff3f8);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:20px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .script-box p{
+      margin:0 0 12px;
+    }
+
+    .script-box p:last-child{margin-bottom:0}
+
+    footer{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:28px 0 34px;
+      margin-top:36px;
+    }
+
+    footer p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      text-align:center;
+      font-size:14px;
+    }
+
+    #scrollTopBtn{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:52px;
+      height:52px;
+      border:none;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-orange),var(--primary-pink));
+      color:var(--white);
+      font-size:22px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow-hover);
+      display:none;
+      z-index:1200;
+    }
+
+    @media (max-width: 1080px){
+      .hero-inner,
+      .two-col,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media (max-width: 860px){
+      .hero-inner,
+      .two-col,
+      .cards-2,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr;
+      }
+
+      .section,
+      .destination-body,
+      .destination-top{
+        padding-left:22px;
+        padding-right:22px;
+      }
+
+      .section h2{font-size:26px}
+      .destination h3{font-size:24px}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">Dr. Viaje · Guía comercial Caribe</div>
+        <h1>Saint Martin / Sint Maarten</h1>
+        <p class="lead">
+          Saint Martin es una isla única en el Caribe: dividida entre Francia (Saint-Martin) y Países Bajos (Sint Maarten), ofrece en un espacio compacto dos perfiles distintos que se complementan muy bien. Se vende por su gastronomía excepcional, sus playas variadas, su dualidad cultural y ser un destino con identidad propia que repite mucho.
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <h3>Clave comercial rápida</h3>
+        <p>
+          Funciona muy bien para parejas y viajeros que ya conocen otros caribeños y quieren algo más sofisticado. El lado francés da elegancia, gastronomía y tranquilidad; el lado holandés da animación, casinos y operativa de hub regional.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">Parejas</span>
+          <span class="pill">Repetidores de Caribe</span>
+          <span class="pill">Gastronomía</span>
+          <span class="pill">Dos países, una isla</span>
+          <span class="pill">Hub regional</span>
+          <span class="pill">Playa variada</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky-nav">
+    <div class="nav-inner">
+      <a class="nav-link" href="#pais">La isla</a>
+      <a class="nav-link" href="#lado-frances">Lado francés</a>
+      <a class="nav-link" href="#lado-holandes">Lado holandés</a>
+      <a class="nav-link" href="#playas">Playas clave</a>
+      <a class="nav-link" href="#comparativa">Comparativa</a>
+      <a class="nav-link" href="#traslados">Traslados</a>
+      <a class="nav-link" href="#temporadas">Temporadas</a>
+      <a class="nav-link" href="#objeciones">Objeciones</a>
+      <a class="nav-link" href="#noches">Noches</a>
+      <a class="nav-link" href="#script">Script</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ═══════════════════════════════════════
+         1. LA ISLA
+    ═══════════════════════════════════════ -->
+    <section class="section" id="pais">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Visión general</span>
+          <h2>Saint Martin / Sint Maarten como producto turístico</h2>
+        </div>
+        <p class="section-intro">
+          Es la isla caribeña más pequeña del mundo dividida entre dos naciones: el norte pertenece a Francia (colectividad de Saint-Martin) y el sur a los Países Bajos (Sint Maarten). No hay frontera real ni controles: se cruza libremente. Esa dualidad es uno de sus argumentos comerciales más potentes.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="label">Aeropuerto principal</span>
+          <strong>SXM</strong>
+          <span>Princess Juliana International Airport, lado holandés. Famoso por sus aterrizajes rasantes sobre Maho Beach.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Clima</span>
+          <strong>27°–31°C</strong>
+          <span>Tropical estable. Mejor clima de noviembre a abril. Temporada de lluvias de julio a noviembre.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Duración ideal</span>
+          <strong>7 a 10 noches</strong>
+          <span>Permite explorar ambos lados de la isla, las playas y las excursiones a islas vecinas.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Identidad única</span>
+          <strong>Dos países, una isla</strong>
+          <span>Francia + Países Bajos en 87 km². Sin frontera real, monedas distintas y dos personalidades que se complementan.</span>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:26px;">
+        <div>
+          <div class="info-box">
+            <strong>Frase de venta base:</strong>
+            "Saint Martin es el Caribe más sofisticado: dos países en una sola isla, gastronomía de nivel, playas muy variadas y una energía que no encontrás en ningún otro destino del Caribe."
+          </div>
+
+          <div class="cards-2">
+            <div class="card">
+              <h3>Cliente ideal</h3>
+              <ul class="clean">
+                <li>Parejas que buscan un Caribe con identidad y gastronomía de nivel.</li>
+                <li>Repetidores que ya conocen Cancún, Punta Cana o Aruba y quieren algo diferente.</li>
+                <li>Viajeros francófonos o con afinidad europea.</li>
+                <li>Cliente premium que valora la experiencia más que el all-inclusive clásico.</li>
+                <li>Amantes de la gastronomía y la cultura.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Pregunta de detección</h3>
+              <p>
+                "¿Buscan un Caribe más tranquilo y gourmet o prefieren más animación, casinos y ambiente de resort? ¿Les interesa explorar islas vecinas como Anguilla o Saint Barths?"
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="height:100%;">
+            <h3>Cómo posicionarla bien</h3>
+            <ul class="clean">
+              <li><strong>Lado francés (Saint-Martin):</strong> más tranquilo, más elegante, mejor gastronomía, playas naturistas y ambiente europeo. Capital: Marigot.</li>
+              <li><strong>Lado holandés (Sint Maarten):</strong> más animado, casinos, zona duty-free, Philipsburg como capital comercial y el aeropuerto SXM.</li>
+              <li><strong>Isla completa:</strong> la gran propuesta es que en 7 días se pueden vivir dos destinos distintos sin cambiar de vuelo.</li>
+              <li><strong>Hub para excursiones:</strong> ideal como base para visitar Anguilla, Saint Barths, Saint Kitts o Tintamarre.</li>
+            </ul>
+
+            <div class="tag-row">
+              <span class="tag">Gastronomía</span>
+              <span class="tag">Playas variadas</span>
+              <span class="tag">Cultura dual</span>
+              <span class="tag">Excursiones</span>
+              <span class="tag">Hub regional</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         2. LADO FRANCÉS
+    ═══════════════════════════════════════ -->
+    <section class="section destination" id="lado-frances">
+      <div class="destination-top">
+        <div class="destination-number">1</div>
+        <h3>Lado francés — Saint-Martin</h3>
+        <p class="destination-subtitle">
+          El norte de la isla tiene personalidad europea y caribeña al mismo tiempo. Marigot es su capital, con mercado, restaurantes, boutiques y el fuerte colonial. Las playas del lado francés son más tranquilas, menos masificadas y algunas son naturistas. Es la propuesta más sofisticada y gastrónoma de toda la isla.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas que quieren elegancia y calma.</li>
+              <li>Viajeros que valoran la gastronomía francesa sobre el all-inclusive.</li>
+              <li>Cliente premium con sensibilidad europea.</li>
+              <li>Amantes de las playas naturales y menos comerciales.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Mejor gastronomía de toda la isla (y de las mejores del Caribe).</li>
+              <li>Marigot: capital con mercado, fuerte y boutiques.</li>
+              <li>Playas como Grand Case, Orient Bay y Friar's Bay.</li>
+              <li>Ambiente más tranquilo y auténtico que el lado holandés.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Zonas y playas destacadas</h4>
+            <ul class="clean">
+              <li><strong>Grand Case:</strong> la capital gastronómica, restaurantes de primer nivel sobre la playa.</li>
+              <li><strong>Orient Bay:</strong> la playa más animada del lado francés, con beach clubs, deportes y ambiente europeo.</li>
+              <li><strong>Friar's Bay / Happy Bay:</strong> más tranquilas y naturales, para cliente que quiere escapar del circuito.</li>
+              <li><strong>Marigot:</strong> capital con mercado sabatino, Fort Saint-Louis y restaurantes frente al mar.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>SXM → Marigot:</strong> aprox. 15 a 20 min.</li>
+              <li><strong>SXM → Grand Case:</strong> aprox. 20 a 25 min.</li>
+              <li><strong>SXM → Orient Bay:</strong> aprox. 25 a 30 min.</li>
+              <li>Se recomienda alquilar coche para moverse cómodamente entre zonas.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender el lado francés:</strong> "Si quieren el Caribe más sofisticado, el norte de Saint Martin es difícil de superar: buena gastronomía francesa, playas bonitas, ambiente tranquilo y la sensación de estar en Europa con mar caribeño."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Pequeños resorts boutique, villas con vista al mar, hoteles íntimos en Grand Case u Orient Bay. El lado francés tiene menos mega-resorts y más producto de carácter y distinción.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender el lado francés al cliente que busca casino, animación nocturna intensa o all-inclusive de gran formato. Su fuerte es la gastronomía, la calma y la elegancia, no el entretenimiento masivo.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         3. LADO HOLANDÉS
+    ═══════════════════════════════════════ -->
+    <section class="section destination" id="lado-holandes">
+      <div class="destination-top">
+        <div class="destination-number">2</div>
+        <h3>Lado holandés — Sint Maarten</h3>
+        <p class="destination-subtitle">
+          El sur de la isla es la cara más comercial y animada: aquí está el aeropuerto SXM, Philipsburg como capital de compras, los casinos, el duty-free, los grandes cruceros y la zona hotelera de Simpson Bay. Es más accesible para un cliente que busca facilidad, ambiente y más opciones de resort.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Viajeros que quieren compras, casinos y ambiente activo.</li>
+              <li>Cliente de crucero o que llega en gran formato.</li>
+              <li>Grupos o familias que valoran facilidad y servicios concentrados.</li>
+              <li>Perfil que quiere resort clásico con acceso fácil al aeropuerto.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Philipsburg: capital con Front Street, duty-free y joyería.</li>
+              <li>Simpson Bay: la zona de mayor concentración hotelera y animación.</li>
+              <li>Casino y vida nocturna variada.</li>
+              <li>SXM con vuelos directos y conectividad regional excelente.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Zonas y playas destacadas</h4>
+            <ul class="clean">
+              <li><strong>Maho Beach:</strong> icónica por los aviones que pasan rozando. Gran atracción fotográfica.</li>
+              <li><strong>Simpson Bay:</strong> zona de bares, restaurantes, marinas y la mayor oferta hotelera.</li>
+              <li><strong>Great Bay (Philipsburg):</strong> playa de la capital, muy accesible, buena para cruceristas.</li>
+              <li><strong>Cupecoy Beach:</strong> acantilados, ambiente más íntimo y diferente al resto.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>SXM → Simpson Bay:</strong> aprox. 5 a 10 min.</li>
+              <li><strong>SXM → Philipsburg:</strong> aprox. 10 a 15 min.</li>
+              <li><strong>SXM → Maho Beach:</strong> aprox. 5 min. (prácticamente al lado del aeropuerto).</li>
+              <li>Traslados más cortos de toda la isla.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender el lado holandés:</strong> "Sint Maarten tiene la operativa más fácil de la isla: cerca del aeropuerto, buenos hoteles, compras, casinos y una zona de animación que funciona bien para quien quiere un Caribe más completo en servicios."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Resorts de playa en Simpson Bay, hoteles con marina, producto all-inclusive o semi-inclusive, y opciones más económicas cerca del aeropuerto. Hay más variedad de precio que en el lado francés.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Sint Maarten como el destino más tranquilo o más gourmet. Su fortaleza es la facilidad, el comercio y la animación. El cliente que busca calma y gastronomía fina encaja mejor en el lado francés.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         4. PLAYAS CLAVE
+    ═══════════════════════════════════════ -->
+    <section class="section destination" id="playas">
+      <div class="destination-top">
+        <div class="destination-number">3</div>
+        <h3>Playas clave para vender</h3>
+        <p class="destination-subtitle">
+          Saint Martin tiene más de 37 playas en apenas 87 km². Cada una tiene personalidad diferente y sirve para un tipo de cliente distinto. Conocer cuáles recomendar según el perfil es uno de los grandes argumentos de venta de este destino.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>🇫🇷 Orient Bay</h4>
+            <ul class="clean">
+              <li>La más animada del lado francés.</li>
+              <li>Beach clubs, deportes acuáticos, kitesurf, restaurantes.</li>
+              <li>Ambiente europeo y cosmopolita.</li>
+              <li>Ideal para cliente activo y social que sigue queriendo elegancia.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>🇫🇷 Grand Case Beach</h4>
+            <ul class="clean">
+              <li>Frente a los mejores restaurantes de la isla.</li>
+              <li>Tranquila, arena suave y aguas calmadas.</li>
+              <li>Ideal para combinar cena gourmet + tarde de playa.</li>
+              <li>El argumento más elegante para parejas.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>🇳🇱 Maho Beach</h4>
+            <ul class="clean">
+              <li>Famosa mundialmente por los aviones que aterrizan muy bajo.</li>
+              <li>La playa más fotogénica e Instagram de la isla.</li>
+              <li>No apta para baño relajado pero imprescindible como experiencia.</li>
+              <li>Ideal para sumarla como visita o anécdota de venta.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>🇫🇷 Happy Bay / Friar's Bay</h4>
+            <ul class="clean">
+              <li>Playas más vírgenes y naturales, sin mucho desarrollo.</li>
+              <li>Requieren algo de caminata para llegar (Happy Bay: 15 min a pie).</li>
+              <li>Perfectas para cliente que quiere escaparse del circuito turístico.</li>
+              <li>Gran argumento para el repetidor que ya conoce Orient Bay.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box pink">
+          <strong>Tip de venta de playas:</strong> la variedad de playas de Saint Martin permite armar un itinerario distinto cada día sin aburrirse. Es un argumento muy potente para los 7–10 días: "cada día una playa diferente."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Excursión estrella: Tintamarre</h4>
+            <p>
+              Islote deshabitado a 20 min en barco desde Orient Bay. Playa virgen, aguas cristalinas, tortugas y delfines. Es una de las excursiones más vendibles del destino para cualquier perfil de cliente.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Excursión premium: Anguilla y Saint Barths</h4>
+            <p>
+              Desde Saint Martin se llega en ferry o avioneta a Anguilla (20 min) y Saint Barths (15 min en avioneta). Perfectas para sumar al paquete de un cliente premium o repetidor que quiere explorar más.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         5. COMPARATIVA DE ZONAS
+    ═══════════════════════════════════════ -->
+    <section class="section" id="comparativa">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Lectura rápida</span>
+          <h2>Comparativa comercial: lado francés vs. holandés</h2>
+        </div>
+        <p class="section-intro">
+          La elección del lado donde hospedarse define el tipo de viaje. Lo ideal es presentar ambos y dejar que el cliente elija, o plantear una combinación de 3–4 noches en cada lado.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Perfil</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>🇫🇷 Saint-Martin (francés)</strong></td>
+            <td>Elegante, gourmet, tranquilo</td>
+            <td>Parejas, premium, repetidores, gastronomía</td>
+            <td>"El Caribe más sofisticado: playa, gastronomía francesa y ambiente europeo."</td>
+          </tr>
+          <tr>
+            <td><strong>🇳🇱 Sint Maarten (holandés)</strong></td>
+            <td>Animado, comercial, fácil</td>
+            <td>Familias, primera vez, compras, animación</td>
+            <td>"La Aruba más fácil: buena playa, buenos hoteles y todo a mano."</td>
+          </tr>
+          <tr>
+            <td><strong>🇫🇷 Orient Bay</strong></td>
+            <td>Playa animada + elegante</td>
+            <td>Parejas activas, cliente social europeo</td>
+            <td>"Lo mejor de los dos mundos: playa potente con beach clubs y estilo."</td>
+          </tr>
+          <tr>
+            <td><strong>🇫🇷 Grand Case</strong></td>
+            <td>Gastronomía + playa tranquila</td>
+            <td>Parejas, foodies, cliente premium</td>
+            <td>"La capital gastronómica del Caribe: restaurantes de nivel al lado de la playa."</td>
+          </tr>
+          <tr>
+            <td><strong>🇳🇱 Simpson Bay</strong></td>
+            <td>Resort + marina + animación</td>
+            <td>Primera vez, grupos, cliente variado</td>
+            <td>"Base práctica con todo cerca: hotel, bares, marina y el aeropuerto a 10 min."</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         6. TRASLADOS
+    ═══════════════════════════════════════ -->
+    <section class="section" id="traslados">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Operativa</span>
+          <h2>Tiempos medios de traslado desde SXM</h2>
+        </div>
+        <p class="section-intro">
+          El aeropuerto Princess Juliana (SXM) está en el lado holandés, cerca de Simpson Bay. La isla es pequeña y en general los traslados son cortos, aunque el tráfico puede afectar en horas pico.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Destino</th>
+            <th>Tiempo medio orientativo</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Simpson Bay (holandés)</strong></td>
+            <td>5 a 10 min</td>
+            <td>La opción más rápida. Zona de resort más cercana al aeropuerto.</td>
+          </tr>
+          <tr>
+            <td><strong>Maho Beach (holandés)</strong></td>
+            <td>5 min</td>
+            <td>Prácticamente al lado de la pista. No requiere traslado formal.</td>
+          </tr>
+          <tr>
+            <td><strong>Philipsburg (holandés)</strong></td>
+            <td>10 a 15 min</td>
+            <td>Capital del lado holandés. Muy accesible para compras y puerto de cruceros.</td>
+          </tr>
+          <tr>
+            <td><strong>Marigot (francés)</strong></td>
+            <td>15 a 20 min</td>
+            <td>Capital del lado francés. Mercado, fuerte y restaurantes frente a la laguna.</td>
+          </tr>
+          <tr>
+            <td><strong>Grand Case (francés)</strong></td>
+            <td>20 a 25 min</td>
+            <td>Capital gastronómica. Vale cada minuto de trayecto.</td>
+          </tr>
+          <tr>
+            <td><strong>Orient Bay (francés)</strong></td>
+            <td>25 a 30 min</td>
+            <td>La playa más vendida del lado francés. Muy asumible.</td>
+          </tr>
+          <tr>
+            <td><strong>Happy Bay / Friar's Bay</strong></td>
+            <td>25 a 35 min</td>
+            <td>Playas más vírgenes. Se recomienda coche propio para llegar cómodamente.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box orange">
+        <strong>Tip de movilidad:</strong> se recomienda alquilar coche para moverse entre los dos lados de la isla. La frontera no existe en la práctica: se cruza sin parar ni mostrar documentos. Eso es un argumento de venta muy potente.
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         7. TEMPORADAS
+    ═══════════════════════════════════════ -->
+    <section class="section" id="temporadas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Estacionalidad</span>
+          <h2>Temporadas comerciales</h2>
+        </div>
+        <p class="section-intro">
+          Saint Martin está dentro del cinturón de huracanes del Caribe, lo que lo diferencia comercialmente de Aruba o Curaçao. La estacionalidad es importante para manejarlo bien con el cliente.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Lectura comercial</th>
+            <th>Cómo venderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diciembre – abril</strong></td>
+            <td>Temporada alta · La mejor ventana</td>
+            <td>Clima seco y muy estable, alta demanda, precios más altos. La ventana más fácil de vender para cualquier perfil.</td>
+          </tr>
+          <tr>
+            <td><strong>Mayo – junio</strong></td>
+            <td>Transición · Muy buen clima, menos presión</td>
+            <td>Buen momento para ir: clima todavía agradable, menos turistas y mejor relación precio-valor que la temporada alta.</td>
+          </tr>
+          <tr>
+            <td><strong>Julio – agosto</strong></td>
+            <td>Verano · Activo pero con calor</td>
+            <td>Buena demanda de europeos. Más cálido y húmedo. Buen argumento de vacaciones de verano para el cliente uruguayo.</td>
+          </tr>
+          <tr>
+            <td><strong>Septiembre – octubre</strong></td>
+            <td>Pico de temporada de huracanes</td>
+            <td>Manejar con cuidado. Precios bajos pero riesgo real. Explicar bien y no ocultarlo. No es el mejor momento para un cliente de primera vez.</td>
+          </tr>
+          <tr>
+            <td><strong>Noviembre</strong></td>
+            <td>Recuperación · Temporada baja terminando</td>
+            <td>Buen precio, clima mejorando. Ideal para viajero flexible y aventurero que busca valor.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Argumento de temporada alta</h4>
+          <p>
+            De diciembre a abril, Saint Martin es uno de los mejores Caribes del mundo en relación calidad-clima. Temperatura ideal, mar en calma y la isla en pleno apogeo gastronómico y cultural.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Cómo manejar la temporada de huracanes</h4>
+          <p>
+            Ser honesto con el cliente: septiembre-octubre tiene riesgo real. Saint Martin sufrió el huracán Irma en 2017, se reconstruyó muy bien, pero hay que manejarlo con transparencia y ofrecer seguros de viaje adecuados.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box pink">
+        <strong>Nota histórica importante:</strong> el huracán Irma (2017) devastó gran parte de la isla, especialmente el lado francés. Hoy Saint Martin está completamente recuperado y en muchos casos mejorado. Es un argumento positivo para el cliente que pregunte: "se reconstruyó mejor de lo que estaba."
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         8. OBJECIONES
+    ═══════════════════════════════════════ -->
+    <section class="section" id="objeciones">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Ventas</span>
+          <h2>Cómo manejar objeciones</h2>
+        </div>
+        <p class="section-intro">
+          Saint Martin requiere algo más de explicación que Cancún o Punta Cana porque no todo el mundo lo conoce. Las objeciones suelen venir de la novedad, el precio o la incertidumbre meteorológica.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>"No lo conozco, no sé si es para mí."</h4>
+          <p>
+            Respuesta: es el Caribe que repite más. Los que van una vez casi siempre vuelven. Y si ya conocen Cancún o Punta Cana, Saint Martin les va a parecer mucho más interesante en gastronomía y variedad de playas.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿No es caro?"</h4>
+          <p>
+            Respuesta: el lado holandés tiene opciones más accesibles que el francés. Y el valor que da —gastronomía, playas variadas, hub para excursiones, dos países en uno— justifica perfectamente el precio frente a un all-inclusive estándar.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿No tuvo un huracán fuerte?"</h4>
+          <p>
+            Respuesta: sí, el Irma en 2017 fue devastador. Hoy está completamente recuperado, con muchos hoteles y restaurantes renovados. De hecho, hay zonas que quedaron mejor que antes. Fue hace casi 10 años.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿En qué idioma se habla?"</h4>
+          <p>
+            Respuesta: en el lado francés, francés principalmente, aunque casi todos hablan inglés y hay mucha presencia internacional. En el lado holandés, inglés y holandés. En la práctica, con inglés funciona perfectamente en toda la isla.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿Es fácil moverse por la isla?"</h4>
+          <p>
+            Respuesta: sí, y ese es uno de sus mayores atractivos. No hay frontera real entre los dos lados: se pasa libremente con el coche. La isla es pequeña y se recorre completa en pocas horas.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿Qué moneda se usa?"</h4>
+          <p>
+            Respuesta: en el lado francés, euro. En el lado holandés, dólar americano. En la práctica se aceptan dólares y tarjeta en casi todos lados. No es un problema operativo para el cliente.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box orange">
+        <strong>Alerta comercial:</strong> no confundir Saint Martin con Saint Maarten en la comunicación escrita al cliente: son la misma isla pero Saint-Martin es el lado francés y Sint Maarten el holandés. Explicarlo claramente evita confusiones y genera confianza.
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         9. NOCHES RECOMENDADAS
+    ═══════════════════════════════════════ -->
+    <section class="section" id="noches">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Duración ideal</span>
+          <h2>Noches recomendadas</h2>
+        </div>
+        <p class="section-intro">
+          Saint Martin justifica perfectamente 7 noches como mínimo. Con 10 noches se puede explorar toda la isla con calma, sumar excursiones a islas vecinas y vivir la gastronomía sin apuro.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Propuesta</th>
+            <th>Noches</th>
+            <th>Lectura comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Solo lado holandés</strong></td>
+            <td>5 a 7 noches</td>
+            <td>Válido para cliente de primera vez o que prioriza facilidad operativa y precio más accesible.</td>
+          </tr>
+          <tr>
+            <td><strong>Solo lado francés</strong></td>
+            <td>7 noches</td>
+            <td>La propuesta más sofisticada. Marigot, Grand Case, Orient Bay y playas naturales. Gastronomía todos los días.</td>
+          </tr>
+          <tr>
+            <td><strong>Combinado ambos lados</strong></td>
+            <td>7 a 10 noches</td>
+            <td>La venta más redonda: 3-4 noches en cada lado o base única con excursiones cruzando. Permite vivir los dos perfiles.</td>
+          </tr>
+          <tr>
+            <td><strong>Con excursiones a islas</strong></td>
+            <td>10 noches</td>
+            <td>La propuesta premium: base en Saint Martin + día en Anguilla + día en Saint Barths. Para cliente de alto valor.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Venta simple (7 noches)</h4>
+          <p>
+            Base en Orient Bay o Simpson Bay, 7 noches. Se exploran las dos caras de la isla, se hace una excursión a Tintamarre y se cena en Grand Case al menos dos veces. Muy redondo y fácil de armar.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Venta premium (10 noches)</h4>
+          <p>
+            10 noches con base boutique en Grand Case o en un resort de Orient Bay. Excursión a Anguilla, medio día en Tintamarre, cenas en los mejores restaurantes de la isla y un día de coche para cruzar al lado holandés. Producto de alto valor muy justificable.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         10. SCRIPT DE VENTA
+    ═══════════════════════════════════════ -->
+    <section class="section" id="script">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cierre comercial</span>
+          <h2>Script de venta</h2>
+        </div>
+        <p class="section-intro">
+          Guion pensado para primera llamada, respuesta rápida o acompañamiento de presupuesto. Saint Martin requiere un poco más de presentación que los destinos más conocidos, pero cierra muy bien cuando se explica bien.
+        </p>
+      </div>
+
+      <div class="script-box">
+        <p><strong>Apertura:</strong> "Si ya conocen Cancún o Punta Cana y quieren algo diferente, Saint Martin es probablemente el Caribe más interesante que existe: dos países en una isla pequeña, la mejor gastronomía del Caribe y playas para todos los gustos."</p>
+        <p><strong>Pregunta de detección:</strong> "¿Les interesa más algo elegante y tranquilo con mucha gastronomía, o prefieren más animación, compras y algo de casino? ¿Están abiertos a explorar islas cercanas como Anguilla o Saint Barths?"</p>
+        <p><strong>Lectura rápida:</strong> "El lado francés es más sofisticado: Grand Case para cenar bien, Orient Bay para la playa con ambiente, Marigot para pasear. El lado holandés tiene más movimiento, mejores compras y el aeropuerto. Lo ideal es combinar los dos."</p>
+        <p><strong>Argumento de unicidad:</strong> "Lo que hace único a Saint Martin es que en un mismo viaje vivís dos destinos distintos sin cambiar de vuelo. Y la frontera no existe en la práctica: un día desayunás en Francia y cenás en Holanda."</p>
+        <p><strong>Cierre recomendado:</strong> "Para disfrutarlo bien, yo les armaría mínimo 7 noches y si tienen 10, mejor: dan tiempo a explorar la isla entera, hacer una excursión a Tintamarre y algún día visitar Anguilla o Saint Barths."</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Guía comercial base · Dr. Viaje · Saint Martin / Sint Maarten · Formato comercial-consultivo</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" aria-label="Subir">↑</button>
+
+  <script>
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        scrollTopBtn.style.display = 'block';
+      } else {
+        scrollTopBtn.style.display = 'none';
+      }
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
+</body>
+</html>

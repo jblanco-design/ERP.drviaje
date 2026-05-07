@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Región Bahía - Guía Brasil | Dr. Viaje</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-purple);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        nav {
+            background-color: var(--primary-orange);
+            padding: 15px 0;
+            position: sticky;
+            top: 120px;
+            z-index: 999;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-links a:hover {
+            background-color: white;
+            color: var(--primary-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: var(--primary-orange);
+        }
+
+        .destination-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .destination-card:nth-child(even) {
+            border-top-color: var(--primary-pink);
+        }
+
+        .destination-header {
+            border-bottom: 3px solid var(--bg-light);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .destination-header h2 {
+            color: var(--primary-purple);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .destination-subtitle {
+            color: var(--primary-pink);
+            font-size: 1.2rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .section h4 {
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: var(--text-medium);
+        }
+
+        .section ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-medium);
+        }
+
+        .section li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+            border-left: 5px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box::before {
+            content: "💡 TIP DE VENTA: ";
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 5px solid var(--primary-pink);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .alert-box::before {
+            content: "⚠️ ALERTA: ";
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border: 2px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 12px;
+            font-style: italic;
+            position: relative;
+        }
+
+        .script-box::before {
+            content: "💬 SCRIPT: ";
+            font-weight: 700;
+            color: var(--primary-purple);
+            font-style: normal;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-pink) 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .destination-card {
+                padding: 25px;
+            }
+
+            .destination-header h2 {
+                font-size: 2rem;
+            }
+
+            nav {
+                top: 140px;
+            }
+        }
+
+        strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    Dr.<br>Viaje<br>.com
+                </div>
+                <div class="header-title">
+                    <h1>Región Bahía</h1>
+                    <p>Corazón Afrobrasileño - Cultura, Historia y Resorts</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#salvador">Salvador de Bahía</a></li>
+                <li><a href="#porto-seguro">Porto Seguro</a></li>
+                <li><a href="#arraial-ajuda">Arraial d'Ajuda</a></li>
+                <li><a href="#morro">Morro de São Paulo</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index-brasil.html" class="back-link">← Volver al índice principal</a>
+
+        <!-- SALVADOR DE BAHÍA -->
+        <div id="salvador" class="destination-card">
+            <div class="destination-header">
+                <h2>SALVADOR DE BAHÍA</h2>
+                <p class="destination-subtitle">El Alma de Brasil - Pelourinho y Cultura Afrobrasileña</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Salvador de Bahía es el alma cultural de Brasil, la ciudad donde late el corazón afrobrasileño más auténtico del continente. Fundada en 1549 como la primera capital de Brasil (mantuvo este estatus durante 214 años hasta 1763), Salvador es un museo vivo donde la herencia africana, portuguesa e indígena se fusionan en una explosión de color, música, gastronomía y espiritualidad única.</p>
+                
+                <p>El Pelourinho, su centro histórico colonial, es Patrimonio de la Humanidad por UNESCO desde 1985. Con más de 800 edificios coloniales de los siglos XVII y XVIII pintados en colores vibrantes, es el conjunto arquitectónico barroco más importante de América Latina.</p>
+
+                <div class="info-box">
+                    <strong>El secreto comercial de Salvador:</strong> Se vende en dos formatos completamente diferentes:<br>
+                    1. <strong>Salvador ciudad:</strong> Turismo cultural, histórico y gastronómico<br>
+                    2. <strong>Litoral Norte:</strong> (Praia do Forte, Costa do Sauípe, Imbassaí) Los mejores resorts all-inclusive de Brasil, a 50-80 km del aeropuerto
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <h4>SALVADOR CIUDAD - Cliente culturalmente curioso:</h4>
+                <p>El comprador típico busca "experiencias auténticas" más que solo playa. Valora la historia viva, la gastronomía regional, la música callejera, y no le molesta el bullicio urbano para descubrir rincones auténticos.</p>
+
+                <h4>LITORAL NORTE - Cliente resort y familiar:</h4>
+                <p>El comprador típico busca formato "Caribe brasileño": all-inclusive de calidad, playas paradisíacas, estructura para familias, pero con la ventaja de estar en Brasil (sin visa, moneda conocida, vuelos más accesibles).</p>
+
+                <div class="script-box">
+                    "Mi recomendación estrella es combinar ambos: 3 noches en Salvador ciudad para vivir la cultura bahiana auténtica, y después 5 noches en resort all-inclusive en Praia do Forte. Así tenés vacaciones completas: experiencia cultural + relax total, todo con un solo aeropuerto."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <h4>SALVADOR CIUDAD:</h4>
+                <ul>
+                    <li><strong>Niños de 0-5 años:</strong> NO especialmente recomendable. Calles empedradas empinadas (imposible para cochecitos), calor agobiante</li>
+                    <li><strong>Niños de 6-11 años:</strong> Condicional. Si son curiosos, el Pelourinho los fascina</li>
+                    <li><strong>Adolescentes (12+ años):</strong> Muy recomendable. Aprecian la historia, se fascinan con la capoeira</li>
+                </ul>
+
+                <h4>LITORAL NORTE: ¡PERFECTO PARA TODAS LAS EDADES!</h4>
+                <ul>
+                    <li>Proyecto Tamar (conservación de tortugas marinas)</li>
+                    <li>Resorts con Copa Baby: cocinas 24hs para madres, mega piscinas, recreación profesional</li>
+                    <li>Playas protegidas: Arrecifes naturales crean piscinas seguras para niños</li>
+                    <li>All-inclusive: Simplifica completamente la logística familiar</li>
+                </ul>
+
+                <div class="script-box">
+                    "Con niños, la jugada perfecta es volar a Salvador, conocer el Pelourinho medio día para la foto y la experiencia cultural, y después directo a un resort all-inclusive en Praia do Forte. Los chicos ven las tortugas marinas, tienen entretenimiento todo el día, y ustedes descansan sin preocuparse por nada."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: Salvador (SSA)</h4>
+                <ul>
+                    <li><strong>Salvador ciudad (Barra/Pelourinho):</strong> 28 km (30-50 min según tráfico)</li>
+                    <li><strong>Litoral Norte (Praia do Forte):</strong> 70 km (1 hora, dirección contraria a la ciudad)</li>
+                </ul>
+
+                <div class="tip-box">
+                    Para llegar a los resorts del Litoral Norte, el traslado privado no es un lujo, es una necesidad. Son 70-85 km por rutas que no conocen, y llegar a un resort 5 estrellas en bus público arruina la primera impresión.
+                </div>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Acarajé en la calle</td><td>USD 3-5 por unidad</td></tr>
+                        <tr><td>Almuerzo en restaurante</td><td>USD 12-20 por persona</td></tr>
+                        <tr><td>Cena bahiana</td><td>USD 20-35 por persona</td></tr>
+                        <tr><td>Moqueca (para 2)</td><td>USD 25-40</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario (Salvador ciudad):</strong> USD 70-100 por persona</p>
+                <p><strong>Litoral Norte all-inclusive:</strong> USD 20-40 por persona (extras)</p>
+            </div>
+
+            <div class="section">
+                <h3>Alertas Críticas</h3>
+                <div class="alert-box">
+                    <strong>Seguridad:</strong> Salvador tiene contrastes urbanos fuertes, pero las zonas turísticas son controladas con precauciones básicas: no usar joyas llamativas, usar taxi/Uber para traslados nocturnos, no alejarse de rutas turísticas principales.<br><br>
+                    <strong>Carnaval:</strong> Durante este período (febrero/marzo), Salvador NO funciona como destino turístico regular. Es exclusivamente para quien quiere vivir el carnaval masivo. Todo gira alrededor de blocos y multitudes.
+                </div>
+            </div>
+        </div>
+
+        <!-- PORTO SEGURO -->
+        <div id="porto-seguro" class="destination-card">
+            <div class="destination-header">
+                <h2>PORTO SEGURO</h2>
+                <p class="destination-subtitle">Cuna de Brasil - Donde Todo Comenzó</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Porto Seguro es donde Pedro Álvares Cabral desembarcó el 22 de abril de 1500, marcando oficialmente el descubrimiento de Brasil. Fundada en 1534, conserva el conjunto arquitectónico colonial más antiguo del país, declarado Patrimonio Histórico Nacional. Hoy es una ciudad vibrante que combina historia auténtica, playas urbanas extensas con las famosas "mega barracas", y la vida nocturna más animada del nordeste brasileño, concentrada en la legendaria Passarela do Álcool.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Porto Seguro es estratégico?</strong> Es el cuarto destino más vendido de Brasil desde Uruguay. Su versatilidad es incomparable: funciona para familias (parques acuáticos, playas calmas), jóvenes (vida nocturna intensa), parejas (romanticismo en Arraial), y tiene excelente relación costo-beneficio.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <p>El comprador típico de Porto Seguro busca "movimiento" y variedad. No quiere quedarse encerrado en un resort, valora tener opciones de entretenimiento nocturno, y generalmente viaja en grupo (familias con adolescentes, grupos de amigos).</p>
+
+                <h4>Cómo detectar a tu cliente Porto Seguro:</h4>
+                <ul>
+                    <li>Menciona "animado", "con vida nocturna", "que tenga movimiento"</li>
+                    <li>Pregunta por destinos que "tengan cosas para hacer"</li>
+                    <li>Viaja con adolescentes o en grupo de amigos</li>
+                    <li>Busca destino donde "no te aburrís"</li>
+                    <li>Busca opciones all-inclusive o media pensión</li>
+                </ul>
+
+                <div class="script-box">
+                    "Porto Seguro es perfecto si buscás un destino completo donde no te aburrís nunca. Tenés playas hermosas durante el día con barracas que tienen shows y música, parques acuáticos espectaculares, la Passarela do Álcool con ambiente todas las noches, y además historia colonial auténtica. Es el destino más versátil del nordeste brasileño."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>SÍ, EXCELENTE PARA FAMILIAS</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-5 años:</strong> Muy recomendable si elegís la zona correcta (Praia do Mutá o resorts all-inclusive en Taperapuã)</li>
+                    <li><strong>Niños de 6-12 años:</strong> Edad ideal. Es la edad perfecta porque disfrutan los parques acuáticos (Eco Parque es el highlight del viaje), las playas con barracas animadas</li>
+                    <li><strong>Adolescentes:</strong> Perfecto. Ya aprecian la historia del Centro Histórico, disfrutan la vida nocturna supervisada</li>
+                </ul>
+
+                <div class="script-box">
+                    "Si tenés niños chicos, Porto Seguro es más práctico: mejor infraestructura hotelera, el parque acuático, y todo más a mano. Podés hacer Arraial como excursión de día. Si tus hijos son más grandes, dividir entre ambos destinos es ideal."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: Porto Seguro (BPS)</h4>
+                <ul>
+                    <li><strong>Centro de Porto Seguro:</strong> 2 km (5-10 minutos)</li>
+                    <li><strong>Taperapuã (zona hotelera):</strong> 6 km (10-15 minutos)</li>
+                    <li><strong>Arraial d'Ajuda:</strong> 8 km + ferry (25-35 minutos total)</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en barraca de playa</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Cena en restaurante medio</td><td>USD 20-35 por persona</td></tr>
+                        <tr><td>Passarela do Álcool (cena + bebidas)</td><td>USD 25-45 por persona</td></tr>
+                        <tr><td>Comida rápida/casual</td><td>USD 10-15 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado:</strong> USD 80-120 por persona (perfil medio)</p>
+            </div>
+        </div>
+
+        <!-- ARRAIAL D'AJUDA -->
+        <div id="arraial-ajuda" class="destination-card">
+            <div class="destination-header">
+                <h2>ARRAIAL D'AJUDA</h2>
+                <p class="destination-subtitle">El Polo Bohemio-Chic de Bahía</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Arraial d'Ajuda, al otro lado del río de Porto Seguro, es el polo bohemio-chic de la región. Este antiguo pueblo de pescadores transformado en refugio hippie en los años 70 mantiene su encanto rústico pero con sofisticación. Sus calles de arena, la famosa Rua do Mucugê (calle principal peatonal llena de boutiques y restaurantes), y sus playas con falesias coloridas crean un ambiente único que atrae desde parejas románticas hasta celebridades brasileñas buscando discreción.</p>
+
+                <div class="info-box">
+                    <strong>La diferencia clave:</strong> Porto Seguro es movimiento constante, Arraial es sofisticación bohemia. Están a 5 minutos en ferry pero el ambiente es completamente diferente.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <p>El comprador típico busca "encanto" más que infraestructura masiva. Valora la autenticidad, el ambiente bohemio pero con buen gusto, y prefiere pousadas boutique sobre grandes hoteles.</p>
+
+                <h4>Cómo detectar a tu cliente Arraial:</h4>
+                <ul>
+                    <li>Menciona "romántico", "bohemio", "con encanto"</li>
+                    <li>Pregunta por destinos "diferentes", "no tan masivos"</li>
+                    <li>Viaja en pareja sin niños pequeños</li>
+                    <li>Valora gastronomía de calidad y ambiente nocturno sofisticado</li>
+                    <li>Rechaza opciones all-inclusive o resorts grandes</li>
+                </ul>
+
+                <div class="script-box">
+                    "Arraial d'Ajuda es como el hermano sofisticado de Porto Seguro. Está a 5 minutos en ferry pero el ambiente es completamente diferente: más bohemio, con pousadas de encanto, la Rua do Mucugê llena de restaurantes con mesas en la arena, y playas con falesias de colores. Es perfecto para parejas que buscan romanticismo con onda."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>DEPENDE DE LA EDAD Y PERFIL</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-5 años:</strong> Condicional. Arraial tiene encanto pero no está optimizado para niños muy pequeños: calles de arena (complicadas para cochecitos), menos opciones con estructura infantil</li>
+                    <li><strong>Niños de 6-12 años:</strong> Recomendable si la familia valora ambiente más auténtico. Las playas son hermosas, el Eco Parque está accesible</li>
+                    <li><strong>Adolescentes:</strong> Muy recomendable. Aprecian el ambiente más sofisticado, las playas con beach clubs</li>
+                </ul>
+
+                <div class="alert-box">
+                    Rua do Mucugê tiene piedras irregulares (no apta para cochecitos), muchas pousadas están en morros con escaleras, no todas las playas tienen infraestructura (sombrillas, baños).
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Ferry Porto Seguro ↔ Arraial</h3>
+                <ul>
+                    <li><strong>Frecuencia:</strong> Cada 30 minutos (más frecuente en temporada alta)</li>
+                    <li><strong>Duración:</strong> 5 minutos de travesía</li>
+                    <li><strong>Horario:</strong> Desde las 6 AM hasta la medianoche</li>
+                </ul>
+
+                <div class="tip-box">
+                    Para Arraial recomiendo siempre traslado privado que incluya el ferry de autos. El ferry peatonal parece más económico pero después tenés que caminar por calles de arena con las maletas.
+                </div>
+            </div>
+        </div>
+
+        <!-- MORRO DE SÃO PAULO -->
+        <div id="morro" class="destination-card">
+            <div class="destination-header">
+                <h2>MORRO DE SÃO PAULO</h2>
+                <p class="destination-subtitle">La Isla Sin Autos - Paraíso Rústico-Chic</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Morro de São Paulo es el paraíso tropical más auténtico de Bahía, una isla mágica donde <strong>no existen automóviles</strong> y el tiempo se mide por las mareas, no por relojes. Ubicada en la Ilha de Tinharé, a 60 km al sur de Salvador, es el destino que materializa la fantasía brasileña perfecta: playas numeradas del 1 al 5, aguas cristalinas color turquesa, calles de arena, vida nocturna en la playa, y una atmósfera bohemia-rústica que conquista desde el primer minuto.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Morro es estratégico?</strong> Es tu "carta diferente" del nordeste brasileño. Cuando tu cliente dice "ya conozco Porto Seguro, Maceió, todos los destinos de playa", Morro es tu respuesta ganadora. Funciona como extensión perfecta desde Salvador (3-4 noches), o como destino principal (5-7 noches) para quien busca desconexión total.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>El Sistema de Playas Numeradas</h3>
+                
+                <h4>Segunda Playa (el corazón palpitante):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Grupos de amigos, parejas jóvenes (menos de 35)</li>
+                    <li><strong>Ventajas:</strong> Barracas con música en vivo desde el mediodía hasta la madrugada</li>
+                    <li><strong>Contra:</strong> Ruido hasta las 2-3 AM todas las noches sin excepción</li>
+                </ul>
+
+                <div class="alert-box">
+                    Si reservás Segunda Playa, tu cliente DEBE saber que habrá música fuerte hasta tarde. No es negociable. No vendas aquí a quien busca descanso absoluto.
+                </div>
+
+                <h4>Tercera Playa (tu recomendación estrella):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Parejas de todas las edades, familias con adolescentes</li>
+                    <li><strong>Ventajas:</strong> Playa más extensa (2 km), piscinas naturales espectaculares en marea baja</li>
+                    <li><strong>Tu recomendación estrella para 70% de clientes</strong></li>
+                </ul>
+
+                <h4>Cuarta Playa (la opción exclusiva):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Parejas maduras (45+ años), luna de miel, máxima tranquilidad</li>
+                    <li><strong>Ventajas:</strong> Pocas barracas, más privacidad, pousadas boutique de mayor nivel</li>
+                    <li><strong>Contra:</strong> 20-25 minutos caminando desde el centro</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>DEPENDE ABSOLUTAMENTE DE LA EDAD</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-6 años: NO RECOMENDABLE</strong></li>
+                    <li>Equipaje transportado en carretilla de mano por arena</li>
+                    <li>Calles de arena hacen imposible usar cochecito</li>
+                    <li>Calor extremo con humedad (35°C sensación térmica)</li>
+                    <li>2 horas en barco pueden ser complicadas con bebés</li>
+                </ul>
+
+                <div class="script-box">
+                    "Para niños tan chicos, Morro no es la mejor opción logística. La belleza es espectacular, pero vas a sufrir con el equipaje, el calor, y la falta de comodidades específicas para bebés. Te recomendaría un resort en Praia do Forte donde tenés toda la infraestructura infantil perfecta."
+                </div>
+
+                <ul>
+                    <li><strong>Niños de 12+ años (adolescentes): MUY RECOMENDABLE</strong></li>
+                    <li>Ya aprecian lo "diferente" y único del destino</li>
+                    <li>Disfrutan la independencia de moverse solos por la isla segura</li>
+                    <li>Se fascinan con la vida nocturna en la playa (bajo supervisión)</li>
+                    <li>Edad perfecta para tirolesa, snorkel, trilhas al faro</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa: Cómo Llegar</h3>
+                
+                <h4>OPCIÓN 1: CATAMARÁN DIRECTO (la más popular pero con riesgos):</h4>
+                <ul>
+                    <li><strong>Punto de partida:</strong> Terminal Marítimo de Salvador (frente al Mercado Modelo)</li>
+                    <li><strong>Duración:</strong> 2 horas de navegación en mar abierto</li>
+                    <li><strong>Horarios:</strong> Generalmente 9:00 AM y 14:30 PM</li>
+                </ul>
+
+                <div class="alert-box">
+                    <strong>MAREO:</strong> El mar puede estar muy picado, especialmente entre diciembre y marzo. Aproximadamente 30-40% de pasajeros tienen algún nivel de mareo, y 10-15% vomitan durante el trayecto. Medicamento antimareo 1 hora antes del embarque obligatorio para sensibles.
+                </div>
+
+                <h4>OPCIÓN 2: TRASLADO SEMI-TERRESTRE (la más segura):</h4>
+                <ul>
+                    <li>Ferry Salvador → Itaparica (40 min, aguas calmas protegidas)</li>
+                    <li>Bus/Van por Itaparica → Valença (1.5 horas, carretera)</li>
+                    <li>Lancha rápida Valença → Morro (15 min, aguas calmas)</li>
+                    <li><strong>Tiempo total:</strong> 3.5-4 horas</li>
+                    <li><strong>Ventajas:</strong> Prácticamente cero riesgo de mareo</li>
+                </ul>
+
+                <h4>El Recibimiento - Los Carretilleros (información crítica):</h4>
+                <p>Cuando el catamarán llega al muelle, hay una rampa empinada de 200 metros hasta el pueblo. Los carretilleros locales se acercan inmediatamente ofreciendo transportar el equipaje.</p>
+                
+                <div class="tip-box">
+                    Cuando llegues, pagá la carretilla sin dudar. No intentes subir esa rampa empinada con maletas de 20kg bajo el sol bahiano. La carretilla vale cada centavo y es parte de la experiencia local.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Costo de Vida en USD (Datos 2024)</h3>
+                
+                <p><strong>Al ser una isla que importa todo del continente, Morro es 15-20% más caro que Salvador ciudad.</strong></p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>TUPA (Tasa de Preservación Ambiental)</td><td>USD 6-8 por persona</td></tr>
+                        <tr><td>Carretilla de equipaje</td><td>USD 5-10 por maleta</td></tr>
+                        <tr><td>Almuerzo en barraca de playa</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Cena en Segunda/Tercera Playa</td><td>USD 20-35 por persona</td></tr>
+                        <tr><td>Paseo a Garapuá (día completo)</td><td>USD 40-55 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado:</strong> USD 70-100 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta Consultiva</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de expectativas obligatorio:</strong><br>
+                    "Morro es hermoso pero rústico en el mejor sentido. Las pousadas boutique son cómodas, no resorts. Vas a caminar descalzo en arena, cargar tu equipaje en algunas escaleras, y el aire acondicionado no siempre es potente como en un hotel urbano. Si buscás lujo total y comodidad constante, te recomiendo otro destino. Si buscás belleza natural auténtica y no te molestan pequeñas incomodidades, Morro es tu paraíso personal."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta - Combinación con Salvador:</strong><br>
+                    "3 noches en Salvador ciudad para vivir el Pelourinho y la cultura bahiana auténtica, y después 3-4 noches en Morro para relajar en el paraíso isleño. Conocés el alma de Brasil y después desconectás en un lugar único. Un solo aeropuerto, traslados coordinados, experiencia completa."
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            Dr.<br>Viaje<br>.com
+        </div>
+        <p><strong>Dr. Viaje - Tu especialista en destinos brasileños</strong></p>
+        <p>Guía Definitiva para Agentes de Viajes - Región Bahía</p>
+        <p>Capacitación Profesional 2024</p>
+    </footer>
+
+    <div class="scroll-top" id="scrollTop">↑</div>
+
+    <script>
+        const scrollTop = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = 180;
+                    const elementPosition = target.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: elementPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de Santa Marta · Tayrona · Barranquilla</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary-purple:#7B2D8E;
+      --primary-orange:#FF9800;
+      --primary-pink:#E91E63;
+      --bg-light:#f8f9fa;
+      --text-dark:#333333;
+      --text-medium:#666666;
+      --white:#ffffff;
+      --shadow:0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover:0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --max-width:1240px;
+      /* colores Santa Marta */
+      --c1:#1565C0;    /* azul caribe profundo */
+      --c2:#00897B;    /* verde selva Tayrona */
+      --c1-soft:rgba(21,101,192,.08);
+      --c2-soft:rgba(0,137,123,.07);
+      /* colores Barranquilla */
+      --bq1:#F57F17;   /* amarillo carnaval */
+      --bq2:#C62828;   /* rojo carnaval */
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      color:var(--text-dark);
+      background:var(--bg-light);
+      line-height:1.65;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max-width),calc(100% - 32px));margin:0 auto}
+
+    /* ── HERO ── */
+    header.hero{
+      background:
+        radial-gradient(circle at top right,rgba(255,255,255,.13),transparent 38%),
+        linear-gradient(135deg,#0D47A1,#1565C0 48%,#00897B);
+      color:var(--white);padding:72px 0 48px;
+      position:relative;overflow:hidden;
+    }
+    .hero::before,.hero::after{
+      content:"";position:absolute;border-radius:50%;
+      background:rgba(255,255,255,.07);z-index:0;
+    }
+    .hero::before{width:300px;height:300px;top:-90px;right:-70px;}
+    .hero::after{width:190px;height:190px;bottom:-50px;left:-50px;}
+    .hero-inner{
+      position:relative;z-index:1;
+      display:grid;grid-template-columns:1.3fr .9fr;gap:28px;align-items:stretch;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:10px;padding:10px 16px;
+      border-radius:999px;background:rgba(255,255,255,.14);backdrop-filter:blur(8px);
+      font-size:14px;font-weight:700;letter-spacing:.2px;margin-bottom:18px;
+    }
+    .hero h1{margin:0 0 14px;font-size:clamp(34px,5vw,54px);line-height:1.05;letter-spacing:-.03em;}
+    .hero p.lead{margin:0;font-size:18px;max-width:760px;color:rgba(255,255,255,.92);}
+    .hero-card{
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);
+      border-radius:var(--radius-xl);padding:26px;
+      backdrop-filter:blur(10px);box-shadow:var(--shadow);align-self:stretch;
+    }
+    .hero-card h3{margin:0 0 12px;font-size:18px;}
+    .hero-card p{margin:0 0 14px;color:rgba(255,255,255,.92);font-size:15px;}
+    .hero-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+    .pill{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);font-size:13px;font-weight:600;color:var(--white);}
+
+    /* ── NAV ── */
+    nav.sticky-nav{position:sticky;top:0;z-index:1000;background:#0D47A1;box-shadow:var(--shadow);}
+    .nav-inner{
+      width:min(var(--max-width),calc(100% - 32px));margin:0 auto;
+      display:flex;gap:12px;overflow:auto;padding:15px 0;scrollbar-width:none;
+    }
+    .nav-inner::-webkit-scrollbar{display:none}
+    .nav-link{
+      white-space:nowrap;padding:10px 16px;border-radius:25px;
+      background:rgba(255,255,255,.18);color:var(--white);font-size:14px;font-weight:700;transition:.25s ease;
+    }
+    .nav-link:hover{background:var(--white);color:#0D47A1;transform:translateY(-1px);}
+
+    section[id]{scroll-margin-top:90px;}
+    main{padding:28px 0 72px}
+
+    /* ── SECCIONES ── */
+    .section{margin:22px 0;background:var(--white);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:34px;}
+    .section-header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:18px;margin-bottom:24px;}
+    .eyebrow{display:inline-block;margin-bottom:8px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary-pink);}
+    .section h2{margin:0;font-size:30px;line-height:1.15;letter-spacing:-.03em;}
+    .section-intro{color:var(--text-medium);max-width:920px;margin:0;}
+
+    /* ── KPI ── */
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px;}
+    .kpi{background:linear-gradient(180deg,#fff,#eef4fd);border:1px solid rgba(21,101,192,.1);border-radius:18px;padding:20px;box-shadow:var(--shadow);}
+    .kpi .label{display:block;font-size:12px;color:var(--text-medium);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+    .kpi strong{display:block;font-size:24px;line-height:1.1;color:var(--c1);margin-bottom:6px;}
+    .kpi span{font-size:14px;color:var(--text-medium);}
+
+    /* ── INFO BOXES ── */
+    .info-box{margin-top:22px;border-left:6px solid var(--c1);background:#eef4fd;border-radius:16px;padding:18px 20px;}
+    .info-box strong{color:var(--c1);}
+    .info-box.green{border-left-color:var(--c2);background:#e8f5f4;}
+    .info-box.green strong{color:#00695C;}
+    .info-box.orange{border-left-color:var(--primary-orange);background:#fff8ef;}
+    .info-box.orange strong{color:#b36a00;}
+    .info-box.pink{border-left-color:var(--primary-pink);background:#fff3f8;}
+    .info-box.pink strong{color:var(--primary-pink);}
+    .info-box.bq{border-left-color:var(--bq1);background:#fffde7;}
+    .info-box.bq strong{color:#E65100;}
+    .info-box.red{border-left-color:#C62828;background:#fff3f3;}
+    .info-box.red strong{color:#C62828;}
+
+    /* ── GRIDS ── */
+    .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start;}
+    .cards-2,.cards-3{display:grid;gap:16px;margin-top:18px;}
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+    .card{background:var(--white);border:1px solid rgba(0,0,0,.06);border-radius:18px;padding:20px;box-shadow:var(--shadow);transition:.25s ease;}
+    .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+    .card h3,.card h4{margin:0 0 10px;line-height:1.2;}
+    .card p{margin:0;color:var(--text-medium);font-size:15px;}
+
+    /* ── DESTINATION BLOCK ── */
+    .destination{padding:0;overflow:hidden;}
+    .destination-top{padding:28px 30px 14px;background:linear-gradient(135deg,var(--c1-soft),var(--c2-soft));border-bottom:1px solid rgba(0,0,0,.06);}
+    .destination-number{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--white);font-weight:800;margin-bottom:12px;box-shadow:var(--shadow);}
+    .destination h3{margin:0 0 8px;font-size:28px;line-height:1.12;letter-spacing:-.03em;}
+    .destination-subtitle{margin:0;color:var(--text-medium);max-width:940px;}
+    .destination-body{padding:24px 30px 30px;}
+    .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px;}
+    .mini-card{background:#fcfcfd;border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:18px;}
+    .mini-card h4{margin:0 0 10px;font-size:16px;color:var(--c1);}
+    ul.clean{margin:0;padding-left:18px;}
+    ul.clean li{margin:0 0 8px}
+
+    /* ── TABLA ── */
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px;box-shadow:var(--shadow);margin-top:18px;}
+    thead th{background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--white);padding:15px 16px;text-align:left;font-size:14px;font-weight:800;letter-spacing:.02em;}
+    tbody td{background:var(--white);padding:15px 16px;border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top;font-size:15px;}
+    tbody tr:last-child td{border-bottom:none}
+
+    /* ── TAGS ── */
+    .tag-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+    .tag{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:13px;font-weight:700;background:#eef4fd;color:var(--c1);}
+    .tag.green{background:#e8f5f4;color:#00695C;}
+
+    /* ── TAYRONA HERO ── */
+    .tayrona-hero{
+      background:linear-gradient(135deg,#1B5E20,#2E7D32 50%,#00897B);
+      border-radius:var(--radius-xl);padding:34px;color:var(--white);
+      margin:22px 0;box-shadow:var(--shadow);position:relative;overflow:hidden;
+    }
+    .tayrona-hero::before{content:"";position:absolute;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,.07);top:-70px;right:-70px;}
+    .tayrona-hero::after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.05);bottom:-40px;left:-40px;}
+    .tayrona-hero h2{margin:0 0 12px;font-size:30px;letter-spacing:-.03em;position:relative;z-index:1;}
+    .tayrona-hero p{margin:0 0 18px;color:rgba(255,255,255,.92);max-width:900px;font-size:17px;position:relative;z-index:1;}
+    .tayrona-eyebrow{display:inline-block;margin-bottom:10px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.75);position:relative;z-index:1;}
+    .tayrona-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px;position:relative;z-index:1;}
+    .tayrona-kpi{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:16px;backdrop-filter:blur(8px);}
+    .tayrona-kpi .label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;color:rgba(255,255,255,.75);}
+    .tayrona-kpi strong{display:block;font-size:20px;line-height:1.1;margin-bottom:4px;}
+    .tayrona-kpi span{font-size:13px;color:rgba(255,255,255,.82);}
+
+    .tayrona-section{margin:22px 0;background:var(--white);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:34px;border-top:5px solid #2E7D32;}
+
+    /* ── BARRANQUILLA HERO ── */
+    .bq-hero{
+      background:linear-gradient(135deg,#B71C1C,#C62828 40%,#F57F17);
+      border-radius:var(--radius-xl);padding:34px;color:var(--white);
+      margin:22px 0;box-shadow:var(--shadow);position:relative;overflow:hidden;
+    }
+    .bq-hero::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.07);top:-80px;right:-60px;}
+    .bq-hero::after{content:"";position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05);bottom:-40px;left:-40px;}
+    .bq-hero h2{margin:0 0 12px;font-size:30px;letter-spacing:-.03em;position:relative;z-index:1;}
+    .bq-hero p{margin:0 0 18px;color:rgba(255,255,255,.92);max-width:900px;font-size:17px;position:relative;z-index:1;}
+    .bq-eyebrow{display:inline-block;margin-bottom:10px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.75);position:relative;z-index:1;}
+    .bq-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px;position:relative;z-index:1;}
+    .bq-kpi{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:16px;backdrop-filter:blur(8px);}
+    .bq-kpi .label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;color:rgba(255,255,255,.75);}
+    .bq-kpi strong{display:block;font-size:20px;line-height:1.1;margin-bottom:4px;}
+    .bq-kpi span{font-size:13px;color:rgba(255,255,255,.82);}
+    .bq-section{margin:22px 0;background:var(--white);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:34px;border-top:5px solid #E65100;}
+
+    /* ── SCRIPT ── */
+    .script-box{background:linear-gradient(135deg,#eef4fd,#e8f5f4);border:1px solid rgba(21,101,192,.1);border-radius:20px;padding:24px;box-shadow:var(--shadow);}
+    .script-box p{margin:0 0 12px;}
+    .script-box p:last-child{margin-bottom:0}
+
+    /* ── FOOTER ── */
+    footer{background:linear-gradient(135deg,#0D47A1,#00897B);color:var(--white);padding:28px 0 34px;margin-top:36px;}
+    footer p{margin:0;color:rgba(255,255,255,.92);text-align:center;font-size:14px;}
+
+    #scrollTopBtn{position:fixed;right:22px;bottom:22px;width:52px;height:52px;border:none;border-radius:50%;background:linear-gradient(135deg,#1565C0,#00897B);color:var(--white);font-size:22px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-hover);display:none;z-index:1200;}
+
+    @media (max-width:1080px){
+      .hero-inner,.two-col,.cards-3,.kpi-grid,.mini-grid,.tayrona-kpis,.bq-kpis{grid-template-columns:1fr 1fr;}
+    }
+    @media (max-width:860px){
+      .hero-inner,.two-col,.cards-2,.cards-3,.kpi-grid,.mini-grid,.tayrona-kpis,.bq-kpis{grid-template-columns:1fr;}
+      .section,.destination-body,.destination-top,.tayrona-section,.bq-section,.tayrona-hero,.bq-hero{padding-left:22px;padding-right:22px;}
+      .section h2,.tayrona-hero h2,.bq-hero h2{font-size:26px;}
+      .destination h3{font-size:24px;}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <!-- ══ HERO ══ -->
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">Dr. Viaje · Guía comercial Caribe Colombia</div>
+        <h1>Santa Marta 🇨🇴<br><span style="font-size:0.65em;opacity:.85;">Tayrona · Barranquilla</span></h1>
+        <p class="lead">
+          Santa Marta es la ciudad más antigua de Colombia y la puerta de entrada a uno de los parques naturales más extraordinarios de América: el Tayrona. Mar caribeño, selva tropical y Sierra Nevada en un mismo horizonte. A dos horas, Barranquilla cierra el triángulo con su energía carnavalera, gastronomía costeña y aeropuerto hub de conexión.
+        </p>
+      </div>
+      <div class="hero-card">
+        <h3>Clave comercial rápida</h3>
+        <p>
+          Un destino para viajero con más curiosidad que el resort estándar. Funciona para naturaleza + playa, aventura con comodidad, cultura caribeña auténtica y el viajero que quiere Colombia más allá de Cartagena.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">Parque Tayrona</span>
+          <span class="pill">Naturaleza + playa</span>
+          <span class="pill">Ciudad más antigua</span>
+          <span class="pill">Sierra Nevada</span>
+          <span class="pill">Carnaval Barranquilla</span>
+          <span class="pill">Colombia auténtica</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ NAV ══ -->
+  <nav class="sticky-nav">
+    <div class="nav-inner">
+      <a class="nav-link" href="#ciudad">Santa Marta</a>
+      <a class="nav-link" href="#centro">Centro histórico</a>
+      <a class="nav-link" href="#rodadero">El Rodadero</a>
+      <a class="nav-link" href="#minca">Minca</a>
+      <a class="nav-link" href="#tayrona">🌿 Tayrona</a>
+      <a class="nav-link" href="#tayrona-playas">Playas Tayrona</a>
+      <a class="nav-link" href="#barranquilla">🎭 Barranquilla</a>
+      <a class="nav-link" href="#comparativa">Comparativa</a>
+      <a class="nav-link" href="#traslados">Traslados</a>
+      <a class="nav-link" href="#temporadas">Temporadas</a>
+      <a class="nav-link" href="#objeciones">Objeciones</a>
+      <a class="nav-link" href="#noches">Noches</a>
+      <a class="nav-link" href="#script">Script</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ══════════════════════════════════════════════
+         SANTA MARTA — VISIÓN GENERAL
+    ══════════════════════════════════════════════ -->
+    <section class="section" id="ciudad">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Visión general</span>
+          <h2>Santa Marta como producto turístico</h2>
+        </div>
+        <p class="section-intro">
+          Santa Marta no es Cartagena y eso es exactamente su ventaja. Fundada en 1525, es la ciudad colonial más antigua de Colombia, con el Caribe al frente y la Sierra Nevada al fondo. Su mayor activo es el Parque Nacional Natural Tayrona, a solo 30 km, donde la selva húmeda tropical llega literalmente a la playa caribeña. Es el destino para el viajero que quiere naturaleza, Caribe auténtico y una Colombia sin filtros.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="label">Aeropuerto</span>
+          <strong>SMR</strong>
+          <span>Aeropuerto Simón Bolívar. Vuelos directos desde Bogotá y Medellín. Alternativamente via Barranquilla (BAQ) a 1h 20 min en bus.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Gran diferencial</span>
+          <strong>Selva + Caribe</strong>
+          <span>El Parque Tayrona: única zona del mundo donde una selva tropical húmeda llega directamente a playas caribeñas de postal.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Clima</span>
+          <strong>28 – 34 °C</strong>
+          <span>Calor intenso en la ciudad. Minca y el interior del Tayrona son más frescos. Brisa caribeña en la costa.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Duración ideal</span>
+          <strong>4 a 6 noches</strong>
+          <span>4 noches para ciudad + Tayrona. 6 si se suma Minca y se quiere tiempo en la playa sin apuro.</span>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:26px;">
+        <div>
+          <div class="info-box">
+            <strong>Frase de venta base:</strong>
+            "Santa Marta es la única ciudad de Colombia donde podés desayunar con vista a la Sierra Nevada, almorzar en la playa caribeña y dormir con el sonido de la selva del Tayrona. No existe esa combinación en ningún otro lugar del continente."
+          </div>
+
+          <div class="cards-2">
+            <div class="card">
+              <h3>Cliente ideal</h3>
+              <ul class="clean">
+                <li>Viajeros de naturaleza que quieren algo más que playa de resort.</li>
+                <li>Parejas aventureras que combinan senderismo y playa.</li>
+                <li>Jóvenes viajeros con gusto por lo auténtico y no masificado.</li>
+                <li>Fotógrafos y amantes de la naturaleza tropical.</li>
+                <li>Cliente que ya conoce Cartagena y quiere Colombia más profunda.</li>
+                <li>Familias aventureras con hijos mayores de 10-12 años.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Pregunta de detección</h3>
+              <p>
+                "¿Qué buscan más: playa de relax puro, naturaleza con senderismo y mar, o quieren combinar ciudad histórica con aventura al aire libre? ¿Les interesa la selva o prefieren quedarse en la costa?"
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="height:100%;">
+            <h3>Cómo posicionarlo bien</h3>
+            <ul class="clean">
+              <li><strong>Centro histórico:</strong> la ciudad colonial con el Parque de los Novios, la Quinta de San Pedro Alejandrino y el casco antiguo.</li>
+              <li><strong>El Rodadero:</strong> la zona de playa y hotelería más turística. Práctico, funcional, con buen ambiente.</li>
+              <li><strong>Minca:</strong> el pueblo de montaña a 45 min donde empieza la Sierra Nevada. Café, cascadas, aves y frío andino.</li>
+              <li><strong>Parque Tayrona:</strong> el gran argumento de diferenciación. Selva + playa + cultura indígena Kogi.</li>
+              <li><strong>Barranquilla:</strong> a 1h 30 min, la ciudad del Carnaval más importante de Colombia.</li>
+            </ul>
+            <div class="tag-row">
+              <span class="tag">Tayrona</span>
+              <span class="tag">Selva + Mar</span>
+              <span class="tag">Minca</span>
+              <span class="tag">Ciudad Colonial</span>
+              <span class="tag">Sierra Nevada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         CENTRO HISTÓRICO
+    ══════════════════════════════════════════════ -->
+    <section class="section destination" id="centro">
+      <div class="destination-top">
+        <div class="destination-number">1</div>
+        <h3>Centro Histórico de Santa Marta</h3>
+        <p class="destination-subtitle">
+          La ciudad más antigua de Colombia (fundada en 1525) con un centro colonial más íntimo y menos masificado que Cartagena. El Parque de los Novios es el corazón social, la Catedral es la más antigua de Colombia y aquí murió Simón Bolívar en la Quinta de San Pedro Alejandrino, hoy museo.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Viajero histórico y cultural que quiere Colombia de verdad.</li>
+              <li>Parejas que buscan autenticidad sin el turismo masivo de Cartagena.</li>
+              <li>Cliente que quiere la base más cercana al Tayrona.</li>
+              <li>Repeaters de Colombia que ya conocen Cartagena.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Ciudad colonial más antigua de Colombia sin la masificación turística de Cartagena.</li>
+              <li>Parque de los Novios: vida social auténtica, terrazas y coctelería local.</li>
+              <li>Quinta de San Pedro Alejandrino: donde murió Simón Bolívar. Museo de primer nivel.</li>
+              <li>Catedral Basílica de Santa Marta: la más antigua de Colombia (1766).</li>
+              <li>A 30 min de la entrada al Parque Tayrona.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Parque de los Novios: el corazón de la vida samaria.</li>
+              <li>Quinta de San Pedro Alejandrino: casa-museo de Bolívar.</li>
+              <li>Catedral Basílica: arquitectura colonial del siglo XVIII.</li>
+              <li>Malecón de Santa Marta: paseo costero con vista a la bahía.</li>
+              <li>Museo del Oro Tairona (sede Santa Marta): cultura indígena precolombina.</li>
+              <li>Mercado Público de Santa Marta: gastronomía costeña auténtica.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>SMR → Centro:</strong> aprox. 10-15 min.</li>
+              <li>El centro es más auténtico que turístico: combinar con tarde en el Rodadero.</li>
+              <li>Base lógica para excursiones al Tayrona (30 min en carro o bus colectivo).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender el centro histórico:</strong> "Es la Colombia costeña sin el filtro turístico. El Parque de los Novios por la tarde con los locales, la Quinta donde murió Bolívar, la catedral colonial y luego la noche en la misma plaza. Más auténtico que Cartagena y mucho menos caro."
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         EL RODADERO
+    ══════════════════════════════════════════════ -->
+    <section class="section destination" id="rodadero">
+      <div class="destination-top">
+        <div class="destination-number">2</div>
+        <h3>El Rodadero</h3>
+        <p class="destination-subtitle">
+          La zona turística y hotelera de Santa Marta por excelencia. Playa con aguas tranquilas, hoteles de cadena frente al mar, restaurantes en primera línea y el ambiente más movido de la ciudad. No es la playa más espectacular de la región, pero es la base más cómoda para quien quiere organización y acceso fácil.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Familias con niños pequeños que quieren playa tranquila y hotel organizado.</li>
+              <li>Cliente de presupuesto medio que quiere servicios completos.</li>
+              <li>Grupos que quieren comodidad y vida nocturna accesible.</li>
+              <li>Base práctica para quienes harán excursiones al Tayrona.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Playa con aguas tranquilas y buena franja de arena.</li>
+              <li>Mayor concentración de hoteles con servicios completos.</li>
+              <li>Restaurants de mariscos y cocina costeña en primera línea.</li>
+              <li>Ambiente animado: acuario, deportes acuáticos y paseos en bote.</li>
+              <li>A 20-30 min del centro histórico y del Tayrona.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Playa El Rodadero: la más organizada y turística de la zona.</li>
+              <li>Acuario de El Rodadero: opción para familias con niños.</li>
+              <li>Taganga: pequeño pueblo de pescadores a 15 min, con ambiente mochilero.</li>
+              <li>Deportes acuáticos: kayak, banana, motos de agua.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>SMR → El Rodadero:</strong> aprox. 10-12 min.</li>
+              <li>Conectado al centro en 20-25 min en taxi.</li>
+              <li>Salida de excursiones al Tayrona: 30-40 min en vehículo.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Alerta comercial:</strong> El Rodadero es cómodo pero no es el Caribe de postal. Para el cliente que quiere agua turquesa de verdad, hay que combinar la base aquí con al menos un día completo en el Tayrona o en las playas de Playa Cristal o Playa Grande.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         MINCA
+    ══════════════════════════════════════════════ -->
+    <section class="section destination" id="minca">
+      <div class="destination-top">
+        <div class="destination-number">3</div>
+        <h3>Minca · Sierra Nevada</h3>
+        <p class="destination-subtitle">
+          El secreto mejor guardado de la región samaria. A solo 45 minutos de la costa y a 660 metros sobre el nivel del mar, Minca es un pueblo de montaña donde el calor del Caribe desaparece y aparecen cafetales, cascadas, aves exóticas y una paz absoluta. Es el contrapunto perfecto al calor y la ciudad: dos mundos a 45 minutos el uno del otro.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Naturaleza y ecoturismo: la oferta más completa de la zona.</li>
+              <li>Fotógrafos: aves endémicas de la Sierra Nevada.</li>
+              <li>Parejas que quieren desconexión y frescura.</li>
+              <li>Viajeros que sufren el calor costero y necesitan un respiro.</li>
+              <li>Amantes del café de especialidad en origen.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Temperatura 10-12 °C más fresca que la costa: el respiro al calor caribeño.</li>
+              <li>Cascadas del Pozo Azul y La Victoria: trekking fácil y muy fotogénico.</li>
+              <li>Avistamiento de aves: más de 600 especies endémicas de la Sierra Nevada.</li>
+              <li>Café de alta calidad en fincas cafeteras visitables.</li>
+              <li>Alojamiento en eco-lodges y fincas con vista a la Sierra.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Cascada Pozo Azul: la más accesible, piscina natural de montaña.</li>
+              <li>Cascadas La Victoria: más exigentes, paisaje extraordinario.</li>
+              <li>Fincas cafeteras: recorrido y catación de café de origen.</li>
+              <li>Miradores sobre la Sierra Nevada y el Caribe.</li>
+              <li>Trekking hacia la Ciudad Perdida (desde Minca, 5-6 días, avanzado).</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>Santa Marta → Minca:</strong> 45 min en moto-taxi o vehículo 4x4.</li>
+              <li>Camino de montaña con curvas pronunciadas: comunicar al cliente.</li>
+              <li>Puede hacerse como excursión de un día o con noche en eco-lodge.</li>
+              <li>No apto para clientes con cinetosis severa.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box green">
+          <strong>Cómo vender Minca:</strong> "A 45 minutos del calor del Caribe, hay un pueblo de montaña con cascadas, cafetales y 600 especies de aves endémicas. El contraste con la playa es tan brutal que parece que estás en otro país. Es el día más sorprendente que podés incluir en el viaje."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Uso comercial correcto</h4>
+            <p>
+              Una noche en Minca más que una excursión de día: se disfruta mucho más el atardecer sobre la Sierra y el amanecer sin turistas. Si el cliente solo va de día, recomendar salida muy temprana para hacer las cascadas antes del calor.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Ciudad Perdida — para el viajero aventurero</h4>
+            <p>
+              El trekking a la Ciudad Perdida (Teyuna) desde la zona de Minca o Santa Marta es una de las caminatas más épicas de América del Sur: 5-6 días en selva, río y montaña para llegar a una ciudad indígena precolombina más antigua que Machu Picchu. Solo para cliente muy activo y con tiempo.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         PARQUE TAYRONA — SECCIÓN ESPECIAL
+    ══════════════════════════════════════════════ -->
+    <div class="tayrona-hero" id="tayrona">
+      <span class="tayrona-eyebrow">🌿 Parque Nacional Natural · Patrimonio de la Biosfera</span>
+      <h2>Parque Nacional Tayrona</h2>
+      <p>
+        El Tayrona es el destino de naturaleza más impresionante del Caribe latinoamericano. 15.000 hectáreas donde la selva húmeda tropical llega directamente a la playa caribeña: rocas de granito, palmeras, arena blanca y un mar en diferentes tonos de azul. No es un parque difícil ni de expedición: la mayoría de sus playas son accesibles con caminatas de 30-90 minutos y los campamentos tienen comodidades básicas bien resueltas. Es el argumento más poderoso para vender Santa Marta.
+      </p>
+      <div class="tayrona-kpis">
+        <div class="tayrona-kpi">
+          <span class="label">Distancia desde Santa Marta</span>
+          <strong>30 km</strong>
+          <span>Entrada principal El Zaíno a 30 min en carro o bus colectivo.</span>
+        </div>
+        <div class="tayrona-kpi">
+          <span class="label">Superficie</span>
+          <strong>15.000 ha</strong>
+          <span>Parque Nacional con selva tropical, 30+ playas y arrecifes de coral.</span>
+        </div>
+        <div class="tayrona-kpi">
+          <span class="label">Tipo de visita</span>
+          <strong>Excursión o camping</strong>
+          <span>Día completo desde Santa Marta o 1-3 noches en campamento dentro del parque.</span>
+        </div>
+        <div class="tayrona-kpi">
+          <span class="label">Alojamiento interno</span>
+          <strong>Eco-habs y Camping</strong>
+          <span>Ecohabs El Cabo (glamping de lujo), carpas y cabañas. Reserva anticipada obligatoria.</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="tayrona-section" id="tayrona-playas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow" style="color:#2E7D32;">Tayrona en detalle</span>
+          <h2 style="color:#1B5E20;">Playas y zonas del Parque</h2>
+        </div>
+        <p class="section-intro">
+          El Tayrona no es solo una playa: son más de treinta bahías con caracteres distintos, algunas aptas para baño, otras solo para contemplación. Conocer cuáles recomendar según el perfil y el nivel de actividad del cliente es fundamental.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4 style="color:#1B5E20;">🏖️ Cabo San Juan de Guía</h4>
+          <p>
+            La playa más icónica del Tayrona. Dos bahías separadas por una gran roca de granito donde está el campamento más famoso del parque. Una es apta para baño, la otra es de contemplación con oleaje fuerte. La foto más reconocida del Tayrona. Caminata de 90 min desde el Zaíno o 40 min desde Arrecifes.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag green">Icónica</span>
+            <span class="tag green">Camping</span>
+            <span class="tag green">Fotografía</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#1B5E20;">🐠 La Piscina</h4>
+          <p>
+            La playa más apta para el baño dentro del Tayrona. Aguas protegidas por rocas, oleaje controlado y mucha presencia de peces tropicales. Ideal para snorkel básico. Unos 40 min de caminata desde el Zaíno. La opción más recomendable para familias y clientes sin condición física particular.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag green">Baño</span>
+            <span class="tag green">Snorkel</span>
+            <span class="tag green">Familia</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#1B5E20;">🌊 Arrecifes</h4>
+          <p>
+            La primera gran playa desde la entrada. Oleaje fuerte que la hace peligrosa para el baño, pero con una belleza visual impresionante: selva hasta el borde del agua, palmeras inclinadas por el viento y arena dorada. Punto de paso obligatorio hacia Cabo San Juan.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag green">Paisaje</span>
+            <span class="tag green">Solo contemplación</span>
+            <span class="tag green">Paso obligado</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#1B5E20;">🦎 Pueblito / Chairama</h4>
+          <p>
+            El sitio arqueológico precolombino dentro del parque. Vestigios de la cultura Tairona con terrazas de piedra en plena selva. La caminata es de 2 horas desde Cabo San Juan o 3 horas desde el Zaíno. Para el viajero que quiere naturaleza + historia indígena en la misma jornada.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag green">Arqueología</span>
+            <span class="tag green">Senderismo</span>
+            <span class="tag green">Cultura Tairona</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#1B5E20;">🌿 Ecohabs El Cabo</h4>
+          <p>
+            El único alojamiento de glamping de lujo dentro del parque, justo en Cabo San Juan. Cabañas elevadas sobre la selva con vista al Caribe, hamacas y gastronomía en plena naturaleza. El producto premium del Tayrona: reservar con meses de antelación especialmente en temporada alta.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag green">Glamping</span>
+            <span class="tag green">Premium</span>
+            <span class="tag green">Lujo en selva</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#1B5E20;">🐘 Fauna del Tayrona</h4>
+          <p>
+            El parque tiene una biodiversidad excepcional: monos aulladores, perezosos, serpientes, tortugas marinas, más de 300 especies de aves y delfines en las bahías. No es un parque africano, pero los avistamientos son frecuentes en caminatas tranquilas.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag green">Fauna</span>
+            <span class="tag green">Aves</span>
+            <span class="tag green">Naturaleza viva</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box green" style="margin-top:22px;">
+        <strong>Tip crítico de operativa:</strong> El Parque Tayrona cierra en febrero (mantenimiento) y en algunas fechas por temporadas indígenas. Verificar disponibilidad antes de vender fechas concretas. Los Ecohabs y los campamentos organizados requieren reserva anticipada: en temporada alta (diciembre-enero) se agotan meses antes.
+      </div>
+
+      <div class="info-box" style="margin-top:14px;">
+        <strong>Combinación ganadora:</strong> 1 noche en Ecohabs o camping en Cabo San Juan + excursión de día completo visitando La Piscina, Arrecifes y Pueblito. El cliente que duerme una noche dentro del parque tiene una experiencia completamente diferente al que hace el parque de día: el atardecer y el amanecer en la selva con el Caribe al frente no tienen precio.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         BARRANQUILLA — SECCIÓN ESPECIAL
+    ══════════════════════════════════════════════ -->
+    <div class="bq-hero" id="barranquilla">
+      <span class="bq-eyebrow">🎭 Capital del Carnaval · 1h 30 min desde Santa Marta</span>
+      <h2>Barranquilla</h2>
+      <p>
+        Barranquilla no es un destino de playa ni de ciudad histórica colonial: es la capital del Carnaval más importante de Colombia y uno de los cuatro más grandes del mundo (después de Río, Venecia y Oruro). Su aeropuerto (BAQ) es el hub de conexión del Caribe colombiano y su gastronomía costeña está entre las más auténticas del país. Para el viajero que llega o sale del Caribe colombiano, Barranquilla siempre tiene sentido como parada.
+      </p>
+      <div class="bq-kpis">
+        <div class="bq-kpi">
+          <span class="label">Aeropuerto</span>
+          <strong>BAQ</strong>
+          <span>Ernesto Cortissoz. Hub de conexión del Caribe. Vuelos internacionales directos desde varias ciudades.</span>
+        </div>
+        <div class="bq-kpi">
+          <span class="label">Distancia a Santa Marta</span>
+          <strong>1h 30 min</strong>
+          <span>En bus o carro por la Troncal del Caribe. Trayecto muy fácil y muy transitado.</span>
+        </div>
+        <div class="bq-kpi">
+          <span class="label">Gran evento</span>
+          <strong>Carnaval</strong>
+          <span>4 días antes del Miércoles de Ceniza. Declarado Patrimonio de la Humanidad por la UNESCO.</span>
+        </div>
+        <div class="bq-kpi">
+          <span class="label">Perfil comercial</span>
+          <strong>Hub + Carnaval</strong>
+          <span>Ideal como entrada o salida del Caribe colombiano o como visita específica en Carnaval.</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="bq-section">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow" style="color:#E65100;">Barranquilla en detalle</span>
+          <h2 style="color:#B71C1C;">Qué tiene para ofrecer</h2>
+        </div>
+        <p class="section-intro">
+          Barranquilla no es el destino principal del viaje en la mayoría de los casos, pero tiene suficiente contenido como para justificar 1-2 noches, especialmente si el cliente llega o sale en avión desde aquí, o si puede coincidir con el Carnaval.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4 style="color:#B71C1C;">🎭 Carnaval de Barranquilla</h4>
+          <p>
+            Cuatro días de celebración continua antes del Miércoles de Ceniza: la Batalla de Flores, el desfile de la Gran Parada, el Festival de Orquestas y el Entierro de Joselito. Más de un millón de personas en las calles. Reservas con 6-12 meses de anticipación mínima.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#fff3e0;color:#E65100;">UNESCO</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Evento único</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Febrero</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#B71C1C;">🍽️ Gastronomía costeña</h4>
+          <p>
+            La cocina caribeña colombiana en su versión más auténtica: sancocho de guandú, friche, arroz de lisa, butifarras de Soledad y los mejores mariscos del litoral. El mercado de La Loma del Perico y los restaurantes del Barrio El Prado son la mejor experiencia gastronómica de la costa.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Gastronomía</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Auténtica</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Costeña</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#B71C1C;">🏛️ Centro histórico y El Prado</h4>
+          <p>
+            El barrio El Prado es uno de los mejores ejemplos de arquitectura republicana del Caribe colombiano. La Catedral Metropolitana, el Parque Cultural del Caribe y el Museo del Caribe son los atractivos culturales más relevantes para el viajero que hace una parada.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Arquitectura</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Cultura</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Museo</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#B71C1C;">🎵 Música y vida nocturna</h4>
+          <p>
+            Barranquilla es la cuna de la cumbia, el vallenato eléctrico y la champeta. Los bares del centro con música en vivo son una experiencia cultural que no tiene equivalente en ningún otro punto del Caribe latinoamericano. Shakira nació aquí.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Cumbia</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Nocturna</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Música en vivo</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#B71C1C;">🌊 Playa Salgar y Puerto Colombia</h4>
+          <p>
+            A 30 min de Barranquilla, Puerto Colombia tiene el muelle histórico más largo de América del Sur (en ruinas, pero impactante) y playas tranquilas donde va la gente local. No es Caribe de postal pero tiene autenticidad total.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Local</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Auténtico</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Histórico</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#B71C1C;">✈️ Hub de conexión aérea</h4>
+          <p>
+            El Aeropuerto Ernesto Cortissoz (BAQ) tiene vuelos directos internacionales que no siempre están disponibles en Santa Marta. Barranquilla funciona perfectamente como ciudad de entrada o salida del Caribe colombiano integrando 1-2 noches al itinerario.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Logística</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Hub</span>
+            <span class="tag" style="background:#fff3e0;color:#E65100;">Internacional</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box bq" style="margin-top:22px;">
+        <strong>Cuándo vender Barranquilla activamente:</strong> Carnaval (febrero, reservar con 6-12 meses de anticipación) y como entrada/salida logística para el itinerario Caribe colombiano completo. El resto del año es una parada de 1-2 noches que suma cultura costeña sin ser el centro del viaje.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         COMPARATIVA
+    ══════════════════════════════════════════════ -->
+    <section class="section" id="comparativa">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Lectura rápida</span>
+          <h2>Comparativa de destinos y zonas</h2>
+        </div>
+        <p class="section-intro">
+          El triángulo Santa Marta – Tayrona – Barranquilla tiene lógicas de venta muy diferentes. Saber cuál priorizar según el perfil del cliente es la clave.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Destino / Zona</th>
+            <th>Producto principal</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Santa Marta centro</strong></td>
+            <td>Historia + ciudad costeña auténtica</td>
+            <td>Culturales, repeaters Colombia, parejas</td>
+            <td>"La ciudad colonial más antigua del país sin el turismo de Cartagena."</td>
+          </tr>
+          <tr>
+            <td><strong>El Rodadero</strong></td>
+            <td>Playa + hotel de cadena + servicios</td>
+            <td>Familias, presupuesto medio, practicidad</td>
+            <td>"La base más cómoda para explorar la región entera."</td>
+          </tr>
+          <tr>
+            <td><strong>Minca</strong></td>
+            <td>Montaña + cascadas + café + aves</td>
+            <td>Naturaleza, fotógrafos, aventureros</td>
+            <td>"El lado de la Sierra Nevada: frío, verde y completamente diferente al Caribe."</td>
+          </tr>
+          <tr>
+            <td><strong>Parque Tayrona</strong></td>
+            <td>Selva + playa + naturaleza única</td>
+            <td>Todos los perfiles activos</td>
+            <td>"Donde la selva tropical llega al Caribe. No existe en ningún otro lugar del mundo."</td>
+          </tr>
+          <tr>
+            <td><strong>Ecohabs Cabo San Juan</strong></td>
+            <td>Glamping en selva caribeña</td>
+            <td>Parejas premium, naturaleza de lujo</td>
+            <td>"Dormir dentro del Tayrona con el Caribe al frente y la selva detrás."</td>
+          </tr>
+          <tr>
+            <td><strong>Barranquilla</strong></td>
+            <td>Carnaval + hub aéreo + gastronomía</td>
+            <td>Evento Carnaval / logística de viaje</td>
+            <td>"La capital del Carnaval. El Caribe colombiano más vivo y más local."</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TRASLADOS
+    ══════════════════════════════════════════════ -->
+    <section class="section" id="traslados">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Operativa</span>
+          <h2>Tiempos medios de traslado</h2>
+        </div>
+        <p class="section-intro">
+          El triángulo Santa Marta – Tayrona – Barranquilla es muy manejable en términos de distancias. Todo lo esencial está a menos de 2 horas del centro de Santa Marta.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Origen / Destino</th>
+            <th>Tiempo estimado</th>
+            <th>Medio de transporte</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>SMR → Centro Santa Marta</strong></td>
+            <td>10-15 min</td>
+            <td>Taxi</td>
+            <td>Aeropuerto muy bien ubicado. Llegada muy sencilla.</td>
+          </tr>
+          <tr>
+            <td><strong>Santa Marta → El Rodadero</strong></td>
+            <td>10-15 min</td>
+            <td>Taxi / bus</td>
+            <td>Conectados por la costa. Fácil y barato en taxi colectivo.</td>
+          </tr>
+          <tr>
+            <td><strong>Santa Marta → Parque Tayrona (Zaíno)</strong></td>
+            <td>30-40 min</td>
+            <td>Bus colectivo / taxi</td>
+            <td>Hay buses colectivos directos desde el mercado de Santa Marta muy económicos.</td>
+          </tr>
+          <tr>
+            <td><strong>Tayrona Zaíno → Cabo San Juan</strong></td>
+            <td>90 min caminando</td>
+            <td>A pie (obligatorio)</td>
+            <td>Caminata en selva plana con tramos de arena. Apta para cualquier nivel de condición física media.</td>
+          </tr>
+          <tr>
+            <td><strong>Tayrona Zaíno → La Piscina</strong></td>
+            <td>40-50 min caminando</td>
+            <td>A pie / caballo</td>
+            <td>La opción más accesible del parque. También hay caballos para quienes no pueden caminar.</td>
+          </tr>
+          <tr>
+            <td><strong>Santa Marta → Minca</strong></td>
+            <td>45 min</td>
+            <td>Moto-taxi / vehículo 4x4</td>
+            <td>Carretera de montaña con curvas. Comunicar al cliente sensible al mareo.</td>
+          </tr>
+          <tr>
+            <td><strong>Santa Marta → Barranquilla</strong></td>
+            <td>1h 30 min</td>
+            <td>Bus / carro</td>
+            <td>Autopista del Caribe. Muy fácil con buses directos y cómodos desde el terminal de Santa Marta.</td>
+          </tr>
+          <tr>
+            <td><strong>BAQ (Barranquilla) → Santa Marta</strong></td>
+            <td>1h 30 min</td>
+            <td>Bus / transfer privado</td>
+            <td>Lógico para clientes que vuelan internacional por BAQ y quieren llegar directamente a Santa Marta.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box pink" style="margin-top:22px;">
+        <strong>Tip de itinerario:</strong> Si el cliente vuela internacional por Barranquilla (BAQ), puede ir directamente en bus a Santa Marta el mismo día del arribo (1h 30 min). No tiene sentido perder una noche en Barranquilla solo de tránsito salvo que haya algo específico que quiera ver en la ciudad.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TEMPORADAS
+    ══════════════════════════════════════════════ -->
+    <section class="section" id="temporadas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Estacionalidad</span>
+          <h2>Temporadas comerciales</h2>
+        </div>
+        <p class="section-intro">
+          Santa Marta tiene una estacionalidad muy marcada por el Tayrona: el parque cierra en febrero y puede cerrar por lluvia. El resto del año es vendible con matices.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Santa Marta / Tayrona</th>
+            <th>Barranquilla</th>
+            <th>Cómo venderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diciembre – enero</strong></td>
+            <td>Temporada alta. Tayrona abierto y lleno. Brisa fuerte (vientos alisios). El mar puede tener más oleaje.</td>
+            <td>Previa al Carnaval. Ciudad normal pero ya con ambiente.</td>
+            <td>Mejor ventana de precio para Tayrona pero reservar muy anticipado. El viento en la costa puede molestar al cliente sensible.</td>
+          </tr>
+          <tr>
+            <td><strong>Febrero</strong></td>
+            <td>⚠️ Tayrona cierra todo el mes por mantenimiento.</td>
+            <td>🎭 Carnaval de Barranquilla. El mejor momento del año.</td>
+            <td>Si el cliente quiere Tayrona, no vender febrero. Si quiere Carnaval, es el momento perfecto con base en Barranquilla.</td>
+          </tr>
+          <tr>
+            <td><strong>Marzo – junio</strong></td>
+            <td>Temporada media/alta. Clima muy bueno. Tayrona en óptimas condiciones.</td>
+            <td>Clima cálido sin evento especial.</td>
+            <td>La mejor ventana para Santa Marta + Tayrona sin las aglomeraciones de diciembre-enero. Muy recomendable.</td>
+          </tr>
+          <tr>
+            <td><strong>Julio – agosto</strong></td>
+            <td>Temporada alta colombiana. Mucho turismo doméstico. Tayrona lleno.</td>
+            <td>Ciudad activa, precios altos.</td>
+            <td>Mucho ambiente pero reservar con anticipación, especialmente en Tayrona. Precios más altos.</td>
+          </tr>
+          <tr>
+            <td><strong>Septiembre – noviembre</strong></td>
+            <td>Temporada de lluvias. El Tayrona puede tener caminos difíciles. Tayrona puede cerrar tramos.</td>
+            <td>Lluvia moderada. Precios bajos.</td>
+            <td>Opción de bajo precio pero con riesgo de cierre parcial del Tayrona. Ideal para cliente que solo quiere ciudad y no le importa el parque.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box red" style="margin-top:18px;">
+        <strong>Alerta importante — Cierre de Tayrona:</strong> El parque cierra oficialmente en febrero (todo el mes) y puede cerrar temporalmente en temporada de lluvias fuertes. Si el Tayrona es el argumento principal de venta, confirmar disponibilidad antes de cerrar la operación. Las reservas en Ecohabs se agotan con meses de anticipación.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         OBJECIONES
+    ══════════════════════════════════════════════ -->
+    <section class="section" id="objeciones">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Ventas</span>
+          <h2>Cómo manejar objeciones</h2>
+        </div>
+        <p class="section-intro">
+          Santa Marta es menos conocida que Cartagena internacionalmente. El trabajo del vendedor es mostrar que tiene algo que Cartagena no puede dar: la naturaleza del Tayrona.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>"Prefiero Cartagena, es más conocida."</h4>
+          <p>
+            Respuesta: Cartagena es extraordinaria para ciudad colonial y gastronomía. Pero si el cliente quiere naturaleza de verdad — selva + playa caribeña — el Tayrona no tiene equivalente en Colombia ni en América. Son destinos complementarios, no competidores.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿El Tayrona es difícil de llegar?"</h4>
+          <p>
+            Respuesta: no. La entrada principal (El Zaíno) está a 30 min de Santa Marta en bus colectivo. La caminata a La Piscina es de 40-50 min en terreno plano. Cabo San Juan son 90 min a ritmo tranquilo. No es una expedición: es un paseo en selva con destino a la playa.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿Hay buenas playas sin entrar al parque?"</h4>
+          <p>
+            Respuesta: Playa Cristal y Playa Grande (cerca de Taganga) tienen agua cristalina accesible en lancha sin entrar al parque. El Rodadero es práctico y familiar. Para el Caribe más espectacular sin caminata, Playa Cristal es la mejor alternativa.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Hace demasiado calor."</h4>
+          <p>
+            Respuesta: en la costa sí. Pero Minca, a 45 minutos, tiene 10-12 grados menos que la ciudad. La combinación de costa + montaña es exactamente lo que hace diferente a este destino: si el calor agobia, hay un plan B a 45 minutos.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿Es seguro el Tayrona?"</h4>
+          <p>
+            Respuesta: el parque está bien gestionado por Parques Nacionales y tiene guías y personal permanente. Las caminatas son seguras de día. No se recomienda caminar de noche. Dentro del parque no hay problemas de seguridad reportados para turistas.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Barranquilla no parece muy turística."</h4>
+          <p>
+            Respuesta: en temporada normal es una ciudad de paso o escala. Pero en Carnaval (febrero) es uno de los cuatro mejores eventos del mundo. Fuera del Carnaval, tiene gastronomía costeña excepcional y vale 1-2 noches para el viajero cultural.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box orange">
+        <strong>Alerta crítica:</strong> No vender Santa Marta como un destino de playa estándar. El Rodadero no es el argumento de venta: el argumento es el Tayrona. Si el cliente hace Santa Marta sin entrar al Tayrona, se pierde el 70% del valor del destino.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         NOCHES
+    ══════════════════════════════════════════════ -->
+    <section class="section" id="noches">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Duración ideal</span>
+          <h2>Noches recomendadas</h2>
+        </div>
+        <p class="section-intro">
+          Santa Marta sola puede cubrirse en 3-4 noches. Con Tayrona bien hecho, 5-6. Con Minca y Barranquilla, un itinerario completo de 8-9 noches es muy coherente y vendible.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Opción de viaje</th>
+            <th>Noches</th>
+            <th>Qué incluye</th>
+            <th>Perfil recomendado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Santa Marta esencial</strong></td>
+            <td>4 noches</td>
+            <td>Centro histórico, El Rodadero, 1 día completo en el Tayrona (Cabo San Juan + La Piscina), atardecer en bahía.</td>
+            <td>Primera visita, tiempo limitado, viajero con buena condición física.</td>
+          </tr>
+          <tr>
+            <td><strong>Santa Marta completo</strong></td>
+            <td>5 a 6 noches</td>
+            <td>Todo lo anterior + 1 noche en Ecohabs o camping en Tayrona + Minca de día.</td>
+            <td>Parejas aventureras, naturaleza, fotógrafos, repeaters de Colombia.</td>
+          </tr>
+          <tr>
+            <td><strong>Caribe norte completo</strong></td>
+            <td>8 a 9 noches</td>
+            <td>Santa Marta (4n) + Tayrona 1 noche + Minca 1 noche + Barranquilla 1-2n. Entrada o salida por BAQ.</td>
+            <td>Viajero internacional, explorador de Colombia, tiempo generoso.</td>
+          </tr>
+          <tr>
+            <td><strong>Colombia Caribe total</strong></td>
+            <td>12 a 14 noches</td>
+            <td>Santa Marta + Tayrona + Barranquilla + Cartagena + Barú. El mejor circuito de costa colombiana posible.</td>
+            <td>Viaje largo, viajero internacional, máximo presupuesto y tiempo.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Venta simple</h4>
+          <p>
+            5 noches base en El Rodadero o centro de Santa Marta con 1 día completo en Tayrona y 1 día en Minca. La combinación más vendible, más diferenciada y más impactante para el cliente.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Venta que sube valor</h4>
+          <p>
+            1 noche en Ecohabs Cabo San Juan dentro del Tayrona. Es el upgrade más impactante que existe en este destino: el cliente pasa de "fui al parque de día" a "dormí en la selva con el Caribe al frente". Ticket más alto, satisfacción máxima.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         SCRIPT DE VENTA
+    ══════════════════════════════════════════════ -->
+    <section class="section" id="script">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cierre comercial</span>
+          <h2>Script de venta</h2>
+        </div>
+        <p class="section-intro">
+          Guion pensado para primera llamada, mail comercial o lectura rápida durante la cotización.
+        </p>
+      </div>
+
+      <div class="script-box">
+        <p><strong>Apertura:</strong> "Santa Marta tiene algo que ningún otro destino del Caribe puede ofrecer: el Parque Tayrona. Es el único lugar del mundo donde una selva húmeda tropical llega directamente a la playa caribeña. La caminata te lleva en 90 minutos desde la selva con monos aulladores hasta una bahía de agua turquesa con arena blanca."</p>
+        <p><strong>Pregunta de detección:</strong> "¿Buscan naturaleza activa — caminata, selva, fauna — o prefieren un plan más relajado con playa y ciudad? ¿El calor intenso es un problema o lo manejan bien?"</p>
+        <p><strong>Lectura rápida por perfil:</strong> "El Rodadero si quieren base cómoda con playa y hotel organizado. El centro histórico si les interesa la ciudad colonial más antigua de Colombia. Minca si quieren escapar del calor y ver las cascadas y los cafetales de la Sierra Nevada. Y el Tayrona si el objetivo principal es la naturaleza y el Caribe de verdad."</p>
+        <p><strong>Argumento Tayrona:</strong> "El parque no es difícil. La caminata a Cabo San Juan son 90 minutos en terreno bastante llano, con selva, aves y ruido de río. Y cuando llegás, encontrás una de las playas más bonitas de América, rodeada de roca de granito y palmeras. Si se puede quedar una noche en los Ecohabs, la experiencia es completamente diferente: el atardecer y el amanecer en la selva con el Caribe al frente."</p>
+        <p><strong>Argumento Barranquilla:</strong> "Si el viaje coincide con febrero o si vuelan por BAQ, merece la pena sumar 1-2 noches en Barranquilla. En Carnaval es uno de los cuatro mejores eventos del mundo. El resto del año tiene la gastronomía costeña más auténtica y la música en vivo más buena del Caribe colombiano."</p>
+        <p><strong>Cierre recomendado:</strong> "Yo no bajaría de 5 noches para hacer bien Santa Marta con el Tayrona. Con 6-7 ya se suma Minca y queda un viaje redondo. Y si tienen posibilidad de combinar con Cartagena, tenemos el mejor itinerario de costa colombiana que existe."</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Guía comercial base · Dr. Viaje · Santa Marta · Parque Tayrona · Barranquilla · Formato comercial-consultivo</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" aria-label="Subir">↑</button>
+
+  <script>
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
+    });
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

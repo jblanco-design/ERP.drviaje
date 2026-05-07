@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guía Comercial Consultiva · Cancún / Riviera Maya</title>
+  <style>
+    :root{
+      --bg:#fff7fb;
+      --white:#ffffff;
+      --ink:#231942;
+      --muted:#6f6287;
+      --brand:#7b2cbf;
+      --brand-2:#9d4edd;
+      --brand-3:#c77dff;
+      --accent:#ff7b54;
+      --accent-2:#ffb703;
+      --rose:#ff4d8d;
+      --line:#eadcf7;
+      --soft:#f6efff;
+      --soft-2:#fff1f7;
+      --shadow:0 12px 30px rgba(71, 38, 122, .12);
+      --radius:22px;
+      --nav-h:84px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, Segoe UI, Arial, Helvetica, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(199,125,255,.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(255,123,84,.14), transparent 24%),
+        linear-gradient(180deg, #fff8fc 0%, #fff 22%, #fff 100%);
+      line-height:1.55;
+    }
+
+    section[id]{
+      scroll-margin-top: calc(var(--nav-h) + 24px);
+    }
+
+    .wrap{
+      width:min(var(--max), calc(100% - 32px));
+      margin:0 auto;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      padding:56px 0 28px;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      filter:blur(10px);
+      z-index:0;
+    }
+
+    .hero::before{
+      width:360px;height:360px;
+      background:rgba(157,78,221,.16);
+      top:-120px; left:-80px;
+    }
+
+    .hero::after{
+      width:280px;height:280px;
+      background:rgba(255,123,84,.14);
+      right:-80px; top:20px;
+    }
+
+    .hero-card{
+      position:relative;
+      z-index:1;
+      background:linear-gradient(135deg, rgba(123,44,191,.96), rgba(255,77,141,.88));
+      color:#fff;
+      border-radius:32px;
+      padding:34px;
+      box-shadow:var(--shadow);
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.16);
+      font-size:13px;
+      font-weight:700;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    h1{
+      margin:18px 0 10px;
+      font-size:clamp(2rem, 4vw, 3.7rem);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:900px;
+      font-size:1.05rem;
+      color:rgba(255,255,255,.92);
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:22px;
+    }
+
+    .pill{
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:700;
+      font-size:.95rem;
+    }
+
+    .kpis{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin:24px 0 10px;
+    }
+
+    .kpi{
+      background:var(--white);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .kpi .label{
+      color:var(--muted);
+      font-size:.85rem;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      font-weight:800;
+    }
+
+    .kpi .value{
+      margin-top:6px;
+      font-size:1.35rem;
+      font-weight:900;
+      color:var(--brand);
+    }
+
+    .sticky-nav{
+      position:sticky;
+      top:0;
+      z-index:999;
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      background:rgba(255,255,255,.9);
+      border-top:1px solid rgba(255,255,255,.5);
+      border-bottom:1px solid var(--line);
+      box-shadow:0 8px 24px rgba(40, 16, 78, .08);
+    }
+
+    .sticky-nav .inner{
+      width:min(var(--max), calc(100% - 24px));
+      margin:0 auto;
+      display:flex;
+      gap:10px;
+      overflow:auto;
+      padding:14px 0;
+      scrollbar-width:none;
+    }
+
+    .sticky-nav .inner::-webkit-scrollbar{display:none}
+
+    .sticky-nav a{
+      white-space:nowrap;
+      text-decoration:none;
+      color:var(--brand);
+      font-weight:800;
+      font-size:.95rem;
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      transition:.2s ease;
+    }
+
+    .sticky-nav a:hover{
+      background:linear-gradient(135deg, var(--brand), var(--rose));
+      color:#fff;
+      border-color:transparent;
+      transform:translateY(-1px);
+    }
+
+    .section{
+      padding:34px 0 10px;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .section-title .dot{
+      width:14px;height:14px;border-radius:50%;
+      background:linear-gradient(135deg, var(--accent), var(--rose));
+      flex:0 0 auto;
+    }
+
+    .section-title h2{
+      margin:0;
+      font-size:clamp(1.4rem, 2.5vw, 2rem);
+      letter-spacing:-.02em;
+    }
+
+    .lead{
+      margin:0 0 18px;
+      color:var(--muted);
+      font-size:1.03rem;
+      max-width:980px;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+
+    .grid-4{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+
+    .card{
+      background:var(--white);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+
+    .card h3{
+      margin:0 0 8px;
+      font-size:1.25rem;
+      letter-spacing:-.02em;
+    }
+
+    .card p{
+      margin:0 0 12px;
+      color:#46375d;
+    }
+
+    .tag{
+      display:inline-block;
+      margin:4px 8px 0 0;
+      padding:8px 12px;
+      border-radius:999px;
+      background:var(--soft-2);
+      color:var(--rose);
+      font-weight:800;
+      font-size:.88rem;
+      border:1px solid #ffd4e5;
+    }
+
+    .mini-title{
+      margin:14px 0 8px;
+      font-size:.95rem;
+      color:var(--brand);
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      font-weight:900;
+    }
+
+    ul.clean{
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+
+    ul.clean li{
+      position:relative;
+      padding-left:18px;
+      margin:8px 0;
+      color:#46375d;
+    }
+
+    ul.clean li::before{
+      content:"•";
+      position:absolute;
+      left:0; top:0;
+      color:var(--accent);
+      font-weight:900;
+    }
+
+    .zone-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:18px;
+    }
+
+    .zone{
+      background:linear-gradient(180deg, #fff 0%, #fff9fd 100%);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .zone .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:var(--soft);
+      color:var(--brand);
+      border:1px solid var(--line);
+      font-weight:900;
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      margin-bottom:12px;
+    }
+
+    .zone h3{
+      margin:0 0 8px;
+      font-size:1.55rem;
+      letter-spacing:-.03em;
+    }
+
+    .zone .sub{
+      color:var(--muted);
+      font-weight:700;
+      margin-bottom:12px;
+    }
+
+    .highlight{
+      background:linear-gradient(135deg, rgba(255,183,3,.14), rgba(255,123,84,.14));
+      border:1px solid rgba(255,183,3,.35);
+      border-radius:18px;
+      padding:14px 16px;
+      margin:14px 0;
+      color:#5f3d0f;
+      font-weight:700;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      background:var(--white);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+    }
+
+    th, td{
+      padding:14px 16px;
+      text-align:left;
+      vertical-align:top;
+      border-bottom:1px solid var(--line);
+      font-size:.97rem;
+    }
+
+    thead th{
+      background:linear-gradient(135deg, var(--brand), var(--rose));
+      color:#fff;
+      font-weight:900;
+      letter-spacing:.02em;
+    }
+
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:nth-child(even) td{background:#fffafd}
+
+    .quote-box{
+      background:linear-gradient(135deg, rgba(123,44,191,.08), rgba(255,77,141,.08));
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+
+    .quote-box strong{
+      color:var(--brand);
+    }
+
+    .footer-note{
+      padding:30px 0 60px;
+      color:var(--muted);
+      text-align:center;
+      font-size:.95rem;
+    }
+
+    @media (max-width: 1080px){
+      .kpis, .grid-4{grid-template-columns:repeat(2,1fr)}
+      .zone-grid, .grid-3, .grid-2{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 680px){
+      :root{--nav-h:76px}
+      .hero-card{padding:24px}
+      .kpis{grid-template-columns:1fr}
+      .grid-4{grid-template-columns:1fr}
+      .zone h3{font-size:1.35rem}
+      th, td{padding:12px}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="hero-card">
+        <span class="eyebrow">Guía comercial consultiva · Caribe Mexicano</span>
+        <h1>Cancún / Riviera Maya</h1>
+        <p>
+          Un producto muy fácil de vender porque permite afinar la propuesta según el perfil del cliente:
+          resort clásico, playa con vida, lujo nuevo, boutique con diseño, familias, parejas, grupos,
+          cultura maya y excursiones de alto impacto. La clave comercial no es vender “solo playa”,
+          sino vender <strong>el tipo de experiencia</strong> dentro del Caribe Mexicano.
+        </p>
+
+        <div class="pill-row">
+          <span class="pill">Parejas</span>
+          <span class="pill">Familias</span>
+          <span class="pill">Todo incluido</span>
+          <span class="pill">Cenotes</span>
+          <span class="pill">Vida nocturna</span>
+          <span class="pill">Cultura maya</span>
+          <span class="pill">Hoteles premium</span>
+          <span class="pill">Viaje multi-zona</span>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="label">Aeropuerto base</div>
+          <div class="value">CUN</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Gran diferencial</div>
+          <div class="value">Muchos viajes en uno</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Estancia ideal</div>
+          <div class="value">7–10 noches</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Cliente más fácil</div>
+          <div class="value">Parejas + familias</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky-nav">
+    <div class="inner">
+      <a href="#pais">País / producto</a>
+      <a href="#cancun">Cancún</a>
+      <a href="#costa-mujeres">Costa Mujeres</a>
+      <a href="#puerto-morelos">Puerto Morelos</a>
+      <a href="#playa-del-carmen">Playa del Carmen</a>
+      <a href="#tulum">Tulum</a>
+      <a href="#comparativa">Comparativa</a>
+      <a href="#traslados">Traslados</a>
+      <a href="#temporadas">Temporadas</a>
+      <a href="#objeciones">Objeciones</a>
+      <a href="#noches">Noches</a>
+      <a href="#script">Script de venta</a>
+    </div>
+  </nav>
+
+  <!-- HOTELES RECOMENDADOS CTA -->
+  <div style="background:linear-gradient(135deg,#fff7e0,#fff);border-bottom:1px solid #f5dfa0;padding:14px 24px;">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:1.4rem;">🏨</span>
+        <div>
+          <strong style="font-size:.95rem;color:#7a4500;">¿Querés ver los hoteles recomendados para este destino?</strong>
+          <p style="font-size:.85rem;color:#9a6000;margin:2px 0 0;">Guía comercial por zona con cadenas, perfiles y upsells: Riviera Maya, Cancún y Costa Mujeres.</p>
+        </div>
+      </div>
+      <a href="../hoteles/cancun-riviera.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#7B2D8E,#E91E63);color:#fff;text-decoration:none;padding:11px 22px;border-radius:12px;font-size:.9rem;font-weight:700;white-space:nowrap;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        🏨 Ver hoteles recomendados →
+      </a>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <section class="section" id="pais">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>País / producto: cómo se vende Cancún / Riviera Maya</h2>
+      </div>
+      <p class="lead">
+        Comercialmente, Cancún / Riviera Maya funciona mejor cuando se presenta como una región de
+        opciones complementarias: Cancún aporta resort, playa y vida nocturna; Costa Mujeres suma
+        hotelería nueva y más tranquilidad; Puerto Morelos da un perfil más auténtico y cercano;
+        Playa del Carmen mezcla playa, calle, compras y movimiento; Tulum aporta imagen aspiracional,
+        ruinas, cenotes y componente boho. La Riviera Maya oficial se describe como un corredor de
+        aproximadamente 130 km desde Puerto Morelos hasta Tulum. [Source](https://mexicancaribbean.travel/destination/riviera-maya/)
+      </p>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Lectura comercial rápida</h3>
+          <ul class="clean">
+            <li><strong>Producto fácil de segmentar:</strong> sirve para vender desde una primera salida al Caribe hasta viajes premium o combinados.</li>
+            <li><strong>Muy buen argumento para familias:</strong> playas, resorts, parques, cenotes y logística simple.</li>
+            <li><strong>Muy fuerte para parejas:</strong> puede ir desde resort animado hasta boutique con estética y gastronomía.</li>
+            <li><strong>Excelente para upselling:</strong> habitación superior, hotel adults only, traslados privados, excursiones y combinación de zonas.</li>
+            <li><strong>No vender igual todas las bases:</strong> el error comercial típico es meter todo en “Cancún” cuando el destino correcto cambia mucho la experiencia.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Pregunta de detección recomendada</h3>
+          <div class="quote-box">
+            “Para orientarte bien, ¿prefieres un viaje de resort cómodo y animado, una zona más tranquila y nueva, un ambiente con paseo y restaurantes, o algo más boutique y con imagen tipo Tulum?”
+          </div>
+
+          <div class="mini-title">Cliente ideal general</div>
+          <div>
+            <span class="tag">Parejas</span>
+            <span class="tag">Familias</span>
+            <span class="tag">Grupos</span>
+            <span class="tag">Lunas de miel</span>
+            <span class="tag">Premium</span>
+            <span class="tag">Multi-generacional</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cancun">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Cancún</h2>
+      </div>
+
+      <div class="zone-grid">
+        <article class="zone">
+          <span class="badge">Base clásica</span>
+          <h3>La opción más fácil para vender “Caribe sin complicaciones”</h3>
+          <div class="sub">Ideal para clientes que quieren playa, resort, servicios, compras y vida nocturna en un mismo viaje.</div>
+
+          <p>
+            La propuesta oficial de Cancún combina playas, spas de lujo, deportes acuáticos, compras y una vida nocturna muy conocida. Es la base más directa para vender comodidad, hoteles grandes y experiencia de vacaciones “redonda”. [Source](https://mexicancaribbean.travel/destination/cancun/) [Source](https://mexicancaribbean.travel/the-best-nightlife-spots-in-cancun/)
+          </p>
+
+          <div class="highlight">
+            <strong>Frase de venta:</strong> “Si quieres un Caribe cómodo, con buen hotel, buena playa y todo a mano, Cancún es la opción más simple de acertar.”
+          </div>
+
+          <div class="mini-title">Cliente ideal</div>
+          <ul class="clean">
+            <li>Parejas que quieren mezcla de descanso y ambiente.</li>
+            <li>Familias que priorizan resort, operativa fácil y servicios.</li>
+            <li>Grupos o pasajeros que valoran vida nocturna.</li>
+          </ul>
+
+          <div class="mini-title">Qué vende bien</div>
+          <ul class="clean">
+            <li>Resorts grandes y all inclusive.</li>
+            <li>Shopping y entretenimiento.</li>
+            <li>Vida nocturna para quien la busca.</li>
+            <li>Buena base para excursiones de 1 día.</li>
+          </ul>
+
+          <div class="mini-title">Traslado medio desde CUN</div>
+          <p>Zona Hotelera: aprox. 45–60 min, pudiendo alargarse según tráfico y terminal. [Source](https://www.welcomepickups.com/cancun/airport-transfer-to-hotel-zone/) [Source](https://www.cancunairport.com/transportation.html)</p>
+        </article>
+
+        <article class="zone">
+          <span class="badge">Clave consultiva</span>
+          <h3>Cuándo conviene recomendar Cancún</h3>
+          <div class="sub">Cuando el cliente quiere “acertar seguro” y no necesita un producto demasiado boutique o silencioso.</div>
+
+          <div class="mini-title">Puntos fuertes comerciales</div>
+          <ul class="clean">
+            <li>Nombre muy reconocible y fácil de cerrar.</li>
+            <li>Buena percepción de vacaciones completas.</li>
+            <li>Sirve muy bien para primeras veces en Caribe.</li>
+            <li>Ideal si el cliente quiere combinar playa + ambiente + excursiones.</li>
+          </ul>
+
+          <div class="mini-title">Cuidado comercial</div>
+          <ul class="clean">
+            <li>Si el cliente busca calma total, puede encajar mejor Costa Mujeres o Puerto Morelos.</li>
+            <li>Si quiere diseño, boho o boutique, normalmente Tulum le resultará más aspiracional.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="costa-mujeres">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Costa Mujeres</h2>
+      </div>
+
+      <div class="zone-grid">
+        <article class="zone">
+          <span class="badge">Upselling natural</span>
+          <h3>La versión más nueva, más ordenada y más premium de la zona norte</h3>
+          <div class="sub">Se vende muy bien a clientes que quieren resort alto, buena playa y una sensación más tranquila que Cancún.</div>
+
+          <p>
+            La web oficial presenta Costa Mujeres como una zona de resorts de alta gama, playas amplias, reservas naturales, golf y experiencias más exclusivas. Comercialmente, es perfecta cuando el cliente dice “quiero Caribe bonito y hotel potente, pero no tanto ruido”. [Source](https://mexicancaribbean.travel/destination/costa-mujeres/)
+          </p>
+
+          <div class="highlight">
+            <strong>Frase de venta:</strong> “Es ideal si quieres un hotel mejor y una playa muy cómoda, pero con una atmósfera más tranquila que Cancún.”
+          </div>
+
+          <div class="mini-title">Cliente ideal</div>
+          <ul class="clean">
+            <li>Parejas que buscan confort premium.</li>
+            <li>Familias que quieren resort moderno y playa sencilla.</li>
+            <li>Pasajeros que repiten Caribe y ya no quieren el producto más masivo.</li>
+          </ul>
+
+          <div class="mini-title">Qué vende bien</div>
+          <ul class="clean">
+            <li>Hotelería nueva o muy competitiva.</li>
+            <li>Perfil más relajado y exclusivo.</li>
+            <li>Buena relación entre lujo y facilidad operativa.</li>
+          </ul>
+
+          <div class="mini-title">Traslado medio desde CUN</div>
+          <p>Aprox. 30–45 min; algunas operativas se alargan según tráfico y terminal de llegada. [Source](https://cancun-airport-transportation.com/shuttle-from-cancun-to-costa-mujeres)</p>
+        </article>
+
+        <article class="zone">
+          <span class="badge">Diferencial</span>
+          <h3>Cómo posicionarla frente a Cancún</h3>
+          <div class="sub">No venderla como “igual pero más lejos”, sino como una experiencia distinta.</div>
+
+          <div class="mini-title">Argumento correcto</div>
+          <ul class="clean">
+            <li>Menos sensación urbana y menos volumen visual.</li>
+            <li>Más apropiada para descanso con estándar alto.</li>
+            <li>Muy buena para viaje de aniversario, celebración o premium contenido.</li>
+          </ul>
+
+          <div class="mini-title">Cuidado comercial</div>
+          <ul class="clean">
+            <li>Si el cliente quiere salir caminando, comprar y moverse más, Playa del Carmen o Cancún suelen dar más juego.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="puerto-morelos">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Puerto Morelos</h2>
+      </div>
+
+      <div class="zone-grid">
+        <article class="zone">
+          <span class="badge">Opción tranquila</span>
+          <h3>Autenticidad, cercanía y mar con perfil más relajado</h3>
+          <div class="sub">Perfecto para quien no quiere un destino tan “escenificado” y valora una base pequeña, cómoda y con acceso fácil.</div>
+
+          <p>
+            Puerto Morelos se presenta oficialmente como un antiguo pueblo pesquero con ambiente relajado, cercanía a la barrera de coral, rutas de cenotes y jardín botánico. Comercialmente funciona para clientes que quieren Caribe sin exceso de masa hotelera. [Source](https://mexicancaribbean.travel/destination/puerto-morelos/) [Source](https://mexicancaribbean.travel/the-gastronomy-of-puerto-morelos-flavors-of-the-sea-and-mexican-tradition/)
+          </p>
+
+          <div class="highlight">
+            <strong>Frase de venta:</strong> “Si quieres una base más tranquila y auténtica, sin alejarte demasiado del aeropuerto, Puerto Morelos encaja muy bien.”
+          </div>
+
+          <div class="mini-title">Cliente ideal</div>
+          <ul class="clean">
+            <li>Parejas tranquilas.</li>
+            <li>Familias que priorizan ritmo suave.</li>
+            <li>Viajeros que valoran snorkel, arrecife y ambiente local.</li>
+          </ul>
+
+          <div class="mini-title">Qué vende bien</div>
+          <ul class="clean">
+            <li>Cercanía al aeropuerto.</li>
+            <li>Perfil más humano y menos masivo.</li>
+            <li>Buen punto para combinar descanso con cenotes y salidas.</li>
+          </ul>
+
+          <div class="mini-title">Traslado medio desde CUN</div>
+          <p>Aprox. 25–35 min en coche o transfer privado. [Source](https://www.welcomepickups.com/cancun/airport-to-puerto-morelos/)</p>
+        </article>
+
+        <article class="zone">
+          <span class="badge">Lectura consultiva</span>
+          <h3>Cuándo conviene ponerlo sobre la mesa</h3>
+          <div class="sub">Cuando el cliente dice que quiere Caribe, pero le preocupa el exceso de ambiente o el tamaño de los resorts más grandes.</div>
+
+          <div class="mini-title">Ventaja comercial</div>
+          <ul class="clean">
+            <li>Es muy útil para diferenciarte como asesor, porque no es la recomendación obvia.</li>
+            <li>Mejora mucho la percepción de “viaje pensado para mí”.</li>
+          </ul>
+
+          <div class="mini-title">Cuidado comercial</div>
+          <ul class="clean">
+            <li>Si el cliente imagina mucha vida nocturna o paseo intenso, puede quedarse corto frente a Cancún o Playa del Carmen.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="playa-del-carmen">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Playa del Carmen</h2>
+      </div>
+
+      <div class="zone-grid">
+        <article class="zone">
+          <span class="badge">La más versátil</span>
+          <h3>Playa, calle, compras, gastronomía y movimiento</h3>
+          <div class="sub">Muy potente cuando el cliente quiere sentir el destino y no quedarse únicamente dentro del hotel.</div>
+
+          <p>
+            Playa del Carmen aparece oficialmente como un destino con calles animadas, centros comerciales, playas, nightclubs, cenotes y cercanía a parques y excursiones. Comercialmente es una de las bases más equilibradas porque mezcla resort con vida exterior. [Source](https://mexicancaribbean.travel/destination/playa-del-carmen/) [Source](https://mexicancaribbean.travel/shopping-in-playa-del-carmen-the-ultimate-guide/)
+          </p>
+
+          <div class="highlight">
+            <strong>Frase de venta:</strong> “Si quieres playa y hotel, pero también salir a cenar, caminar y sentir ambiente, Playa del Carmen suele ser la opción más completa.”
+          </div>
+
+          <div class="mini-title">Cliente ideal</div>
+          <ul class="clean">
+            <li>Parejas activas.</li>
+            <li>Grupos que quieren moverse algo más.</li>
+            <li>Viajeros que valoran restaurante, calle y excursión.</li>
+          </ul>
+
+          <div class="mini-title">Qué vende bien</div>
+          <ul class="clean">
+            <li>Base central para excursiones.</li>
+            <li>Buena mezcla de ocio diurno y nocturno.</li>
+            <li>Muy buena sensación de “vacaciones con plan”.</li>
+          </ul>
+
+          <div class="mini-title">Traslado medio desde CUN</div>
+          <p>Aprox. 45–60 min en traslado privado; más si es shuttle compartido o en franjas congestionadas. [Source](https://taxishuttlecancun.com/blog/cancun-airport-to-playa-del-carmen-transportation-guide) [Source](https://www.cancunairport.com/transportation.html)</p>
+        </article>
+
+        <article class="zone">
+          <span class="badge">Venta inteligente</span>
+          <h3>Por qué funciona tan bien en perfil europeo y latino</h3>
+          <div class="sub">Porque el viaje no depende al 100 % del resort.</div>
+
+          <div class="mini-title">Argumento correcto</div>
+          <ul class="clean">
+            <li>Da más sensación de libertad y vida fuera del hotel.</li>
+            <li>Permite escapadas, compras y cenas sin tanta dependencia logística.</li>
+            <li>Sirve muy bien para combinar con Tulum o con una base más tranquila.</li>
+          </ul>
+
+          <div class="mini-title">Cuidado comercial</div>
+          <ul class="clean">
+            <li>Si el cliente sueña con un all inclusive muy protagonista y descanso total, Cancún o Costa Mujeres pueden cerrar mejor.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="tulum">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Tulum</h2>
+      </div>
+
+      <div class="zone-grid">
+        <article class="zone">
+          <span class="badge">Aspiracional</span>
+          <h3>Imagen, ruinas, cenotes y componente boutique / boho</h3>
+          <div class="sub">No se vende tanto como “vacaciones clásicas”, sino como viaje con estética, personalidad y experiencias.</div>
+
+          <p>
+            Tulum destaca por sus vestigios mayas frente al mar, cenotes como Gran Cenote, Dos Ojos o Calavera, experiencias de yoga, gastronomía y una noche más bohemia. También suma el componente cultural de las ruinas y la cercanía de Sian Ka’an. [Source](https://mexicancaribbean.travel/10-things-to-do-in-tulum/) [Source](https://mexicancaribbean.travel/discover-the-archaeological-sites-of-tulum-history-by-the-caribbean-sea/)
+          </p>
+
+          <div class="highlight">
+            <strong>Frase de venta:</strong> “Si buscas un Caribe con imagen, cenotes, ruinas y un ambiente más boutique, Tulum tiene una personalidad muy distinta al resto.”
+          </div>
+
+          <div class="mini-title">Cliente ideal</div>
+          <ul class="clean">
+            <li>Parejas.</li>
+            <li>Lunas de miel.</li>
+            <li>Viajeros que valoran diseño, wellness y gastronomía.</li>
+            <li>Clientes que no quieren un Caribe ‘genérico’.</li>
+          </ul>
+
+          <div class="mini-title">Qué vende bien</div>
+          <ul class="clean">
+            <li>Ruinas frente al mar y componente cultural.</li>
+            <li>Cenotes y naturaleza.</li>
+            <li>Imagen muy fuerte en redes y viaje aspiracional.</li>
+          </ul>
+
+          <div class="mini-title">Traslado medio desde CUN</div>
+          <p>Aprox. 1 h 30 min – 2 h por carretera en condiciones normales. [Source](https://www.cancunairporttransportations.com/blog/navigating-the-journey-how-long-does-it-take-to-get-to-tulum-from-cancun-airport/) [Source](https://www.cancunairport.com/transportation.html)</p>
+        </article>
+
+        <article class="zone">
+          <span class="badge">Consultivo</span>
+          <h3>Cuándo sí y cuándo no vender Tulum</h3>
+          <div class="sub">Muy potente si el cliente quiere algo especial; menos adecuado si lo que busca es sencillez absoluta o presupuesto controlado.</div>
+
+          <div class="mini-title">Ventaja comercial</div>
+          <ul class="clean">
+            <li>Permite diferenciar el discurso y subir valor.</li>
+            <li>Encaja muy bien en aniversarios, lunas de miel o viajes con componente wellness.</li>
+          </ul>
+
+          <div class="mini-title">Cuidado comercial</div>
+          <ul class="clean">
+            <li>Puede tener una logística algo más larga desde Cancún.</li>
+            <li>No es la mejor recomendación si el pasajero quiere un resort sencillo y operativo.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="comparativa">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Comparativa rápida de zonas</h2>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Producto principal</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cancún</strong></td>
+            <td>Resort + playa + vida nocturna + compras</td>
+            <td>Parejas, familias, grupos</td>
+            <td>“La opción más fácil si quieres un Caribe completo y sin complicaciones.”</td>
+          </tr>
+          <tr>
+            <td><strong>Costa Mujeres</strong></td>
+            <td>Resort premium + tranquilidad + hotelería nueva</td>
+            <td>Premium, parejas, familias</td>
+            <td>“Más calma y mejor sensación de exclusividad sin renunciar a un gran resort.”</td>
+          </tr>
+          <tr>
+            <td><strong>Puerto Morelos</strong></td>
+            <td>Base tranquila + arrecife + perfil local</td>
+            <td>Parejas tranquilas, familias suaves</td>
+            <td>“Caribe relajado y auténtico, muy cómodo y cerca del aeropuerto.”</td>
+          </tr>
+          <tr>
+            <td><strong>Playa del Carmen</strong></td>
+            <td>Playa + calle + compras + ambiente</td>
+            <td>Parejas activas, grupos, viajeros sociales</td>
+            <td>“La base más equilibrada si quieres playa y también moverte.”</td>
+          </tr>
+          <tr>
+            <td><strong>Tulum</strong></td>
+            <td>Boutique + cenotes + ruinas + wellness</td>
+            <td>Parejas, honeymoon, aspiracional</td>
+            <td>“La opción con más personalidad e imagen del Caribe Mexicano.”</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="traslados">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Traslados medios desde el aeropuerto de Cancún (CUN)</h2>
+      </div>
+      <p class="lead">
+        Operativamente conviene explicarlos como <strong>tiempos orientativos</strong>, ya que pueden variar por terminal,
+        tráfico, tipo de traslado y franja horaria.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Trayecto</th>
+            <th>Tiempo medio</th>
+            <th>Lectura comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CUN → Cancún / Zona Hotelera</td>
+            <td>45–60 min</td>
+            <td>Correcto para resort clásico; avisar de tráfico para ajustar expectativas.</td>
+          </tr>
+          <tr>
+            <td>CUN → Costa Mujeres</td>
+            <td>30–45 min</td>
+            <td>Buen equilibrio entre cercanía y sensación de exclusividad.</td>
+          </tr>
+          <tr>
+            <td>CUN → Puerto Morelos</td>
+            <td>25–35 min</td>
+            <td>La base más cómoda si el cliente valora traslados cortos.</td>
+          </tr>
+          <tr>
+            <td>CUN → Playa del Carmen</td>
+            <td>45–60 min</td>
+            <td>Muy asumible para un producto con bastante vida exterior.</td>
+          </tr>
+          <tr>
+            <td>CUN → Tulum</td>
+            <td>90–120 min</td>
+            <td>Hay que vender el valor de destino para justificar el trayecto.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="temporadas">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Temporadas, clima y lectura comercial</h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Cómo leer el año comercialmente</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Periodo</th>
+                <th>Lectura</th>
+                <th>Comentario de venta</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Finales nov – marzo</strong></td>
+                <td>Temporada muy fuerte</td>
+                <td>Gran momento para vender clima agradable, escapadas de invierno y mejor percepción general de playa.</td>
+              </tr>
+              <tr>
+                <td><strong>Abril – junio</strong></td>
+                <td>Muy vendible</td>
+                <td>Suele ofrecer buena relación entre clima, precio y disponibilidad, aunque conviene vigilar evolución de sargazo.</td>
+              </tr>
+              <tr>
+                <td><strong>Julio – agosto</strong></td>
+                <td>Verano alto</td>
+                <td>Fuerte para familias; importante gestionar calor, humedad y posible presencia de sargazo.</td>
+              </tr>
+              <tr>
+                <td><strong>Septiembre – octubre</strong></td>
+                <td>Más sensible</td>
+                <td>Puede haber mejores precios, pero conviene argumentar flexibilidad por lluvias, huracanes y estado de playas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>Puntos clave para vender bien</h3>
+          <ul class="clean">
+            <li>La información oficial de viaje del Caribe Mexicano sitúa temperaturas medias cálidas todo el año, lo que ayuda mucho en venta vacacional. [Source](https://mexicancaribbean.travel/travel-information/)</li>
+            <li>El sargazo suele ser una variable de primavera a finales de verano, con picos habituales en los meses centrales, aunque puede adelantarse algunos años. [Source](https://sargassummonitoring.com/en/forecast-sargassum-mexico-riviera-maya/) [Source](https://mexiconewsdaily.com/news/mexican-riviera-worst-ever-sargassum-season/)</li>
+            <li>Si el cliente es muy sensible al estado de playa, conviene avisarlo antes y vender el destino como “playa + hotel + excursiones”, no solo como arena perfecta todos los días.</li>
+            <li>Para minimizar objeciones, finales de noviembre a marzo suele ser la ventana más cómoda de venta general. [Source](https://www.journeymexico.com/blog/update-on-sargassum-seaweed-affecting-mexicos-beaches)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="objeciones">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Objeciones frecuentes y respuesta comercial</h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>“No quiero un sitio demasiado masificado.”</h3>
+          <p>
+            Perfecto: entonces no lo orientaría a Cancún clásico, sino a Costa Mujeres o Puerto Morelos,
+            donde el viaje se percibe más tranquilo y mejor ajustado a ese perfil.
+          </p>
+
+          <h3>“Me preocupa el sargazo.”</h3>
+          <p>
+            Es correcto tenerlo en cuenta porque puede aparecer por temporadas. Lo importante es vender bien la fecha,
+            la zona y el tipo de viaje: aquí no solo compras playa, compras hotel, gastronomía, cenotes, cultura maya
+            y excursiones. Además, su intensidad no es igual todos los meses ni en todas las playas.
+          </p>
+
+          <h3>“Tulum me gusta, pero lo veo incómodo.”</h3>
+          <p>
+            Es verdad que el traslado puede ser más largo, por eso Tulum hay que recomendarlo cuando el cliente valora
+            mucho su estilo, cenotes, ruinas y ambiente. Si prioriza facilidad pura, hay mejores bases.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>“Quiero hotel bueno, pero no tanta fiesta.”</h3>
+          <p>
+            Entonces lo más lógico es movernos a Costa Mujeres, donde el estándar hotelero suele encajar muy bien
+            con esa necesidad sin meter al cliente en una atmósfera demasiado activa.
+          </p>
+
+          <h3>“No sé si hacer solo resort o algo más.”</h3>
+          <p>
+            Si duda, Playa del Carmen suele ser el punto medio más fácil: mantiene playa y hotel,
+            pero añade paseo, restaurantes y más sensación de viaje con vida exterior.
+          </p>
+
+          <h3>“¿Y si llueve o hay viento?”</h3>
+          <p>
+            Como en cualquier Caribe, el tiempo puede variar según la época, pero sigue siendo un destino
+            que se vende muy bien por la cantidad de alternativas: hotel, spa, gastronomía, compras,
+            cenotes, ruinas, parques y excursiones.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="noches">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Noches recomendadas</h2>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Base</th>
+            <th>Mínimo razonable</th>
+            <th>Ideal</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cancún</td>
+            <td>5 noches</td>
+            <td>7 noches</td>
+            <td>Funciona muy bien como opción simple y cerradora.</td>
+          </tr>
+          <tr>
+            <td>Costa Mujeres</td>
+            <td>5 noches</td>
+            <td>7–9 noches</td>
+            <td>Perfecta para descanso premium o celebración.</td>
+          </tr>
+          <tr>
+            <td>Puerto Morelos</td>
+            <td>5 noches</td>
+            <td>7 noches</td>
+            <td>Muy cómoda y recomendable para viaje relajado.</td>
+          </tr>
+          <tr>
+            <td>Playa del Carmen</td>
+            <td>5 noches</td>
+            <td>7–10 noches</td>
+            <td>Muy buena para clientes que quieren mezcla de resort y vida exterior.</td>
+          </tr>
+          <tr>
+            <td>Tulum</td>
+            <td>4–5 noches</td>
+            <td>6–8 noches</td>
+            <td>Ideal en pareja o combinado con otra base para redondear experiencia.</td>
+          </tr>
+          <tr>
+            <td>Combinado Riviera Maya</td>
+            <td>7 noches</td>
+            <td>9–10 noches</td>
+            <td>La mejor forma de subir valor y adaptar el viaje al cliente.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="script">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Script comercial de venta rápida</h2>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>1. Apertura</h3>
+          <p>
+            “Cancún / Riviera Maya funciona muy bien porque no es un único destino:
+            dentro del mismo viaje podemos buscarte una opción más resort, más tranquila,
+            más social o más boutique según lo que te apetezca.”
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>2. Detección</h3>
+          <p>
+            “¿Te encaja más un hotel cómodo con todo incluido, una zona más tranquila,
+            un sitio con más paseo y restaurantes, o una opción más especial tipo Tulum?”
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>3. Lectura rápida</h3>
+          <p>
+            <strong>Cancún</strong> si quieres ir a lo fácil y completo. <br />
+            <strong>Costa Mujeres</strong> si quieres más calma y hotel potente. <br />
+            <strong>Puerto Morelos</strong> si prefieres algo más tranquilo y cercano. <br />
+            <strong>Playa del Carmen</strong> si quieres playa y ambiente. <br />
+            <strong>Tulum</strong> si buscas imagen, cenotes y una experiencia más especial.
+          </p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <h3>4. Cierre recomendado</h3>
+        <p>
+          “Si quieres mi recomendación rápida: para un primer viaje al Caribe Mexicano,
+          mínimo intentaría 7 noches. Si además quieres disfrutar bien del hotel, hacer excursiones
+          y no ir con prisas, 9 o 10 noches deja un viaje mucho más redondo.”
+        </p>
+
+        <div class="mini-title">Cierre premium / consultivo</div>
+        <p>
+          “Lo más importante aquí no es elegir solo Cancún o Riviera Maya, sino acertar con la base.
+          Si me dices qué pesa más para ti —hotel, playa, ambiente, tranquilidad o estética tipo Tulum—
+          te digo cuál encaja mejor sin hacerte perder tiempo.”
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <h3>Conclusión comercial</h3>
+        <p>
+          Cancún / Riviera Maya se vende muy bien cuando se deja de tratar como un destino único y se
+          presenta como un abanico de experiencias. <strong>Cancún</strong> cierra fácil,
+          <strong>Costa Mujeres</strong> mejora el perfil premium, <strong>Puerto Morelos</strong> afina la calma,
+          <strong>Playa del Carmen</strong> suma vida exterior y <strong>Tulum</strong> eleva el componente aspiracional.
+          Cuanto mejor se haga la detección inicial, más fácil será cerrar la venta correcta.
+        </p>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Guía comercial base · Dr. Viaje · Cancún / Riviera Maya
+    </div>
+  </main>
+
+</body>
+</html>

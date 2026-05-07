@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Info Útil · Dr.Viaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    :root {
+      --primary-purple: #7B2D8E;
+      --primary-orange: #FF9800;
+      --primary-pink: #E91E63;
+      --bg: #f8f9fa;
+      --text: #333333;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding-top: 0; }
+
+    .page-hero {
+      background: linear-gradient(135deg, var(--primary-purple) 0%, #9c27b0 50%, var(--primary-pink) 100%);
+      color: #fff; padding: 56px 24px 48px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before { content:""; position:absolute; width:380px; height:380px; border-radius:50%; background:rgba(255,255,255,.06); top:-100px; right:-100px; }
+    .page-hero::after { content:""; position:absolute; width:260px; height:260px; border-radius:50%; background:rgba(255,255,255,.04); bottom:-80px; left:-60px; }
+    .page-hero .eyebrow { display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.28); color:#fff; font-size:.75rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:7px 16px; border-radius:999px; margin-bottom:18px; }
+    .page-hero h1 { font-family:'Playfair Display',serif; font-size:clamp(1.9rem,4vw,3rem); margin-bottom:14px; position:relative; z-index:1; }
+    .page-hero p { max-width:760px; margin:0 auto; font-size:1.05rem; line-height:1.7; opacity:.92; position:relative; z-index:1; }
+
+    .tab-nav { background:#fff; border-bottom:2px solid #eee; position:sticky; top:72px; z-index:90; box-shadow:0 2px 10px rgba(0,0,0,.06); }
+    .tab-nav .wrap { max-width:1200px; margin:0 auto; padding:0 24px; display:flex; overflow-x:auto; scrollbar-width:none; }
+    .tab-nav .wrap::-webkit-scrollbar { display:none; }
+    .tab-btn { flex:0 0 auto; padding:16px 22px; font-size:.92rem; font-weight:600; color:#555; border:none; background:transparent; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .2s; white-space:nowrap; }
+    .tab-btn:hover { color:var(--primary-purple); }
+    .tab-btn.active { color:var(--primary-purple); border-bottom-color:var(--primary-purple); }
+
+    .content-wrap { max-width:1200px; margin:0 auto; padding:40px 24px 80px; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    .section-title { display:flex; align-items:center; gap:12px; margin-bottom:28px; }
+    .section-title .dot { width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg, var(--primary-orange), var(--primary-pink)); flex:0 0 auto; }
+    .section-title h2 { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.5vw,1.9rem); color:#231942; }
+
+    .page-footer { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:#fff; text-align:center; padding:40px 24px; }
+    .page-footer img { height:36px; margin-bottom:14px; opacity:.85; }
+    .page-footer p { font-size:.88rem; opacity:.6; margin-top:8px; }
+    .page-footer a { color:rgba(255,255,255,.7); text-decoration:none; }
+    .page-footer a:hover { color:#fff; }
+
+    /* ── RISK STYLES ── */
+    .dv-risk { --dv-white:#ffffff; --dv-ink:#231942; --dv-muted:#6f6287; --dv-brand:#7b2cbf; --dv-accent:#ff7b54; --dv-rose:#ff4d8d; --dv-line:#eadcf7; --dv-shadow:0 12px 30px rgba(71,38,122,.12); --dv-radius:22px; color:var(--dv-ink); font-family:Inter,sans-serif; }
+    .dv-risk * { box-sizing:border-box; }
+    .dv-risk-grid-2,.dv-risk-grid-3 { display:grid; gap:18px; }
+    .dv-risk-grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .dv-risk-grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .dv-risk-card { background:var(--dv-white); border:1px solid var(--dv-line); border-radius:var(--dv-radius); padding:22px; box-shadow:var(--dv-shadow); }
+    .dv-risk-card h3 { margin:0 0 10px; font-size:1.2rem; color:var(--dv-ink); }
+    .dv-risk-card p { margin:0 0 12px; color:#46375d; line-height:1.6; }
+    .dv-risk-mini { margin:14px 0 8px; font-size:.9rem; color:var(--dv-brand); text-transform:uppercase; letter-spacing:.05em; font-weight:900; }
+    .dv-risk-list { list-style:none; padding:0; margin:0; }
+    .dv-risk-list li { position:relative; padding-left:18px; margin:8px 0; color:#46375d; line-height:1.55; }
+    .dv-risk-list li::before { content:"•"; position:absolute; left:0; top:0; color:var(--dv-accent); font-weight:900; }
+    .dv-risk-callout { background:linear-gradient(135deg,rgba(123,44,191,.08),rgba(255,123,84,.10)); border:1px solid var(--dv-line); border-radius:20px; padding:16px 18px; font-weight:700; color:#4d3b69; line-height:1.55; }
+    .dv-risk-table-wrap { margin-top:18px; overflow-x:auto; border-radius:22px; box-shadow:var(--dv-shadow); }
+    .dv-risk-table { width:100%; min-width:760px; border-collapse:separate; border-spacing:0; background:var(--dv-white); border:1px solid var(--dv-line); border-radius:22px; overflow:hidden; }
+    .dv-risk-table th,.dv-risk-table td { padding:14px 16px; text-align:left; vertical-align:top; border-bottom:1px solid var(--dv-line); font-size:.97rem; line-height:1.5; }
+    .dv-risk-table thead th { background:linear-gradient(135deg,var(--dv-brand),var(--dv-rose)); color:#fff; font-weight:900; }
+    .dv-risk-table tbody tr:last-child td { border-bottom:none; }
+    .dv-risk-table tbody tr:nth-child(even) td { background:#fffafd; }
+    .dv-risk-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; font-weight:900; font-size:.82rem; text-transform:uppercase; letter-spacing:.05em; border:1px solid transparent; white-space:nowrap; }
+    .dv-risk-low { background:#ecfdf3; color:#0f8a4b; border-color:#b7efcf; }
+    .dv-risk-medium { background:#fff8e8; color:#a16207; border-color:#f6d58b; }
+    .dv-risk-high { background:#fff0f0; color:#c62828; border-color:#f0b1b1; }
+    .dv-risk-note { margin-top:12px; font-size:.92rem; color:var(--dv-muted); line-height:1.55; }
+    .dv-risk-quote { background:linear-gradient(135deg,rgba(123,44,191,.08),rgba(255,77,141,.08)); border:1px solid var(--dv-line); border-radius:24px; padding:22px; box-shadow:var(--dv-shadow); color:#4d3b69; line-height:1.6; }
+    .dv-risk-title { display:flex; align-items:center; gap:12px; margin:28px 0 16px; }
+    .dv-risk-title .dot { width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg,#ff7b54,#ff4d8d); flex:0 0 auto; }
+    .dv-risk-title h2 { margin:0; font-size:clamp(1.45rem,2.5vw,2rem); letter-spacing:-.02em; line-height:1.15; color:#231942; }
+    .dv-risk-lead { margin:0 0 18px; color:#6f6287; font-size:1.03rem; max-width:980px; line-height:1.6; }
+    @media(max-width:980px){.dv-risk-grid-3,.dv-risk-grid-2{grid-template-columns:1fr;}}
+
+    /* ── DOCS STYLES ── */
+    .uy-docs { --uy-navy:#1f2a56; --uy-indigo:#3949ab; --uy-red:#b42318; --uy-ink:#253047; --uy-soft:#667085; --uy-line:#dde4f0; --uy-white:#ffffff; --uy-shadow:0 18px 40px rgba(28,41,79,.08); font-family:"Lato",Arial,sans-serif; color:var(--uy-ink); }
+    .uy-docs * { box-sizing:border-box; }
+    .uy-docs .uy-wrap { max-width:1280px; margin:0 auto; }
+    .uy-docs .uy-hero { background:linear-gradient(135deg,#1f2a56 0%,#3346a8 55%,#6d78da 100%); color:#fff; border-radius:28px; padding:42px 34px; margin:0 0 24px; box-shadow:var(--uy-shadow); position:relative; overflow:hidden; }
+    .uy-docs .uy-hero:after { content:""; position:absolute; right:-60px; top:-60px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.09); }
+    .uy-docs .uy-kicker { display:inline-flex; align-items:center; gap:8px; font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.18); padding:8px 12px; border-radius:999px; margin-bottom:18px; font-weight:700; }
+    .uy-docs h2,.uy-docs h3,.uy-docs h4 { font-family:"Playfair Display",Georgia,serif; margin:0 0 12px; line-height:1.08; color:inherit; }
+    .uy-docs .uy-hero h2 { font-size:2.35rem; max-width:920px; }
+    .uy-docs .uy-hero p { max-width:980px; margin:0; color:rgba(255,255,255,.92); font-size:1.03rem; line-height:1.7; }
+    .uy-docs .uy-alert { margin:0 0 26px; background:linear-gradient(180deg,#fff1f0 0%,#ffe7e5 100%); border:1px solid #f6c7c2; border-left:8px solid var(--uy-red); color:#7a271f; border-radius:22px; padding:22px; box-shadow:var(--uy-shadow); }
+    .uy-docs .uy-alert h3 { color:var(--uy-red); font-size:1.35rem; margin-bottom:10px; }
+    .uy-docs .uy-alert p { margin:0; line-height:1.75; font-size:.98rem; }
+    .uy-docs .uy-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:28px; }
+    .uy-docs .uy-stat { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:16px; backdrop-filter:blur(6px); }
+    .uy-docs .uy-stat strong { display:block; font-size:1.15rem; margin-bottom:4px; color:#fff; }
+    .uy-docs .uy-stat span { font-size:.92rem; color:rgba(255,255,255,.88); }
+    .uy-docs .uy-section { margin:26px 0; background:var(--uy-white); border:1px solid var(--uy-line); border-radius:24px; padding:28px; box-shadow:var(--uy-shadow); }
+    .uy-docs .uy-section-head { display:flex; justify-content:space-between; align-items:end; gap:20px; margin-bottom:22px; flex-wrap:wrap; }
+    .uy-docs .uy-section-head h3 { font-size:1.8rem; color:var(--uy-navy); }
+    .uy-docs .uy-section-head p { margin:0; max-width:780px; color:var(--uy-soft); line-height:1.7; }
+    .uy-docs .uy-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .uy-docs .uy-grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+    .uy-docs .uy-note { background:linear-gradient(180deg,#f9fbff 0%,#f1f5ff 100%); border:1px solid #dbe5ff; border-radius:20px; padding:20px; }
+    .uy-docs .uy-note h4 { color:var(--uy-indigo); font-size:1.16rem; }
+    .uy-docs .uy-note p { margin:0; line-height:1.7; color:var(--uy-ink); }
+    .uy-docs .uy-card { border:1px solid var(--uy-line); border-radius:22px; padding:22px; background:#fff; box-shadow:0 8px 24px rgba(17,24,39,.05); }
+    .uy-docs .uy-card h4 { font-size:1.28rem; color:var(--uy-navy); margin-bottom:10px; }
+    .uy-docs .uy-badges { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
+    .uy-docs .uy-badge { display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; font-size:.78rem; font-weight:700; letter-spacing:.02em; }
+    .uy-docs .uy-badge.blue{background:#eaf1ff;color:#2f55c8;}
+    .uy-docs .uy-badge.gold{background:#fff4dc;color:#9a6a00;}
+    .uy-docs .uy-badge.green{background:#e8f7ef;color:#177245;}
+    .uy-docs .uy-badge.rose{background:#ffe9ef;color:#b33b67;}
+    .uy-docs .uy-badge.red{background:#ffe9e7;color:#b42318;}
+    .uy-docs .uy-badge.gray{background:#f2f4f7;color:#475467;}
+    .uy-docs .uy-card p { margin:0 0 14px; line-height:1.72; color:var(--uy-ink); }
+    .uy-docs .uy-card ul { margin:0; padding-left:18px; color:var(--uy-ink); line-height:1.7; }
+    .uy-docs .uy-card li+li { margin-top:6px; }
+    .uy-docs .uy-mini { margin-top:14px; padding-top:14px; border-top:1px dashed var(--uy-line); font-size:.95rem; color:var(--uy-soft); line-height:1.7; }
+    .uy-docs .uy-mini strong { color:var(--uy-navy); }
+    .uy-docs table { width:100%; border-collapse:collapse; font-size:.95rem; }
+    .uy-docs thead th { background:#24315f; color:#fff; text-align:left; padding:14px 12px; font-weight:700; }
+    .uy-docs tbody td { border-bottom:1px solid var(--uy-line); padding:14px 12px; vertical-align:top; line-height:1.6; }
+    .uy-docs tbody tr:nth-child(even) { background:#fafcff; }
+    .uy-docs .uy-links { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    .uy-docs .uy-link-card { border:1px solid var(--uy-line); border-radius:18px; padding:18px; background:#fff; }
+    .uy-docs .uy-link-card a { color:var(--uy-indigo); text-decoration:none; font-weight:700; }
+    .uy-docs .uy-link-card p { margin:8px 0 0; color:var(--uy-soft); line-height:1.65; font-size:.95rem; }
+    .uy-docs .uy-closing { background:linear-gradient(135deg,#fff7e7 0%,#fff 100%); border:1px solid #f1ddab; }
+    @media(max-width:1080px){.uy-docs .uy-grid-3,.uy-docs .uy-stats,.uy-docs .uy-links{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:760px){.uy-docs .uy-grid-3,.uy-docs .uy-grid-2,.uy-docs .uy-stats,.uy-docs .uy-links{grid-template-columns:1fr;} .uy-docs .uy-hero h2{font-size:1.95rem;} .uy-docs .uy-section,.uy-docs .uy-hero{padding:22px;}}
+  </style>
+</head>
+<body>
+
+  <script src="js/navbar-inject.js"></script>
+
+  <div class="page-hero">
+    <span class="eyebrow">Centro de Capacitación · Dr.Viaje</span>
+    <h1>Info Útil</h1>
+    <p>Recursos prácticos para vender mejor: clima, riesgos y documentación orientativa para viajeros desde Uruguay.</p>
+  </div>
+
+  <nav class="tab-nav">
+    <div class="wrap">
+      <button class="tab-btn active" data-tab="clima">🌊 Sargazo &amp; Huracanes</button>
+      <button class="tab-btn" data-tab="docs">📄 Documentación</button>
+    </div>
+  </nav>
+
+  <div class="content-wrap">
+
+    <!-- TAB: CLIMA / SARGAZO -->
+    <div class="tab-panel active" id="panel-clima">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Sargazo y temporada de huracanes · guía comercial consultiva</h2>
+      </div>
+
+      <section class="dv-risk">
+        <p class="dv-risk-lead">Esta sección está pensada para vender con criterio: poner contexto, explicar probabilidades, manejar expectativas y reforzar tu papel como asesor. En Caribe, el error comercial no es hablar del clima; el error es prometer certezas absolutas.</p>
+
+        <div class="dv-risk-grid-3">
+          <div class="dv-risk-card">
+            <h3>La verdad comercial</h3>
+            <p>La temporada de huracanes no significa que vaya a hacer mal tiempo todos los días. Significa que existe una ventana del año con mayor vigilancia meteorológica y una probabilidad más alta de incidencias, especialmente entre agosto y octubre.</p>
+            <div class="dv-risk-mini">Cómo decirlo</div>
+            <div class="dv-risk-callout">"No es una temporada para descartar por sistema, sino para vender mejor la fecha, el destino y la expectativa del viaje."</div>
+          </div>
+          <div class="dv-risk-card">
+            <h3>La verdad sobre el sargazo</h3>
+            <p>El sargazo no afecta igual a todo el Caribe ni todos los meses por igual. Como objeción de venta pesa sobre todo en el Caribe Mexicano y debe tratarse como una variable dinámica, no como una condena fija del destino.</p>
+            <div class="dv-risk-mini">Cómo decirlo</div>
+            <div class="dv-risk-callout">"No se puede prometer playa perfecta con meses de antelación, pero sí se puede vender bien la zona, el hotel y el tipo de viaje para reducir la objeción."</div>
+          </div>
+          <div class="dv-risk-card">
+            <h3>Regla de oro</h3>
+            <p>No vendas "riesgo cero". Vende <strong>probabilidad baja / media / alta</strong>, seguimiento, buena recomendación de base y plan alternativo si el cliente es sensible al clima o al estado de playa.</p>
+            <div class="dv-risk-mini">Promesa correcta</div>
+            <div class="dv-risk-callout">"Te recomiendo el destino más estable según la fecha y el tipo de experiencia que buscas."</div>
+          </div>
+        </div>
+
+        <div class="dv-risk-card" style="margin-top:18px;">
+          <h3>Lectura rápida de probabilidad · huracanes en el Caribe / Atlántico</h3>
+          <div class="dv-risk-table-wrap">
+            <table class="dv-risk-table">
+              <thead><tr><th>Periodo</th><th>Probabilidad</th><th>Lectura comercial</th><th>Qué decir al cliente</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Enero – mayo</strong></td><td><span class="dv-risk-badge dv-risk-low">Baja</span></td><td>Ventana muy cómoda para vender Caribe sin objeción meteorológica fuerte.</td><td>"Es una época muy favorable si priorizas estabilidad y poca conversación sobre clima."</td></tr>
+                <tr><td><strong>Junio – julio</strong></td><td><span class="dv-risk-badge dv-risk-medium">Baja / media</span></td><td>La temporada ya ha empezado, pero no es todavía el tramo de mayor concentración.</td><td>"Se puede vender bien, simplemente conviene viajar con seguimiento normal de la previsión."</td></tr>
+                <tr><td><strong>Mitad agosto – mitad octubre</strong></td><td><span class="dv-risk-badge dv-risk-high">Alta</span></td><td>Es el tramo más sensible y donde hay que ser más fino con destino, precio y perfil.</td><td>"Si viajas aquí, conviene priorizar destinos más estables o aceptar mayor flexibilidad."</td></tr>
+                <tr><td><strong>Finales octubre – noviembre</strong></td><td><span class="dv-risk-badge dv-risk-medium">Media</span></td><td>Sigue siendo temporada oficial, aunque normalmente baja la tensión respecto al pico.</td><td>"Todavía hay temporada, pero ya no es el tramo más tenso del calendario."</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dv-risk-note">Referencia comercial base: temporada oficial del 1 de junio al 30 de noviembre; pico climatológico a principios de septiembre; mayor actividad entre mediados de agosto y mediados de octubre.</div>
+        </div>
+
+        <div class="dv-risk-card" style="margin-top:18px;">
+          <h3>Lectura rápida de probabilidad · sargazo en Caribe Mexicano</h3>
+          <div class="dv-risk-table-wrap">
+            <table class="dv-risk-table">
+              <thead><tr><th>Periodo</th><th>Probabilidad en Caribe Mexicano</th><th>Lectura comercial</th><th>Qué decir al cliente</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Diciembre – febrero</strong></td><td><span class="dv-risk-badge dv-risk-low">Baja</span></td><td>Ventana normalmente más cómoda para vender playa sin tanta objeción.</td><td>"Si la playa es prioritaria, suele ser una de las épocas más cómodas para Caribe Mexicano."</td></tr>
+                <tr><td><strong>Marzo – mayo</strong></td><td><span class="dv-risk-badge dv-risk-medium">Media</span></td><td>Empieza la vigilancia; algunos años se adelanta.</td><td>"Conviene revisar zona y hotel, pero sigue siendo muy vendible."</td></tr>
+                <tr><td><strong>Junio – agosto</strong></td><td><span class="dv-risk-badge dv-risk-high">Media / alta</span></td><td>Es la franja donde la objeción suele ganar más peso.</td><td>"Aquí hay que vender el viaje como experiencia completa: hotel, cenotes, excursiones y gastronomía."</td></tr>
+                <tr><td><strong>Septiembre – noviembre</strong></td><td><span class="dv-risk-badge dv-risk-medium">Variable</span></td><td>Puede seguir presente, pero depende mucho de corrientes, viento y limpieza local.</td><td>"No se generaliza: se monitoriza más cerca de la salida."</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dv-risk-title" style="margin-top:28px;"><span class="dot"></span><h2>Mapa comercial por destino</h2></div>
+
+        <div class="dv-risk-table-wrap">
+          <table class="dv-risk-table">
+            <thead><tr><th>Destino</th><th>Huracanes</th><th>Sargazo</th><th>Cómo venderlo</th><th>Perfil ideal</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Aruba</strong></td><td><span class="dv-risk-badge dv-risk-low">Baja comparativa</span></td><td><span class="dv-risk-badge dv-risk-low">Baja objeción</span></td><td>"Muy buena opción si quieres Caribe con clima estable y muy poca conversación sobre riesgo."</td><td>Clientes prudentes, premium, familias, verano y otoño.</td></tr>
+              <tr><td><strong>Curaçao</strong></td><td><span class="dv-risk-badge dv-risk-low">Baja comparativa</span></td><td><span class="dv-risk-badge dv-risk-low">Baja objeción</span></td><td>"Muy recomendable si quieres una alternativa caribeña con perfil más estable y diferente."</td><td>Parejas, clientes sensibles al clima, buceo, cultura y playa.</td></tr>
+              <tr><td><strong>Jamaica</strong></td><td><span class="dv-risk-badge dv-risk-medium">Media estacional</span></td><td><span class="dv-risk-badge dv-risk-low">Objeción secundaria</span></td><td>"Si eliges bien la fecha, sigue siendo un Caribe muy vendible por experiencia, música y naturaleza."</td><td>Parejas, familias activas, clientes que quieren Caribe con carácter.</td></tr>
+              <tr><td><strong>Cancún / Riviera Maya</strong></td><td><span class="dv-risk-badge dv-risk-medium">Media / alta estacional</span></td><td><span class="dv-risk-badge dv-risk-high">Objeción principal</span></td><td>"Hay que vender bien zona, fecha y propuesta de valor; no solo playa, sino viaje completo."</td><td>Parejas, familias, grupos y clientes que quieren variedad.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="dv-risk-grid-2" style="margin-top:18px;">
+          <div class="dv-risk-card">
+            <h3>Argumentos de venta que sí funcionan</h3>
+            <ul class="dv-risk-list">
+              <li><strong>"Temporada" no significa incidencia permanente:</strong> significa una ventana con más vigilancia.</li>
+              <li><strong>El Caribe no se comporta igual:</strong> Aruba y Curaçao son refugios comerciales muy buenos para clientes más sensibles.</li>
+              <li><strong>El sargazo no invalida el viaje:</strong> obliga a vender mejor hotel, excursiones, gastronomía y tipo de playa.</li>
+              <li><strong>El valor del asesor está en afinar la recomendación:</strong> fecha + destino + perfil del cliente.</li>
+              <li><strong>Cuando hay más objeción, también suele haber más oportunidad de precio:</strong> útil para clientes flexibles.</li>
+            </ul>
+          </div>
+          <div class="dv-risk-card">
+            <h3>Cosas que no conviene prometer</h3>
+            <ul class="dv-risk-list">
+              <li>"No va a llover."</li>
+              <li>"No habrá nada de sargazo."</li>
+              <li>"En esa época nunca pasa nada."</li>
+              <li>"Todas las playas estarán perfectas."</li>
+              <li>"Es exactamente igual en todo el Caribe."</li>
+            </ul>
+            <div class="dv-risk-callout" style="margin-top:14px;">Mejor promesa: <strong>"Te orientaré hacia el destino con mejor equilibrio entre clima, probabilidad y tipo de viaje para tus fechas."</strong></div>
+          </div>
+        </div>
+
+        <div class="dv-risk-title" style="margin-top:28px;"><span class="dot"></span><h2>Manejo de objeciones · respuestas listas para usar</h2></div>
+
+        <div class="dv-risk-grid-2">
+          <div class="dv-risk-card">
+            <h3>"No quiero viajar en temporada de huracanes."</h3>
+            <p>Totalmente lógico. Si para ti la estabilidad pesa mucho, lo mejor es mover la fecha o ir a destinos con exposición comparativamente más baja, como Aruba o Curaçao.</p>
+            <h3 style="margin-top:16px;">"¿Entonces es mala idea ir al Caribe en verano?"</h3>
+            <p>No necesariamente. Lo importante es no vender todos los destinos igual. En verano hay destinos más sensibles y otros más cómodos; además, a veces compensa por precio si el cliente entiende bien el contexto.</p>
+            <h3 style="margin-top:16px;">"Me preocupa quedarme sin playa por el sargazo."</h3>
+            <p>Es una objeción razonable, sobre todo en Riviera Maya. Por eso ahí no conviene vender solo playa: conviene vender viaje completo, con hotel potente, cenotes, excursiones y elección cuidadosa de zona.</p>
+          </div>
+          <div class="dv-risk-card">
+            <h3>"Quiero el Caribe con menos riesgo posible."</h3>
+            <p>Entonces la recomendación más segura suele ir hacia Aruba o Curaçao, porque comercialmente son de los productos más estables para clientes que priorizan tranquilidad meteorológica.</p>
+            <h3 style="margin-top:16px;">"¿Y si reservo Jamaica o Riviera Maya?"</h3>
+            <p>Se puede vender perfectamente, pero con el discurso correcto: fecha adecuada, seguimiento previo, hotel bien elegido y expectativas claras.</p>
+            <h3 style="margin-top:16px;">"¿Se puede saber con meses de antelación cómo estará la playa?"</h3>
+            <p>No con precisión absoluta. Lo correcto es hacer lectura estacional ahora y seguimiento real más cerca de la salida.</p>
+          </div>
+        </div>
+
+        <div class="dv-risk-card" style="margin-top:18px;">
+          <h3>Mini script de venta consultiva</h3>
+          <div class="dv-risk-mini">Apertura</div>
+          <div class="dv-risk-quote">"Si te parece, más que hablar solo de destino, te orientaré por nivel de estabilidad y por el tipo de viaje que quieres hacer."</div>
+          <div class="dv-risk-mini">Detección</div>
+          <p>"¿Qué pesa más para ti: minimizar al máximo cualquier objeción climática, o aprovechar mejor precio asumiendo algo más de flexibilidad?"</p>
+          <div class="dv-risk-mini">Recomendación rápida</div>
+          <p>"Si quieres máxima tranquilidad, te llevo a Aruba o Curaçao. Si buscas más variedad, hotelería o excursiones, Jamaica o Riviera Maya siguen siendo muy buenas opciones, pero con una lectura más fina de fecha y zona."</p>
+          <div class="dv-risk-mini">Cierre</div>
+          <p>"Mi trabajo aquí no es decirte que no existe riesgo, sino ayudarte a elegir el Caribe que mejor encaja con tus fechas y con tu tolerancia a esa variable."</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB: DOCUMENTACIÓN -->
+    <div class="tab-panel" id="panel-docs">
+      <div class="section-title">
+        <span class="dot"></span>
+        <h2>Documentación orientativa para pasajeros desde Uruguay</h2>
+      </div>
+
+      <section class="uy-docs" id="documentacion-uruguay">
+        <div class="uy-wrap">
+
+          <div class="uy-alert">
+            <h3>Importante · información únicamente orientativa</h3>
+            <p>Esta guía está elaborada <strong>solo como referencia general</strong> para pasajeros con <strong>documentación uruguaya</strong>. La documentación exigida para viajar puede cambiar sin previo aviso por decisión de autoridades migratorias, sanitarias, aerolíneas o países de destino. <strong>Es responsabilidad exclusiva del pasajero/a</strong> viajar con toda la documentación vigente, en buen estado y correctamente emitida. Antes de viajar, se debe <strong>reconfirmar siempre</strong> la documentación y los requisitos de ingreso/salida con los canales oficiales correspondientes.</p>
+          </div>
+
+          <div class="uy-hero">
+            <div class="uy-kicker">Información útil · documentación uruguaya</div>
+            <h2>Guía orientativa de documentación para salir de Uruguay</h2>
+            <p>Esta sección resume, en formato práctico para venta y capacitación, qué documentación conviene revisar antes de un viaje desde Uruguay. El objetivo es ordenar la información esencial para <strong>adultos</strong>, <strong>menores de edad</strong> y <strong>requisitos sanitarios/vacunación</strong>, especialmente en viajes dentro de Latinoamérica.</p>
+            <div class="uy-stats">
+              <div class="uy-stat"><strong>Adultos</strong><span>cédula, pasaporte, visas y vigencias</span></div>
+              <div class="uy-stat"><strong>Menores</strong><span>permiso, vínculo y casos frecuentes</span></div>
+              <div class="uy-stat"><strong>Vacunas</strong><span>foco principal: fiebre amarilla</span></div>
+              <div class="uy-stat"><strong>Enlaces útiles</strong><span>solo fuentes oficiales</span></div>
+            </div>
+          </div>
+
+          <section class="uy-section">
+            <div class="uy-section-head">
+              <div><h3>Reglas base para pasajeros adultos con documentación uruguaya</h3></div>
+              <p>La primera validación siempre es simple: documento correcto, vigente, legible, en buen estado y con foto reconocible. Después se revisa si el destino admite <strong>cédula</strong> o exige <strong>pasaporte</strong>, y si además pide visa, vigencia mínima mayor a 6 meses, seguro o documentación complementaria.</p>
+            </div>
+            <div class="uy-grid-3">
+              <div class="uy-note"><h4>Documento en buen estado</h4><p>La documentación para salir del país debe estar vigente, legible, en buen estado y con foto reconocible. Algunos destinos exigen vigencia superior a 6 meses.</p></div>
+              <div class="uy-note"><h4>MERCOSUR y asociados</h4><p>Para viajar a los Estados Parte y Asociados del MERCOSUR —Brasil, Paraguay, Argentina, Bolivia, Chile, Colombia, Ecuador, Perú y Venezuela— se puede viajar solo con cédula de identidad uruguaya.</p></div>
+              <div class="uy-note"><h4>Resto del mundo</h4><p>Para viajar fuera de ese marco, la referencia oficial uruguaya es llevar <strong>pasaporte vigente</strong>. El pasaporte es el documento que acredita identidad y habilita a viajar según convenios internacionales.</p></div>
+            </div>
+            <div style="margin-top:22px; overflow:auto;">
+              <table>
+                <thead><tr><th>Situación</th><th>Qué revisar</th><th>Observación comercial / práctica</th></tr></thead>
+                <tbody>
+                  <tr><td>Viaje dentro de MERCOSUR y asociados</td><td>Cédula vigente, en buen estado y con foto reconocible</td><td>Aunque Uruguay lo permite con cédula, el pasajero debe reconfirmar requisitos del destino y de la aerolínea.</td></tr>
+                  <tr><td>Viaje fuera de MERCOSUR</td><td>Pasaporte vigente</td><td>Muchos destinos piden vigencia mínima de 6 meses. Confirmar siempre antes de viajar.</td></tr>
+                  <tr><td>Destino con requisitos extra</td><td>Visa, seguro, reservas, solvencia, carta de invitación o vacunas</td><td>Uruguay recomienda consultar directamente a la representación diplomática o consular del país de destino.</td></tr>
+                  <tr><td>Prevención documental</td><td>Copias escaneadas de cédula, pasaporte y visas</td><td>Se recomienda guardarlas en un lugar seguro y también en el correo electrónico.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="uy-section">
+            <div class="uy-section-head">
+              <div><h3>Menores de edad: qué debe revisarse antes de salir de Uruguay</h3></div>
+              <p>En menores, la clave no es solo el documento de viaje, sino también <strong>la acreditación del vínculo</strong> y, cuando corresponde, el <strong>permiso de menor</strong>. Es una de las áreas donde más conviene prevenir errores antes de la emisión final.</p>
+            </div>
+            <div class="uy-grid-2">
+              <article class="uy-card">
+                <div class="uy-badges"><span class="uy-badge red">Atención prioritaria</span><span class="uy-badge blue">Normativa uruguaya</span></div>
+                <h4>Qué es el permiso de menor</h4>
+                <p>El permiso para menor de edad es una autorización documentada exigida por la normativa uruguaya a menores uruguayos o extranjeros residentes en Uruguay —o con más de un año de residencia efectiva— que deseen ausentarse del territorio nacional.</p>
+                <ul>
+                  <li>La autoridad competente para exigirlo y controlarlo es la Dirección Nacional de Migración.</li>
+                  <li>Si el menor viaja solo, con uno de sus padres o con terceros, en principio debe analizarse si necesita permiso.</li>
+                  <li>El permiso puede tramitarse ante Migración: <a href="https://www.gub.uy/tramites/permiso-menor-edad" target="_blank">gub.uy/tramites/permiso-menor-edad</a></li>
+                </ul>
+                <div class="uy-mini"><strong>Advertencia útil:</strong> aunque la situación parezca simple, en menores siempre conviene validar el caso exacto antes del viaje.</div>
+              </article>
+              <article class="uy-card">
+                <div class="uy-badges"><span class="uy-badge green">Excepciones</span><span class="uy-badge gold">Verificar vínculo</span></div>
+                <h4>Cuándo puede no exigirse permiso</h4>
+                <p>Uruguay exceptúa del permiso de menor los casos en que el menor viaja acompañado de sus padres o tutor, o cuando posee un <strong>pasaporte uruguayo válido</strong>. Aun así, se recomienda confirmar si el país de destino pide documentación adicional.</p>
+                <ul>
+                  <li>Si viaja con ambos padres y usa <strong>cédula uruguaya</strong>, debe acreditarse el vínculo con <strong>partida de nacimiento con vigencia no mayor a 1 año</strong>.</li>
+                  <li>Si es menor uruguayo con <strong>pasaporte extranjero</strong> y viaja con ambos padres, también debe acreditar vínculo con partida de nacimiento vigente.</li>
+                  <li>Si es menor extranjero con más de un año de permanencia en Uruguay, también puede requerir partida de nacimiento vigente.</li>
+                </ul>
+              </article>
+            </div>
+            <div style="margin-top:22px; overflow:auto;">
+              <table>
+                <thead><tr><th>Caso frecuente</th><th>Orientación general</th><th>Qué conviene confirmar</th></tr></thead>
+                <tbody>
+                  <tr><td>Menor con ambos padres + cédula uruguaya</td><td>No debería requerir permiso, pero sí acreditación del vínculo con partida de nacimiento vigente</td><td>Que la partida tenga menos de 1 año y que la aerolínea/destino no pida documentación extra.</td></tr>
+                  <tr><td>Menor con ambos padres + pasaporte uruguayo válido</td><td>La normativa uruguaya lo exceptúa del permiso</td><td>Confirmar igualmente si el destino solicita documentación adicional para menores.</td></tr>
+                  <tr><td>Menor con uno solo de los padres</td><td>Debe revisarse expresamente si corresponde permiso de menor</td><td>No dejar este caso para último momento; validarlo con Migración.</td></tr>
+                  <tr><td>Menor que viaja solo o con terceros</td><td>Debe revisarse expresamente si corresponde permiso de menor</td><td>Confirmar además condiciones de aerolínea y país de destino.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="uy-grid-3" style="margin-top:22px;">
+              <div class="uy-note"><h4>Vigencia y costo del permiso</h4><p>El permiso de menor puede tener vigencia de hasta 1 año y costo por viaje, pudiendo emitirse por más de una salida según el formulario.</p></div>
+              <div class="uy-note"><h4>Trámite presencial</h4><p>La Dirección Nacional de Migración indica que el trámite requiere agenda y que no es necesario que el menor acompañe a sus padres al momento del trámite presencial.</p></div>
+              <div class="uy-note"><h4>Regla práctica</h4><p>Si hay un menor involucrado, no alcanza con "suponer" que está todo bien: conviene revisar con tiempo documento, vínculo y eventual permiso.</p></div>
+            </div>
+          </section>
+
+          <section class="uy-section">
+            <div class="uy-section-head">
+              <div><h3>Vacunas para Latinoamérica: foco práctico para viajeros desde Uruguay</h3></div>
+              <p>En esta parte la clave es no simplificar de más: <strong>no existe una exigencia única para toda Latinoamérica</strong>. La vacuna internacionalmente más relevante en viajes es la de <strong>fiebre amarilla</strong>, pero su exigencia o recomendación puede variar según el país, las zonas visitadas, las escalas y el antecedente de tránsito por áreas de riesgo.</p>
+            </div>
+            <div class="uy-grid-2">
+              <article class="uy-card">
+                <div class="uy-badges"><span class="uy-badge red">Vacuna clave</span><span class="uy-badge gold">Fiebre amarilla</span></div>
+                <h4>La referencia sanitaria principal</h4>
+                <p>El propio Ministerio de Salud Pública de Uruguay señala que, a nivel internacional, la vacuna que algunos países pueden exigir es la de <strong>fiebre amarilla</strong>. Uruguay también dispone del trámite oficial para vacunación y para obtención del Certificado Internacional de Vacunación.</p>
+                <ul>
+                  <li>La protección adecuada se considera a los <strong>10 días</strong> de aplicada la vacuna.</li>
+                  <li>Uruguay recomienda iniciar el trámite con antelación suficiente, especialmente en temporada alta.</li>
+                  <li>Si la vacuna está contraindicada por razones médicas, puede tramitarse certificado de exención.</li>
+                </ul>
+              </article>
+              <article class="uy-card">
+                <div class="uy-badges"><span class="uy-badge blue">Certificado internacional</span><span class="uy-badge green">MSP Uruguay</span></div>
+                <h4>Cómo se gestiona en Uruguay</h4>
+                <p>Para obtener el Certificado Internacional de Vacunación contra fiebre amarilla en Uruguay, el ciudadano debe haber recibido la vacuna y tener registrado el acto vacunal en el sistema oficial. Luego realiza la solicitud, pago y agenda para retiro del certificado.</p>
+                <ul>
+                  <li>Debe presentarse el documento de viaje que se usará en el viaje.</li>
+                  <li>Si ya fue vacunado pero no tiene certificado, el MSP prevé el canal para su gestión.</li>
+                  <li>La agenda queda confirmada una vez abonado el arancel del certificado.</li>
+                  <li>Más info: <a href="https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior" target="_blank">gub.uy/tramites/vacunacion-fiebre-amarilla</a></li>
+                </ul>
+              </article>
+            </div>
+            <div class="uy-note" style="margin-top:22px;">
+              <h4>Lectura comercial correcta sobre vacunas</h4>
+              <p><strong>"En Latinoamérica no hay una regla única para todos los destinos; la vacuna a revisar especialmente es fiebre amarilla, y el requisito final depende del país, las escalas, las zonas visitadas y la normativa vigente al momento del viaje"</strong>.</p>
+            </div>
+          </section>
+
+          <section class="uy-section">
+            <div class="uy-section-head">
+              <div><h3>Checklist rápido antes de emitir o viajar</h3></div>
+              <p>Esta es la lectura más útil para usar con el pasajero antes del cierre: corta, práctica y orientada a prevenir rechazos o contratiempos.</p>
+            </div>
+            <div class="uy-grid-3">
+              <div class="uy-note"><h4>1. Documento correcto</h4><p>Confirmar si el viaje admite cédula o exige pasaporte, y revisar que el documento esté vigente, legible y en buen estado.</p></div>
+              <div class="uy-note"><h4>2. Vigencia mínima</h4><p>Corroborar si el país de destino exige más de 6 meses de vigencia del documento.</p></div>
+              <div class="uy-note"><h4>3. Menores</h4><p>Si viaja un menor, revisar vínculo, partida y eventual permiso de menor con tiempo.</p></div>
+              <div class="uy-note"><h4>4. Vacunas</h4><p>Revisar especialmente si el itinerario exige vacuna/certificado de fiebre amarilla.</p></div>
+              <div class="uy-note"><h4>5. Copias y respaldo</h4><p>Guardar copias escaneadas de cédula, pasaporte y visas en lugar seguro y en el correo electrónico.</p></div>
+              <div class="uy-note"><h4>6. Seguro y consulados</h4><p>Se recomienda contratar asistencia al viajero e identificar la oficina consular uruguaya más cercana al destino.</p></div>
+            </div>
+          </section>
+
+          <section class="uy-section">
+            <div class="uy-section-head">
+              <div><h3>Enlaces útiles · fuentes oficiales</h3></div>
+              <p>En esta sección sí conviene derivar siempre a enlaces oficiales. Son la base correcta para reconfirmar requisitos antes del viaje.</p>
+            </div>
+            <div class="uy-links">
+              <div class="uy-link-card"><a href="https://www.gub.uy/tramites/permiso-menor-edad" target="_blank">Permiso para menor de edad · GUB.UY</a><p>Trámite oficial y casuísticas completas para salidas del país de menores de edad.</p></div>
+              <div class="uy-link-card"><a href="https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar" target="_blank">Migración: documentación a tener en cuenta para viajar</a><p>Recordatorio oficial actualizado sobre documentación y casos frecuentes con menores.</p></div>
+              <div class="uy-link-card"><a href="https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior" target="_blank">Cancillería: recomendaciones generales al viajar al exterior</a><p>Guía oficial de Uruguay sobre documentación, copias, seguros, visados y asistencia consular.</p></div>
+              <div class="uy-link-card"><a href="https://www.gub.uy/tramites/solicitud-pasaporte-primera-vez" target="_blank">Solicitud de pasaporte · GUB.UY</a><p>Trámite oficial del documento que acredita identidad y habilita a viajar fuera de los destinos donde basta la cédula.</p></div>
+              <div class="uy-link-card"><a href="https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior" target="_blank">Vacunación contra fiebre amarilla para viajes al exterior</a><p>Información oficial del MSP sobre vacunación, tiempos previos al viaje y certificados de exención.</p></div>
+              <div class="uy-link-card"><a href="https://www.gub.uy/tramites/obtencion-certificado-internacional-vacunacion-fiebre-amarilla" target="_blank">Certificado Internacional de Vacunación Fiebre Amarilla</a><p>Trámite oficial para obtener el certificado internacional en Uruguay.</p></div>
+              <div class="uy-link-card"><a href="https://mapaconsular.mrree.gub.uy/" target="_blank">Mapa Consular de Uruguay</a><p>Ubicación y contacto de embajadas y consulados uruguayos en el exterior.</p></div>
+              <div class="uy-link-card"><a href="https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf" target="_blank">PDF oficial: documentación para salir del país</a><p>Resumen oficial de Cancillería sobre documentación, menores, visados y medidas sanitarias.</p></div>
+            </div>
+          </section>
+
+          <section class="uy-section uy-closing">
+            <div class="uy-section-head"><div><h3>Mensaje final para capacitación</h3></div></div>
+            <div class="uy-note">
+              <h4>Texto recomendado</h4>
+              <p><strong>"La agencia orienta, pero la responsabilidad documental es siempre del pasajero/a. Toda persona debe reconfirmar antes de viajar la validez de su documento, requisitos migratorios, permisos de menores, visas, vacunas y demás exigencias de ingreso o salida directamente con fuentes oficiales, aerolínea y autoridades competentes."</strong></p>
+            </div>
+          </section>
+
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    <img src="images/logo-white.png" alt="Dr.Viaje">
+    <p>Centro de Capacitación · <a href="index.html">Volver al inicio</a></p>
+    <p style="margin-top:6px;">La información de esta sección es orientativa. Verificar siempre con fuentes oficiales antes de viajar.</p>
+  </footer>
+
+  <script>
+    const btns = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        btns.forEach(b => b.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + tab).classList.add('active');
+        document.querySelector('.content-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amadeus · Guía Rápida de Reservas · Dr.Viaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <style>
+    :root {
+      --primary:#7B2D8E;
+      --pink:#E91E63;
+      --orange:#FF9800;
+      --navy:#16324f;
+      --blue:#2457a6;
+      --blue-soft:#edf4ff;
+      --green-b:#1d7a46;
+      --green-soft:#e9f8ef;
+      --amber-b:#a66a00;
+      --amber-soft:#fff6e5;
+      --red-b:#b42318;
+      --red-soft:#fff0f0;
+      --line:#dbe4f0;
+      --muted:#5b6b7f;
+      --text:#1f2a37;
+      --card:#ffffff;
+      --shadow:0 10px 30px rgba(22,50,79,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:#f4f7fb;
+      color:var(--text);
+      padding-top:0;
+    }
+
+    /* ── HERO ── */
+    .aq-hero{
+      background:linear-gradient(135deg, var(--primary) 0%, #9c27b0 45%, var(--pink) 100%);
+      color:#fff;
+      padding:52px 24px 44px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .aq-hero::before{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.06);top:-120px;right:-80px;}
+    .aq-hero::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:rgba(255,152,0,.10);bottom:-80px;left:-60px;}
+    .aq-hero .eyebrow{
+      display:inline-block;
+      font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+      padding:7px 14px;border-radius:999px;margin-bottom:16px;position:relative;z-index:1;
+    }
+    .aq-hero h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.8rem,4vw,2.8rem);
+      margin-bottom:14px;position:relative;z-index:1;line-height:1.15;
+    }
+    .aq-hero p{
+      max-width:800px;margin:0 auto 24px;
+      font-size:1.02rem;line-height:1.7;opacity:.93;
+      position:relative;z-index:1;
+    }
+    .aq-hero-btns{
+      display:flex;flex-wrap:wrap;gap:14px;justify-content:center;
+      position:relative;z-index:1;
+    }
+    .btn-primary{
+      display:inline-flex;align-items:center;gap:8px;
+      background:#fff;color:var(--primary);
+      border-radius:999px;padding:14px 28px;
+      font-weight:800;font-size:.95rem;
+      box-shadow:0 8px 28px rgba(0,0,0,.18);
+      text-decoration:none;transition:.25s ease;
+    }
+    .btn-primary:hover{background:var(--orange);color:#fff;transform:translateY(-2px);}
+    .btn-outline{
+      display:inline-flex;align-items:center;gap:8px;
+      background:transparent;color:#fff;
+      border:2px solid rgba(255,255,255,.65);
+      border-radius:999px;padding:14px 28px;
+      font-weight:800;font-size:.95rem;
+      text-decoration:none;transition:.25s ease;
+    }
+    .btn-outline:hover{background:rgba(255,255,255,.15);border-color:#fff;transform:translateY(-2px);}
+
+    .aq-hero-stats{
+      display:grid;grid-template-columns:repeat(4,1fr);
+      gap:12px;max-width:760px;margin:28px auto 0;
+      position:relative;z-index:1;
+    }
+    .aq-hero-stat{
+      background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);
+      border-radius:18px;padding:14px;
+    }
+    .aq-hero-stat strong{display:block;font-size:20px;margin-bottom:4px;}
+    .aq-hero-stat span{font-size:12px;opacity:.9;}
+
+    /* ── WRAP ── */
+    .wrap{max-width:1180px;margin:0 auto;padding:48px 24px 80px;}
+
+    /* ── STICKY NAV ── */
+    .quick-nav{
+      display:flex;flex-wrap:wrap;gap:10px;
+      margin:0 0 36px;padding:10px;
+      border-radius:20px;border:1px solid var(--line);
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(8px);
+      box-shadow:var(--shadow);
+      position:sticky;top:78px;z-index:8;
+    }
+    .quick-nav a{
+      text-decoration:none;color:var(--navy);
+      background:#fff;border:1px solid var(--line);
+      padding:9px 14px;border-radius:999px;
+      font-size:13px;font-weight:700;transition:.2s ease;
+    }
+    .quick-nav a:hover{background:var(--blue-soft);border-color:#c9dafc;transform:translateY(-1px);}
+
+    /* ── SECTION TITLES ── */
+    .section-title{
+      font-family:'Playfair Display',serif;
+      font-size:1.5rem;color:var(--navy);
+      margin:36px 0 6px;scroll-margin-top:130px;
+    }
+    .section-note{color:var(--muted);font-size:.93rem;line-height:1.65;margin-bottom:18px;max-width:980px;}
+
+    /* ── FLOW ── */
+    .flow{
+      display:grid;grid-template-columns:repeat(8,minmax(0,1fr));
+      gap:12px;margin-bottom:36px;
+    }
+    .flow-step{
+      background:#fff;border:1px solid var(--line);
+      border-radius:18px;padding:14px;
+      text-align:center;box-shadow:var(--shadow);
+      font-size:13px;line-height:1.45;
+    }
+    .flow-step strong{display:block;color:var(--navy);font-size:14px;margin-bottom:4px;}
+
+    /* ── CARDS ── */
+    .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:36px;}
+
+    .card{
+      background:var(--card);border:1px solid var(--line);
+      border-radius:22px;padding:22px;
+      box-shadow:var(--shadow);
+      position:relative;overflow:hidden;
+    }
+    .card::before{
+      content:"";position:absolute;inset:0 auto 0 0;
+      width:5px;background:var(--blue);
+    }
+    .card.card-important{
+      background:linear-gradient(180deg,#fff5f5 0%,#ffe9e9 100%);
+      border:1px solid #f3b8b8;
+    }
+    .card.card-important::before{background:var(--red-b);}
+
+    .card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px;}
+
+    .badge{
+      display:inline-block;font-size:11px;font-weight:800;
+      letter-spacing:.04em;text-transform:uppercase;
+      padding:6px 10px;border-radius:999px;
+      background:var(--blue-soft);color:var(--blue);
+      margin-bottom:6px;
+    }
+    .badge-red{
+      display:inline-block;font-size:11px;font-weight:800;
+      letter-spacing:.04em;text-transform:uppercase;
+      padding:6px 10px;border-radius:999px;
+      background:var(--red-b);color:#fff;
+      margin-bottom:6px;
+    }
+    .card h3{margin:0;font-size:1.15rem;color:var(--navy);}
+    .card p{margin:0 0 14px;color:var(--muted);line-height:1.65;font-size:.9rem;}
+
+    /* FXD highlight card */
+    .fxd-cta-card{
+      background:linear-gradient(135deg,var(--primary) 0%,var(--pink) 100%);
+      border:none;color:#fff;cursor:pointer;
+    }
+    .fxd-cta-card::before{background:rgba(255,255,255,.25);}
+    .fxd-cta-card h3{color:#fff;}
+    .fxd-cta-card p{color:rgba(255,255,255,.9);}
+    .fxd-cta-card .badge{background:rgba(255,255,255,.2);color:#fff;}
+    .fxd-cta-card a{
+      display:inline-flex;align-items:center;gap:8px;
+      margin-top:14px;background:#fff;color:var(--primary);
+      text-decoration:none;padding:10px 20px;border-radius:10px;
+      font-size:.88rem;font-weight:800;transition:.2s;
+    }
+    .fxd-cta-card a:hover{background:var(--orange);color:#fff;}
+
+    /* ── CMD BLOCK ── */
+    .cmd{
+      background:#0f172a;color:#eff6ff;
+      border-radius:16px;padding:14px 16px;
+      font-family:Consolas,Monaco,monospace;
+      font-size:15px;overflow:auto;
+      margin:0 0 12px;white-space:pre-line;
+    }
+    code{
+      background:#e8edf5;color:#1e3a5f;
+      padding:2px 6px;border-radius:5px;
+      font-family:Consolas,Monaco,monospace;font-size:.88em;
+    }
+    .cmd code{background:transparent;color:#93c5fd;padding:0;}
+
+    /* ── MINI LIST ── */
+    .mini-list{margin:0;padding-left:18px;color:var(--text);}
+    .mini-list li{margin:0 0 8px;line-height:1.55;font-size:.88rem;}
+
+    /* ── TIPS ── */
+    .tip{
+      margin-top:14px;border-radius:14px;
+      padding:11px 14px;font-size:.84rem;line-height:1.55;
+      border:1px solid transparent;
+    }
+    .tip.blue{background:var(--blue-soft);color:var(--blue);border-color:#dbe7ff;}
+    .tip.green{background:var(--green-soft);color:var(--green-b);border-color:#c9e8d8;}
+    .tip.amber{background:var(--amber-soft);color:var(--amber-b);border-color:#f0deb2;}
+    .tip.red{background:var(--red-soft);color:var(--red-b);border-color:#f3c6c6;}
+
+    /* ── TABLE ── */
+    .table-wrap{
+      overflow:auto;background:#fff;
+      border:1px solid var(--line);border-radius:22px;
+      box-shadow:var(--shadow);margin-bottom:36px;
+    }
+    table{width:100%;border-collapse:collapse;min-width:860px;}
+    th,td{padding:13px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:.88rem;line-height:1.5;}
+    th{background:#f8fbff;color:var(--navy);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;}
+    tbody tr:last-child td{border-bottom:none;}
+
+    /* ── ALERT ── */
+    .alert{
+      background:var(--red-soft);border:1px solid #f5c2c0;
+      color:var(--red-b);border-radius:20px;
+      padding:18px 22px;margin-bottom:36px;
+    }
+    .alert strong{display:block;margin-bottom:6px;font-size:1rem;}
+
+    /* ── MANUAL PDF BTN ── */
+    .manual-banner{
+      display:flex;align-items:center;gap:20px;
+      background:linear-gradient(135deg,#fff7f0 0%,#fff 100%);
+      border:1px solid #ffe0c0;border-radius:24px;
+      padding:24px 28px;margin-bottom:36px;
+    }
+    .manual-banner .icon{font-size:2.4rem;flex:0 0 auto;}
+    .manual-banner h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:#8a4000;margin-bottom:6px;}
+    .manual-banner p{color:#7a3800;font-size:.9rem;line-height:1.6;margin:0 0 14px;}
+    .btn-pdf{
+      display:inline-flex;align-items:center;gap:8px;
+      background:linear-gradient(135deg,var(--primary),var(--pink));
+      color:#fff;text-decoration:none;
+      padding:11px 22px;border-radius:12px;
+      font-size:.88rem;font-weight:800;transition:.2s;
+    }
+    .btn-pdf:hover{opacity:.88;transform:translateY(-1px);}
+
+    /* ── FOOTER ── */
+    .page-footer{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;text-align:center;padding:40px 24px;}
+    .page-footer img{height:36px;margin-bottom:14px;opacity:.85;}
+    .page-footer p{font-size:.85rem;opacity:.6;margin-top:8px;}
+    .page-footer a{color:rgba(255,255,255,.7);text-decoration:none;}
+
+    @media(max-width:980px){
+      .aq-hero-stats,.flow,.cards{grid-template-columns:1fr;}
+      .quick-nav{position:static;}
+    }
+    @media(max-width:600px){
+      .manual-banner{flex-direction:column;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+
+  <script src="../js/navbar-inject.js"></script>
+
+  <!-- HERO -->
+  <div class="aq-hero">
+    <span class="eyebrow">✈️ Amadeus · Ayuda memoria</span>
+    <h1>Guía rápida para generar una reserva</h1>
+    <p>Resumén operativo de los comandos clave para armar una reserva en Amadeus: desde consultar disponibilidad hasta dejar la tarifa grabada y lista para emisión.</p>
+    <div class="aq-hero-btns">
+      <a href="reservas-basico.pdf" target="_blank" class="btn-primary">
+        📄 Manual Básico PDF
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+      <a href="fxd.html" class="btn-outline">
+        🔍 Guía FXD avanzada →
+      </a>
+    </div>
+    <div class="aq-hero-stats">
+      <div class="aq-hero-stat">
+        <strong>8</strong>
+        <span>Cards operativas</span>
+      </div>
+      <div class="aq-hero-stat">
+        <strong>1</strong>
+        <span>Card importante</span>
+      </div>
+      <div class="aq-hero-stat">
+        <strong>Ejemplos</strong>
+        <span>completos y realistas</span>
+      </div>
+      <div class="aq-hero-stat">
+        <strong>PNR</strong>
+        <span>listo para emisión</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- QUICK NAV -->
+    <nav class="quick-nav">
+      <a href="#aq-flujo">Flujo de trabajo</a>
+      <a href="#aq-cards">Cards operativas</a>
+      <a href="#aq-tabla">Tabla rápida</a>
+      <a href="#aq-fxd">Guía FXD</a>
+    </nav>
+
+    <!-- MANUAL BANNER -->
+    <div class="manual-banner">
+      <div class="icon">📘</div>
+      <div>
+        <h3>Manual Básico Amadeus (PDF oficial)</h3>
+        <p>El manual completo de reservas básicas de Amadeus Learning Services. Cubre desde la plataforma hasta la creación de PNRs para uno o múltiples pasajeros.</p>
+        <a href="reservas-basico.pdf" target="_blank" class="btn-pdf">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Abrir Manual Básico PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- FLUJO -->
+    <h2 class="section-title" id="aq-flujo">Flujo de trabajo</h2>
+    <p class="section-note">Secuencia lógica de una reserva completa: consultar, vender, cotizar, validar alternativas, completar datos, cerrar el PNR y grabar la tarifa.</p>
+    <div class="flow">
+      <div class="flow-step"><strong>1</strong>AN</div>
+      <div class="flow-step"><strong>2</strong>SS</div>
+      <div class="flow-step"><strong>3</strong>FXX / FXR</div>
+      <div class="flow-step"><strong>+</strong>FXD / MD / FXZ / FXU</div>
+      <div class="flow-step"><strong>4</strong>NM</div>
+      <div class="flow-step"><strong>5</strong>AP / TK / RF</div>
+      <div class="flow-step"><strong>6</strong>ER / ET</div>
+      <div class="flow-step"><strong>7–8</strong>FXP / FXB / TQT</div>
+    </div>
+
+    <!-- CARDS -->
+    <h2 class="section-title" id="aq-cards">Cards operativas</h2>
+    <div class="cards">
+
+      <!-- Card 01 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 01</span>
+            <h3>Solicitar disponibilidad</h3>
+          </div>
+        </div>
+        <p>Consulta vuelos disponibles entre dos ciudades en una fecha determinada. El formato base es fecha + origen + destino.</p>
+        <div class="cmd">AN15NOVMVDMAD</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo:</strong> Montevideo → Madrid, 15 de noviembre.</li>
+          <li><strong>AN</strong> = disponibilidad aérea.</li>
+          <li><strong>15NOV</strong> = fecha.</li>
+          <li><strong>MVDMAD</strong> = origen / destino.</li>
+        </ul>
+        <div class="tip blue"><strong>Ayuda memoria:</strong> primero mirás opciones, después elegís qué vender.</div>
+      </article>
+
+      <!-- Card 02 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 02</span>
+            <h3>Vender los lugares</h3>
+          </div>
+        </div>
+        <p>Una vez elegida la opción, se vende el segmento indicando cantidad, clase y número de línea.</p>
+        <div class="cmd">SS1Y2</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo:</strong> 1 plaza en clase Y de la línea 2.</li>
+          <li><strong>SS</strong> = vender segmento.</li>
+          <li><strong>1</strong> = cantidad de plazas.</li>
+          <li><strong>Y</strong> = clase · <strong>2</strong> = línea elegida.</li>
+        </ul>
+        <div class="tip green"><strong>Ayuda memoria:</strong> comprobá muy bien la línea y la clase antes de vender.</div>
+      </article>
+
+      <!-- Card 03 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 03</span>
+            <h3>Cotización</h3>
+          </div>
+        </div>
+        <p>Consulta la tarifa sin dejarla grabada. Sirve para ver el precio de lo reservado o pedir una mejor tarifa antes de completar el PNR.</p>
+        <div class="cmd">FXX
+FXR</div>
+        <ul class="mini-list">
+          <li><code>FXX</code> → cotiza exactamente lo ya reservado, sin guardar.</li>
+          <li><code>FXR</code> → busca mejor tarifa disponible, sin guardar.</li>
+        </ul>
+        <div class="tip green"><strong>Ayuda memoria:</strong> esta card es solo para consultar tarifa, todavía no deja nada listo para emisión.</div>
+      </article>
+
+      <!-- Card IMPORTANTE: FXD -->
+      <article class="card card-important">
+        <div class="card-top">
+          <div>
+            <span class="badge-red">⚠️ Importante</span>
+            <h3>Validar otra opción con FXD</h3>
+          </div>
+        </div>
+        <p>Antes de seguir, conviene validar con <strong>FXD</strong> si existe una alternativa mejor o con otra aerolínea. <strong>MD</strong> desplaza entre grupos de recomendaciones, <strong>FXS</strong> muestra una recomendación y <strong>FXZ / FXU</strong> la reserva.</p>
+        <div class="cmd">FXD
+MD
+FXS2
+FXZ2
+FXU2</div>
+        <ul class="mini-list">
+          <li><strong>FXD</strong> → busca recomendaciones para el itinerario actual.</li>
+          <li><strong>MD</strong> → desplaza entre grupos / pantallas.</li>
+          <li><strong>FXS2</strong> → muestra el detalle de la recomendación 2.</li>
+          <li><strong>FXZ2</strong> → reserva la rec. 2 sin crear TST.</li>
+          <li><strong>FXU2</strong> → reserva la rec. 2 creando TST.</li>
+        </ul>
+        <div class="tip red"><strong>Ayuda memoria:</strong> no te quedes solo con la primera opción. Si con FXD hay algo mejor, usá MD para recorrer opciones.</div>
+        <a href="fxd.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:linear-gradient(135deg,#7B2D8E,#E91E63);color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-size:.85rem;font-weight:800;">
+          Ver Guía Completa FXD →
+        </a>
+      </article>
+
+      <!-- Card 04 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 04</span>
+            <h3>Agregar nombres</h3>
+          </div>
+        </div>
+        <p>El nombre del pasajero es elemento obligatorio del PNR. Se carga con apellido, nombre y tratamiento.</p>
+        <div class="cmd">NM1PEREZ/JUAN MR</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo:</strong> pasajero Juan Pérez, tratamiento MR.</li>
+          <li><strong>NM1</strong> = un pasajero.</li>
+          <li><strong>PEREZ/JUAN</strong> = apellido / nombre.</li>
+          <li><strong>MR</strong> = tratamiento.</li>
+        </ul>
+        <div class="tip blue"><strong>Ayuda memoria:</strong> el nombre debe coincidir exactamente con la documentación del pasajero.</div>
+      </article>
+
+      <!-- Card 05 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 05</span>
+            <h3>Datos básicos</h3>
+          </div>
+        </div>
+        <p>Antes de cerrar la reserva se cargan los datos básicos del expediente: contacto, plazo de emisión y received from.</p>
+        <div class="cmd">AP MVD 099123456-A
+TKTL01SEP
+RF ANA</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo:</strong> teléfono Montevideo, límite 01SEP, recibido de Ana.</li>
+          <li><strong>AP</strong> = teléfono o contacto.</li>
+          <li><strong>TKTL</strong> = fecha límite de emisión.</li>
+          <li><strong>RF</strong> = recibido de / quién solicita.</li>
+        </ul>
+        <div class="tip amber"><strong>Ayuda memoria:</strong> nombre + vuelos + contacto + ticket limit + RF = base mínima para cerrar el PNR.</div>
+      </article>
+
+      <!-- Card 06 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 06</span>
+            <h3>Cerrar la reserva</h3>
+          </div>
+        </div>
+        <p>Cuando el PNR tiene los datos básicos cargados, se guarda. Se puede cerrar dejando en pantalla o finalizando la transacción.</p>
+        <div class="cmd">ER
+ET</div>
+        <ul class="mini-list">
+          <li><code>ER</code> → guarda y recupera el PNR en pantalla.</li>
+          <li><code>ET</code> → guarda y cierra la transacción.</li>
+        </ul>
+        <div class="tip amber"><strong>Ayuda memoria:</strong> si todavía querés seguir trabajando el PNR, normalmente conviene ER.</div>
+      </article>
+
+      <!-- Card 07 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 07</span>
+            <h3>Grabar la tarifa y volver a cerrar</h3>
+          </div>
+        </div>
+        <p>Para dejar la reserva lista para emisión, la tarifa debe quedar grabada en TST con FXP o FXB; luego se vuelve a cerrar el PNR.</p>
+        <div class="cmd">FXP
+ER
+
+FXB
+ER</div>
+        <ul class="mini-list">
+          <li><code>FXP</code> + <code>ER</code> → graba la tarifa reservada y vuelve a cerrar.</li>
+          <li><code>FXB</code> + <code>ER</code> → busca mejor tarifa, la graba y cierra.</li>
+          <li><strong>FXP</strong> = cotiza y graba en TST · <strong>FXB</strong> = busca mejor y graba.</li>
+        </ul>
+        <div class="tip green"><strong>Ayuda memoria:</strong> para emisión no alcanza con consultar; la tarifa debe quedar grabada y la reserva nuevamente cerrada.</div>
+      </article>
+
+      <!-- Card 08 -->
+      <article class="card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Card 08</span>
+            <h3>Cómo leer la tarifa</h3>
+          </div>
+        </div>
+        <p>Una vez grabada o cotizada, la tarifa se puede revisar en distintos niveles: detalle del TST, imagen de ticket o desglose de cálculo.</p>
+        <div class="cmd">TQT
+FQQ3
+FQH31</div>
+        <ul class="mini-list">
+          <li><code>TQT</code> → revisa el TST grabado en el PNR.</li>
+          <li><code>FQQ3</code> → imagen de ticket de la opción 3.</li>
+          <li><code>FQH31</code> → desglose / cálculo de tarifa.</li>
+        </ul>
+        <div class="tip blue"><strong>Ayuda memoria:</strong> TQT es la revisión rápida más útil para confirmar qué quedó grabado.</div>
+      </article>
+
+    </div>
+
+    <!-- TABLA RÁPIDA -->
+    <h2 class="section-title" id="aq-tabla">Tabla rápida de comandos</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Card</th>
+            <th>Comando</th>
+            <th>Ejemplo</th>
+            <th>Para qué sirve</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1. Disponibilidad</td><td><code>AN15NOVMVDMAD</code></td><td>Montevideo → Madrid, 15NOV</td><td>Busca vuelos por fecha y ruta</td></tr>
+          <tr><td>2. Venta</td><td><code>SS1Y2</code></td><td>1 plaza clase Y, línea 2</td><td>Vende el lugar elegido</td></tr>
+          <tr><td>3. Cotización</td><td><code>FXX</code> / <code>FXR</code></td><td>Ver precio o buscar mejor tarifa</td><td>Consulta precio sin grabar</td></tr>
+          <tr><td><strong>⚠️ Importante</strong></td><td><code>FXD</code> / <code>MD</code> / <code>FXS2</code> / <code>FXZ2</code> / <code>FXU2</code></td><td>Buscar alternativa, navegar y reservar</td><td>Valida otras opciones</td></tr>
+          <tr><td>4. Nombres</td><td><code>NM1PEREZ/JUAN MR</code></td><td>Juan Pérez, MR</td><td>Carga el pasajero</td></tr>
+          <tr><td>5. Datos básicos</td><td><code>AP MVD 099123456-A</code> · <code>TKTL01SEP</code> · <code>RF ANA</code></td><td>Contacto + límite + recibido de</td><td>Completa el expediente</td></tr>
+          <tr><td>6. Cerrar reserva</td><td><code>ER</code> / <code>ET</code></td><td>Guardar y seguir / guardar y salir</td><td>Guarda el PNR</td></tr>
+          <tr><td>7. Grabar tarifa</td><td><code>FXP</code> + <code>ER</code> · <code>FXB</code> + <code>ER</code></td><td>Graba tarifa y vuelve a cerrar</td><td>Deja la reserva lista para emisión</td></tr>
+          <tr><td>8. Leer tarifa</td><td><code>TQT</code> / <code>FQQ3</code> / <code>FQH31</code></td><td>Ver TST, ticket image y cálculo</td><td>Revisá cómo quedó la tarifa</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ALERT -->
+    <div class="alert">
+      <strong>📌 Nota importante</strong>
+      Esta guía es una ayuda memoria operativa. Los comandos pueden variar según oficina, mercado, configuración o tipo de tarifa. Siempre validá el procedimiento exacto en tu entorno de trabajo.
+    </div>
+
+    <!-- CTA FXD -->
+    <h2 class="section-title" id="aq-fxd">¿Querés profundizar en FXD?</h2>
+    <p class="section-note">FXD (Master Pricer) permite buscar y comparar vuelos sin necesidad de crear un PNR previo. Es ideal para validar alternativas y optimizar opciones antes de armar la reserva definitiva.</p>
+    <div class="cards" style="grid-template-columns:1fr;">
+      <article class="card fxd-cta-card">
+        <div class="card-top">
+          <div>
+            <span class="badge">Guía Avanzada</span>
+            <h3>Dominar FXD · Master Pricer</h3>
+          </div>
+        </div>
+        <p>8 cards de uso práctico, flujo paso a paso, tabla de comandos, troubleshooting con los mensajes de error más frecuentes y diferencias clave entre FXD, FXX y FXP. Todo explicado con ejemplos reales Montevideo → Madrid.</p>
+        <a href="fxd.html">
+          Ver Guía Completa FXD
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </article>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    <img src="../images/logo-white.png" alt="Dr.Viaje">
+    <p>Centro de Capacitación · <a href="../index.html">Volver al inicio</a></p>
+    <p style="margin-top:6px;">Plataforma de uso interno · Dr.Viaje © 2026</p>
+  </footer>
+
+</body>
+</html>

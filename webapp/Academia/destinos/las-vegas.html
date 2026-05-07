@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Viaje | Guía Comercial Definitiva Las Vegas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --critical-red: #d32f2f;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+        a { color: inherit; text-decoration: none; }
+        .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: var(--white); padding: 50px 0 40px; position: relative; overflow: hidden;
+        }
+        header::before, header::after {
+            content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.08);
+        }
+        header::before { width: 260px; height: 260px; top: -90px; right: -50px; }
+        header::after { width: 180px; height: 180px; bottom: -80px; left: -30px; }
+        .header-content { position: relative; z-index: 2; }
+        .badge {
+            display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+            color: var(--white); padding: 8px 16px; border-radius: 999px; font-size: 0.88rem; font-weight: 700;
+            margin-bottom: 18px; letter-spacing: 0.03em;
+        }
+        header h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); font-weight: 800; line-height: 1.05; margin-bottom: 12px; letter-spacing: -0.03em; }
+        .header-subtitle { font-size: 1.05rem; opacity: 0.93; max-width: 820px; margin-bottom: 32px; }
+
+        .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-top: 8px; }
+        .kpi {
+            background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
+            padding: 18px 14px; text-align: center; backdrop-filter: blur(6px);
+        }
+        .kpi strong { display: block; font-size: 1.6rem; font-weight: 800; color: #ffd36a; margin-bottom: 4px; }
+        .kpi span { font-size: 0.82rem; opacity: 0.9; }
+
+        nav {
+            position: sticky; top: 72px; z-index: 100; background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .nav-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 13px 0; scrollbar-width: none; }
+        .nav-scroll::-webkit-scrollbar { display: none; }
+        .nav-scroll a {
+            white-space: nowrap; background: linear-gradient(135deg, rgba(255,152,0,0.1), rgba(233,30,99,0.1));
+            color: var(--primary-purple); border: 1px solid rgba(123,45,142,0.15); padding: 9px 16px;
+            border-radius: 999px; font-size: 0.88rem; font-weight: 700; transition: var(--transition);
+        }
+        .nav-scroll a:hover {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink)); color: var(--white); transform: translateY(-1px);
+        }
+
+        main { padding: 32px 0 80px; }
+        /* Offset para los dos navbars apilados */
+        .destination-card[id] { scroll-margin-top: 140px; }
+
+        .destination-card {
+            background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange); padding: 32px; margin-bottom: 32px; transition: var(--transition);
+        }
+        .destination-card:nth-child(even) { border-top-color: var(--primary-pink); }
+        .destination-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+        
+        .destination-header { border-bottom: 2px solid var(--bg-light); padding-bottom: 20px; margin-bottom: 28px; }
+        .destination-header h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800; color: var(--primary-purple); letter-spacing: -0.03em; margin-bottom: 6px; }
+        .destination-subtitle { color: var(--primary-pink); font-size: 1.05rem; font-style: italic; font-weight: 500; }
+
+        .section { margin-bottom: 32px; }
+        .section + .section { padding-top: 28px; border-top: 1px solid rgba(0,0,0,0.05); }
+        .section h3 { font-size: 1.35rem; font-weight: 800; color: var(--text-dark); padding-left: 14px; border-left: 5px solid var(--primary-orange); margin-bottom: 16px; letter-spacing: -0.01em; }
+        .section h4 { font-size: 1.05rem; font-weight: 700; color: var(--primary-purple); margin: 18px 0 10px; }
+        .section p { color: var(--text-medium); margin-bottom: 12px; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; margin-top: 16px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; margin-top: 16px; }
+
+        .card { background: var(--white); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.06); transition: var(--transition); }
+        .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+        .card h4 { font-size: 1rem; font-weight: 800; color: var(--primary-purple); margin-bottom: 10px; }
+        .card p { font-size: 0.95rem; color: var(--text-medium); margin-bottom: 8px; }
+        .card-orange { border-top: 4px solid var(--primary-orange); }
+        .card-pink { border-top: 4px solid var(--primary-pink); }
+        .card-purple { border-top: 4px solid var(--primary-purple); }
+
+        .info-box, .tip-box, .alert-box, .script-box, .critical-alert {
+            border-radius: var(--radius-lg); padding: 18px 20px; margin: 16px 0;
+        }
+        .info-box { background: linear-gradient(135deg, rgba(123,45,142,0.07), rgba(63,81,181,0.05)); border-left: 5px solid var(--primary-purple); }
+        .tip-box { background: linear-gradient(135deg, rgba(255,193,7,0.12), rgba(255,152,0,0.08)); border-left: 5px solid var(--primary-orange); }
+        .alert-box { background: linear-gradient(135deg, rgba(233,30,99,0.08), rgba(255,255,255,0.95)); border-left: 5px solid var(--primary-pink); }
+        .script-box { background: linear-gradient(135deg, rgba(123,45,142,0.07), rgba(63,81,181,0.07)); border: 2px solid rgba(123,45,142,0.2); }
+        .critical-alert { background: linear-gradient(135deg, rgba(211,47,47,0.09), rgba(255,255,255,0.98)); border: 2px solid var(--critical-red); }
+        .critical-alert strong { color: var(--critical-red); }
+
+        .box-label {
+            display: inline-block; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.06em;
+            text-transform: uppercase; margin-bottom: 8px; padding: 3px 10px; border-radius: 999px;
+        }
+        .label-purple { background: rgba(123,45,142,0.12); color: var(--primary-purple); }
+        .label-orange { background: rgba(255,152,0,0.15); color: #e65100; }
+        .label-pink { background: rgba(233,30,99,0.12); color: var(--primary-pink); }
+        .label-red { background: rgba(211,47,47,0.12); color: var(--critical-red); }
+
+        .pill {
+            display: inline-block; background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white); padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+            margin-bottom: 10px; letter-spacing: 0.03em;
+        }
+
+        .quote { font-size: 1rem; font-weight: 600; color: var(--primary-purple); font-style: italic; line-height: 1.7; }
+
+        .table-wrap { overflow-x: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); margin: 16px 0; }
+        table { width: 100%; border-collapse: collapse; background: var(--white); min-width: 680px; }
+        thead th { background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); color: var(--white); padding: 13px 14px; text-align: left; font-size: 0.9rem; font-weight: 700; }
+        tbody td { padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-medium); font-size: 0.93rem; vertical-align: top; }
+        tbody tr:nth-child(even) td { background: #fafafa; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #f5f0fb; }
+
+        ul.clean-list { padding-left: 0; list-style: none; display: grid; gap: 8px; }
+        ul.clean-list li { color: var(--text-medium); padding-left: 18px; position: relative; font-size: 0.95rem; }
+        ul.clean-list li::before { content: "•"; color: var(--primary-orange); font-weight: 900; position: absolute; left: 0; }
+
+        .highlight { color: var(--primary-purple); font-weight: 700; }
+
+        .scroll-top {
+            position: fixed; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
+            border: none; cursor: pointer; background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: var(--white); font-size: 1.2rem; font-weight: 700; box-shadow: var(--shadow-hover);
+            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 999;
+            opacity: 0; visibility: hidden;
+        }
+        .scroll-top.visible { opacity: 1; visibility: visible; }
+        .scroll-top:hover { transform: translateY(-4px); }
+
+        footer { background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); color: var(--white); text-align: center; padding: 32px 20px; margin-top: 20px; }
+        footer p { opacity: 0.93; font-size: 0.94rem; margin-bottom: 4px; }
+
+        @media (max-width: 1024px) { .kpi-row { grid-template-columns: repeat(2, minmax(0,1fr)); } .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+        @media (max-width: 680px) { .kpi-row, .grid-2, .grid-3 { grid-template-columns: 1fr; } .destination-card { padding: 22px; } header { padding: 36px 0 30px; } }
+    </style>
+</head>
+<body>
+
+<script src="../js/navbar-inject.js"></script>
+
+<header>
+    <div class="container header-content">
+        <span class="badge">Dr. Viaje · Guía comercial definitiva</span>
+        <h1>Las Vegas</h1>
+        <p class="header-subtitle">
+            La capital mundial del entretenimiento y el espectáculo. Una ciudad que renació como destino de lujo,
+            gastronomía con estrellas Michelin, shows permanentes de artistas globales y la puerta de entrada
+            al Gran Cañón. El destino donde el agente que domina los Resort Fees y la logística del Strip
+            marca la diferencia entre una venta exitosa y un cliente decepcionado.
+        </p>
+
+        <div class="kpi-row">
+            <div class="kpi">
+                <strong>USD 45</strong>
+                <span>Resort Fee promedio por noche</span>
+            </div>
+            <div class="kpi">
+                <strong>6.8 km</strong>
+                <span>Longitud total del Strip</span>
+            </div>
+            <div class="kpi">
+                <strong>4.5 h</strong>
+                <span>Al Gran Cañón South Rim</span>
+            </div>
+            <div class="kpi">
+                <strong>45°C</strong>
+                <span>Temperatura máxima en verano</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <div class="container">
+        <div class="nav-scroll">
+            <a href="#visa">Visa B1/B2</a>
+            <a href="#perfil">Cliente ideal</a>
+            <a href="#logistica">Logística del Strip</a>
+            <a href="#zonas">Zonas de alojamiento</a>
+            <a href="#shows">Shows y entretenimiento</a>
+            <a href="#gastronomia">Gastronomía</a>
+            <a href="#excursiones">Gran Cañón</a>
+            <a href="#temporadas">Temporadas</a>
+            <a href="#fees">Resort Fees</a>
+            <a href="#familias">Familias</a>
+            <a href="#alertas">Alertas críticas</a>
+            <a href="#script">Script de venta</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+<div class="container">
+
+<!-- ══════════════════════════
+     VISA B1/B2
+══════════════════════════ -->
+<div id="visa" class="destination-card">
+    <div class="destination-header">
+        <h2>Visa B1/B2 — Requisito Obligatorio</h2>
+        <p class="destination-subtitle">Primer filtro antes de cualquier reserva a Estados Unidos</p>
+    </div>
+
+    <div class="section">
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Información crítica para el agente</div>
+            <p>
+                <strong>Todos los ciudadanos uruguayos y argentinos REQUIEREN Visa B1/B2</strong>
+                para ingresar a Estados Unidos por turismo. Es el primer filtro que debes aplicar antes
+                de confirmar cualquier reserva no reembolsable en Las Vegas.
+            </p>
+        </div>
+
+        <div class="grid-2">
+            <div class="card card-purple">
+                <h4>Datos clave de la Visa B1/B2</h4>
+                <ul class="clean-list">
+                    <li><strong>Costo (tasa MRV):</strong> USD 185 por persona (no reembolsable)</li>
+                    <li><strong>Vigencia típica:</strong> Hasta 10 años con múltiples entradas</li>
+                    <li><strong>Estadía máxima:</strong> Hasta 6 meses por entrada</li>
+                    <li><strong>Proceso:</strong> Formulario DS-160 + entrevista consular obligatoria</li>
+                </ul>
+            </div>
+            <div class="card card-orange">
+                <h4>Tiempos de demora orientativos</h4>
+                <ul class="clean-list">
+                    <li><strong>Uruguay:</strong> Turnos disponibles en 2-4 semanas aproximadamente</li>
+                    <li><strong>Argentina:</strong> Demoras de 6-12 meses o más para conseguir turno</li>
+                    <li><strong>Procesamiento:</strong> 3-15 días hábiles después de la entrevista</li>
+                    <li><strong>Recomendación:</strong> Iniciar trámite con máxima anticipación posible</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="box-label label-purple">🔗 Sitio oficial para solicitud de visa</div>
+            <p>Dirige a tus pasajeros al sitio oficial de la Embajada de Estados Unidos:</p>
+            <p style="margin-top: 12px;">
+                <a href="https://uy.usembassy.gov/es/visas-es/visas-de-no-inmigrante/" target="_blank" rel="noopener noreferrer"
+                   style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); color: white; padding: 12px 20px; border-radius: 999px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 15px rgba(123,45,142,0.3);">
+                    🌐 Solicitud de Visa B1/B2 — Embajada EE.UU. Uruguay
+                </a>
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script para el agente</div>
+            <p class="quote">
+                "Antes de avanzar con fechas o reservas en Las Vegas, necesito confirmar si ya tienen
+                la visa americana vigente. Si no la tienen, el trámite cuesta USD 185 por persona y puede
+                demorar varios meses, especialmente en Argentina. Mi recomendación es asegurar primero
+                la visa y después definir las fechas del viaje."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     PERFIL DE CLIENTE
+══════════════════════════ -->
+<div id="perfil" class="destination-card">
+    <div class="destination-header">
+        <h2>Perfil de Cliente Ideal</h2>
+        <p class="destination-subtitle">Las Vegas se vende sola — tu trabajo es estructurar la experiencia</p>
+    </div>
+
+    <div class="section">
+        <h3>El reposicionamiento comercial de Las Vegas</h3>
+        <p>
+            El gran error es vender Las Vegas solo como destino de casinos. Hoy es la <strong>capital mundial
+            del entretenimiento en vivo</strong>: residencias de artistas de primer nivel, restaurantes de
+            chefs con estrellas Michelin, The Sphere como nueva maravilla tecnológica, y la puerta de entrada
+            más cómoda al Gran Cañón y los parques nacionales del suroeste americano.
+        </p>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Clave comercial</div>
+            <p>
+                Un cliente que no juega puede disfrutar Las Vegas tanto o más que uno que sí lo hace.
+                Tu valor como agente está en <strong>estructurar la experiencia</strong>: elegir el
+                hotel correcto según presupuesto, combinar shows con excursiones, y gestionar las
+                expectativas sobre costos reales (Resort Fees, clima, distancias).
+            </p>
+        </div>
+
+        <h3>Perfiles que compran bien Las Vegas</h3>
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Grupos de amigos y parejas (25-45 años)</h4>
+                <p>
+                    El perfil más clásico. Buscan shows de clase mundial, vida nocturna, pool parties,
+                    gastronomía premium y la experiencia única de una ciudad diseñada para el entretenimiento.
+                </p>
+                <div class="pill">Duración ideal: 3-4 noches</div>
+            </div>
+            <div class="card card-pink">
+                <h4>Viajeros del circuito Costa Oeste</h4>
+                <p>
+                    Usan Las Vegas como punto estratégico en el road trip LA → Vegas → Gran Cañón → SF.
+                    Vegas aporta el contraste urbano y de luces entre los paisajes naturales del circuito.
+                </p>
+                <div class="pill">Duración en Vegas: 2-3 noches dentro del circuito</div>
+            </div>
+            <div class="card card-purple">
+                <h4>Amantes de shows y entretenimiento</h4>
+                <p>
+                    Vienen específicamente por las residencias permanentes (Adele, U2 en The Sphere),
+                    Cirque du Soleil, shows de magia de clase mundial. Vegas es el único lugar donde
+                    estos espectáculos son permanentes.
+                </p>
+                <div class="pill">Duración ideal: 3-4 noches</div>
+            </div>
+            <div class="card card-orange">
+                <h4>Gastronómicos premium</h4>
+                <p>
+                    Las Vegas concentra más restaurantes de chefs con estrella Michelin por kilómetro
+                    cuadrado que cualquier otra ciudad de EE.UU. Gordon Ramsay, Joël Robuchon, Nobu,
+                    Wolfgang Puck tienen múltiples locales en el Strip.
+                </p>
+                <div class="pill">Duración ideal: 3-5 noches</div>
+            </div>
+            <div class="card card-pink">
+                <h4>Aventureros con base de lujo</h4>
+                <p>
+                    Usan Vegas como "campamento base premium" para explorar Gran Cañón, Antelope Canyon,
+                    Zion National Park y Monument Valley. La ciudad ofrece el contraste perfecto:
+                    aventura de día, lujo de noche.
+                </p>
+                <div class="pill">Duración ideal: 4-6 noches</div>
+            </div>
+            <div class="card card-purple">
+                <h4>Celebraciones especiales</h4>
+                <p>
+                    Despedidas de soltero/a, aniversarios, cumpleaños importantes. Las Vegas tiene
+                    la infraestructura y el ambiente perfecto para celebraciones que requieren
+                    "algo extraordinario".
+                </p>
+                <div class="pill">Duración ideal: 3-4 noches</div>
+            </div>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Pregunta de detección clave</div>
+            <p class="quote">
+                "Para armar la mejor experiencia en Las Vegas necesito saber: ¿el foco principal son
+                los shows y el entretenimiento, las excursiones al Gran Cañón y parques nacionales,
+                la gastronomía y vida nocturna, o una combinación? ¿Tienen algún show específico
+                que quieran ver? Eso define mucho las fechas y la estrategia de alojamiento."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     LOGÍSTICA DEL STRIP
+══════════════════════════ -->
+<div id="logistica" class="destination-card">
+    <div class="destination-header">
+        <h2>Logística del Strip</h2>
+        <p class="destination-subtitle">Por qué las distancias en Vegas engañan al turista</p>
+    </div>
+
+    <div class="section">
+        <h3>La ilusión óptica de Las Vegas</h3>
+        <p>
+            El Strip parece compacto desde el aire, pero es una ilusión. Los mega-resorts son tan enormes
+            que <strong>caminar de un hotel al hotel "vecino" puede tomar 20-30 minutos</strong>. Hay que
+            atravesar casinos gigantes, subir y bajar puentes peatonales, y sortear multitudes. En verano,
+            con 45°C, esto se vuelve agotador rápidamente.
+        </p>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Auto en Las Vegas — Cuándo SÍ y cuándo NO</div>
+            <p>
+                <strong>NO alquilar auto si solo van a estar en el Strip:</strong> Parking de hotel
+                USD 15-30/noche, tráfico denso los fines de semana, zonas de recogida de Uber muy alejadas.<br><br>
+                <strong>SÍ alquilar auto para:</strong> Excursiones al Gran Cañón, Zion, Antelope Canyon,
+                Valley of Fire. Para estas excursiones, el auto es indispensable y más económico que tours
+                organizados para grupos pequeños.
+            </p>
+        </div>
+
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Caminar (Strip central)</h4>
+                <p>
+                    La opción más auténtica para experimentar Vegas, pero requiere estrategia.
+                    Los hoteles están conectados por puentes peatonales y galerías internas
+                    con aire acondicionado.
+                </p>
+                <ul class="clean-list">
+                    <li>Bellagio ↔ Caesars Palace: 15 min caminando</li>
+                    <li>Puentes peatonales en intersecciones principales</li>
+                    <li>Galerías internas con A/C en verano</li>
+                    <li><strong>Calzado cómodo es absolutamente obligatorio</strong></li>
+                </ul>
+            </div>
+            <div class="card card-pink">
+                <h4>Las Vegas Monorail</h4>
+                <p>
+                    Conecta 7 estaciones desde MGM Grand hasta Sahara. Solo corre por el lado
+                    este del Strip, no llega al Bellagio ni Caesars (lado oeste).
+                </p>
+                <ul class="clean-list">
+                    <li><strong>Precio:</strong> USD 5 por viaje / USD 13 pase de día</li>
+                    <li><strong>Horario:</strong> 7 AM - 2 AM (3 AM viernes-sábado)</li>
+                    <li>Útil para desplazamientos rápidos norte-sur</li>
+                    <li>No llega al aeropuerto</li>
+                </ul>
+            </div>
+            <div class="card card-purple">
+                <h4>Uber / Lyft</h4>
+                <p>
+                    La opción más flexible, especialmente para trayectos fuera del Strip
+                    o cuando el calor hace imposible caminar.
+                </p>
+                <ul class="clean-list">
+                    <li><strong>Strip ↔ Aeropuerto:</strong> USD 15-25 (15 min)</li>
+                    <li><strong>Strip ↔ Fremont Street:</strong> USD 12-20</li>
+                    <li><strong>Dentro del Strip:</strong> USD 8-15 por tramo</li>
+                    <li>Surge pricing viernes-sábado noche</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 La estrategia del Strip inteligente</div>
+            <p>
+                <strong>Planificar por bloques:</strong> Agrupar actividades por zona del Strip para
+                minimizar desplazamientos. Ejemplo: Mañana en el centro (Bellagio, Caesars, Paris),
+                tarde en el norte (Venetian, Wynn), noche en el sur (MGM, New York-New York).
+                Esta estrategia puede ahorrar 2-3 horas de caminata por día.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     ZONAS DE ALOJAMIENTO
+══════════════════════════ -->
+<div id="zonas" class="destination-card">
+    <div class="destination-header">
+        <h2>Zonas de Alojamiento</h2>
+        <p class="destination-subtitle">El hotel ES la experiencia en Las Vegas</p>
+    </div>
+
+    <div class="section">
+        <h3>Por qué la ubicación define el viaje</h3>
+        <p>
+            En Las Vegas, el hotel no es solo donde duermes: es tu casino, tu centro de entretenimiento,
+            tu base gastronómica y tu identidad durante la estadía. Cada hotel-casino tiene su propio
+            universo temático, clientela y nivel de experiencia. <strong>Elegir mal el hotel genera
+            la queja más frecuente en este destino.</strong>
+        </p>
+
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>🏆 Ultra-Premium (USD 200-600+/noche)</h4>
+                <p><strong>Para el cliente que quiere lo mejor sin restricciones</strong></p>
+                <ul class="clean-list">
+                    <li><strong>Bellagio:</strong> El más icónico. Fuentes, arte, gastronomía de lujo</li>
+                    <li><strong>Wynn / Encore:</strong> El más elegante. Jardines, golf, spa de clase mundial</li>
+                    <li><strong>Aria:</strong> Diseño moderno, tecnología de punta, casino sofisticado</li>
+                    <li><strong>Venetian / Palazzo:</strong> Todas las habitaciones son suites (65m² mínimo)</li>
+                </ul>
+                <p><strong>Argumento de venta:</strong> Habitaciones enormes, servicio impecable, ubicación central perfecta.</p>
+            </div>
+            <div class="card card-pink">
+                <h4>⭐ Medio-Alto (USD 100-350/noche)</h4>
+                <p><strong>El rango más vendible para el mercado sudamericano</strong></p>
+                <ul class="clean-list">
+                    <li><strong>MGM Grand:</strong> El hotel más grande del mundo. Ambiente animado</li>
+                    <li><strong>Caesars Palace:</strong> Historia, ambiente romano, ubicación perfecta</li>
+                    <li><strong>Paris Las Vegas:</strong> Torre Eiffel, ambiente europeo, muy fotogénico</li>
+                    <li><strong>Planet Hollywood:</strong> Temática de cine, popular con jóvenes</li>
+                </ul>
+                <p><strong>Argumento de venta:</strong> Excelente relación calidad-precio, ubicación central, experiencia completa.</p>
+            </div>
+            <div class="card card-purple">
+                <h4>💰 Económico-Medio (USD 50-180/noche)</h4>
+                <p><strong>Para optimizar presupuesto sin sacrificar ubicación</strong></p>
+                <ul class="clean-list">
+                    <li><strong>Flamingo:</strong> El más histórico de Vegas (1946). Precio-ubicación perfecta</li>
+                    <li><strong>Harrah's:</strong> Clásico, bien ubicado, presupuesto controlado</li>
+                    <li><strong>The LINQ:</strong> Moderno, joven, frente a la rueda High Roller</li>
+                    <li><strong>Bally's:</strong> Renovado recientemente, buena relación precio-ubicación</li>
+                </ul>
+                <p><strong>Argumento de venta:</strong> El Strip es el mismo para todos. Ubicación central a precio accesible.</p>
+            </div>
+            <div class="card card-orange">
+                <h4>🎭 Hoteles Temáticos Únicos</h4>
+                <p><strong>Para la experiencia inmersiva total</strong></p>
+                <ul class="clean-list">
+                    <li><strong>Luxor:</strong> Pirámide negra con haz de luz al espacio</li>
+                    <li><strong>New York-New York:</strong> Skyline de NYC + montaña rusa en la fachada</li>
+                    <li><strong>Excalibur:</strong> Castillo medieval, ideal para familias</li>
+                    <li><strong>The Strat:</strong> Torre más alta de Vegas con atracciones extremas</li>
+                </ul>
+                <p><strong>Argumento de venta:</strong> La foto del hotel ya justifica la elección.</p>
+            </div>
+        </div>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Resort Fee obligatorio en TODOS los hoteles del Strip</div>
+            <p>
+                <strong>USD 35-55 por noche adicional</strong> en absolutamente todos los hoteles del Strip.
+                No existe excepción. Este fee incluye WiFi, acceso a gym y piscina, pero es obligatorio
+                aunque no uses estos servicios. <strong>Para 4 noches: USD 140-220 adicionales que el
+                pasajero no espera.</strong> Comunicar siempre por escrito antes de confirmar la reserva.
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script de recomendación de hotel</div>
+            <p class="quote">
+                "En Las Vegas, el hotel ES la experiencia. Mi recomendación es elegir uno en el centro
+                del Strip para poder caminar a las principales atracciones. Si el presupuesto lo permite,
+                el Bellagio o Caesars Palace son los más icónicos. Para optimizar presupuesto sin
+                sacrificar ubicación, el Flamingo o Paris Las Vegas son excelentes opciones.
+                Importante: todos los hoteles cobran un Resort Fee de USD 40-50 por noche adicional."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     SHOWS Y ENTRETENIMIENTO
+══════════════════════════ -->
+<div id="shows" class="destination-card">
+    <div class="destination-header">
+        <h2>Shows y Entretenimiento</h2>
+        <p class="destination-subtitle">El argumento más poderoso para clientes que no juegan</p>
+    </div>
+
+    <div class="section">
+        <h3>Las Vegas como capital mundial del entretenimiento en vivo</h3>
+        <p>
+            Ninguna ciudad del mundo concentra tantos shows de primer nivel de forma permanente.
+            Lo que en otras ciudades sería una gira de dos fechas, en Las Vegas es una residencia
+            de meses o años. <strong>Este es el argumento más poderoso para reposicionar Vegas
+            más allá de los casinos.</strong>
+        </p>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 The Sphere — La nueva maravilla de Vegas</div>
+            <p>
+                Inaugurada en 2023, The Sphere es la estructura de entretenimiento más avanzada del mundo.
+                Una esfera de 112 metros de altura con la pantalla LED de mayor resolución jamás construida.
+                Alberga residencias de U2, Phish y experiencias inmersivas como "Postcard from Earth".
+                <strong>Es actualmente la atracción más demandada de Las Vegas.</strong>
+            </p>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría de Show</th>
+                        <th>Ejemplos destacados</th>
+                        <th>Precio orientativo</th>
+                        <th>Perfil ideal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">The Sphere Experience</span></td>
+                        <td>U2 UV Achtung Baby, Postcard from Earth</td>
+                        <td>USD 150-400+</td>
+                        <td>Todos los perfiles. Experiencia única en el mundo.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Residencias de Artistas</span></td>
+                        <td>Adele (Caesars), Carrie Underwood (Resorts World)</td>
+                        <td>USD 100-500+</td>
+                        <td>Fans del artista, experiencia exclusiva</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Cirque du Soleil</span></td>
+                        <td>O (Bellagio), MJ ONE (Mandalay Bay), Mystère (TI)</td>
+                        <td>USD 80-250+</td>
+                        <td>Parejas, familias, amantes del arte</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Shows de Magia</span></td>
+                        <td>Penn & Teller (Rio), David Copperfield (MGM)</td>
+                        <td>USD 60-150</td>
+                        <td>Familias, todas las edades, presupuesto medio</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Shows de Comedia</span></td>
+                        <td>Comedy Cellar, Brad Garrett's Comedy Club</td>
+                        <td>USD 40-80</td>
+                        <td>Adultos que hablen inglés fluido</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Estrategia de reserva de shows</div>
+            <p>
+                <strong>Incluir AL MENOS un show en el paquete desde el inicio.</strong> Un cliente que
+                llega a Vegas sin show reservado puede quedarse sin cupos para lo que quería. Las
+                residencias de artistas se agotan con 2-3 meses de anticipación. The Sphere requiere
+                reserva inmediata. Posicionarlo como "la experiencia que van a recordar toda la vida".
+            </p>
+        </div>
+
+        <h3>Vida nocturna — Clubs y Pool Parties</h3>
+        <div class="grid-2">
+            <div class="card card-pink">
+                <h4>Nightclubs del Strip</h4>
+                <p>Los clubs más espectaculares del mundo con DJs de primer nivel en residencia permanente.</p>
+                <ul class="clean-list">
+                    <li><strong>Hakkasan (MGM Grand):</strong> El más grande, 5 pisos</li>
+                    <li><strong>Omnia (Caesars Palace):</strong> Chandelier de cristal icónico</li>
+                    <li><strong>XS (Encore):</strong> El más exclusivo, vista a la piscina</li>
+                    <li><strong>Zouk (Resorts World):</strong> El más nuevo y tecnológico</li>
+                    <li>Cover: USD 30-100+ (mujeres gratis antes de medianoche)</li>
+                </ul>
+            </div>
+            <div class="card card-orange">
+                <h4>Pool Parties (abril-octubre)</h4>
+                <p>Fiestas diurnas en piscinas de lujo con DJs internacionales. Experiencia única de Vegas.</p>
+                <ul class="clean-list">
+                    <li><strong>Wet Republic (MGM Grand):</strong> La más famosa</li>
+                    <li><strong>Encore Beach Club:</strong> La más exclusiva</li>
+                    <li><strong>Marquee Dayclub (Cosmopolitan):</strong> Popular con jóvenes</li>
+                    <li>Cover: USD 20-80+ según DJ y día</li>
+                </ul>
+                <div class="pill">Solo disponible en temporada cálida</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     GASTRONOMÍA
+══════════════════════════ -->
+<div id="gastronomia" class="destination-card">
+    <div class="destination-header">
+        <h2>Gastronomía: Capital Culinaria Subestimada</h2>
+        <p class="destination-subtitle">Más estrellas Michelin por km² que Nueva York</p>
+    </div>
+
+    <div class="section">
+        <h3>El argumento gastronómico de Las Vegas</h3>
+        <p>
+            Los grandes hoteles del Strip compiten ferozmente por traer a los mejores chefs del mundo.
+            La concentración de restaurantes de estrellas Michelin en Las Vegas rivaliza con París
+            y supera a Nueva York en densidad. <strong>Para el cliente gastronómico, esto es un
+            argumento de venta de primer orden.</strong>
+        </p>
+
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>Restaurantes de Chefs Famosos (Premium)</h4>
+                <ul class="clean-list">
+                    <li><strong>Joël Robuchon (MGM Grand):</strong> El chef con más estrellas Michelin del mundo. USD 200-400/persona</li>
+                    <li><strong>Gordon Ramsay Hell's Kitchen (Caesars):</strong> El restaurante del show de TV. USD 80-150/persona</li>
+                    <li><strong>Nobu (Caesars Palace):</strong> Japonesa de lujo de Nobu Matsuhisa. USD 100-200/persona</li>
+                    <li><strong>Wolfgang Puck Spago (Bellagio):</strong> Californiana de lujo. USD 80-150/persona</li>
+                    <li><strong>é by José Andrés (Cosmopolitan):</strong> Experiencia molecular. USD 300-500/persona</li>
+                </ul>
+            </div>
+            <div class="card card-pink">
+                <h4>Opciones para Todos los Presupuestos</h4>
+                <ul class="clean-list">
+                    <li><strong>Buffets de casino:</strong> Tradición de Vegas. USD 35-65/persona todo incluido</li>
+                    <li><strong>Bacchanal Buffet (Caesars):</strong> El mejor buffet del mundo. USD 60-90</li>
+                    <li><strong>Food Courts de hoteles:</strong> USD 12-25/persona</li>
+                    <li><strong>In-N-Out Burger:</strong> Clásico californiano en el Strip. USD 8-12</li>
+                    <li><strong>Secret Pizza (Cosmopolitan):</strong> Pizza newyorkina oculta. USD 15-25</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script gastronomía para clientes premium</div>
+            <p class="quote">
+                "Lo que mucha gente no sabe es que Las Vegas es una de las mejores ciudades
+                gastronómicas del mundo. Los grandes hoteles traen a los chefs más famosos
+                del planeta: pueden cenar en Hell's Kitchen de Gordon Ramsay, almorzar en
+                Nobu y desayunar en el mejor buffet de su vida. Es una experiencia culinaria
+                que supera a muchas capitales europeas, todo en 6 kilómetros de Strip."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     EXCURSIONES: GRAN CAÑÓN
+══════════════════════════ -->
+<div id="excursiones" class="destination-card">
+    <div class="destination-header">
+        <h2>Excursiones: El Gran Cañón</h2>
+        <p class="destination-subtitle">Cómo transformar Vegas en un viaje de alto valor natural</p>
+    </div>
+
+    <div class="section">
+        <h3>Las Vegas como hub de la naturaleza americana</h3>
+        <p>
+            Esta es la característica más subestimada de Las Vegas: en un radio de 5 horas se encuentran
+            algunos de los paisajes más espectaculares del planeta. <strong>Para el cliente que combina
+            Vegas con excursiones, el valor percibido del viaje se multiplica enormemente.</strong>
+        </p>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ South Rim vs West Rim — Diferencia crítica</div>
+            <p>
+                <strong>South Rim:</strong> Es el Gran Cañón del Parque Nacional (las postales clásicas).
+                Está en Arizona, a 4.5 horas en auto. Requiere día completo mínimo o 1 noche.<br><br>
+                <strong>West Rim:</strong> Más cerca (2.5 horas), con el Skywalk de vidrio. NO es Parque
+                Nacional, es territorio Hualapai. Es la excursión típica de "día desde Vegas".<br><br>
+                <strong>Error que genera quejas:</strong> Vender West Rim como "el Gran Cañón de las películas"
+                sin aclarar que es otra zona con vistas diferentes.
+            </p>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Excursión</th>
+                        <th>Distancia/Tiempo</th>
+                        <th>Lo que ofrece</th>
+                        <th>Perfil ideal</th>
+                        <th>Observación comercial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Gran Cañón South Rim</span></td>
+                        <td>4.5 horas / 450 km</td>
+                        <td>El Cañón "real" de postales. Vistas de 1,600m de profundidad</td>
+                        <td>Todos los perfiles, obligatorio</td>
+                        <td>Requiere día completo MUY largo o 1 noche en Williams/Tusayan</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Gran Cañón West Rim</span></td>
+                        <td>2.5 horas / 200 km</td>
+                        <td>Skywalk de vidrio, territorio Hualapai</td>
+                        <td>Primera visita, tiempo limitado</td>
+                        <td>Más accesible pero NO es el Parque Nacional clásico</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Antelope Canyon</span></td>
+                        <td>4 horas / 350 km</td>
+                        <td>Cañones de arenisca más fotogénicos del mundo</td>
+                        <td>Fotógrafos, aventureros</td>
+                        <td>Requiere tour guiado obligatorio. Reservar con meses de anticipación</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Zion National Park</span></td>
+                        <td>2.5 horas / 170 km</td>
+                        <td>Cañones rojos, Angels Landing, senderismo</td>
+                        <td>Aventureros, senderistas</td>
+                        <td>Angels Landing requiere permiso. Combinar con Bryce Canyon</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Valley of Fire</span></td>
+                        <td>1 hora / 80 km</td>
+                        <td>Rocas rojas de 150 millones de años</td>
+                        <td>Fotógrafos, presupuesto ajustado</td>
+                        <td>La excursión más económica y accesible desde Vegas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Helicóptero al Gran Cañón — Upselling premium</div>
+            <p>
+                La excursión en helicóptero al West Rim con aterrizaje en el fondo del cañón (USD 400-500)
+                es una de las experiencias de mayor satisfacción. Toma solo 4 horas ida y vuelta desde
+                el hotel y genera contenido espectacular para redes sociales. <strong>Altísima rentabilidad
+                y satisfacción del cliente.</strong>
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script Gran Cañón desde Vegas</div>
+            <p class="quote">
+                "Si van a estar en Las Vegas, sería un error perderse el Gran Cañón. Está a solo 4.5 horas
+                del verdadero Parque Nacional, o 2.5 horas del West Rim con el Skywalk de vidrio. Es una
+                de las maravillas naturales más impresionantes del mundo. Muchos viajeros dicen que fue
+                lo más impactante del viaje, por encima de todo lo que vieron en Las Vegas. La diferencia
+                está en elegir cuál Gran Cañón quieren: el clásico de las postales o el más accesible con
+                el puente de cristal."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     TEMPORADAS Y CLIMA
+══════════════════════════ -->
+<div id="temporadas" class="destination-card">
+    <div class="destination-header">
+        <h2>Temporadas y Clima</h2>
+        <p class="destination-subtitle">El desierto no perdona — preparar al cliente es obligatorio</p>
+    </div>
+
+    <div class="section">
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Las Vegas está en pleno desierto de Mojave</div>
+            <p>
+                Las temperaturas en verano superan los <strong>45°C con frecuencia</strong>. El asfalto
+                del Strip puede alcanzar los <strong>70°C</strong>. Caminar al sol en julio puede ser
+                peligroso para la salud. <strong>Esta es la queja más frecuente del turista en verano:
+                llegan sin esta información.</strong> Hidratación constante es obligatoria.
+            </p>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Temporada</th>
+                        <th>Período</th>
+                        <th>Clima real</th>
+                        <th>Ventajas comerciales</th>
+                        <th>Alertas críticas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Primavera</span></td>
+                        <td>Mar - May</td>
+                        <td>18-30°C, soleado</td>
+                        <td>El mejor momento. Pool parties empiezan. Precios moderados.</td>
+                        <td>Spring Break (marzo): multitudes y precios suben</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Verano</span></td>
+                        <td>Jun - Ago</td>
+                        <td>35-45°C, seco extremo</td>
+                        <td>Pool parties en apogeo. Precios hoteleros más bajos entre semana.</td>
+                        <td>Calor extremo peligroso. Imposible caminar largas distancias de día.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Otoño</span></td>
+                        <td>Sep - Nov</td>
+                        <td>20-32°C, perfecto</td>
+                        <td>El segundo mejor momento. Menos turistas que primavera.</td>
+                        <td>Labor Day (septiembre): precios máximos del año</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Invierno</span></td>
+                        <td>Dic - Feb</td>
+                        <td>5-15°C, noches frías</td>
+                        <td>Precios muy bajos. Navidad/Año Nuevo espectaculares.</td>
+                        <td>Noches muy frías. Sin pool parties. Nieve en excursiones.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Año Nuevo en Las Vegas — Evento especial</div>
+            <p>
+                <strong>Las Vegas Año Nuevo es el evento más espectacular de EE.UU.</strong> El Strip se
+                cierra al tráfico, 400,000+ personas celebran en la calle, fuegos artificiales desde
+                todos los hoteles a medianoche. Los hoteles se reservan con <strong>6-12 meses de
+                anticipación</strong> y los precios se multiplican por 3-5x. Si mencionan Año Nuevo,
+                <strong>actuar inmediatamente.</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     RESORT FEES Y COSTOS
+══════════════════════════ -->
+<div id="fees" class="destination-card">
+    <div class="destination-header">
+        <h2>Resort Fees y Costos Ocultos</h2>
+        <p class="destination-subtitle">La queja número 1 del turista en Las Vegas</p>
+    </div>
+
+    <div class="section">
+        <h3>El Resort Fee — El costo más impactante</h3>
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Resort Fee obligatorio en el 100% de hoteles del Strip</div>
+            <p>
+                <strong>USD 35-55 por noche en todos los hoteles del Strip</strong>, obligatorio y no
+                incluido en el precio mostrado inicialmente. Incluye WiFi, gym, piscina, pero es
+                obligatorio aunque no uses estos servicios.<br><br>
+                <strong>Ejemplo real:</strong> Hotel USD 80/noche x 4 noches = USD 320. Con Resort Fee
+                de USD 45/noche + impuestos (13.38%), el total real es USD 523. <strong>Es 64% más caro.</strong>
+                Este es el punto de queja número uno en Las Vegas.
+            </p>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Precio orientativo</th>
+                        <th>Comentario crítico para el agente</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Resort Fee por noche</td>
+                        <td>USD 35-55</td>
+                        <td>100% de hoteles del Strip. Comunicar SIEMPRE por escrito.</td>
+                    </tr>
+                    <tr>
+                        <td>Parking en hotel</td>
+                        <td>USD 15-30/día</td>
+                        <td>Mayoría de hoteles del Strip. Verificar al reservar.</td>
+                    </tr>
+                    <tr>
+                        <td>Trago en casino</td>
+                        <td>USD 15-25</td>
+                        <td>Gratuito mientras juegas (propina USD 1-2 esperada).</td>
+                    </tr>
+                    <tr>
+                        <td>Buffet premium</td>
+                        <td>USD 40-90/persona</td>
+                        <td>Bacchanal Buffet es el mejor del mundo (USD 75-90).</td>
+                    </tr>
+                    <tr>
+                        <td>Show Cirque du Soleil</td>
+                        <td>USD 80-250/persona</td>
+                        <td>Según show y ubicación. Reservar con anticipación.</td>
+                    </tr>
+                    <tr>
+                        <td>The Sphere Experience</td>
+                        <td>USD 150-400+/persona</td>
+                        <td>La experiencia más demandada actualmente.</td>
+                    </tr>
+                    <tr>
+                        <td>Uber Strip ↔ Aeropuerto</td>
+                        <td>USD 15-25</td>
+                        <td>15 min. Más económico que taxi.</td>
+                    </tr>
+                    <tr>
+                        <td>Presupuesto diario económico</td>
+                        <td>USD 100-150/persona</td>
+                        <td>Sin shows premium. Atracciones gratuitas + comidas básicas.</td>
+                    </tr>
+                    <tr>
+                        <td>Presupuesto diario medio</td>
+                        <td>USD 200-300/persona</td>
+                        <td>El rango más realista. Incluye 1 show + cenas decentes.</td>
+                    </tr>
+                    <tr>
+                        <td>Presupuesto diario alto</td>
+                        <td>USD 500-1,000+/persona</td>
+                        <td>Restaurantes premium + shows + clubs. Sin límite real.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 El secreto de las bebidas gratuitas en casinos</div>
+            <p>
+                <strong>Información cultural importante:</strong> En los casinos de Las Vegas, las bebidas
+                alcohólicas son <strong>completamente gratuitas</strong> mientras juegas, sin importar
+                cuánto apuestes. Solo se espera propina de USD 1-2 por trago. Esta tradición permite
+                disfrutar tragos premium sin costo adicional para jugadores recreativos.
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Cómo comunicar los costos reales sin asustar</div>
+            <p class="quote">
+                "Para que no haya sorpresas, te explico los costos adicionales de Las Vegas. Todos
+                los hoteles del Strip cobran un Resort Fee de USD 40-50 por noche que se paga en destino.
+                Esto incluye WiFi y piscina, pero es obligatorio. Después, Las Vegas puede ser económica
+                o cara según las decisiones: las atracciones del Strip son gratuitas, pero un show de
+                The Sphere o una cena en Joël Robuchon son inversiones significativas. Te ayudo a
+                planificar el presupuesto real."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     FAMILIAS
+══════════════════════════ -->
+<div id="familias" class="destination-card">
+    <div class="destination-header">
+        <h2>¿Es Adecuado para Familias?</h2>
+        <p class="destination-subtitle">Sí, con expectativas correctas y planificación específica</p>
+    </div>
+
+    <div class="section">
+        <h3>La realidad de Las Vegas con niños</h3>
+        <p>
+            Las Vegas no está diseñada para familias como Orlando o Disney World. Sin embargo, con
+            planificación correcta, puede ser parte exitosa de un circuito familiar. La clave está
+            en <strong>no intentar hacer Vegas de adultos cuando se viaja con niños</strong>, sino
+            adaptar completamente la experiencia al perfil familiar.
+        </p>
+
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Niños pequeños (4-8 años)</h4>
+                <p>
+                    Vegas no es ideal como destino principal para esta edad, pero como escala de
+                    1-2 noches en circuito Costa Oeste puede funcionar.
+                </p>
+                <ul class="clean-list">
+                    <li>Fuentes del Bellagio: fascinan a los niños</li>
+                    <li>High Roller: rueda gigante segura y espectacular</li>
+                    <li>Hoteles temáticos: Luxor (pirámide), Excalibur (castillo)</li>
+                    <li>Excursión Gran Cañón: impacto visual enorme</li>
+                </ul>
+                <p><strong>Máximo recomendado:</strong> 2 noches</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Preadolescentes (9-13 años)</h4>
+                <p>
+                    Pueden disfrutar más de Vegas. Las atracciones del Strip los impresionan
+                    y las excursiones a parques nacionales son ideales para esta edad.
+                </p>
+                <ul class="clean-list">
+                    <li>Shows de magia: Penn & Teller, David Copperfield</li>
+                    <li>Fremont Street Experience: show de luces</li>
+                    <li>Gran Cañón, Zion, Valley of Fire: perfectos para esta edad</li>
+                    <li>Atracciones del Stratosphere Tower</li>
+                </ul>
+                <p><strong>Foco:</strong> Excursiones naturales + atracciones del Strip</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Adolescentes (14+ años)</h4>
+                <p>
+                    La edad en que Vegas funciona bien. Pueden apreciar la arquitectura,
+                el espectáculo y las excursiones de aventura.
+                </p>
+                <ul class="clean-list">
+                    <li>Cirque du Soleil: espectacular para adolescentes</li>
+                    <li>The Sphere: experiencia tecnológica impactante</li>
+                    <li>Excursiones aventura: rappel Gran Cañón, ATV desierto</li>
+                    <li>Outlets Premium: compras muy valoradas</li>
+                </ul>
+                <p><strong>La edad ideal para circuito Costa Oeste completo</strong></p>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <div class="box-label label-pink">⚠ Puntos delicados a explicar a familias</div>
+            <ul class="clean-list">
+                <li><strong>Ambiente adulto:</strong> Gente bebiendo, música fuerte, fiestas 24/7</li>
+                <li><strong>Publicidad para adultos:</strong> Cartelería y volantes en algunas zonas</li>
+                <li><strong>Humo de cigarrillo:</strong> Dentro de casinos y algunos pasillos</li>
+                <li><strong>Calor extremo:</strong> Peligroso para bebés y niños pequeños en verano</li>
+                <li><strong>Distancias:</strong> Caminatas largas pueden agotar a menores</li>
+            </ul>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 La estrategia familiar correcta</div>
+            <p>
+                Para familias, posicionar Las Vegas como <strong>"la base de lujo para explorar los
+                parques nacionales más espectaculares de América"</strong>. El Gran Cañón, Zion y
+                Valley of Fire son experiencias que marcan a los niños de por vida. Vegas es el hotel
+                cómodo con piscinas increíbles desde donde salen a esas aventuras. Este reencuadre
+                transforma la propuesta de valor para familias.
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script para familias con niños</div>
+            <p class="quote">
+                "Las Vegas con niños funciona muy bien si la usamos como base para explorar el suroeste
+                americano. Desde ahí pueden hacer el Gran Cañón, que es una experiencia que los niños
+                no van a olvidar nunca, Valley of Fire que parece de otro planeta, y Zion con sus
+                cañones rojos espectaculares. En Vegas misma, las fuentes del Bellagio, los hoteles
+                temáticos como la pirámide del Luxor y la rueda High Roller los entretienen perfectamente.
+                La clave es enfocar el viaje en las excursiones naturales usando Vegas como base cómoda."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     ALERTAS CRÍTICAS
+══════════════════════════ -->
+<div id="alertas" class="destination-card">
+    <div class="destination-header">
+        <h2>Alertas Críticas</h2>
+        <p class="destination-subtitle">Información esencial para evitar conflictos post-venta</p>
+    </div>
+
+    <div class="section">
+        <div class="grid-2">
+            <div class="critical-alert">
+                <div class="box-label label-red">⚠ Resort Fee en el 100% de hoteles del Strip</div>
+                <p>
+                    USD 35-55 por noche adicional en absolutamente todos los hoteles del Strip.
+                    No existe excepción. Es el punto de queja número uno de los turistas.
+                    <strong>Comunicar siempre por escrito antes de confirmar la reserva.</strong>
+                </p>
+            </div>
+            <div class="critical-alert">
+                <div class="box-label label-red">⚠ Calor extremo mortal en verano</div>
+                <p>
+                    40-45°C en julio-agosto. El asfalto alcanza 70°C. <strong>Caminar al sol
+                    sin preparación puede causar golpe de calor.</strong> Informar sobre
+                    hidratación, protector solar y planificación de horarios obligatoriamente.
+                </p>
+            </div>
+            <div class="critical-alert">
+                <div class="box-label label-red">⚠ Shows y Año Nuevo — Reserva inmediata obligatoria</div>
+                <p>
+                    The Sphere, residencias de artistas y habitaciones para Año Nuevo se agotan
+                    con <strong>6-12 meses de anticipación</strong>. Si el cliente menciona estas
+                    fechas o shows específicos, <strong>actuar inmediatamente</strong>. No hay segunda oportunidad.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Antelope Canyon — Reserva con meses de anticipación</div>
+                <p>
+                    Los tours a Antelope Canyon se agotan con 2-4 meses de anticipación en temporada alta.
+                    Si el cliente quiere esta excursión, reservar inmediatamente. Solo operadores autorizados.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Juego responsable</div>
+                <p>
+                    Vegas está diseñada para que el jugador pierda noción del tiempo y dinero: sin relojes,
+                    sin ventanas, bebidas gratuitas. Para clientes propensos al juego, recomendar límite
+                    diario antes de entrar al casino.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Propinas — Sistema obligatorio</div>
+                <p>
+                    18-22% en restaurantes, USD 1-2 por trago en casino, USD 2-5 por maleta a maleteros,
+                    15-20% en taxis. Las propinas son parte del salario en EE.UU. y son esperadas en todos los servicios.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     SCRIPT DE VENTA
+══════════════════════════ -->
+<div id="script" class="destination-card">
+    <div class="destination-header">
+        <h2>Script de Venta Consultiva</h2>
+        <p class="destination-subtitle">Argumentarios y cierres para cada situación comercial</p>
+    </div>
+
+    <div class="section">
+        <h3>Apertura general — El reencuadre de Vegas</h3>
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Presentación inicial</div>
+            <p class="quote">
+                "Las Vegas es la ciudad más incomprendida de Estados Unidos. Mucha gente cree que es
+                solo para quienes juegan en casinos. La realidad es que es la capital mundial del
+                entretenimiento: los mejores shows del planeta son permanentes ahí (The Sphere es una
+                maravilla tecnológica única), los restaurantes de chefs con estrellas Michelin están
+                concentrados en el Strip, y es la puerta de entrada al Gran Cañón y los paisajes más
+                espectaculares de América del Norte. Se puede disfrutar Las Vegas completamente sin
+                apostar un solo dólar."
+            </p>
+        </div>
+
+        <h3>Scripts por perfil específico</h3>
+        <div class="grid-2">
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Para grupos de amigos</div>
+                <p class="quote">
+                    "Para grupos de amigos, Las Vegas es el destino perfecto porque cada uno puede
+                    hacer lo que quiere y al final del día se reencuentran en el hotel. Unos van
+                    al casino, otros al pool party, otros de compras, otros al show. Nunca hay
+                    conflicto de intereses porque la ciudad tiene todo en el mismo kilómetro cuadrado.
+                    ¿Tienen algún artista específico que quieran ver en The Sphere o alguna residencia?
+                    Eso define las fechas."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Para el cliente que "no le gustan los casinos"</div>
+                <p class="quote">
+                    "Perfecto, porque Las Vegas hoy es mucho más que casinos. Las fuentes del Bellagio,
+                    The Sphere y Fremont Street son espectáculos gratuitos. El Cirque du Soleil tiene
+                    shows permanentes únicos en el mundo. Y en un radio de 4 horas están el Gran Cañón
+                    y Antelope Canyon. Pueden tener una experiencia completamente increíble sin pisar
+                    un casino. De hecho, muchos de nuestros clientes van específicamente por los shows
+                    y las excursiones."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Para el circuito Costa Oeste</div>
+                <p class="quote">
+                    "En el circuito Costa Oeste, Las Vegas es el punto de mayor intensidad y contraste.
+                    Después de Los Ángeles y antes del Gran Cañón, Vegas aporta la energía única de
+                    una ciudad que nunca duerme. Tres noches son perfectas: primera noche para el Strip
+                    y The Sphere, segunda para shows y vida nocturna, tercer día para excursión al
+                    Gran Cañón. Es el equilibrio perfecto entre ciudad y naturaleza."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Para Año Nuevo</div>
+                <p class="quote">
+                    "Las Vegas en Año Nuevo es el evento más espectacular de Estados Unidos. El Strip
+                    se cierra al tráfico, 400,000 personas celebran en la calle con fuegos artificiales
+                    desde todos los hoteles a medianoche. Pero hay que actuar YA: los hoteles se reservan
+                    con 6 a 12 meses de anticipación y los precios se triplican. Si quieren estar en
+                    Las Vegas el 31 de diciembre, tenemos que confirmarlo hoy mismo."
+                </p>
+            </div>
+        </div>
+
+        <h3>Manejo de objeciones</h3>
+        <div class="grid-2">
+            <div class="script-box">
+                <div class="box-label label-purple">💬 "Es muy cara Las Vegas"</div>
+                <p class="quote">
+                    "Las Vegas puede ser económica o cara según las decisiones que tomes. Las atracciones
+                    del Strip son gratuitas. Los buffets de casino ofrecen comida increíble a precios
+                    razonables. Los hoteles entre semana son sorprendentemente económicos. La clave es
+                    planificar bien: elegir hotel en el centro del Strip, presupuestar uno o dos shows
+                    importantes, y disfrutar todo lo gratuito. Te ayudo a estructurar el presupuesto
+                    real incluyendo el Resort Fee desde el inicio."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 "¿No es peligroso?"</div>
+                <p class="quote">
+                    "El Strip de Las Vegas es una de las zonas más vigiladas de Estados Unidos. Hay
+                    cámaras y seguridad privada en absolutamente todos los hoteles y espacios públicos.
+                    Con sentido común básico de cualquier ciudad grande, la experiencia es completamente
+                    segura. Lo importante es mantenerse en el Strip y las zonas turísticas principales."
+                </p>
+            </div>
+        </div>
+
+        <h3>Cierre de venta</h3>
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Duraciones recomendadas</div>
+            <p><strong>2-3 noches:</strong> Mínimo viable para Strip + 1 show. Ideal dentro de circuito Costa Oeste.</p>
+            <p style="margin-top: 6px;"><strong>4-5 noches:</strong> El formato más vendible. Permite Strip + shows + 1-2 excursiones.</p>
+            <p style="margin-top: 6px;"><strong>6-7 noches:</strong> Para Vegas completo + Gran Cañón + Antelope Canyon + Zion.</p>
+            <p style="margin-top: 6px;"><strong>Año Nuevo:</strong> Mínimo 3-4 noches. Reservar con 6-12 meses de anticipación obligatorio.</p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Cierre definitivo</div>
+            <p class="quote">
+                "Mi recomendación profesional para Las Vegas es mínimo 4 noches si quieren hacer el Strip
+                correctamente, al menos un show de primera categoría (The Sphere es imperdible) y una
+                excursión al Gran Cañón. Con menos tiempo se van con la sensación de que les faltó algo.
+                Con 4-5 noches tienen la primera noche para el Strip gratuito y las fuentes del Bellagio,
+                la segunda para The Sphere o el show que elijan, la tercera para la excursión al Gran
+                Cañón y la cuarta para Fremont Street y última noche de Strip. Eso es una experiencia
+                completa de Las Vegas. ¿Tienen fechas en mente y ya confirmamos que tienen la visa americana?"
+            </p>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Valor agregado para cerrar</div>
+            <p>
+                "Además del paquete completo, les voy a dar una guía con los mejores shows actuales
+                organizados por presupuesto, el mapa del Strip con las atracciones gratuitas marcadas,
+                los mejores restaurantes por categoría de precio, información detallada sobre el Resort
+                Fee y todos los tips para aprovechar Las Vegas al máximo sin sorpresas en el presupuesto."
+            </p>
+        </div>
+    </div>
+</div>
+
+</div>
+</main>
+
+<footer>
+    <p><strong>Dr. Viaje · Guía comercial definitiva de Las Vegas</strong></p>
+    <p>The Strip · The Sphere · Gran Cañón · Antelope Canyon · Shows · Gastronomía</p>
+    <p>Material exclusivo para agentes de viajes · Capacitación comercial profesional 2025</p>
+</footer>
+
+<button class="scroll-top" id="scrollTop"
+    onclick="window.scrollTo({top:0,behavior:'smooth'})"
+    aria-label="Volver arriba">↑</button>
+
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offset = target.getBoundingClientRect().top + window.pageYOffset - 140;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+    });
+});
+
+const scrollTopBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+});
+</script>
+
+</body>
+</html>

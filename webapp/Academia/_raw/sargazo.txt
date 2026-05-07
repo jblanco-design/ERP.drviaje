@@ -1,0 +1,532 @@
+<style>
+  .dv-risk{
+    --dv-bg:#fff7fb;
+    --dv-white:#ffffff;
+    --dv-ink:#231942;
+    --dv-muted:#6f6287;
+    --dv-brand:#7b2cbf;
+    --dv-brand-2:#9d4edd;
+    --dv-accent:#ff7b54;
+    --dv-accent-2:#ffb703;
+    --dv-rose:#ff4d8d;
+    --dv-line:#eadcf7;
+    --dv-soft:#f6efff;
+    --dv-soft-2:#fff1f7;
+    --dv-shadow:0 12px 30px rgba(71,38,122,.12);
+    --dv-radius:22px;
+    color:var(--dv-ink);
+    font-family: Inter, Segoe UI, Arial, Helvetica, sans-serif;
+  }
+
+  .dv-risk *{box-sizing:border-box}
+
+  .dv-risk-section{
+    padding:34px 0 10px;
+  }
+
+  .dv-risk-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:0 0 16px;
+  }
+
+  .dv-risk-title .dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--dv-accent), var(--dv-rose));
+    flex:0 0 auto;
+  }
+
+  .dv-risk-title h2{
+    margin:0;
+    font-size:clamp(1.45rem, 2.5vw, 2rem);
+    letter-spacing:-.02em;
+    line-height:1.15;
+    color:var(--dv-ink);
+  }
+
+  .dv-risk-lead{
+    margin:0 0 18px;
+    color:var(--dv-muted);
+    font-size:1.03rem;
+    max-width:980px;
+    line-height:1.6;
+  }
+
+  .dv-risk-grid-2,
+  .dv-risk-grid-3{
+    display:grid;
+    gap:18px;
+  }
+
+  .dv-risk-grid-2{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+
+  .dv-risk-grid-3{
+    grid-template-columns:repeat(3, minmax(0,1fr));
+  }
+
+  .dv-risk-card{
+    background:var(--dv-white);
+    border:1px solid var(--dv-line);
+    border-radius:var(--dv-radius);
+    padding:22px;
+    box-shadow:var(--dv-shadow);
+  }
+
+  .dv-risk-card h3{
+    margin:0 0 10px;
+    font-size:1.2rem;
+    letter-spacing:-.02em;
+    color:var(--dv-ink);
+  }
+
+  .dv-risk-card p{
+    margin:0 0 12px;
+    color:#46375d;
+    line-height:1.6;
+  }
+
+  .dv-risk-mini{
+    margin:14px 0 8px;
+    font-size:.9rem;
+    color:var(--dv-brand);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    font-weight:900;
+  }
+
+  .dv-risk-list{
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+
+  .dv-risk-list li{
+    position:relative;
+    padding-left:18px;
+    margin:8px 0;
+    color:#46375d;
+    line-height:1.55;
+  }
+
+  .dv-risk-list li::before{
+    content:"•";
+    position:absolute;
+    left:0;
+    top:0;
+    color:var(--dv-accent);
+    font-weight:900;
+  }
+
+  .dv-risk-callout{
+    background:linear-gradient(135deg, rgba(123,44,191,.08), rgba(255,123,84,.10));
+    border:1px solid var(--dv-line);
+    border-radius:20px;
+    padding:16px 18px;
+    font-weight:700;
+    color:#4d3b69;
+    line-height:1.55;
+  }
+
+  .dv-risk-table-wrap{
+    margin-top:18px;
+    overflow-x:auto;
+    border-radius:22px;
+    box-shadow:var(--dv-shadow);
+  }
+
+  .dv-risk-table{
+    width:100%;
+    min-width:760px;
+    border-collapse:separate;
+    border-spacing:0;
+    background:var(--dv-white);
+    border:1px solid var(--dv-line);
+    border-radius:22px;
+    overflow:hidden;
+  }
+
+  .dv-risk-table th,
+  .dv-risk-table td{
+    padding:14px 16px;
+    text-align:left;
+    vertical-align:top;
+    border-bottom:1px solid var(--dv-line);
+    font-size:.97rem;
+    line-height:1.5;
+  }
+
+  .dv-risk-table thead th{
+    background:linear-gradient(135deg, var(--dv-brand), var(--dv-rose));
+    color:#fff;
+    font-weight:900;
+    letter-spacing:.02em;
+  }
+
+  .dv-risk-table tbody tr:last-child td{
+    border-bottom:none;
+  }
+
+  .dv-risk-table tbody tr:nth-child(even) td{
+    background:#fffafd;
+  }
+
+  .dv-risk-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    font-weight:900;
+    font-size:.82rem;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    border:1px solid transparent;
+    white-space:nowrap;
+  }
+
+  .dv-risk-low{
+    background:#ecfdf3;
+    color:#0f8a4b;
+    border-color:#b7efcf;
+  }
+
+  .dv-risk-medium{
+    background:#fff8e8;
+    color:#a16207;
+    border-color:#f6d58b;
+  }
+
+  .dv-risk-high{
+    background:#fff0f0;
+    color:#c62828;
+    border-color:#f0b1b1;
+  }
+
+  .dv-risk-note{
+    margin-top:12px;
+    font-size:.92rem;
+    color:var(--dv-muted);
+    line-height:1.55;
+  }
+
+  .dv-risk-quote{
+    background:linear-gradient(135deg, rgba(123,44,191,.08), rgba(255,77,141,.08));
+    border:1px solid var(--dv-line);
+    border-radius:24px;
+    padding:22px;
+    box-shadow:var(--dv-shadow);
+    color:#4d3b69;
+    line-height:1.6;
+  }
+
+  @media (max-width: 980px){
+    .dv-risk-grid-3{
+      grid-template-columns:1fr;
+    }
+    .dv-risk-grid-2{
+      grid-template-columns:1fr;
+    }
+  }
+</style>
+
+<section class="dv-risk dv-risk-section" id="clima-riesgos">
+  <div class="dv-risk-title">
+    <span class="dot"></span>
+    <h2>Sargazo y temporada de huracanes · guía comercial consultiva</h2>
+  </div>
+
+  <p class="dv-risk-lead">
+    Esta sección está pensada para vender con criterio: poner contexto, explicar probabilidades,
+    manejar expectativas y reforzar tu papel como asesor. En Caribe, el error comercial no es hablar del clima;
+    el error es prometer certezas absolutas.
+  </p>
+
+  <div class="dv-risk-grid-3">
+    <div class="dv-risk-card">
+      <h3>La verdad comercial</h3>
+      <p>
+        La temporada de huracanes no significa que vaya a hacer mal tiempo todos los días.
+        Significa que existe una ventana del año con mayor vigilancia meteorológica y una probabilidad más alta
+        de incidencias, especialmente entre agosto y octubre.
+      </p>
+      <div class="dv-risk-mini">Cómo decirlo</div>
+      <div class="dv-risk-callout">
+        “No es una temporada para descartar por sistema, sino para vender mejor la fecha,
+        el destino y la expectativa del viaje.”
+      </div>
+    </div>
+
+    <div class="dv-risk-card">
+      <h3>La verdad sobre el sargazo</h3>
+      <p>
+        El sargazo no afecta igual a todo el Caribe ni todos los meses por igual. Como objeción de venta
+        pesa sobre todo en el Caribe Mexicano y debe tratarse como una variable dinámica,
+        no como una condena fija del destino.
+      </p>
+      <div class="dv-risk-mini">Cómo decirlo</div>
+      <div class="dv-risk-callout">
+        “No se puede prometer playa perfecta con meses de antelación, pero sí se puede vender bien la zona,
+        el hotel y el tipo de viaje para reducir la objeción.”
+      </div>
+    </div>
+
+    <div class="dv-risk-card">
+      <h3>Regla de oro</h3>
+      <p>
+        No vendas “riesgo cero”. Vende <strong>probabilidad baja / media / alta</strong>, seguimiento,
+        buena recomendación de base y plan alternativo si el cliente es sensible al clima o al estado de playa.
+      </p>
+      <div class="dv-risk-mini">Promesa correcta</div>
+      <div class="dv-risk-callout">
+        “Te recomiendo el destino más estable según la fecha y el tipo de experiencia que buscas.”
+      </div>
+    </div>
+  </div>
+
+  <div class="dv-risk-card" style="margin-top:18px;">
+    <h3>Lectura rápida de probabilidad · huracanes en el Caribe / Atlántico</h3>
+
+    <div class="dv-risk-table-wrap">
+      <table class="dv-risk-table">
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Probabilidad</th>
+            <th>Lectura comercial</th>
+            <th>Qué decir al cliente</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Enero – mayo</strong></td>
+            <td><span class="dv-risk-badge dv-risk-low">Baja</span></td>
+            <td>Ventana muy cómoda para vender Caribe sin objeción meteorológica fuerte.</td>
+            <td>“Es una época muy favorable si priorizas estabilidad y poca conversación sobre clima.”</td>
+          </tr>
+          <tr>
+            <td><strong>Junio – julio</strong></td>
+            <td><span class="dv-risk-badge dv-risk-medium">Baja / media</span></td>
+            <td>La temporada ya ha empezado, pero no es todavía el tramo de mayor concentración.</td>
+            <td>“Se puede vender bien, simplemente conviene viajar con seguimiento normal de la previsión.”</td>
+          </tr>
+          <tr>
+            <td><strong>Mitad de agosto – mitad de octubre</strong></td>
+            <td><span class="dv-risk-badge dv-risk-high">Alta</span></td>
+            <td>Es el tramo más sensible y donde hay que ser más fino con destino, precio y perfil.</td>
+            <td>“Si viajas aquí, conviene priorizar destinos más estables o aceptar mayor flexibilidad.”</td>
+          </tr>
+          <tr>
+            <td><strong>Finales de octubre – noviembre</strong></td>
+            <td><span class="dv-risk-badge dv-risk-medium">Media</span></td>
+            <td>Sigue siendo temporada oficial, aunque normalmente baja la tensión respecto al pico.</td>
+            <td>“Todavía hay temporada, pero ya no es el tramo más tenso del calendario.”</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="dv-risk-note">
+      Referencia comercial base: temporada oficial del 1 de junio al 30 de noviembre;
+      pico climatológico a principios de septiembre; mayor actividad entre mediados de agosto y mediados de octubre.
+    </div>
+  </div>
+
+  <div class="dv-risk-card" style="margin-top:18px;">
+    <h3>Lectura rápida de probabilidad · sargazo</h3>
+
+    <div class="dv-risk-table-wrap">
+      <table class="dv-risk-table">
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Probabilidad en Caribe Mexicano</th>
+            <th>Lectura comercial</th>
+            <th>Qué decir al cliente</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diciembre – febrero</strong></td>
+            <td><span class="dv-risk-badge dv-risk-low">Baja</span></td>
+            <td>Ventana normalmente más cómoda para vender playa sin tanta objeción.</td>
+            <td>“Si la playa es prioritaria, suele ser una de las épocas más cómodas para Caribe Mexicano.”</td>
+          </tr>
+          <tr>
+            <td><strong>Marzo – mayo</strong></td>
+            <td><span class="dv-risk-badge dv-risk-medium">Media</span></td>
+            <td>Empieza la vigilancia; algunos años se adelanta.</td>
+            <td>“Conviene revisar zona y hotel, pero sigue siendo muy vendible.”</td>
+          </tr>
+          <tr>
+            <td><strong>Junio – agosto</strong></td>
+            <td><span class="dv-risk-badge dv-risk-high">Media / alta</span></td>
+            <td>Es la franja donde la objeción suele ganar más peso.</td>
+            <td>“Aquí hay que vender el viaje como experiencia completa: hotel, cenotes, excursiones y gastronomía.”</td>
+          </tr>
+          <tr>
+            <td><strong>Septiembre – noviembre</strong></td>
+            <td><span class="dv-risk-badge dv-risk-medium">Variable</span></td>
+            <td>Puede seguir presente, pero depende mucho de corrientes, viento y limpieza local.</td>
+            <td>“No se generaliza: se monitoriza más cerca de la salida.”</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="dv-risk-title" style="margin-top:28px;">
+    <span class="dot"></span>
+    <h2>Mapa comercial por destino</h2>
+  </div>
+
+  <div class="dv-risk-table-wrap">
+    <table class="dv-risk-table">
+      <thead>
+        <tr>
+          <th>Destino</th>
+          <th>Huracanes</th>
+          <th>Sargazo</th>
+          <th>Cómo venderlo</th>
+          <th>Perfil ideal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Aruba</strong></td>
+          <td><span class="dv-risk-badge dv-risk-low">Baja comparativa</span></td>
+          <td><span class="dv-risk-badge dv-risk-low">Baja objeción</span></td>
+          <td>“Muy buena opción si quieres Caribe con clima estable y muy poca conversación sobre riesgo.”</td>
+          <td>Clientes prudentes, premium, familias, verano y otoño.</td>
+        </tr>
+        <tr>
+          <td><strong>Curaçao</strong></td>
+          <td><span class="dv-risk-badge dv-risk-low">Baja comparativa</span></td>
+          <td><span class="dv-risk-badge dv-risk-low">Baja objeción</span></td>
+          <td>“Muy recomendable si quieres una alternativa caribeña con perfil más estable y diferente.”</td>
+          <td>Parejas, clientes sensibles al clima, buceo, cultura y playa.</td>
+        </tr>
+        <tr>
+          <td><strong>Jamaica</strong></td>
+          <td><span class="dv-risk-badge dv-risk-medium">Media estacional</span></td>
+          <td><span class="dv-risk-badge dv-risk-low">Objeción secundaria</span></td>
+          <td>“Si eliges bien la fecha, sigue siendo un Caribe muy vendible por experiencia, música y naturaleza.”</td>
+          <td>Parejas, familias activas, clientes que quieren Caribe con carácter.</td>
+        </tr>
+        <tr>
+          <td><strong>Cancún / Riviera Maya</strong></td>
+          <td><span class="dv-risk-badge dv-risk-medium">Media / alta estacional</span></td>
+          <td><span class="dv-risk-badge dv-risk-high">Objeción principal</span></td>
+          <td>“Hay que vender bien zona, fecha y propuesta de valor; no solo playa, sino viaje completo.”</td>
+          <td>Parejas, familias, grupos y clientes que quieren variedad.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="dv-risk-grid-2" style="margin-top:18px;">
+    <div class="dv-risk-card">
+      <h3>Argumentos de venta que sí funcionan</h3>
+      <ul class="dv-risk-list">
+        <li><strong>“Temporada” no significa incidencia permanente:</strong> significa una ventana con más vigilancia.</li>
+        <li><strong>El Caribe no se comporta igual:</strong> Aruba y Curaçao son refugios comerciales muy buenos para clientes más sensibles.</li>
+        <li><strong>El sargazo no invalida el viaje:</strong> obliga a vender mejor hotel, excursiones, gastronomía y tipo de playa.</li>
+        <li><strong>El valor del asesor está en afinar la recomendación:</strong> fecha + destino + perfil del cliente.</li>
+        <li><strong>Cuando hay más objeción, también suele haber más oportunidad de precio:</strong> útil para clientes flexibles.</li>
+      </ul>
+    </div>
+
+    <div class="dv-risk-card">
+      <h3>Cosas que no conviene prometer</h3>
+      <ul class="dv-risk-list">
+        <li>“No va a llover.”</li>
+        <li>“No habrá nada de sargazo.”</li>
+        <li>“En esa época nunca pasa nada.”</li>
+        <li>“Todas las playas estarán perfectas.”</li>
+        <li>“Es exactamente igual en todo el Caribe.”</li>
+      </ul>
+
+      <div class="dv-risk-callout" style="margin-top:14px;">
+        Mejor promesa: <strong>“Te orientaré hacia el destino con mejor equilibrio entre clima, probabilidad y tipo de viaje para tus fechas.”</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="dv-risk-title" style="margin-top:28px;">
+    <span class="dot"></span>
+    <h2>Manejo de objeciones · respuestas listas para usar</h2>
+  </div>
+
+  <div class="dv-risk-grid-2">
+    <div class="dv-risk-card">
+      <h3>“No quiero viajar en temporada de huracanes.”</h3>
+      <p>
+        Totalmente lógico. Si para ti la estabilidad pesa mucho, lo mejor es mover la fecha o ir a destinos
+        con exposición comparativamente más baja, como Aruba o Curaçao.
+      </p>
+
+      <h3>“¿Entonces es mala idea ir al Caribe en verano?”</h3>
+      <p>
+        No necesariamente. Lo importante es no vender todos los destinos igual. En verano hay destinos
+        más sensibles y otros más cómodos; además, a veces compensa por precio si el cliente entiende bien el contexto.
+      </p>
+
+      <h3>“Me preocupa quedarme sin playa por el sargazo.”</h3>
+      <p>
+        Es una objeción razonable, sobre todo en Riviera Maya. Por eso ahí no conviene vender solo playa:
+        conviene vender viaje completo, con hotel potente, cenotes, excursiones y elección cuidadosa de zona.
+      </p>
+    </div>
+
+    <div class="dv-risk-card">
+      <h3>“Quiero el Caribe con menos riesgo posible.”</h3>
+      <p>
+        Entonces la recomendación más segura suele ir hacia Aruba o Curaçao, porque comercialmente son
+        de los productos más estables para clientes que priorizan tranquilidad meteorológica.
+      </p>
+
+      <h3>“¿Y si reservo Jamaica o Riviera Maya?”</h3>
+      <p>
+        Se puede vender perfectamente, pero con el discurso correcto: fecha adecuada, seguimiento previo,
+        hotel bien elegido y expectativas claras.
+      </p>
+
+      <h3>“¿Se puede saber con meses de antelación cómo estará la playa?”</h3>
+      <p>
+        No con precisión absoluta. Lo correcto es hacer lectura estacional ahora y seguimiento real más cerca de la salida.
+      </p>
+    </div>
+  </div>
+
+  <div class="dv-risk-card" style="margin-top:18px;">
+    <h3>Mini script de venta consultiva</h3>
+
+    <div class="dv-risk-mini">Apertura</div>
+    <div class="dv-risk-quote">
+      “Si te parece, más que hablar solo de destino, te orientaré por nivel de estabilidad
+      y por el tipo de viaje que quieres hacer.”
+    </div>
+
+    <div class="dv-risk-mini">Detección</div>
+    <p>
+      “¿Qué pesa más para ti: minimizar al máximo cualquier objeción climática,
+      o aprovechar mejor precio asumiendo algo más de flexibilidad?”
+    </p>
+
+    <div class="dv-risk-mini">Recomendación rápida</div>
+    <p>
+      “Si quieres máxima tranquilidad, te llevo a Aruba o Curaçao. Si buscas más variedad, hotelería o excursiones,
+      Jamaica o Riviera Maya siguen siendo muy buenas opciones, pero con una lectura más fina de fecha y zona.”
+    </p>
+
+    <div class="dv-risk-mini">Cierre</div>
+    <p>
+      “Mi trabajo aquí no es decirte que no existe riesgo, sino ayudarte a elegir el Caribe
+      que mejor encaja con tus fechas y con tu tolerancia a esa variable.”
+    </p>
+  </div>
+</section>

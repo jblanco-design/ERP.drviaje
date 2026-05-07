@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Región Ceará - Guía Brasil | Dr. Viaje</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-purple);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        nav {
+            background-color: var(--primary-orange);
+            padding: 15px 0;
+            position: sticky;
+            top: 120px;
+            z-index: 999;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-links a:hover {
+            background-color: white;
+            color: var(--primary-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: var(--primary-orange);
+        }
+
+        .destination-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .destination-card:nth-child(even) {
+            border-top-color: var(--primary-pink);
+        }
+
+        .destination-header {
+            border-bottom: 3px solid var(--bg-light);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .destination-header h2 {
+            color: var(--primary-purple);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .destination-subtitle {
+            color: var(--primary-pink);
+            font-size: 1.2rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .section h4 {
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: var(--text-medium);
+        }
+
+        .section ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-medium);
+        }
+
+        .section li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+            border-left: 5px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box::before {
+            content: "💡 TIP DE VENTA: ";
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 5px solid var(--primary-pink);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .alert-box::before {
+            content: "⚠️ ALERTA: ";
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border: 2px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 12px;
+            font-style: italic;
+            position: relative;
+        }
+
+        .script-box::before {
+            content: "💬 SCRIPT: ";
+            font-weight: 700;
+            color: var(--primary-purple);
+            font-style: normal;
+        }
+
+        .critical-alert {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 3px solid var(--primary-orange);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .critical-alert::before {
+            content: "🎯 INFORMACIÓN CRÍTICA LOGÍSTICA: ";
+            font-weight: 700;
+            color: var(--primary-orange);
+            font-size: 1.1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-pink) 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .destination-card {
+                padding: 25px;
+            }
+
+            .destination-header h2 {
+                font-size: 2rem;
+            }
+
+            nav {
+                top: 140px;
+            }
+        }
+
+        strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    Dr.<br>Viaje<br>.com
+                </div>
+                <div class="header-title">
+                    <h1>Región Ceará</h1>
+                    <p>Aventura, Kitesurf y el Transformador Jericoacoara</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#fortaleza">Fortaleza</a></li>
+                <li><a href="#jericoacoara">Jericoacoara</a></li>
+                <li><a href="#natal">Natal</a></li>
+                <li><a href="#pipa">Pipa</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index-brasil.html" class="back-link">← Volver al índice principal</a>
+
+        <!-- FORTALEZA -->
+        <div id="fortaleza" class="destination-card">
+            <div class="destination-header">
+                <h2>FORTALEZA</h2>
+                <p class="destination-subtitle">Terra da Luz - Capital de la Diversión Familiar</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Fortaleza es la quinta ciudad más grande de Brasil y la capital de Ceará, una metrópolis vibrante de 2.7 millones de habitantes que se ha consolidado como la <strong>capital de la diversión familiar del nordeste brasileño</strong>. Conocida como <strong>"Terra da Luz"</strong> (Tierra de la Luz) por sus 2.800 horas de sol anuales, es el destino que revolucionó el concepto de entretenimiento playero con sus legendarias megabarracas y alberga el <strong>Beach Park</strong>, el mayor parque acuático de América Latina.</p>
+
+                <p>La posición geográfica estratégica de Fortaleza en el "joelho" (rodilla) del nordeste, donde la costa cambia de dirección, genera <strong>vientos constantes de 15-25 km/h durante 300 días al año</strong>. Este fenómeno la convirtió en capital mundial del kitesurf y crea el microclima perfecto: calor tropical (28-32°C) con brisa permanente que lo hace perfectamente tolerable.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Fortaleza es fundamental en tu cartera?</strong> Es tu destino multifunción estratégico: funciona como base urbana económica para explorar múltiples playas espectaculares (Cumbuco, Morro Branco, Canoa Quebrada), como destino familiar all-inclusive (Beach Park Resort), o como hub logístico para llegar a Jericoacoara. Su aeropuerto tiene conectividad excepcional y es frecuentemente más económico que otros destinos nordestinos.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Características Turísticas Principales</h3>
+                
+                <h4>Tu argumento de venta estrella #1: Las Megabarracas de Praia do Futuro</h4>
+                <p>Praia do Futuro (8 km del centro) revolucionó el concepto de ir a la playa. Las megabarracas son complejos permanentes de 2-3 pisos con:</p>
+                <ul>
+                    <li>Piscinas gigantes frente al mar con toboganes</li>
+                    <li>Restaurantes completos especializados en mariscos</li>
+                    <li>Shows en vivo diurnos (forró, axé, samba)</li>
+                    <li>Parques acuáticos infantiles integrados</li>
+                    <li>Spa, salones de belleza, lockers, duchas VIP</li>
+                    <li>Servicio de sombrilla, silla, mesa incluido en consumo mínimo</li>
+                </ul>
+
+                <p><strong>Barracas icónicas:</strong> Crocobeach (la más grande), Chico do Caranguejo (especializada en cangrejos), Vira Verão (ambiente joven).</p>
+
+                <div class="tip-box">
+                    Las megabarracas de Praia do Futuro no son simples restaurantes de playa: son clubes privados sobre la arena donde pasás el día entero. Llegás a las 10 AM, te instalás con piscina y shows en vivo, almorzás mariscos espectaculares, los chicos tienen parque acuático, y salís a las 5 PM habiendo vivido una experiencia completa sin moverte.
+                </div>
+
+                <h4>Tu argumento de venta estrella #2: Beach Park (Porto das Dunas)</h4>
+                <p>El mayor parque acuático de América Latina (25 km de Fortaleza) con 20 hectáreas y 18 atracciones:</p>
+                <ul>
+                    <li><strong>Insano:</strong> Tobogán de 41 metros (equivalente a edificio de 14 pisos), récord mundial</li>
+                    <li><strong>Kalafrio:</strong> Montaña rusa acuática con descenso de 24 metros</li>
+                    <li><strong>Ramubrinká:</strong> Área infantil exclusiva con 15 atracciones para menores de 1.20m</li>
+                    <li><strong>Acqua Show:</strong> Piscina de ondas gigante con espectáculos diurnos</li>
+                </ul>
+
+                <p><strong>Sistema de hospedagem integrado:</strong></p>
+                <ul>
+                    <li>Beach Park Resort (5 estrellas): All-inclusive premium con acceso ilimitado</li>
+                    <li>Beach Park Acqua Resort (4 estrellas): Opción intermedia</li>
+                    <li>Beach Park Suítes Resort (3 estrellas superior): Económico con acceso restringido</li>
+                </ul>
+
+                <h4>EXCURSIONES DESDE FORTALEZA (tu verdadero producto comercial):</h4>
+                <ul>
+                    <li><strong>Cumbuco (30 km oeste - el más vendido):</strong> Dunas móviles gigantes con paseos de buggy ("com emoção" o "sem emoção"), Lagoa de Parnamirim con tirolesa, capital mundial del kitesurf</li>
+                    <li><strong>Morro Branco y Praia das Fontes (85 km este):</strong> Falesias coloridas de 30 metros con 8 tonalidades naturales, Labirinto das Falésias tipo mini Grand Canyon</li>
+                    <li><strong>Canoa Quebrada (165 km este):</strong> Broadway de arena roja con vida nocturna bohemia, Lua e Estrela de Canoa esculpidos en acantilado, recomendable como pernocte (2 noches)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <h4>FORTALEZA CIUDAD: CONDICIONAL (función logística, no familiar ideal)</h4>
+                <ul>
+                    <li><strong>Niños de 0-6 años:</strong> NO especialmente recomendable como destino principal. Ciudad urbana intensa, tráfico caótico, playas urbanas centrales no ideales para niños pequeños</li>
+                    <li><strong>Niños de 7-14 años:</strong> Recomendable si el enfoque son las excursiones y megabarracas. Cumbuco (buggy y esquibunda), Morro Branco (falesias coloridas), y Praia do Futuro (megabarracas con parques acuáticos) los fascinan</li>
+                </ul>
+
+                <h4>BEACH PARK: ¡PARAÍSO ABSOLUTO PARA TODAS LAS EDADES!</h4>
+                <ul>
+                    <li><strong>Niños de 0-3 años:</strong> Excelente. Ramubrinká (área exclusiva), berçário profesional, Copa Baby con cocina 24hs, piscinas infantiles climatizadas</li>
+                    <li><strong>Niños de 4-12 años:</strong> EDAD IDEAL. Es literalmente el sueño: parque acuático gigante, playa privada, piscinas, recreación profesional, all-inclusive que simplifica todo a los padres</li>
+                    <li><strong>Adolescentes:</strong> Muy recomendable. Atracciones de adrenalina extrema (Insano, Kalafrio), ambiente social internacional, independencia supervisada en complejo seguro</li>
+                </ul>
+
+                <div class="script-box">
+                    Beach Park es el destino donde los padres realmente descansan. Los chicos tienen entretenimiento profesional desde las 8 AM hasta las 10 PM, todo incluido, completamente seguro, y vos podés relajar en spa o leer en la playa sabiendo que están felices y supervisados profesionalmente.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: Fortaleza - Pinto Martins (FOR)</h4>
+                <p><strong>Ventaja logística excepcional:</strong> Aeropuerto a solo 6 km del centro turístico (15-20 min), uno de los más céntricos y modernos de Brasil.</p>
+
+                <ul>
+                    <li><strong>Centro turístico (Beira Mar):</strong> 6 km (15-20 min)</li>
+                    <li><strong>Praia do Futuro:</strong> 8 km (20-25 min)</li>
+                    <li><strong>Beach Park:</strong> 25 km (30-40 min según tráfico)</li>
+                    <li><strong>Cumbuco:</strong> 30 km (40-50 min)</li>
+                    <li><strong>Jericoacoara:</strong> 300 km (5-6 horas, últimos 20 km en 4x4)</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Desayuno fuera del hotel</td><td>USD 5-8 por persona</td></tr>
+                        <tr><td>Megabarraca Praia do Futuro (día completo)</td><td>USD 25-40 por persona</td></tr>
+                        <tr><td>Cena en Beira Mar</td><td>USD 15-28 por persona</td></tr>
+                        <tr><td>Beach Park (entrada día)</td><td>USD 60-80 por persona</td></tr>
+                        <tr><td>Cumbuco (día completo)</td><td>USD 35-50 por persona</td></tr>
+                        <tr><td>Morro Branco + Fontes</td><td>USD 40-60 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong> USD 50-80 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Alertas Críticas</h3>
+                <div class="alert-box">
+                    <strong>Expectativas de playas urbanas centrales:</strong> Las playas del centro de Fortaleza (Beira Mar, Meireles, Iracema) frecuentemente no son aptas para baño por corrientes y calidad del agua variable. Se usan para caminar, deportes, y disfrutar la infraestructura. Para bañarte vas a Praia do Futuro (20 min) con las megabarracas espectaculares, o a excursiones a playas paradisíacas. Fortaleza se vende como base urbana + excursiones, no como destino de playa urbana paradisíaca.<br><br>
+                    <strong>Vientos constantes:</strong> Los vientos cearenses son permanentes (no ocasionales). Ventajas: refrescan calor tropical, permiten kitesurf mundial. Posibles inconvenientes: pueden molestar en playa contemplativa.<br><br>
+                    <strong>Beach Park en Julio:</strong> Colapso total durante vacaciones de invierno brasileñas. Filas de 60-90 minutos en atracciones principales. Si el cliente tiene flexibilidad, evitar julio absolutamente.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de objeción - "¿Vale la pena si las playas urbanas no son buenas?":</strong><br>
+                    "Fortaleza no se vende por sus playas urbanas del centro, se vende por ser el hub estratégico del nordeste más espectacular. Desde ahí accedés a Cumbuco (dunas saharianas), Morro Branco (Grand Canyon brasileño), Canoa Quebrada (pueblo bohemio), Beach Park (parque acuático mundial), y Jericoacoara (uno de los 10 atardeceres más lindos del mundo). Es tu base operativa inteligente con precios de ciudad auténtica para conocer lo mejor de Ceará."
+                </div>
+
+                <div class="script-box">
+                    <strong>Estrategia 1 - Fortaleza como base exploradora:</strong><br>
+                    "4-5 noches en hotel económico en Beira Mar haciendo excursiones diarias: Cumbuco (dunas y kitesurf), Morro Branco (falesias coloridas), Beach Park (día completo), Praia do Futuro (megabarracas). Ahorrás en alojamiento, conocés 5 experiencias diferentes, tenés vida nocturna urbana, y usás un solo aeropuerto."
+                </div>
+
+                <div class="script-box">
+                    <strong>Estrategia 2 - Beach Park exclusivo familiar:</strong><br>
+                    "5-7 noches en Beach Park Resort all-inclusive. Los chicos viven el sueño del parque acuático gigante, vos descansás en spa y playa privada, todo incluido sin abrir billetera. Es vacaciones de verdad para toda la familia donde nadie se aburre ni un minuto."
+                </div>
+            </div>
+        </div>
+
+        <!-- JERICOACOARA -->
+        <div id="jericoacoara" class="destination-card">
+            <div class="destination-header">
+                <h2>JERICOACOARA</h2>
+                <p class="destination-subtitle">El Paraíso Transformador - Parque Nacional</p>
+            </div>
+
+            <div class="critical-alert">
+                <h3 style="color: var(--primary-orange); margin-top: 0;">INFORMACIÓN LOGÍSTICA CRÍTICA - Tu Responsabilidad Profesional Principal</h3>
+                <p><strong>ANTES DE DESCRIBIR LA MAGIA DE JERICOACOARA, DEBÉS DOMINAR COMPLETAMENTE SU LOGÍSTICA. ES LO QUE DEFINE EL ÉXITO O FRACASO DE LA VENTA.</strong></p>
+                
+                <h4 style="color: var(--primary-orange);">Las Dos Opciones de Llegada desde Uruguay:</h4>
+                
+                <p><strong>OPCIÓN 1: VUELO DIRECTO MONTEVIDEO → FORTALEZA (FOR)</strong></p>
+                <ul>
+                    <li><strong>Información operativa crítica:</strong> Vuelo directo disponible TODO EL AÑO saliendo los días SÁBADOS</li>
+                    <li><strong>Implicancia comercial:</strong> Te obliga a armar paquetes de 7 o 14 noches exactas</li>
+                    <li><strong>Distancia:</strong> 300 km totales (280 km asfalto + 20 km en 4x4 por Parque Nacional)</li>
+                </ul>
+
+                <p><strong>EL PROBLEMA CRÍTICO DEL RETORNO:</strong> El traslado regular desde Jeri a Fortaleza sale muy temprano (6-7 AM) para llegar al aeropuerto alrededor de las 12-13 horas. Si tu vuelo directo de regreso sale a las 19-20 horas (horario típico del sábado), vas a estar 7 horas esperando en el aeropuerto después de 5-6 horas de traslado agotador.</p>
+
+                <div class="script-box" style="margin: 20px 0;">
+                    <strong>SOLUCIÓN PROFESIONAL OBLIGATORIA - Pernocte Estratégico:</strong><br>
+                    "Mi recomendación profesional es agregar 1 noche en Fortaleza al final del viaje. Salís de Jeri tranquilo el viernes, llegás a Fortaleza con tiempo, te instalás en un hotel con piscina cerca del aeropuerto, descansás, cenás bien, y al día siguiente (sábado) tomás el vuelo directo relajado. Son USD 60-80 adicionales que transforman completamente la experiencia del retorno."
+                </div>
+
+                <p><strong>OPCIÓN 2: VUELOS CON ESCALA AL AEROPUERTO DE JERICOACOARA (JJD)</strong></p>
+                <ul>
+                    <li><strong>Ruta con 1 escala (la más recomendable):</strong> Montevideo → São Paulo (GRU/CGH) → Jijoca de Jericoacoara (JJD). Tiempo total: 6-8 horas</li>
+                    <li><strong>Ruta con 2 escalas:</strong> Montevideo → São Paulo → Brasília (BSB) o Belo Horizonte (CNF) → Jijoca (JJD). Tiempo total: 8-10 horas</li>
+                    <li><strong>Distancia aeropuerto JJD → Jeri:</strong> 25 km (40 minutos en 4x4)</li>
+                    <li><strong>Ventajas:</strong> Elimina completamente el traslado terrestre de 5-6 horas, sin problemas de timing en el retorno</li>
+                    <li><strong>Desventajas:</strong> 20-30% más caro que volar a Fortaleza, frecuencias limitadas según temporada</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>LA COMBINACIÓN ESTRATÉGICA IDEAL</h3>
+                
+                <h4>PAQUETE FORTALEZA (2-3 NOCHES) + JERICOACOARA (5-6 NOCHES) + FORTALEZA (1 NOCHE RETORNO)</h4>
+                
+                <p><strong>Itinerario optimizado (9-10 noches totales):</strong></p>
+                <ul>
+                    <li><strong>Días 1-2: Llegada y Fortaleza</strong> - Vuelo directo Montevideo → Fortaleza, 2 noches en hotel Beira Mar o Praia do Futuro, día completo Cumbuco o Beach Park</li>
+                    <li><strong>Día 3: Traslado Fortaleza → Jericoacoara</strong> - Salida 7-8 AM en traslado privado, 300 km totales, llegada al mediodía</li>
+                    <li><strong>Días 3-8: Jericoacoara - El Corazón del Viaje (5-6 noches)</strong> - Atardecer diario en Duna do Pôr do Sol, Lagoa do Paraíso, Pedra Furada y Lagoa Azul, Tatajuba y Mangue Seco</li>
+                    <li><strong>Día 9: Retorno Estratégico Jeri → Fortaleza</strong> - Salida tranquila de Jeri (9-10 AM), 1 noche obligatoria en Fortaleza cerca del aeropuerto</li>
+                    <li><strong>Día 10: Vuelo de Regreso</strong> - Check-out relajado, traslado corto al aeropuerto, vuelo internacional descansado</li>
+                </ul>
+
+                <div class="script-box">
+                    "Esta combinación 2+6+1 noches es la fórmula perfecta probada durante años: conocés lo mejor de Ceará sin desperdiciar días en traslados, tenés tiempo suficiente en Jeri para vivir la magia completa, y volvés descansado, no agotado. Es la diferencia entre volver contento y volver transformado."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Jericoacoara es el paraíso natural más puro y transformador de Brasil, un antiguo pueblo de pescadores que el Washington Post eligió entre las <strong>"10 Playas Más Hermosas del Mundo"</strong> y National Geographic incluyó entre <strong>"Los 10 Atardeceres Más Hermosos del Mundo"</strong>. Ubicado dentro del Parque Nacional de Jericoacoara, es el destino donde las calles son de arena, no circulan autos convencionales, y la electricidad llegó recién en 1998 para preservar la visibilidad de las estrellas.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Jericoacoara es estratégico para tu cartera?</strong> Es tu "destino premium emocional" que genera satisfacción extrema y referencias espontáneas. Los clientes vuelven transformados y recomiendan activamente. Es el destino que diferencia al agente profesional: requiere conocimiento logístico específico, manejo de expectativas preciso, y asesoramiento estratégico que justifica tu comisión.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Características Turísticas Principales</h3>
+                
+                <h4>Tu argumento de venta estrella: El Atardecer en Duna do Pôr do Sol</h4>
+                <p>Todos los días, cientos de personas suben la duna de 30 metros media hora antes del atardecer y presencian en silencio reverente uno de los espectáculos naturales más hermosos del planeta. Cuando el sol toca el agua, todos aplauden espontáneamente.</p>
+
+                <div class="tip-box">
+                    El atardecer de Jeri no es solo bonito: es emocionalmente transformador. Personas adultas lloran de emoción. National Geographic lo puso entre los 10 mejores del mundo por una razón científica: es objetivamente espectacular.
+                </div>
+
+                <h4>Lagoas - Las Piscinas de Agua Dulce (tu producto estrella):</h4>
+                <ul>
+                    <li><strong>Lagoa do Paraíso (LA EXPERIENCIA OBLIGATORIA):</strong> Agua dulce transparente con tonalidades azul-verde, Restaurante Alchymist con mesas dentro del agua con hamacas flotantes, ambiente lounge con música chill out internacional</li>
+                    <li><strong>Lagoa Azul:</strong> Agua cristalina color turquesa intenso, más rústica y tranquila, redes dentro del agua para la postal clásica</li>
+                </ul>
+
+                <h4>Pedra Furada - El Ícono Fotográfico:</h4>
+                <p>Arco natural de 10 metros accesible caminando 20 minutos por la playa (solo en marea baja). <strong>ALERTA:</strong> Siempre consultar tabla de mareas.</p>
+
+                <h4>Kitesurf - Capital Mundial:</h4>
+                <p>Vientos constantes 20-25 km/h durante 300 días al año. Más de 20 escuelas certificadas.</p>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <h4>RESPUESTA CRÍTICA: DEPENDE ABSOLUTAMENTE DE LA EDAD</h4>
+
+                <p><strong>Niños de 0-7 años: NO RECOMENDABLE</strong></p>
+                <ul>
+                    <li><strong>Traslado:</strong> 5-6 horas desde Fortaleza, últimos 20 km en 4x4 sacudiendo</li>
+                    <li><strong>Movilidad:</strong> Imposible usar cochecitos (todo es arena profunda)</li>
+                    <li><strong>Paseos:</strong> Buggies en dunas son intensos para niños pequeños</li>
+                    <li><strong>Infraestructura:</strong> Pocas pousadas con estructura infantil real</li>
+                </ul>
+
+                <div class="script-box">
+                    "Con niños tan chicos, Jeri no es logísticamente práctico. Van a sufrir el traslado largo, no podés usar cochecito, y los paseos son intensos. Te recomiendo Beach Park o Porto de Galinhas para esta etapa, y guardá Jeri para cuando tengan 10+ años."
+                </div>
+
+                <p><strong>Adolescentes (15+ años): MUY RECOMENDABLE</strong></p>
+                <ul>
+                    <li>Aprecian belleza natural extrema</li>
+                    <li>Disfrutan kitesurf, windsurf, ambiente bohemio internacional</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Costo de Vida en USD (Datos 2024)</h3>
+                
+                <div class="alert-box">
+                    ALERTA: Jeri es 30-40% más caro que otros destinos nordestinos por logística de área protegida.
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Desayuno</td><td>USD 10-15 por persona</td></tr>
+                        <tr><td>Lagoa do Paraíso (día completo)</td><td>USD 40-60 por persona</td></tr>
+                        <tr><td>Cena en Rua Principal</td><td>USD 25-45 por persona</td></tr>
+                        <tr><td>Buggy Lagoa do Paraíso</td><td>USD 100-150 por vehículo (hasta 4 personas)</td></tr>
+                        <tr><td>Taxa de preservação ambiental</td><td>USD 15-20 por persona (pago único)</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong> USD 90-140 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta Consultiva</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de objeción - "Es muy complicado llegar":</strong><br>
+                    "Correcto, requiere esfuerzo: 5-6 horas desde Fortaleza o vuelos con 1-2 escalas. Pero esa dificultad es lo que lo mantiene auténtico. Los lugares más hermosos nunca son fáciles de alcanzar. La pregunta es: ¿preferís comodidad logística o experiencia transformadora? Jeri transforma vidas."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta - La fórmula perfecta con vuelos de sábado:</strong><br>
+                    "Tenemos vuelo directo todos los sábados todo el año. Te propongo el paquete inteligente de 8 días: salís un sábado, 1 noche en Fortaleza para descansar del vuelo, 5 noches completas en Jericoacoara viviendo la magia, y 1 noche estratégica en Fortaleza para tomar el vuelo del sábado siguiente descansado. Es la fórmula perfecta probada durante años que garantiza que vuelvas transformado, no agotado."
+                </div>
+            </div>
+        </div>
+
+        <!-- NATAL -->
+        <div id="natal" class="destination-card">
+            <div class="destination-header">
+                <h2>NATAL</h2>
+                <p class="destination-subtitle">Cidade do Sol - Capital Mundial del Buggy</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Natal, capital de Rio Grande do Norte, ostenta un título científicamente certificado: <strong>"A Cidade do Sol"</strong> con más de 300 días soleados al año y el aire más puro del nordeste brasileño. El diferenciador absoluto son las <strong>dunas de Genipabu</strong>: 40 km de montañas de arena blanca de hasta 50 metros de altura que crean el paisaje desértico más espectacular del nordeste.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Natal es estratégico?</strong> Es tu "destino aventura familiar" perfecto para clase media que busca experiencias memorables con seguridad profesional. Natal es donde nacieron los legendarios paseos de buggy con la pregunta ritual: "Com emoção ou sem emoção?"
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>El Paseo de Buggy en Genipabu</h3>
+                
+                <p>Esta es LA experiencia que define Natal y tu gancho emocional más poderoso. Son 40 km de dunas móviles que recrean paisajes saharianos junto al mar turquesa. El ritual comienza con la pregunta sagrada del bugueiro certificado: <strong>"Com emoção ou sem emoção?"</strong></p>
+
+                <h4>INFORMACIÓN CRÍTICA - Las dos modalidades (manejo obligatorio):</h4>
+
+                <p><strong>"Com emoção" (con emoción):</strong></p>
+                <ul>
+                    <li>Descensos verticales de dunas de 50 metros a máxima velocidad</li>
+                    <li>Giros de 360 grados, derrapes controlados, saltos sobre montañas de arena</li>
+                    <li>Adrenalina extrema comparable a montaña rusa de parque temático</li>
+                    <li><strong>CONTRAINDICADO:</strong> Embarazadas, niños menores de 8 años, adultos mayores, problemas cardíacos/columna</li>
+                </ul>
+
+                <p><strong>"Sem emoção" (sin emoción):</strong></p>
+                <ul>
+                    <li>Recorrido panorámico por las mismas dunas a velocidad moderada</li>
+                    <li>Igualmente espectacular visualmente pero sin maniobras bruscas</li>
+                    <li>Para familias con niños pequeños, adultos mayores, embarazadas</li>
+                </ul>
+
+                <div class="script-box">
+                    <strong>Script de manejo profesional obligatorio:</strong><br>
+                    "Antes de confirmar necesito saber: ¿querés buggy 'com emoção' (adrenalina extrema tipo montaña rusa) o 'sem emoção' (paseo panorámico tranquilo)? 'Com emoção' es realmente intenso - descensos verticales a máxima velocidad. Si tenés cualquier duda, empezá 'sem emoção'. El bugueiro puede aumentar intensidad si querés más, pero no puede bajarla una vez que arrancó fuerte."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>¡EXCELENTE PARA FAMILIAS, ESPECIALMENTE CON ADOLESCENTES!</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-6 años:</strong> Muy recomendable. Playas urbanas seguras, hoteles con piscinas grandes, buggy "sem emoção" seguro y divertido</li>
+                    <li><strong>Niños de 7-12 años:</strong> Edad perfecta. Buggy moderado, esquibunda, aerobunda, dromedarios, lagunas de agua dulce. Se fascinan con cada actividad</li>
+                    <li><strong>Adolescentes (12+ años):</strong> IDEAL ABSOLUTO. Buggy "com emoção" extremo, deportes acuáticos, tirolesas, y suficiente vida nocturna apropiada</li>
+                </ul>
+
+                <div class="script-box">
+                    "Si tenés hijos adolescentes, Natal es tu destino perfecto. Van a vivir la experiencia de sus vidas con buggy de alta adrenalina, esquibunda, tirolesas sobre lagunas, y vos vas a estar tranquilo porque todo está profesionalmente organizado con certificaciones de seguridad. Es el destino donde los adolescentes nunca dicen 'estoy aburrido'."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: Natal - São Gonçalo do Amarante (NAT)</h4>
+                
+                <div class="alert-box">
+                    <strong>ALERTA LOGÍSTICA CRÍTICA:</strong> El aeropuerto está a 40 km del centro turístico (inaugurado en 2014, muy alejado). SIEMPRE incluir traslados privados en el paquete.
+                </div>
+
+                <ul>
+                    <li><strong>Aeropuerto → Ponta Negra (Natal):</strong> 40 km (50-60 min según tráfico)</li>
+                    <li><strong>Natal → Pipa:</strong> 85 km (2 horas por carretera costera)</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en barraca de playa</td><td>USD 12-20 por persona</td></tr>
+                        <tr><td>Cena en Ponta Negra</td><td>USD 18-30 por persona</td></tr>
+                        <tr><td>Buggy Genipabu</td><td>USD 80-120 por vehículo (hasta 4 personas)</td></tr>
+                        <tr><td>Maracajaú (día completo)</td><td>USD 50-70 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado:</strong> USD 60-90 por persona (perfil medio)</p>
+
+                <div class="alert-box">
+                    <strong>ALERTA CRÍTICA COMERCIAL:</strong> El buggy se cobra por vehículo (hasta 4 personas), NO por persona. Siempre aclarar explícitamente para evitar malentendidos en la facturación.
+                </div>
+            </div>
+        </div>
+
+        <!-- PIPA -->
+        <div id="pipa" class="destination-card">
+            <div class="destination-header">
+                <h2>PIPA</h2>
+                <p class="destination-subtitle">Baía dos Golfinhos - Bohemia-Chic Nordestina</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Pipa (oficialmente Praia da Pipa, municipio de Tibau do Sul), es el pueblo bohemio-chic más sofisticado del nordeste. Descubierto por surfistas hippies en los años 70, este antiguo refugio de pescadores se asienta sobre falesias coloridas de hasta 70 metros. Su <strong>Santuário Ecológico</strong> alberga <strong>golfinhos rotadores</strong> (Stenella longirostris) que diariamente visitan la Baía dos Golfinhos, creando uno de los pocos lugares del mundo donde se puede nadar junto a delfines salvajes en libertad total.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Pipa es estratégico?</strong> Es tu "Búzios del nordeste" para parejas y grupos que valoran sofisticación bohemia con presupuesto controlado. La combinación Natal (3-4 noches) + Pipa (3-4 noches) crea el paquete nordestino más completo y versátil: aventura + romanticismo, familiar + pareja, actividad + contemplación.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Tu argumento de venta estrella: la Baía dos Golfinhos</h3>
+                
+                <p>Pipa alberga uno de los pocos Santuários Ecológicos del mundo donde golfinhos rotadores salvajes (Stenella longirostris) eligen vivir libremente. Diariamente, al amanecer y atardecer, entran a la bahía protegida para alimentarse y jugar. <strong>No es espectáculo turístico: es naturaleza salvaje auténtica.</strong></p>
+
+                <div class="tip-box">
+                    Los golfinhos de Pipa no están en cautiverio ni entrenados. Son completamente salvajes y eligieron esa bahía como hogar hace décadas. Cuando nadás en Baía dos Golfinhos y un delfín se acerca curioso a jugar a tu lado, es una experiencia que emociona hasta las lágrimas. Es contacto auténtico con naturaleza que no se puede comprar en ningún parque temático.
+                </div>
+
+                <h4>Playas principales de Pipa:</h4>
+                <ul>
+                    <li><strong>Praia do Centro:</strong> Frente a Rua Principal, infraestructura completa, piscinas naturales en marea baja</li>
+                    <li><strong>Praia do Amor:</strong> Vista desde acantilados forma corazón perfecto, olas ideales para surf</li>
+                    <li><strong>Baía dos Golfinhos:</strong> Playa protegida donde entran los golfinhos diariamente. <strong>ACCESO CRÍTICO:</strong> Solo por trilha de 15 min o caminando por playa en marea baja</li>
+                    <li><strong>Praia do Madeiro:</strong> La más espectacular, rodeada de falesias cubiertas de Mata Atlântica, golfinhos visibles desde la playa</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>DEPENDE CRÍTICAMENTE DE LA EDAD Y MOVILIDAD</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-6 años:</strong> NO especialmente recomendable como base. Calles empedradas empinadas, accesos a playas por escaleras largas, imposible usar cochecitos en la mayoría de lugares</li>
+                    <li><strong>Niños de 7-14 años:</strong> Recomendable si son físicamente activos. Los golfinhos los fascinan, trilhas son aventura, pero requiere caminar mucho</li>
+                    <li><strong>Adolescentes:</strong> Muy recomendable. Aprecian ambiente bohemio, surf, gastronomía internacional, naturaleza auténtica</li>
+                </ul>
+
+                <div class="script-box">
+                    "Con niños chicos, la estrategia inteligente es quedarse en Natal (infraestructura familiar perfecta) y hacer Pipa como excursión de día completo. Ven los golfinhos y conocen las playas espectaculares sin complicarte la logística de equipaje y cochecitos en calles empedradas empinadas."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Desde Natal:</h4>
+                <ul>
+                    <li><strong>Natal → Pipa:</strong> 85 km (2 horas por carretera costera)</li>
+                    <li><strong>Aeropuerto → Pipa directo:</strong> 125 km (2.5 horas)</li>
+                </ul>
+
+                <div class="tip-box">
+                    Vender el traslado como "recorrido panorámico por costa potiguar con paradas opcionales en Búzios/RN y Camurupim". Convierte logística en experiencia turística.
+                </div>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en playa</td><td>USD 18-28 por persona</td></tr>
+                        <tr><td>Cena en restaurante internacional</td><td>USD 25-45 por persona</td></tr>
+                        <tr><td>Cena premium</td><td>USD 40-70 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado:</strong> USD 80-120 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Alertas Críticas</h3>
+                <div class="alert-box">
+                    <strong>Dependencia de mareas:</strong> Baía dos Golfinhos NO tiene acceso por tierra. Solo se llega caminando por la playa ÚNICAMENTE en marea baja desde Centro o Madeiro. Si vas cuando sube la marea, el agua golpea los acantilados y podés quedar atrapado sin salida.<br><br>
+                    <strong>Accesibilidad:</strong> Pipa está construida sobre acantilados con calles empedradas empinadas. Imposible para cochecitos de bebé en 80% del pueblo. Accesos a mejores playas por escaleras de 100+ escalones.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de objeción - "¿Los delfines aparecen siempre?":</strong><br>
+                    "Los golfinhos de Pipa son salvajes y libres, no están entrenados. Vienen diariamente hace décadas porque eligieron esa bahía como hogar, pero es naturaleza auténtica. En 15 años vendiendo Pipa, solo tuve 2 clientes que no los vieron (por temporal extremo). La probabilidad es 95%+, y si no aparecen, tenés la experiencia de estar en una de las playas más hermosas del mundo."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta - La combinación estratégica:</strong><br>
+                    "3-4 noches en Natal (buggy en Genipabu, lagunas, mayor cajueiro del mundo, playas urbanas) + 3-4 noches en Pipa (golfinhos salvajes, acantilados espectaculares, gastronomía internacional). Volás a Natal, vivís la aventura completa, te trasladás por costa panorámica a Pipa para el cierre romántico, y volvés por el mismo aeropuerto. Es el paquete nordestino más completo: acción + contemplación, familiar + romántico, aventura + sofisticación."
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            Dr.<br>Viaje<br>.com
+        </div>
+        <p><strong>Dr. Viaje - Tu especialista en destinos brasileños</strong></p>
+        <p>Guía Definitiva para Agentes de Viajes - Región Ceará</p>
+        <p>Capacitación Profesional 2024</p>
+    </footer>
+
+    <div class="scroll-top" id="scrollTop">↑</div>
+
+    <script>
+        const scrollTop = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = 180;
+                    const elementPosition = target.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: elementPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

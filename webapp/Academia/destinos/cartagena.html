@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de Cartagena de Indias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary-purple:#7B2D8E;
+      --primary-orange:#FF9800;
+      --primary-pink:#E91E63;
+      --bg-light:#f8f9fa;
+      --text-dark:#333333;
+      --text-medium:#666666;
+      --white:#ffffff;
+      --shadow:0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover:0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --radius-sm:10px;
+      --max-width:1240px;
+      /* colores Cartagena */
+      --c1:#C0392B;   /* rojo colonial */
+      --c2:#E67E22;   /* naranja cálido */
+      --c1-soft:rgba(192,57,43,.08);
+      --c2-soft:rgba(230,126,34,.07);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      color:var(--text-dark);
+      background:var(--bg-light);
+      line-height:1.65;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max-width),calc(100% - 32px));margin:0 auto}
+
+    /* ── HERO ── */
+    header.hero{
+      background:
+        radial-gradient(circle at top right,rgba(255,255,255,.13),transparent 38%),
+        linear-gradient(135deg,#7B2318,#C0392B 50%,#E67E22);
+      color:var(--white);
+      padding:72px 0 48px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::before,.hero::after{
+      content:"";position:absolute;border-radius:50%;
+      background:rgba(255,255,255,.07);z-index:0;
+    }
+    .hero::before{width:300px;height:300px;top:-90px;right:-70px;}
+    .hero::after{width:190px;height:190px;bottom:-50px;left:-50px;}
+
+    .hero-inner{
+      position:relative;z-index:1;
+      display:grid;grid-template-columns:1.3fr .9fr;
+      gap:28px;align-items:stretch;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 16px;border-radius:999px;
+      background:rgba(255,255,255,.14);backdrop-filter:blur(8px);
+      font-size:14px;font-weight:700;letter-spacing:.2px;margin-bottom:18px;
+    }
+    .hero h1{margin:0 0 14px;font-size:clamp(34px,5vw,56px);line-height:1.05;letter-spacing:-.03em;}
+    .hero p.lead{margin:0;font-size:18px;max-width:760px;color:rgba(255,255,255,.92);}
+
+    .hero-card{
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);
+      border-radius:var(--radius-xl);padding:26px;
+      backdrop-filter:blur(10px);box-shadow:var(--shadow);align-self:stretch;
+    }
+    .hero-card h3{margin:0 0 12px;font-size:18px;}
+    .hero-card p{margin:0 0 14px;color:rgba(255,255,255,.92);font-size:15px;}
+    .hero-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+    .pill{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);font-size:13px;font-weight:600;color:var(--white);}
+
+    /* ── NAV STICKY ── */
+    nav.sticky-nav{
+      position:sticky;top:0;z-index:1000;
+      background:#7B2318;box-shadow:var(--shadow);
+    }
+    .nav-inner{
+      width:min(var(--max-width),calc(100% - 32px));margin:0 auto;
+      display:flex;gap:12px;overflow:auto;padding:15px 0;scrollbar-width:none;
+    }
+    .nav-inner::-webkit-scrollbar{display:none}
+    .nav-link{
+      white-space:nowrap;padding:10px 16px;border-radius:25px;
+      background:rgba(255,255,255,.18);color:var(--white);
+      font-size:14px;font-weight:700;transition:.25s ease;
+    }
+    .nav-link:hover{background:var(--white);color:#7B2318;transform:translateY(-1px);}
+
+    section[id]{scroll-margin-top:90px;}
+    main{padding:28px 0 72px}
+
+    /* ── SECCIONES ── */
+    .section{
+      margin:22px 0;background:var(--white);
+      border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:34px;
+    }
+    .section-header{
+      display:flex;flex-wrap:wrap;align-items:end;
+      justify-content:space-between;gap:18px;margin-bottom:24px;
+    }
+    .eyebrow{
+      display:inline-block;margin-bottom:8px;
+      font-size:13px;font-weight:800;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--primary-pink);
+    }
+    .section h2{margin:0;font-size:30px;line-height:1.15;letter-spacing:-.03em;}
+    .section-intro{color:var(--text-medium);max-width:920px;margin:0;}
+
+    /* ── KPI GRID ── */
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px;}
+    .kpi{
+      background:linear-gradient(180deg,#fff,#fdf3f1);
+      border:1px solid rgba(192,57,43,.1);border-radius:18px;
+      padding:20px;box-shadow:var(--shadow);
+    }
+    .kpi .label{display:block;font-size:12px;color:var(--text-medium);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+    .kpi strong{display:block;font-size:24px;line-height:1.1;color:var(--c1);margin-bottom:6px;}
+    .kpi span{font-size:14px;color:var(--text-medium);}
+
+    /* ── INFO BOXES ── */
+    .info-box{
+      margin-top:22px;border-left:6px solid var(--c1);
+      background:#fdf3f1;border-radius:16px;padding:18px 20px;
+    }
+    .info-box strong{color:var(--c1);}
+    .info-box.orange{border-left-color:var(--c2);background:#fff8ef;}
+    .info-box.orange strong{color:#b36a00;}
+    .info-box.pink{border-left-color:var(--primary-pink);background:#fff3f8;}
+    .info-box.pink strong{color:var(--primary-pink);}
+    .info-box.blue{border-left-color:#0288D1;background:#f0f8ff;}
+    .info-box.blue strong{color:#0277bd;}
+    .info-box.green{border-left-color:#2E7D32;background:#f1f8f1;}
+    .info-box.green strong{color:#2E7D32;}
+
+    /* ── GRIDS ── */
+    .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start;}
+    .cards-2,.cards-3{display:grid;gap:16px;margin-top:18px;}
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+
+    .card{
+      background:var(--white);border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;padding:20px;box-shadow:var(--shadow);transition:.25s ease;
+    }
+    .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+    .card h3,.card h4{margin:0 0 10px;line-height:1.2;}
+    .card p{margin:0;color:var(--text-medium);font-size:15px;}
+
+    /* ── DESTINATION BLOCK ── */
+    .destination{padding:0;overflow:hidden;}
+    .destination-top{
+      padding:28px 30px 14px;
+      background:linear-gradient(135deg,var(--c1-soft),var(--c2-soft));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .destination-number{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:40px;height:40px;border-radius:50%;
+      background:linear-gradient(135deg,var(--c1),var(--c2));
+      color:var(--white);font-weight:800;margin-bottom:12px;box-shadow:var(--shadow);
+    }
+    .destination h3{margin:0 0 8px;font-size:28px;line-height:1.12;letter-spacing:-.03em;}
+    .destination-subtitle{margin:0;color:var(--text-medium);max-width:940px;}
+    .destination-body{padding:24px 30px 30px;}
+
+    .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px;}
+    .mini-card{background:#fcfcfd;border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:18px;}
+    .mini-card h4{margin:0 0 10px;font-size:16px;color:var(--c1);}
+
+    ul.clean{margin:0;padding-left:18px;}
+    ul.clean li{margin:0 0 8px}
+
+    /* ── TABLA ── */
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px;box-shadow:var(--shadow);margin-top:18px;}
+    thead th{background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--white);padding:15px 16px;text-align:left;font-size:14px;font-weight:800;letter-spacing:.02em;}
+    tbody td{background:var(--white);padding:15px 16px;border-bottom:1px solid rgba(0,0,0,.06);vertical-align:top;font-size:15px;}
+    tbody tr:last-child td{border-bottom:none}
+
+    /* ── TAGS ── */
+    .tag-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;
+      border-radius:999px;font-size:13px;font-weight:700;
+      background:#fdecea;color:var(--c1);
+    }
+
+    /* ── SCRIPT BOX ── */
+    .script-box{
+      background:linear-gradient(135deg,#fdf3f1,#fff8ef);
+      border:1px solid rgba(192,57,43,.1);border-radius:20px;
+      padding:24px;box-shadow:var(--shadow);
+    }
+    .script-box p{margin:0 0 12px;}
+    .script-box p:last-child{margin-bottom:0}
+
+    /* ── BARU SPECIAL ── */
+    .baru-hero{
+      background:linear-gradient(135deg,#005F73,#0A9396 55%,#94D2BD);
+      border-radius:var(--radius-xl);padding:34px;color:var(--white);
+      margin:22px 0;box-shadow:var(--shadow);position:relative;overflow:hidden;
+    }
+    .baru-hero::before{
+      content:"";position:absolute;width:220px;height:220px;border-radius:50%;
+      background:rgba(255,255,255,.08);top:-60px;right:-60px;
+    }
+    .baru-hero h2{margin:0 0 12px;font-size:30px;letter-spacing:-.03em;position:relative;z-index:1;}
+    .baru-hero p{margin:0 0 18px;color:rgba(255,255,255,.92);max-width:900px;font-size:17px;position:relative;z-index:1;}
+    .baru-eyebrow{
+      display:inline-block;margin-bottom:10px;
+      font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+      color:rgba(255,255,255,.75);position:relative;z-index:1;
+    }
+    .baru-kpis{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+      margin-top:20px;position:relative;z-index:1;
+    }
+    .baru-kpi{
+      background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);
+      border-radius:16px;padding:16px;backdrop-filter:blur(8px);
+    }
+    .baru-kpi .label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;color:rgba(255,255,255,.75);}
+    .baru-kpi strong{display:block;font-size:20px;line-height:1.1;margin-bottom:4px;}
+    .baru-kpi span{font-size:13px;color:rgba(255,255,255,.82);}
+
+    .baru-section{
+      margin:22px 0;background:var(--white);
+      border-radius:var(--radius-xl);box-shadow:var(--shadow);
+      padding:34px;border-top:5px solid #0A9396;
+    }
+
+    /* ── FOOTER ── */
+    footer{
+      background:linear-gradient(135deg,#7B2318,#E67E22);
+      color:var(--white);padding:28px 0 34px;margin-top:36px;
+    }
+    footer p{margin:0;color:rgba(255,255,255,.92);text-align:center;font-size:14px;}
+
+    #scrollTopBtn{
+      position:fixed;right:22px;bottom:22px;width:52px;height:52px;
+      border:none;border-radius:50%;
+      background:linear-gradient(135deg,#C0392B,#E67E22);
+      color:var(--white);font-size:22px;font-weight:800;cursor:pointer;
+      box-shadow:var(--shadow-hover);display:none;z-index:1200;
+    }
+
+    @media (max-width:1080px){
+      .hero-inner,.two-col,.cards-3,.kpi-grid,.mini-grid,.baru-kpis{grid-template-columns:1fr 1fr;}
+    }
+    @media (max-width:860px){
+      .hero-inner,.two-col,.cards-2,.cards-3,.kpi-grid,.mini-grid,.baru-kpis{grid-template-columns:1fr;}
+      .section,.destination-body,.destination-top{padding-left:22px;padding-right:22px;}
+      .baru-hero{padding:24px 22px;}
+      .section h2,.baru-hero h2{font-size:26px;}
+      .destination h3{font-size:24px;}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <!-- ══ HERO ══ -->
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">Dr. Viaje · Guía comercial Caribe</div>
+        <h1>Cartagena de Indias 🇨🇴</h1>
+        <p class="lead">
+          Cartagena es el destino colombiano más internacional y más vendible. Ciudad amurallada Patrimonio de la Humanidad, Caribe a 20 minutos, gastronomía de nivel, arquitectura colonial incomparable y una mezcla de cultura, lujo y playa que no tiene equivalente en el continente. Y a todo eso se le suma Barú: el paraíso de aguas turquesas a menos de una hora.
+        </p>
+      </div>
+      <div class="hero-card">
+        <h3>Clave comercial rápida</h3>
+        <p>
+          Funciona para casi todos los perfiles: parejas que buscan romanticismo y buena mesa, clientes culturales, grupos de amigos que quieren ambiente y coctelería, luna de miel con ciudad histórica + playa, y familia con mix de cultura y mar.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">Ciudad amurallada</span>
+          <span class="pill">UNESCO</span>
+          <span class="pill">Gastronomía</span>
+          <span class="pill">Barú</span>
+          <span class="pill">Luna de miel</span>
+          <span class="pill">Cultura + Playa</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ NAV STICKY ══ -->
+  <nav class="sticky-nav">
+    <div class="nav-inner">
+      <a class="nav-link" href="#ciudad">La Ciudad</a>
+      <a class="nav-link" href="#ciudad-amurallada">Ciudad Amurallada</a>
+      <a class="nav-link" href="#getsemani">Getsemaní</a>
+      <a class="nav-link" href="#bocagrande">Bocagrande</a>
+      <a class="nav-link" href="#manga-castillo">Manga / Castillo</a>
+      <a class="nav-link" href="#baru">🏝️ Barú</a>
+      <a class="nav-link" href="#playas">Playas</a>
+      <a class="nav-link" href="#comparativa">Comparativa</a>
+      <a class="nav-link" href="#traslados">Traslados</a>
+      <a class="nav-link" href="#temporadas">Temporadas</a>
+      <a class="nav-link" href="#objeciones">Objeciones</a>
+      <a class="nav-link" href="#noches">Noches</a>
+      <a class="nav-link" href="#script">Script</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ══════════════════════════════════════════════════════
+         LA CIUDAD
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="ciudad">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Visión general</span>
+          <h2>Cartagena como producto turístico</h2>
+        </div>
+        <p class="section-intro">
+          Cartagena no es solo playa ni solo ciudad: es la combinación más potente del Caribe latinoamericano. Su casco histórico amurallado es único en el mundo, sus calles de colores están entre las más fotografiadas de América y su escena gastronómica compite con cualquier capital. Y a 45 minutos, Barú ofrece un Caribe de postal con aguas turquesas absolutas.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="label">Aeropuerto</span>
+          <strong>CTG</strong>
+          <span>Rafael Núñez. Vuelos directos desde Bogotá, Medellín, Cali y conexiones internacionales. Muy buena conectividad.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Gran diferencial</span>
+          <strong>UNESCO + Caribe</strong>
+          <span>Ciudad amurallada Patrimonio de la Humanidad + acceso a playa caribeña. La única combinación así en todo el continente.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Clima</span>
+          <strong>28 – 33 °C</strong>
+          <span>Clima cálido y húmedo todo el año. Brisa caribeña constante. Dos temporadas de lluvia moderadas entre mayo-junio y octubre-noviembre.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Duración ideal</span>
+          <strong>5 a 7 noches</strong>
+          <span>5 noches para ver lo esencial; 7 para disfrutar sin prisa y sumar al menos 2 días en Barú o las islas del Rosario.</span>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:26px;">
+        <div>
+          <div class="info-box">
+            <strong>Frase de venta base:</strong>
+            "Cartagena es el único destino de América donde podés caminar por una ciudad colonial del siglo XVI declarada Patrimonio de la Humanidad y estar en una playa caribeña de aguas turquesas en menos de una hora."
+          </div>
+
+          <div class="cards-2">
+            <div class="card">
+              <h3>Cliente ideal</h3>
+              <ul class="clean">
+                <li>Parejas y lunas de miel que buscan romanticismo con sustancia cultural.</li>
+                <li>Clientes culturales que quieren arquitectura, historia y gastronomía.</li>
+                <li>Grupos de amigos con presupuesto medio-alto que buscan ambiente y coctelería.</li>
+                <li>Familias colombianas o latinoamericanas que quieren mix ciudad + playa.</li>
+                <li>Viajeros internacionales con imagen de "Latinoamérica auténtica".</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Pregunta de detección</h3>
+              <p>
+                "¿Buscan más el plan de ciudad — calles de colores, restaurantes, historia — o prefieren que la base sea playa y el mar, con alguna excursión a la ciudad? ¿O quieren los dos en el mismo viaje?"
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="height:100%;">
+            <h3>Cómo posicionarlo bien</h3>
+            <ul class="clean">
+              <li><strong>Ciudad Amurallada:</strong> el corazón histórico. Calles coloridas, plazas con ambiente, los mejores restaurantes y hoteles boutique en casonas coloniales.</li>
+              <li><strong>Getsemaní:</strong> el barrio bohemio. Arte urbano, coctelerías y la Cartagena más auténtica y vibrante.</li>
+              <li><strong>Bocagrande:</strong> la zona hotelera moderna con playa accesible. Más funcional, menos fotogénico.</li>
+              <li><strong>Manga / Castillo de San Felipe:</strong> la Cartagena histórica monumental.</li>
+              <li><strong>Barú + Islas del Rosario:</strong> el Caribe de postal a 45-90 min. Excursión imprescindible.</li>
+            </ul>
+            <div class="tag-row">
+              <span class="tag">UNESCO</span>
+              <span class="tag">Gastronomía</span>
+              <span class="tag">Boutique</span>
+              <span class="tag">Barú</span>
+              <span class="tag">Romanticismo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         CIUDAD AMURALLADA
+    ══════════════════════════════════════════════════════ -->
+    <section class="section destination" id="ciudad-amurallada">
+      <div class="destination-top">
+        <div class="destination-number">1</div>
+        <h3>Ciudad Amurallada</h3>
+        <p class="destination-subtitle">
+          El corazón de Cartagena y el argumento más potente del destino. Calles empedradas, casas de colores con balcones floridos, plazas con vida propia y los mejores restaurantes y hoteles boutique del país alojados en casonas coloniales del siglo XVII. Es incomparable en toda América Latina.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas y lunas de miel: la zona más romántica.</li>
+              <li>Culturales e históricos que quieren vivir la ciudad de verdad.</li>
+              <li>Viajero premium que quiere hotel boutique en casona colonial.</li>
+              <li>Gastrónomos: aquí están los mejores restaurantes de la ciudad.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Patrimonio de la Humanidad: argumento de valor incuestionable.</li>
+              <li>Hoteles boutique únicos en el mundo: casonas coloniales convertidas en alojamientos de lujo.</li>
+              <li>Gastronomía de nivel internacional: Celele, El Gobernador, Carmen, La Vitrola.</li>
+              <li>Ambiente nocturno en plazas como Trinidad y La Aduana.</li>
+              <li>Calles más fotogénicas de Colombia y de toda América.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Murallas coloniales: 13 km de murallas del siglo XVI.</li>
+              <li>Plaza de los Coches y Portal de los Dulces.</li>
+              <li>Plaza de la Trinidad (corazón de Getsemaní).</li>
+              <li>Torre del Reloj: la entrada principal a la ciudad amurallada.</li>
+              <li>Paseo nocturno por las murallas y los bastiones.</li>
+              <li>Tiendas de artesanías y joyería con esmeraldas colombianas.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>CTG → Ciudad Amurallada:</strong> aprox. 15-20 min.</li>
+              <li>Mejor zona para hotel si el cliente prioriza experiencia cultural.</li>
+              <li>La mayoría de los restaurantes top están aquí o en Getsemaní.</li>
+              <li>Todo se recorre a pie dentro de las murallas.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender la Ciudad Amurallada:</strong> "Es el único lugar de América donde podés cenar en un restaurante de clase mundial dentro de una casona del siglo XVII, salir a una plaza con música en vivo y caminar por las mismas murallas que construyeron los españoles hace 400 años. No hay otro sitio así en todo el continente."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Hoteles boutique en casonas coloniales dentro de las murallas: Casa San Agustín, Bastión Luxury, Hotel Sofitel Legend Santa Clara, Hotel Quadrifolio. Son el producto diferencial de Cartagena y justifican por sí solos la elección del destino.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              La Ciudad Amurallada no tiene playa directa. El cliente que base su estadía aquí deberá ir en taxi o excursión a Bocagrande, Barú o las Islas del Rosario para tener mar. Comunicarlo con claridad evita decepciones.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         GETSEMANÍ
+    ══════════════════════════════════════════════════════ -->
+    <section class="section destination" id="getsemani">
+      <div class="destination-top">
+        <div class="destination-number">2</div>
+        <h3>Getsemaní</h3>
+        <p class="destination-subtitle">
+          El barrio más auténtico, vibrante y fotogénico de Cartagena. Justo fuera de las murallas, Getsemaní es el corazón bohemio de la ciudad: murales callejeros monumentales, bares de coctelería creativa, restaurantes con personalidad y la Plaza de la Trinidad donde la vida local sucede a cualquier hora.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Viajeros culturales y fotógrafos: los murales más impresionantes de Colombia.</li>
+              <li>Grupos de amigos: la mejor coctelería y ambiente nocturno.</li>
+              <li>Parejas que buscan algo más auténtico que el turismo tradicional.</li>
+              <li>Jóvenes viajeros con perfil urbano y creativo.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Arte urbano: murales monumentales de artistas reconocidos internacionalmente.</li>
+              <li>Plaza de la Trinidad: el punto de encuentro más vivo de la ciudad.</li>
+              <li>Coctelería creativa con ingredientes tropicales colombianos.</li>
+              <li>Restaurantes jóvenes con cocina caribeña contemporánea.</li>
+              <li>Ambiente nocturno real sin el postureo de las zonas turísticas.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Murales de Getsemaní: arte urbano de escala monumental.</li>
+              <li>Plaza de la Trinidad: la plaza más icónica del barrio.</li>
+              <li>Bar del Mono: coctelería de culto local.</li>
+              <li>Mercado de Bazurto: para el cliente más aventurero, el mercado más auténtico.</li>
+              <li>Iglesia de la Santísima Trinidad: arquitectura colonial.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>Ciudad Amurallada → Getsemaní:</strong> a pie, 5-10 min cruzando la Torre del Reloj.</li>
+              <li>Conectado a pie con toda la zona histórica.</li>
+              <li>Zona en rápida transformación: cada vez más opciones de hotel boutique.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender Getsemaní:</strong> "Es el Cartagena que el turista de resort no conoce. Los murales, la plaza con los locales bailando, la coctelería en una casona rehabilitada. Es lo que hace que el viaje tenga profundidad más allá de las fotos de las murallas."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Uso comercial correcto</h4>
+            <p>
+              Ideal como combinación con alojamiento en la Ciudad Amurallada: cenar en el casco histórico y vivir la noche en Getsemaní. También hay buenos hoteles boutique en el barrio para el viajero que quiere estar en el corazón de la vida local.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              Getsemaní tuvo problemas de seguridad en el pasado. Hoy está mucho mejor pero sigue requiriendo prudencia nocturna en las calles más alejadas de la Plaza Trinidad. Comunicar con equilibrio: es seguro en las zonas turísticas, sin salirse del área consolidada de noche.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         BOCAGRANDE
+    ══════════════════════════════════════════════════════ -->
+    <section class="section destination" id="bocagrande">
+      <div class="destination-top">
+        <div class="destination-number">3</div>
+        <h3>Bocagrande</h3>
+        <p class="destination-subtitle">
+          La zona hotelera moderna de Cartagena. Una península con playa, hoteles de cadena, centros comerciales y acceso fácil a todo. No es la Cartagena más fotogénica, pero es la más cómoda para cliente que prioriza playa funcional y hotel de servicios completos cerca del mar.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Familias con niños que quieren playa cerca del hotel.</li>
+              <li>Cliente de presupuesto más ajustado que quiere hotel de cadena con piscina.</li>
+              <li>Grupos de congreso o viajes corporativos.</li>
+              <li>Viajero que quiere practicidad y acceso rápido a la ciudad histórica.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Playa accesible a pie desde los hoteles.</li>
+              <li>Mayor oferta hotelera de cadenas internacionales.</li>
+              <li>Restaurantes, centros comerciales y servicios completos.</li>
+              <li>A 15-20 min en taxi de la Ciudad Amurallada.</li>
+              <li>Precios de hotel generalmente más accesibles que el casco histórico.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Playa de Bocagrande: la más accesible para el turista.</li>
+              <li>Avenida San Martín: gastronomía y vida nocturna moderna.</li>
+              <li>Centro comercial El Castillo y Pierino Gallo.</li>
+              <li>Acceso rápido a excursiones de día a las islas.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa</h4>
+            <ul class="clean">
+              <li><strong>CTG → Bocagrande:</strong> aprox. 10-15 min.</li>
+              <li><strong>Bocagrande → Ciudad Amurallada:</strong> 15-20 min en taxi.</li>
+              <li>La playa de Bocagrande es funcional pero no es el Caribe de postal: el agua no tiene la claridad de Barú.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box blue">
+          <strong>Cómo vender Bocagrande:</strong> "Si buscan tener la playa a 5 minutos del hotel y prefieren cadenas internacionales con todos los servicios, Bocagrande es la base más práctica. La Ciudad Amurallada queda a un taxi corto y pueden tener lo mejor de los dos mundos."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Hoteles de cadena con piscina y acceso a playa: Hilton, Hyatt, NH, Wyndham. Para cliente de presupuesto ajustado o que prioriza comodidades de hotel internacional sobre la experiencia boutique.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              La playa de Bocagrande es ruidosa, con vendedores ambulantes constantes y el agua no es tan limpia como en Barú o las Islas del Rosario. No vender como "playa de postal": es cómoda y funcional, no paradisiaca.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         MANGA / CASTILLO DE SAN FELIPE
+    ══════════════════════════════════════════════════════ -->
+    <section class="section destination" id="manga-castillo">
+      <div class="destination-top">
+        <div class="destination-number">4</div>
+        <h3>Manga · Castillo de San Felipe · Miramar</h3>
+        <p class="destination-subtitle">
+          La Cartagena monumental e histórica más allá de las murallas. El Castillo de San Felipe de Barajas es la fortaleza colonial española más grande de América, declarada Patrimonio de la Humanidad. Manga es el barrio residencial tradicional con casas republicanas y vista al puerto histórico.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Castillo de San Felipe de Barajas: la fortaleza colonial más grande de América.</li>
+              <li>Convento de La Popa: cerro con vistas panorámicas a toda la ciudad y la bahía.</li>
+              <li>Manga: barrio histórico con arquitectura republicana del siglo XX.</li>
+              <li>Bahía de Cartagena: paseos en velero o catamarán al atardecer.</li>
+              <li>Club de Pesca: el punto más romántico para ver el atardecer caribeño.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Uso comercial correcto</h4>
+            <ul class="clean">
+              <li>El Castillo y La Popa son excursiones de medio día, no zonas de base.</li>
+              <li>El atardecer en la bahía (catamaran o velero) es uno de los productos más románticos de la ciudad. Ideal para lunas de miel y parejas.</li>
+              <li>Se combina fácilmente con la tarde en la Ciudad Amurallada.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box green">
+          <strong>Producto diferencial:</strong> El paseo en catamarán por la bahía al atardecer, con vista a las murallas iluminadas y la bahía en calma, es uno de los momentos más especiales que se pueden vender en todo el Caribe latinoamericano. Para parejas y lunas de miel es un cierre de día perfecto.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         BARÚ — SECCIÓN ESPECIAL
+    ══════════════════════════════════════════════════════ -->
+    <div class="baru-hero" id="baru">
+      <span class="baru-eyebrow">🏝️ Extensión imprescindible · Caribe de postal</span>
+      <h2>Barú y las Islas del Rosario</h2>
+      <p>
+        Barú es la joya escondida a menos de una hora de Cartagena. Una península con aguas turquesas absolutas, arena blanca y un nivel de naturaleza caribeña que contrasta con la energía urbana de la ciudad histórica. No es un resort de hotel: es naturaleza pura con infraestructura turística en crecimiento. Las Islas del Rosario, a 90 minutos en lancha, añaden un archipiélago de coral con biodiversidad marina excepcional.
+      </p>
+      <div class="baru-kpis">
+        <div class="baru-kpi">
+          <span class="label">Distancia desde Cartagena</span>
+          <strong>45 – 60 min</strong>
+          <span>En lancha rápida o carro hasta el muelle de Barú.</span>
+        </div>
+        <div class="baru-kpi">
+          <span class="label">Agua</span>
+          <strong>Turquesa absoluta</strong>
+          <span>El color del agua de Barú es comparable al mejor Caribe. Playa Blanca es la más conocida.</span>
+        </div>
+        <div class="baru-kpi">
+          <span class="label">Tipo de producto</span>
+          <strong>Excursión o estadía</strong>
+          <span>Excursión de día desde Cartagena o alojamiento en eco-lodges de Playa Blanca.</span>
+        </div>
+        <div class="baru-kpi">
+          <span class="label">Islas del Rosario</span>
+          <strong>90 min en lancha</strong>
+          <span>Archipiélago de coral con snorkel, buceo y privacidad total.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-secciones de Barú -->
+    <section class="baru-section" id="baru-detalle">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow" style="color:#0A9396;">Barú en detalle</span>
+          <h2 style="color:#005F73;">Qué vender en Barú y las Islas</h2>
+        </div>
+        <p class="section-intro">
+          El error más común es vender Barú solo como una excursión de día masificada. Hay mucho más que Playa Blanca en temporada alta con miles de turistas: si se elige bien el producto y el momento, es el Caribe más impresionante a menos de una hora de una ciudad patrimonio.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4 style="color:#005F73;">🏖️ Playa Blanca</h4>
+          <p>
+            La playa más conocida de Barú. Arena blanca impecable y agua turquesa de nivel caribeño absoluto. En temporada alta puede estar muy concurrida. La visita ideal es en temporada media o saliendo muy temprano en lancha privada. Venta de día completo desde Cartagena.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Agua turquesa</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Snorkel</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Foto de postal</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#005F73;">🌿 Eco-lodges en Barú</h4>
+          <p>
+            Barú tiene una oferta creciente de alojamientos eco-lodge y boutique directamente sobre la playa. Son la opción para cliente que quiere desconexión total con calidad. Dos noches en Barú al final del viaje de Cartagena es el complemento perfecto.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Eco-lodge</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Desconexión</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Naturaleza</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#005F73;">🐠 Islas del Rosario</h4>
+          <p>
+            Archipiélago de 27 islas e islotes de coral a 90 min en lancha. Snorkel y buceo en arrecifes intactos, aves tropicales y un silencio que no existe en ningún otro punto cercano a Cartagena. Producto premium para cliente de naturaleza y buceo.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Buceo</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Arrecife</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Premium</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#005F73;">⛵ Lancha privada</h4>
+          <p>
+            El producto más vendible para parejas y grupos con presupuesto. Lancha privada desde el muelle de Cartagena con paradas a elección: Barú, Islas del Rosario, snorkel y almuerzo en playa privada. Experiencia sin comparación.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Privado</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Personalizado</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Parejas</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#005F73;">🌅 Tour al atardecer en bahía</h4>
+          <p>
+            Catamarán o velero por la bahía de Cartagena al atardecer, con las murallas iluminadas de fondo. Cocteles a bordo, música suave y el Caribe en calma. Uno de los mejores momentos que se pueden regalar en un viaje a Cartagena.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Romántico</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Luna de miel</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Atardecer</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="color:#005F73;">🐬 Avistamiento de delfines</h4>
+          <p>
+            En la zona de las Islas del Rosario es frecuente el avistamiento de delfines en estado salvaje. Argumento diferencial para familia con niños y para clientes que buscan experiencias de naturaleza más allá de la playa estándar.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Naturaleza</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Familia</span>
+            <span class="tag" style="background:#e0f4f5;color:#005F73;">Delfines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box blue" style="margin-top:22px;">
+        <strong>Combinación ganadora:</strong> 4-5 noches en Ciudad Amurallada o Bocagrande + 2 noches en eco-lodge en Barú. El cliente tiene el viaje cultural completo y termina en el Caribe de postal. Ticket más alto, experiencia mucho más completa y memorable.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         PLAYAS CLAVE
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="playas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Mar y naturaleza</span>
+          <h2>Playas y experiencias acuáticas</h2>
+        </div>
+        <p class="section-intro">
+          Cartagena tiene una relación especial con el mar: la ciudad misma es Caribe, pero las mejores aguas están en las excursiones. Saber cuál recomendar según el perfil y el presupuesto es clave para la venta.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Playa / Zona</th>
+            <th>Tipo de agua</th>
+            <th>Distancia</th>
+            <th>Perfil ideal</th>
+            <th>Nota comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Playa de Bocagrande</strong></td>
+            <td>Funcional, no cristalina</td>
+            <td>En la ciudad</td>
+            <td>Familias, practicidad</td>
+            <td>Cómoda pero no espectacular. No vender como playa de postal.</td>
+          </tr>
+          <tr>
+            <td><strong>Playa Blanca (Barú)</strong></td>
+            <td>Turquesa, arena blanca</td>
+            <td>45-60 min en lancha</td>
+            <td>Parejas, fotógrafos, primera visita</td>
+            <td>La más fotogénica cerca de Cartagena. En temporada alta puede haber mucha gente.</td>
+          </tr>
+          <tr>
+            <td><strong>Islas del Rosario</strong></td>
+            <td>Cristalina, arrecife</td>
+            <td>90 min en lancha</td>
+            <td>Buceadores, naturaleza, premium</td>
+            <td>La opción más impresionante. Snorkel y buceo en arrecife de coral.</td>
+          </tr>
+          <tr>
+            <td><strong>Playa de la Boquilla</strong></td>
+            <td>Mar abierto</td>
+            <td>20 min</td>
+            <td>Local, auténtico, económico</td>
+            <td>Playa más auténtica y menos turística. Buena opción para cliente que quiere experiencia local.</td>
+          </tr>
+          <tr>
+            <td><strong>Punta Arena (Barú)</strong></td>
+            <td>Turquesa, menos concurrida</td>
+            <td>60-70 min</td>
+            <td>Privacidad, parejas</td>
+            <td>Alternativa a Playa Blanca con menos turismo masivo. Ideal en temporada alta.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         COMPARATIVA
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="comparativa">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Lectura rápida</span>
+          <h2>Comparativa comercial de zonas</h2>
+        </div>
+        <p class="section-intro">
+          La elección de zona en Cartagena define completamente la experiencia del viaje. El mismo destino es radicalmente diferente según dónde se aloje el cliente.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Producto principal</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Ciudad Amurallada</strong></td>
+            <td>Cultura + gastronomía + boutique</td>
+            <td>Parejas, lunas de miel, culturales, premium</td>
+            <td>"Vivir dentro de la historia en uno de los hoteles más únicos de América."</td>
+          </tr>
+          <tr>
+            <td><strong>Getsemaní</strong></td>
+            <td>Arte urbano + bohemia + nocturna</td>
+            <td>Jóvenes, fotógrafos, grupos, culturales</td>
+            <td>"La Cartagena que no aparece en los folletos turísticos."</td>
+          </tr>
+          <tr>
+            <td><strong>Bocagrande</strong></td>
+            <td>Playa + hoteles de cadena + comodidad</td>
+            <td>Familias, corporativo, presupuesto ajustado</td>
+            <td>"La base más práctica con playa accesible y todo a mano."</td>
+          </tr>
+          <tr>
+            <td><strong>Barú (eco-lodge)</strong></td>
+            <td>Caribe de postal + desconexión + naturaleza</td>
+            <td>Parejas, naturaleza, descanso absoluto</td>
+            <td>"El Caribe de aguas turquesas a menos de una hora de la ciudad colonial."</td>
+          </tr>
+          <tr>
+            <td><strong>Islas del Rosario</strong></td>
+            <td>Arrecife + snorkel + naturaleza virgen</td>
+            <td>Buceadores, familias aventureras, premium</td>
+            <td>"El Caribe más puro y menos masificado del norte de Colombia."</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         TRASLADOS
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="traslados">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Operativa</span>
+          <h2>Tiempos medios de traslado</h2>
+        </div>
+        <p class="section-intro">
+          Cartagena es compacta en su núcleo histórico pero los accesos a las zonas de playa y naturaleza requieren planificación. Conocer bien los tiempos evita sorpresas con el cliente.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona / Punto</th>
+            <th>Desde aeropuerto (CTG)</th>
+            <th>Desde Ciudad Amurallada</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Ciudad Amurallada</strong></td>
+            <td>15 a 20 min</td>
+            <td>–</td>
+            <td>La base más recomendable para experiencia boutique. Acceso a pie a todo el casco histórico.</td>
+          </tr>
+          <tr>
+            <td><strong>Bocagrande</strong></td>
+            <td>10 a 15 min</td>
+            <td>15 a 20 min en taxi</td>
+            <td>Más cerca del aeropuerto. Cómodo para familias con equipaje.</td>
+          </tr>
+          <tr>
+            <td><strong>Castillo de San Felipe</strong></td>
+            <td>20 min</td>
+            <td>10 min en taxi</td>
+            <td>Media mañana de visita. Combinar con La Popa en el mismo día.</td>
+          </tr>
+          <tr>
+            <td><strong>Convento de La Popa</strong></td>
+            <td>25 min</td>
+            <td>15 min en taxi</td>
+            <td>Vistas panorámicas únicas. Media tarde al final del día en la ciudad.</td>
+          </tr>
+          <tr>
+            <td><strong>Playa Blanca (Barú)</strong></td>
+            <td>1h en lancha</td>
+            <td>45-60 min en lancha desde muelle Turístico</td>
+            <td>Salida temprana recomendada para evitar aglomeraciones.</td>
+          </tr>
+          <tr>
+            <td><strong>Barú (por tierra)</strong></td>
+            <td>1h 30 min en coche</td>
+            <td>1h 15 min en coche</td>
+            <td>Opción más económica. Camino parcialmente sin asfaltar en tramos finales.</td>
+          </tr>
+          <tr>
+            <td><strong>Islas del Rosario</strong></td>
+            <td>1h 45 min en lancha</td>
+            <td>1h 30 min en lancha desde Muelle Turístico</td>
+            <td>Excursión de día completo. Salida muy temprana.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box pink" style="margin-top:22px;">
+        <strong>Tip operativo:</strong> El Muelle Turístico de la Marina de Cartagena es el punto de salida de todas las lanchas a Barú e Islas del Rosario. Está en Bocagrande, a 15-20 min en taxi de la Ciudad Amurallada. Recomendable salir antes de las 8:00 AM para llegar antes de las aglomeraciones.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         TEMPORADAS
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="temporadas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Estacionalidad</span>
+          <h2>Temporadas comerciales</h2>
+        </div>
+        <p class="section-intro">
+          Cartagena es vendible todo el año. La diferencia entre temporadas es más de precio y ambiente que de viabilidad del viaje.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Lectura comercial</th>
+            <th>Cómo venderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diciembre – marzo</strong></td>
+            <td>Temporada alta / ideal</td>
+            <td>La mejor combinación de clima, precio y ambiente. Brisa fuerte que refresca. Navidad y Año Nuevo son los picos de precio más alto del año. Reservar con mucha antelación.</td>
+          </tr>
+          <tr>
+            <td><strong>Abril – mayo</strong></td>
+            <td>Temporada media / excelente</td>
+            <td>Muy buen clima, precios más accesibles que en alta temporada. Semana Santa eleva precios y afluencia enormemente. Una de las mejores ventanas para parejas y lunas de miel sin aglomeraciones.</td>
+          </tr>
+          <tr>
+            <td><strong>Junio – agosto</strong></td>
+            <td>Temporada alta latinoamericana</td>
+            <td>Vacaciones colombianas y latinoamericanas. Mucho turismo doméstico. Ciudad muy animada pero también muy llena. Precios altos. Ideal para grupos y familias.</td>
+          </tr>
+          <tr>
+            <td><strong>Septiembre – noviembre</strong></td>
+            <td>Temporada de lluvias</td>
+            <td>Lluvias más frecuentes, especialmente octubre. El precio baja. El casco histórico sigue siendo visitable y muy hermoso con la luz de la lluvia. Barú puede ser difícil en días de mal tiempo. Buena opción para presupuesto ajustado o viajero flexible.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Cartagena en Semana Santa y Fiestas</h4>
+          <p>
+            El Festival de Música del Caribe (marzo-abril) y las Fiestas de Independencia (noviembre) son momentos especiales de alta demanda. Si el cliente coincide con estas fechas, la ciudad tiene un ambiente extraordinario pero los precios y la ocupación son máximos.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Lluvia en la Ciudad Amurallada</h4>
+          <p>
+            Al contrario que otras zonas de playa, Cartagena histórica no pierde valor con la lluvia: las calles mojadas de colores, los patios interiores de los hoteles y la gastronomía siguen siendo un producto completo. El cliente que va principalmente por la ciudad no sufre la temporada de lluvias como en un destino puramente playero.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         OBJECIONES
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="objeciones">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Ventas</span>
+          <h2>Cómo manejar objeciones</h2>
+        </div>
+        <p class="section-intro">
+          Cartagena tiene una imagen muy fuerte como destino, pero también objeciones recurrentes, principalmente sobre el calor, la seguridad y la relación calidad-precio.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>"Hace demasiado calor."</h4>
+          <p>
+            Respuesta: sí, el calor es real. Pero la brisa caribeña constante lo hace muy manejable. Los hoteles boutique tienen piscinas y aire acondicionado, los restaurantes tienen patios con ventilación. Y por la noche, la temperatura baja y las calles son perfectas para pasear.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿Es seguro?"</h4>
+          <p>
+            Respuesta: el casco histórico, Bocagrande y Getsemaní (zona turística) son seguros y muy frecuentados por turistas internacionales. Como en cualquier ciudad, se recomienda no alejarse a barrios desconocidos de noche. El turismo en Cartagena está bien organizado y es masivo.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Es muy caro para Colombia."</h4>
+          <p>
+            Respuesta: los hoteles boutique dentro de las murallas tienen precios internacionales porque son productos únicos. Pero hay opciones más accesibles en Bocagrande. Y la gastronomía, los bares y las excursiones siguen siendo más baratas que cualquier Caribe externo de perfil equivalente.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"No tiene buenas playas."</h4>
+          <p>
+            Respuesta: Bocagrande no es espectacular, eso es cierto. Pero a 45-60 minutos está Playa Blanca en Barú con aguas turquesas absolutas. Cartagena no se vende por la playa del hotel: se vende por la combinación ciudad histórica + excursión a Caribe de postal.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Prefiero ir a un resort todo incluido."</h4>
+          <p>
+            Respuesta: totalmente válido, pero Cartagena ofrece algo que ningún resort puede dar: la experiencia de vivir en una ciudad viva, con historia real, gastronomía de primer nivel y una arquitectura colonial que no existe en ningún otro lugar de América. El todo incluido da comodidad; Cartagena da un viaje que se recuerda.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Ya fui y me pareció muy turístico."</h4>
+          <p>
+            Respuesta: Getsemaní y los mercados locales son la respuesta a eso. También Barú fuera de temporada alta y las Islas del Rosario para buceo. Y hay restaurantes de cocina caribeña contemporánea donde no van los tours masivos. Si volvés con otro ángulo, es otra ciudad.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box orange">
+        <strong>Alerta crítica:</strong> no vendas Cartagena como un destino de playa estándar. Su valor está en la combinación única de ciudad patrimonio + Caribe. El cliente que va solo a Bocagrande a tomar sol puede decepcionar. El que hace el casco histórico + Getsemaní + Barú tiene uno de los mejores viajes del continente.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         NOCHES
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="noches">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Duración ideal</span>
+          <h2>Noches recomendadas</h2>
+        </div>
+        <p class="section-intro">
+          Cartagena sola merece entre 4 y 5 noches para verla bien. Si se suma Barú, sumar 2 noches más. Si se añaden las Islas del Rosario o San Andrés, el viaje colombiano puede llegar a 10 noches perfectamente justificadas.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Opción de viaje</th>
+            <th>Noches</th>
+            <th>Qué incluye</th>
+            <th>Perfil recomendado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cartagena esencial</strong></td>
+            <td>4 noches</td>
+            <td>Ciudad Amurallada, Getsemaní, Castillo de San Felipe, excursión de día a Barú / Playa Blanca, atardecer en bahía.</td>
+            <td>Primera visita, tiempo ajustado, viajero internacional.</td>
+          </tr>
+          <tr>
+            <td><strong>Cartagena completa</strong></td>
+            <td>5 a 6 noches</td>
+            <td>Todo lo anterior + Islas del Rosario, La Popa, mercado de Bazurto, tarde de coctelería en Getsemaní y tiempo libre sin agenda.</td>
+            <td>Parejas, luna de miel, primera visita con más tiempo.</td>
+          </tr>
+          <tr>
+            <td><strong>Cartagena + Barú (noche)</strong></td>
+            <td>6 a 7 noches</td>
+            <td>4-5 noches en Ciudad Amurallada o Bocagrande + 2 noches en eco-lodge en Playa Blanca / Barú.</td>
+            <td>Parejas, naturaleza, desconexión, cliente que quiere playa de verdad.</td>
+          </tr>
+          <tr>
+            <td><strong>Colombia Caribe completo</strong></td>
+            <td>9 a 12 noches</td>
+            <td>Cartagena + Barú + San Andrés (vuelo directo entre ciudades). El viaje colombiano de costa más completo posible.</td>
+            <td>Viajeros internacionales, repeaters de Colombia, cliente de experiencias.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Venta simple</h4>
+          <p>
+            4-5 noches en Ciudad Amurallada, hotel boutique y excursión de día a Barú. El paquete más completo y diferencial de todo el Caribe latinoamericano. Muy fácil de argumentar y de cerrar.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Venta que sube valor</h4>
+          <p>
+            Añadir 2 noches en eco-lodge en Barú al final del viaje, o combinar con San Andrés en 10-12 noches. Son los combos que hacen que el cliente salga con "el mejor viaje de mi vida". Mayor ticket y mayor satisfacción.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
+         SCRIPT DE VENTA
+    ══════════════════════════════════════════════════════ -->
+    <section class="section" id="script">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cierre comercial</span>
+          <h2>Script de venta</h2>
+        </div>
+        <p class="section-intro">
+          Guion pensado para primera llamada, mail comercial o lectura rápida durante la cotización.
+        </p>
+      </div>
+
+      <div class="script-box">
+        <p><strong>Apertura:</strong> "Cartagena de Indias es el único destino de América donde en el mismo viaje podés caminar por una ciudad colonial del siglo XVI declarada Patrimonio de la Humanidad y estar en una playa caribeña de agua turquesa en menos de una hora. No existe ningún otro lugar así en todo el continente."</p>
+        <p><strong>Pregunta de detección:</strong> "¿Buscan más el plan de ciudad — arquitectura, gastronomía, calles de colores — o prefieren que la playa y el mar sean el centro del viaje? ¿O quieren las dos cosas combinadas?"</p>
+        <p><strong>Lectura rápida por perfil:</strong> "Ciudad Amurallada si quieren vivir dentro de la historia en un hotel boutique en casona colonial. Bocagrande si prefieren hotel de cadena con playa a pie. Barú para el Caribe de postal real, que está a menos de una hora. Y si el presupuesto acompaña, cerrar con 2 noches en eco-lodge en Barú es el cierre perfecto para cualquier viaje."</p>
+        <p><strong>Argumento de diferenciación:</strong> "Los resorts del Caribe dan playa y comodidad. Cartagena da todo eso más una ciudad viva, con murallas reales, gastronomía de nivel mundial y una atmósfera que no podés encontrar en ningún resort. Es el único Caribe con alma de ciudad."</p>
+        <p><strong>Cierre con Barú:</strong> "Si quieren las mejores aguas del viaje, hay que añadir aunque sea un día en Playa Blanca en Barú. Si pueden quedarse 2 noches en eco-lodge, es el final de viaje más completo que existe para un viajero latinoamericano."</p>
+        <p><strong>Cierre recomendado:</strong> "Yo no bajaría de 5 noches para ver Cartagena bien. Con 7 ya suma Barú de verdad. Y si se combinan con San Andrés, tenemos el mejor viaje Caribe colombiano que se puede armar."</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Guía comercial base · Dr. Viaje · Cartagena de Indias + Barú · Formato comercial-consultivo</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" aria-label="Subir">↑</button>
+
+  <script>
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.style.display = window.scrollY > 400 ? 'block' : 'none';
+    });
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

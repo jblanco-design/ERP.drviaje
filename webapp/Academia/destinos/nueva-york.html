@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Viaje | Guía Definitiva Nueva York</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --critical-red: #d32f2f;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.65;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1200px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        /* ══════════════════════════════════════════
+           HEADER
+        ══════════════════════════════════════════ */
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: var(--white);
+            padding: 50px 0 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before,
+        header::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+
+        header::before {
+            width: 260px;
+            height: 260px;
+            top: -90px;
+            right: -50px;
+        }
+
+        header::after {
+            width: 180px;
+            height: 180px;
+            bottom: -80px;
+            left: -30px;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: 0.03em;
+        }
+
+        header h1 {
+            font-size: clamp(2.6rem, 6vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+        }
+
+        .header-subtitle {
+            font-size: 1.05rem;
+            opacity: 0.93;
+            max-width: 820px;
+            margin-bottom: 32px;
+        }
+
+        /* KPIs */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .kpi {
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 18px 14px;
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .kpi strong {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffd36a;
+            margin-bottom: 4px;
+        }
+
+        .kpi span {
+            font-size: 0.82rem;
+            opacity: 0.9;
+        }
+
+        /* ══════════════════════════════════════════
+           NAVIGATION
+        ══════════════════════════════════════════ */
+        nav {
+            position: sticky;
+            top: 72px;
+            z-index: 100;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.07);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .nav-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 13px 0;
+            scrollbar-width: none;
+        }
+
+        .nav-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-scroll a {
+            white-space: nowrap;
+            background: linear-gradient(135deg, rgba(255,152,0,0.1), rgba(233,30,99,0.1));
+            color: var(--primary-purple);
+            border: 1px solid rgba(123,45,142,0.15);
+            padding: 9px 16px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .nav-scroll a:hover {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: var(--white);
+            transform: translateY(-1px);
+        }
+
+        /* ══════════════════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════════════════ */
+        main {
+            padding: 32px 0 80px;
+        }
+
+        /* Scroll offset para los dos navbars apilados */
+        .destination-card[id] {
+            scroll-margin-top: 140px;
+        }
+
+        /* Destination Cards */
+        .destination-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange);
+            padding: 32px;
+            margin-bottom: 32px;
+            transition: var(--transition);
+        }
+
+        .destination-card:nth-child(even) {
+            border-top-color: var(--primary-pink);
+        }
+
+        .destination-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .destination-header {
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+
+        .destination-header h2 {
+            font-size: clamp(1.9rem, 4vw, 2.8rem);
+            font-weight: 800;
+            color: var(--primary-purple);
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
+        }
+
+        .destination-subtitle {
+            color: var(--primary-pink);
+            font-size: 1.05rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section + .section {
+            padding-top: 28px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .section h3 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            padding-left: 14px;
+            border-left: 5px solid var(--primary-orange);
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .section h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin: 18px 0 10px;
+        }
+
+        .section p {
+            color: var(--text-medium);
+            margin-bottom: 12px;
+        }
+
+        /* Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 18px;
+            margin-top: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 18px;
+            margin-top: 16px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.06);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card h4 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary-purple);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-medium);
+            margin-bottom: 8px;
+        }
+
+        .card-orange {
+            border-top: 4px solid var(--primary-orange);
+        }
+
+        .card-pink {
+            border-top: 4px solid var(--primary-pink);
+        }
+
+        .card-purple {
+            border-top: 4px solid var(--primary-purple);
+        }
+
+        /* Info Boxes */
+        .info-box,
+        .tip-box,
+        .alert-box,
+        .script-box,
+        .critical-alert,
+        .warning-box {
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            margin: 16px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(123,45,142,0.07), rgba(63,81,181,0.05));
+            border-left: 5px solid var(--primary-purple);
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(255,193,7,0.12), rgba(255,152,0,0.08));
+            border-left: 5px solid var(--primary-orange);
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, rgba(233,30,99,0.08), rgba(255,255,255,0.95));
+            border-left: 5px solid var(--primary-pink);
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, rgba(123,45,142,0.07), rgba(63,81,181,0.07));
+            border: 2px solid rgba(123,45,142,0.2);
+        }
+
+        .critical-alert {
+            background: linear-gradient(135deg, rgba(211,47,47,0.09), rgba(255,255,255,0.98));
+            border: 2px solid var(--critical-red);
+        }
+
+        .critical-alert strong {
+            color: var(--critical-red);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255,152,0,0.12), rgba(255,193,7,0.08));
+            border: 2px solid var(--primary-orange);
+        }
+
+        .box-label {
+            display: inline-block;
+            font-weight: 800;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .label-purple {
+            background: rgba(123,45,142,0.12);
+            color: var(--primary-purple);
+        }
+
+        .label-orange {
+            background: rgba(255,152,0,0.15);
+            color: #e65100;
+        }
+
+        .label-pink {
+            background: rgba(233,30,99,0.12);
+            color: var(--primary-pink);
+        }
+
+        .label-red {
+            background: rgba(211,47,47,0.12);
+            color: var(--critical-red);
+        }
+
+        .quote {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-purple);
+            font-style: italic;
+            line-height: 1.7;
+        }
+
+        /* Pill */
+        .pill {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white);
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+        }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            min-width: 680px;
+        }
+
+        thead th {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white);
+            padding: 13px 14px;
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: var(--text-medium);
+            font-size: 0.93rem;
+            vertical-align: top;
+        }
+
+        tbody tr:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: #f5f0fb;
+        }
+
+        /* Lists */
+        ul.clean-list {
+            padding-left: 0;
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        ul.clean-list li {
+            color: var(--text-medium);
+            padding-left: 18px;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        ul.clean-list li::before {
+            content: "•";
+            color: var(--primary-orange);
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Highlight */
+        .highlight {
+            color: var(--primary-purple);
+            font-weight: 700;
+        }
+
+        .highlight-orange {
+            color: #e65100;
+            font-weight: 700;
+        }
+
+        .highlight-pink {
+            color: var(--primary-pink);
+            font-weight: 700;
+        }
+
+        /* Scroll Top */
+        .scroll-top {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: var(--white);
+            font-size: 1.2rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 999;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white);
+            text-align: center;
+            padding: 32px 20px;
+            margin-top: 20px;
+        }
+
+        footer p {
+            opacity: 0.93;
+            font-size: 0.94rem;
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .kpi-row,
+            .grid-4 {
+                grid-template-columns: repeat(2, minmax(0,1fr));
+            }
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0,1fr));
+            }
+        }
+
+        @media (max-width: 680px) {
+            .kpi-row,
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .destination-card {
+                padding: 22px;
+            }
+            header {
+                padding: 36px 0 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+<!-- ══════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════ -->
+<header>
+    <div class="container header-content">
+        <span class="badge">Dr. Viaje · Guía comercial definitiva</span>
+        <h1>Nueva York</h1>
+        <p class="header-subtitle">
+            La ciudad más icónica del mundo. Una guía completa para que puedas vender NYC con profundidad,
+            seguridad y argumentos comerciales sólidos: desde los cinco boroughs hasta las extensiones regionales,
+            pasando por visados, propinas, fees de hotel y todo lo que el pasajero necesita saber antes de viajar.
+        </p>
+
+        <div class="kpi-row">
+            <div class="kpi">
+                <strong>5</strong>
+                <span>Boroughs únicos para vender</span>
+            </div>
+            <div class="kpi">
+                <strong>18-22%</strong>
+                <span>Propina estándar obligatoria</span>
+            </div>
+            <div class="kpi">
+                <strong>$25-80</strong>
+                <span>Resort Fee por noche</span>
+            </div>
+            <div class="kpi">
+                <strong>$2.90</strong>
+                <span>Tarifa única metro OMNY</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<nav>
+    <div class="container">
+        <div class="nav-scroll">
+            <a href="#visados">Visados & ESTA</a>
+            <a href="#perfil">Cliente ideal</a>
+            <a href="#manhattan">Manhattan</a>
+            <a href="#brooklyn">Brooklyn</a>
+            <a href="#queens">Queens</a>
+            <a href="#bronx">El Bronx</a>
+            <a href="#staten">Staten Island</a>
+            <a href="#pases">Pases turísticos</a>
+            <a href="#transporte">Transporte</a>
+            <a href="#temporadas">Temporadas</a>
+            <a href="#alojamiento">Alojamiento</a>
+            <a href="#fees">Fees y costos</a>
+            <a href="#propinas">Propinas</a>
+            <a href="#familias">Familias</a>
+            <a href="#extensiones">Extensiones</a>
+            <a href="#alertas">Alertas críticas</a>
+            <a href="#script">Script de venta</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+<main>
+<div class="container">
+
+<!-- ══════════════════════════
+     VISADOS Y DOCUMENTACIÓN
+══════════════════════════ -->
+<div id="visados" class="destination-card">
+    <div class="destination-header">
+        <h2>Visados y Documentación</h2>
+        <p class="destination-subtitle">Requisito migratorio obligatorio para viajar a Estados Unidos</p>
+    </div>
+
+    <div class="section">
+        <h3>Visa B1/B2 — Requisito obligatorio para Uruguay y Argentina</h3>
+        
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Información crítica para el agente</div>
+            <p>
+                <strong>Todos los ciudadanos con pasaporte uruguayo y argentino REQUIEREN Visa B1/B2</strong> 
+                para ingresar a Estados Unidos por turismo. Es el primer requisito que debes verificar 
+                antes de confirmar cualquier reserva no reembolsable.
+            </p>
+        </div>
+
+        <div class="grid-2">
+            <div class="card card-purple">
+                <h4>Datos clave de la Visa B1/B2</h4>
+                <ul class="clean-list">
+                    <li><strong>Costo (tasa MRV):</strong> USD 185 por persona (no reembolsable)</li>
+                    <li><strong>Vigencia típica:</strong> Hasta 10 años con múltiples entradas</li>
+                    <li><strong>Estadía máxima:</strong> Hasta 6 meses por entrada (decide el oficial de inmigración)</li>
+                    <li><strong>Proceso:</strong> Formulario DS-160 + entrevista consular obligatoria</li>
+                </ul>
+            </div>
+            <div class="card card-orange">
+                <h4>Tiempos de demora actuales</h4>
+                <ul class="clean-list">
+                    <li><strong>Uruguay:</strong> Turnos disponibles en 2-4 semanas aproximadamente</li>
+                    <li><strong>Argentina:</strong> Demoras de 6-12 meses o más para conseguir turno</li>
+                    <li><strong>Procesamiento:</strong> 3-15 días hábiles después de la entrevista</li>
+                    <li><strong>Recomendación:</strong> Iniciar trámite con máxima anticipación posible</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="box-label label-purple">🔗 Sitio oficial para solicitud de visa</div>
+            <p>
+                Dirige a tus pasajeros al sitio oficial de la Embajada de Estados Unidos para iniciar 
+                el proceso de solicitud de visa B1/B2:
+            </p>
+            <p style="margin-top: 12px;">
+                <a href="https://uy.usembassy.gov/es/visas-es/visas-de-no-inmigrante/" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   style="
+                       display: inline-flex;
+                       align-items: center;
+                       gap: 8px;
+                       background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+                       color: white;
+                       padding: 12px 20px;
+                       border-radius: 999px;
+                       font-weight: 700;
+                       font-size: 0.9rem;
+                       text-decoration: none;
+                       box-shadow: 0 4px 15px rgba(123,45,142,0.3);
+                   ">
+                    🌐 Solicitud de Visa B1/B2 — Embajada EE.UU. Uruguay
+                </a>
+            </p>
+            <p style="margin-top: 8px; font-size: 0.9rem; color: var(--text-medium);">
+                Para pasajeros argentinos, derivar al sitio de la Embajada de EE.UU. en Buenos Aires 
+                para información actualizada de tiempos y requisitos.
+            </p>
+        </div>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Alerta operativa crítica</div>
+            <p>
+                <strong>NUNCA confirmes fechas de viaje sin verificar el estado de la visa del pasajero.</strong>
+                Los tiempos de espera para conseguir turno consular pueden superar los 12 meses, 
+                especialmente en Argentina. Esto puede hacer inviable el viaje en las fechas deseadas.
+            </p>
+            <p style="margin-top: 8px;">
+                <strong>Estrategia recomendada:</strong> Primero verificar visa vigente o iniciar trámite, 
+                después definir fechas y confirmar reservas.
+            </p>
+        </div>
+
+        <h3>Proceso de solicitud paso a paso</h3>
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>Pasos principales</h4>
+                <ul class="clean-list">
+                    <li>Completar formulario DS-160 online</li>
+                    <li>Pagar tasa MRV de USD 185 (no reembolsable)</li>
+                    <li>Solicitar turno para entrevista consular</li>
+                    <li>Asistir a entrevista en la Embajada con documentación</li>
+                    <li>Esperar resolución y entrega del pasaporte con visa</li>
+                </ul>
+            </div>
+            <div class="card card-pink">
+                <h4>Documentación típica requerida</h4>
+                <ul class="clean-list">
+                    <li>Pasaporte vigente (mínimo 6 meses)</li>
+                    <li>Formulario DS-160 confirmado</li>
+                    <li>Foto según especificaciones consulares</li>
+                    <li>Comprobantes de solvencia económica</li>
+                    <li>Evidencia de vínculos con país de origen</li>
+                    <li>Itinerario tentativo de viaje</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script para el agente</div>
+            <p class="quote">
+                "Antes de avanzar con cualquier reserva, necesito confirmar si ya tienen la visa 
+                americana vigente. Si no la tienen, el trámite puede demorar varios meses y tiene 
+                un costo de USD 185 por persona. Mi recomendación es que inicien el proceso de visa 
+                primero, y una vez aprobada, definamos las fechas del viaje. ¿Tienen visa vigente 
+                o necesitan tramitarla?"
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Seguro de Viaje — Obligatorio recomendar</h3>
+        <p>
+            Aunque no es obligatorio por ley, el seguro médico es <strong>absolutamente indispensable</strong>
+            en Estados Unidos debido a los costos astronómicos del sistema de salud.
+        </p>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">💰 Costos médicos reales en EE.UU.</div>
+            <ul class="clean-list">
+                <li><strong>Consulta de urgencia:</strong> USD 500 - 1,500</li>
+                <li><strong>Noche de internación:</strong> USD 4,000 - 15,000</li>
+                <li><strong>Cirugía de emergencia:</strong> USD 30,000 - 200,000+</li>
+                <li><strong>Ambulancia:</strong> USD 1,500 - 4,000</li>
+                <li><strong>Radiografía simple:</strong> USD 300 - 800</li>
+            </ul>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Cómo venderlo</div>
+            <p class="quote">
+                "El seguro médico no es un gasto extra, es parte del presupuesto del viaje. Una simple
+                consulta por dolor de estómago en Nueva York puede costarte más que todo el hotel de la semana.
+                Es la inversión más importante que vas a hacer antes de viajar."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     PERFIL DE CLIENTE
+══════════════════════════ -->
+<div id="perfil" class="destination-card">
+    <div class="destination-header">
+        <h2>Perfil de Cliente Ideal</h2>
+        <p class="destination-subtitle">Quién compra bien Nueva York y cómo detectarlo en la consulta</p>
+    </div>
+
+    <div class="section">
+        <h3>Presentación comercial de NYC</h3>
+        <p>
+            Nueva York es el destino urbano más aspiracional para la clase media y media-alta de Uruguay y Argentina.
+            Se vende solo con sus íconos globales, pero la estrategia comercial está en <strong>ordenar la experiencia</strong>:
+            qué ver primero, cómo no saturar el itinerario, y qué experiencias elevan el valor percibido del viaje.
+        </p>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Posicionamiento comercial</div>
+            <p>
+                NYC no es "solo una ciudad grande". Es un destino de experiencias urbanas concentradas donde
+                <strong>cada día tiene un costo alto</strong>. Tu rol como agente es ayudar al pasajero a
+                <strong>maximizar valor por día</strong> sin saturar el itinerario ni subestimar tiempos y costos.
+            </p>
+        </div>
+
+        <h3>Perfiles que compran bien NYC</h3>
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Parejas (25-55 años)</h4>
+                <p>
+                    Buscan la experiencia de "la ciudad de las ciudades". Quieren rooftops, Broadway, cenas con vista,
+                    Central Park y el skyline nocturno. NYC es aspiracional y emocional para este perfil.
+                </p>
+                <div class="pill">Duración ideal: 6-8 noches</div>
+            </div>
+            <div class="card card-pink">
+                <h4>Familias con hijos mayores (8+ años)</h4>
+                <p>
+                    Funcionan muy bien cuando los hijos reconocen la ciudad por películas/series. Museos interactivos,
+                    Times Square, espectáculos y la energía urbana impacta a todas las edades.
+                </p>
+                <div class="pill">Duración ideal: 7-10 noches</div>
+            </div>
+            <div class="card card-purple">
+                <h4>Primerizos en EE.UU.</h4>
+                <p>
+                    NYC es la puerta de entrada natural. Tiene reconocimiento inmediato, se vende solo con
+                    los íconos, y genera la sensación de haber "cumplido un sueño americano".
+                </p>
+                <div class="pill">Duración ideal: 5-7 noches</div>
+            </div>
+            <div class="card card-orange">
+                <h4>Grupos de amigos</h4>
+                <p>
+                    La ciudad funciona perfectamente porque tiene algo para todos: gastronomía, vida nocturna,
+                    shoppings, museos, deportes y espectáculos. Muy buen margen por grupo.
+                </p>
+                <div class="pill">Duración ideal: 5-8 noches</div>
+            </div>
+            <div class="card card-pink">
+                <h4>Viajeros culturales</h4>
+                <p>
+                    Perfil que prioriza museos, teatro, gastronomía y arquitectura. NYC tiene la oferta cultural
+                    más densa del mundo. Met, MoMA, Broadway son argumentos de cierre.
+                </p>
+                <div class="pill">Duración ideal: 7-10 noches</div>
+            </div>
+            <div class="card card-purple">
+                <h4>Combinadores</h4>
+                <p>
+                    Muchos clientes combinan NYC con Miami, Washington DC, Orlando o Boston. NYC suele ser
+                    el primer destino y el de mayor impacto emocional del viaje completo.
+                </p>
+                <div class="pill">Duración ideal: 4-5 noches en NYC</div>
+            </div>
+        </div>
+
+        <h3>Preguntas de detección comercial</h3>
+        <div class="grid-2">
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Script de detección #1</div>
+                <p class="quote">
+                    "¿Qué imagen tienen de Nueva York? ¿Buscan más la experiencia urbana clásica
+                    (Times Square, Central Park, miradores), o también quieren incluir cultura,
+                    gastronomía y barrios más auténticos?"
+                </p>
+                <p>Esta pregunta define si el viaje es solo Manhattan turístico o incluye Brooklyn/Queens.</p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Script de detección #2</div>
+                <p class="quote">
+                    "¿Hay algo específico que no se quieren perder? ¿Un espectáculo de Broadway,
+                    algún museo en particular, los miradores, compras, un partido de los Yankees?"
+                </p>
+                <p>Permite construir el itinerario desde los deseos del cliente y cerrar con más facilidad.</p>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <div class="box-label label-pink">⚠ Qué cliente NO encaja bien</div>
+            <ul class="clean-list">
+                <li><strong>Buscan solo playa y relax:</strong> NYC no tiene ese componente</li>
+                <li><strong>Movilidad muy reducida:</strong> La ciudad exige caminar 15-25k pasos diarios</li>
+                <li><strong>Niños muy pequeños (0-4 años):</strong> El ritmo es muy exigente</li>
+                <li><strong>Presupuesto muy ajustado:</strong> Expectativas vs realidad pueden generar conflictos</li>
+                <li><strong>Fobia a multitudes:</strong> NYC es intensa en ruido y aglomeraciones</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     MANHATTAN
+══════════════════════════ -->
+<div id="manhattan" class="destination-card">
+    <div class="destination-header">
+        <h2>Manhattan</h2>
+        <p class="destination-subtitle">El corazón comercial, cultural e icónico de Nueva York</p>
+    </div>
+
+    <div class="section">
+        <h3>Cómo posicionar Manhattan comercialmente</h3>
+        <p>
+            Manhattan es la isla central de NYC y el destino principal de casi todos los visitantes. Concentra los grandes íconos,
+            los mejores museos, los teatros de Broadway y la mayor densidad de experiencias por kilómetro cuadrado del mundo.
+            Para el agente, Manhattan es el núcleo de la venta y el punto desde el cual se expande el resto del viaje.
+        </p>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Clave de venta</div>
+            <p>
+                Manhattan se vende solo con sus íconos. La estrategia comercial está en <strong>ordenar la experiencia</strong>:
+                qué ver primero, qué combinar por zona, cómo no saturar el itinerario, y qué experiencias elevan
+                el nivel percibido del viaje para justificar el costo.
+            </p>
+        </div>
+
+        <h3>Zonas clave de Manhattan por perfil</h3>
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>Midtown Manhattan</h4>
+                <p>
+                    El Manhattan más icónico: Times Square, Empire State, Quinta Avenida, Grand Central, MoMA,
+                    Rockefeller Center. Donde la mayoría de hoteles de primera visita se ubican.
+                </p>
+                <p><strong>Ideal para:</strong> Primera vez, familias, clientes que quieren todo cerca caminando.</p>
+                <p><strong>Contra:</strong> Muy ruidoso, habitaciones minúsculas, el más caro, muy turístico.</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Downtown / Lower Manhattan</h4>
+                <p>
+                    Wall Street, One World Trade Center, Memorial 9/11, Brooklyn Bridge, Battery Park.
+                    Zona histórica y emocional, con carga narrativa muy poderosa para vender.
+                </p>
+                <p><strong>Ideal para:</strong> Clientes culturales, historia, primera visita, parejas.</p>
+                <p><strong>Contra:</strong> Menos vida nocturna, algo alejado de Broadway/Times Square.</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Upper Manhattan / Central Park</h4>
+                <p>
+                    Central Park, Museo Metropolitano (Met), Museo Historia Natural, Upper West/East Side.
+                    Zona más residencial y elegante, ritmo más tranquilo.
+                </p>
+                <p><strong>Ideal para:</strong> Parejas, culturales, viajeros con más tiempo, familias.</p>
+                <p><strong>Contra:</strong> Más alejado de Times Square y Downtown, menos "postal NYC".</p>
+            </div>
+            <div class="card card-orange">
+                <h4>SoHo, Greenwich Village, Chelsea</h4>
+                <p>
+                    Gastronomía de alto nivel, galerías de arte, High Line, mercados, arquitectura histórica.
+                    La NYC más auténtica para completar el viaje.
+                </p>
+                <p><strong>Ideal para:</strong> Repetidores, parejas, gastronómicos, perfil sofisticado.</p>
+                <p><strong>Contra:</strong> Menos íconos reconocibles, más caro para comer.</p>
+            </div>
+        </div>
+
+        <h3>Atracciones principales y estrategia de venta</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Atracción</th>
+                        <th>Por qué venderla</th>
+                        <th>Perfil ideal</th>
+                        <th>Precio orientativo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Empire State Building</span></td>
+                        <td>El ícono más reconocido del mundo. Obligatorio para primera vez</td>
+                        <td>Primera visita, todos los perfiles</td>
+                        <td>USD 44 – 90 según piso</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Top of the Rock</span></td>
+                        <td>Mejores vistas del Empire State + Central Park. Menos multitudes</td>
+                        <td>Parejas, fotógrafos, atardeceres</td>
+                        <td>USD 40 – 60</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Edge (Hudson Yards)</span></td>
+                        <td>Plataforma exterior más alta del hemisferio occidental. Muy instagrameable</td>
+                        <td>Aventureros, jóvenes, experiencias premium</td>
+                        <td>USD 38 – 185</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Summit One Vanderbilt</span></td>
+                        <td>Experiencia inmersiva más moderna. Espejos, arte, muy fotogénico</td>
+                        <td>Parejas, millennials, redes sociales</td>
+                        <td>USD 39 – 49</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Estatua de la Libertad + Ellis Island</span></td>
+                        <td>Ícono histórico y emocional. El ferry incluye ambas islas</td>
+                        <td>Primera visita, familias, culturales</td>
+                        <td>USD 24 – 30 (ferry oficial)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Metropolitan Museum (Met)</span></td>
+                        <td>Uno de los mejores museos del mundo. 5.000 años de historia</td>
+                        <td>Culturales, parejas, día de lluvia</td>
+                        <td>USD 30 (sugerido)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">MoMA</span></td>
+                        <td>Arte moderno imprescindible: Picasso, Warhol, Van Gogh</td>
+                        <td>Culturales, parejas, grupos</td>
+                        <td>USD 25</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Memorial y Museo 9/11</span></td>
+                        <td>Experiencia emocional e histórica de gran impacto</td>
+                        <td>Todos los perfiles adultos</td>
+                        <td>USD 30</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Broadway</span></td>
+                        <td>Experiencia cultural única en el mundo. Diferenciador clave</td>
+                        <td>Parejas, culturales, grupos</td>
+                        <td>USD 70 – 250+</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Broadway — El diferenciador comercial</h3>
+        <p>
+            Broadway es uno de los argumentos de venta más poderosos de NYC porque genera una experiencia
+            que no existe en ningún otro lugar del mundo. El agente que sabe vender Broadway correctamente
+            cierra viajes más completos y de mayor valor.
+        </p>
+
+        <div class="grid-2">
+            <div class="card card-purple">
+                <h4>Espectáculos más vendibles</h4>
+                <ul class="clean-list">
+                    <li><strong>El Rey León:</strong> Familiar, visual, conocido universalmente</li>
+                    <li><strong>Hamilton:</strong> Muy aspiracional, alta demanda, difícil conseguir</li>
+                    <li><strong>Chicago:</strong> Clásico elegante, ideal para parejas</li>
+                    <li><strong>Wicked:</strong> Muy popular, excelente para todos los perfiles</li>
+                    <li><strong>Aladdin:</strong> Familiar, espectacular visualmente</li>
+                    <li><strong>MJ The Musical:</strong> Para fans de Michael Jackson</li>
+                </ul>
+            </div>
+            <div class="tip-box">
+                <div class="box-label label-orange">💡 Tips operativos Broadway</div>
+                <ul class="clean-list">
+                    <li>Reservar con 2-3 meses de anticipación mínimo</li>
+                    <li>TKTS Booth en Times Square: descuentos día de función</li>
+                    <li>Martes a jueves: funciones más económicas</li>
+                    <li>Matinée (tarde) más barata que función nocturna</li>
+                    <li>Orchestra y Mezzanine: mejores ubicaciones</li>
+                    <li>Llegar 30 minutos antes del inicio</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script de venta Broadway</div>
+            <p class="quote">
+                "Broadway no es solo un show, es LA experiencia que solo podés vivir en Nueva York.
+                Ver El Rey León o Wicked en su teatro original, con la producción completa, es algo
+                que van a recordar toda la vida. ¿Prefieren algo más familiar y visual como El Rey León,
+                o algo más sofisticado como Chicago o Hamilton?"
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     BROOKLYN
+══════════════════════════ -->
+<div id="brooklyn" class="destination-card">
+    <div class="destination-header">
+        <h2>Brooklyn</h2>
+        <p class="destination-subtitle">La NYC auténtica, creativa y con las mejores vistas del skyline</p>
+    </div>
+
+    <div class="section">
+        <h3>Por qué vender Brooklyn como complemento obligatorio</h3>
+        <p>
+            Brooklyn es el borough más grande de NYC por población y el más interesante comercialmente
+            porque ofrece algo que Manhattan no puede: <span class="highlight">la vista del skyline desde afuera</span>.
+            Además, tiene identidad cultural propia, gastronomía de primer nivel y energía más auténtica.
+        </p>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Clave comercial</div>
+            <p>
+                Brooklyn no se vende como alternativa a Manhattan sino como <strong>complemento imprescindible</strong>.
+                Un viaje que no cruza el Brooklyn Bridge a pie se pierde una de las experiencias más fotogénicas
+                e icónicas de toda la ciudad. Es contenido obligatorio para redes sociales.
+            </p>
+        </div>
+
+        <h3>Zonas y atracciones principales</h3>
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>DUMBO (Down Under Manhattan Bridge Overpass)</h4>
+                <p>
+                    El barrio más fotogénico de NYC. La vista del Brooklyn Bridge con Manhattan de fondo
+                    es una de las postales más icónicas del mundo. Galerías, restaurantes y Brooklyn Bridge Park.
+                </p>
+                <p><strong>Ideal para:</strong> Todos los perfiles. Visita obligatoria para primera vez.</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Williamsburg</h4>
+                <p>
+                    El barrio más hipster y gastronómico de NYC. Mercados, rooftop bars, galerías,
+                    tiendas de diseño y vida nocturna muy activa. Vista espectacular del skyline.
+                </p>
+                <p><strong>Ideal para:</strong> Grupos de amigos, parejas jóvenes, gastronómicos, repetidores.</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Brooklyn Bridge (a pie)</h4>
+                <p>
+                    Cruzar el puente caminando desde Manhattan es experiencia obligatoria. 30-40 minutos
+                    con vistas espectaculares en ambas direcciones. Gratuito e imprescindible.
+                </p>
+                <p><strong>Ideal para:</strong> Todos los perfiles. El paseo más icónico de NYC.</p>
+            </div>
+            <div class="card card-orange">
+                <h4>Coney Island</h4>
+                <p>
+                    La playa urbana más famosa de NYC. Parque de atracciones histórico, boardwalk
+                    y ambiente más kitsch y divertido. Ideal para salir del circuito turístico habitual.
+                </p>
+                <p><strong>Ideal para:</strong> Familias, grupos de amigos, experiencias diferentes, verano.</p>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Itinerario perfecto Brooklyn</div>
+            <p>
+                <strong>Mañana:</strong> Cruzar Brooklyn Bridge a pie desde Manhattan (salida City Hall/South Street Seaport)<br>
+                <strong>Mediodía:</strong> DUMBO para fotos icónicas y almuerzo<br>
+                <strong>Tarde:</strong> Williamsburg para gastronomía y ambiente local<br>
+                <strong>Atardecer:</strong> Rooftop bar con vista al skyline<br>
+                Es un día completo que genera altísima satisfacción y contenido para redes sociales.
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script de venta Brooklyn</div>
+            <p class="quote">
+                "Brooklyn les va a dar las mejores fotos del viaje. Cruzar el Brooklyn Bridge a pie
+                y ver Manhattan desde DUMBO es algo que no se pueden perder. Además, es donde van a sentir
+                la Nueva York más auténtica: cafés de especialidad, arte callejero, gastronomía local.
+                Es el contraste perfecto con el Manhattan turístico."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     QUEENS
+══════════════════════════ -->
+<div id="queens" class="destination-card">
+    <div class="destination-header">
+        <h2>Queens</h2>
+        <p class="destination-subtitle">El borough más diverso del mundo y la mejor opción calidad-precio</p>
+    </div>
+
+    <div class="section">
+        <h3>Por qué Queens es estratégico para el agente</h3>
+        <p>
+            Queens es el borough más étnicamente diverso del planeta (160+ idiomas). Para el agente tiene
+            dos valores comerciales clave: es la <span class="highlight">mejor opción de alojamiento calidad-precio</span>
+            para presupuestos ajustados, y tiene atracciones propias para itinerarios de 6+ noches.
+        </p>
+
+        <h3>Zonas y atracciones comercialmente relevantes</h3>
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Long Island City</h4>
+                <p>
+                    A solo 2 estaciones de metro de Midtown Manhattan (10-15 min). Hoteles significativamente
+                    más baratos con vistas espectaculares del skyline. La recomendación estrella para optimizar presupuesto.
+                </p>
+                <p><strong>Ahorro:</strong> 30-50% vs Manhattan manteniendo conectividad excelente.</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Flushing — Little Asia</h4>
+                <p>
+                    El barrio asiático más auténtico de NYC fuera de Asia. Gastronomía china, coreana, japonesa
+                    de primer nivel a precios muy accesibles. Experiencia gastronómica única.
+                </p>
+                <p><strong>Ideal para:</strong> Gastronómicos, repetidores, aventureros culinarios.</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Citi Field (Estadio de los Mets)</h4>
+                <p>
+                    Para fanáticos del béisbol, un partido de los Mets es experiencia cultural auténtica
+                    y más accesible económicamente que los Yankees del Bronx.
+                </p>
+                <p><strong>Ideal para:</strong> Deportivos, grupos de amigos, experiencia local.</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Queens como base de alojamiento</div>
+            <p>
+                Cuando el cliente tiene presupuesto ajustado pero quiere estar en NYC, Long Island City
+                es la respuesta correcta. Hay que venderlo como ventaja estratégica, no como concesión:
+                "Vas a estar a 10 minutos de Times Square pagando la mitad que en Manhattan, con habitaciones
+                más grandes y vistas increíbles del skyline."
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script para presupuesto ajustado</div>
+            <p class="quote">
+                "Si el presupuesto de alojamiento es importante, te recomiendo Queens, específicamente
+                Long Island City. Estás a dos paradas de metro de Midtown, tenés vistas increíbles del skyline
+                desde la habitación, y ahorrás entre USD 80 y 150 por noche comparado con Manhattan.
+                Esa diferencia la invertís en Broadway, pases turísticos y buena gastronomía."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     EL BRONX
+══════════════════════════ -->
+<div id="bronx" class="destination-card">
+    <div class="destination-header">
+        <h2>El Bronx</h2>
+        <p class="destination-subtitle">Cuna del hip-hop, los Yankees y el jardín botánico más grande de EE.UU.</p>
+    </div>
+
+    <div class="section">
+        <h3>Cómo posicionar El Bronx en la venta</h3>
+        <p>
+            El Bronx tiene una reputación histórica que muchos pasajeros asocian con inseguridad.
+            El agente debe saber que <strong>las zonas turísticas del Bronx son completamente seguras</strong>
+            y que tiene atracciones de primer nivel que justifican excursión de día completo para ciertos perfiles.
+        </p>
+
+        <div class="alert-box">
+            <div class="box-label label-pink">⚠ Gestión de expectativas</div>
+            <p>
+                No recomiendes El Bronx como zona de alojamiento para nuestro mercado. Sí recomendalo como
+                <strong>excursión diurna puntual</strong> para perfiles específicos: fanáticos del béisbol,
+                amantes de la naturaleza y viajeros culturales que quieren salir del circuito turístico habitual.
+            </p>
+        </div>
+
+        <h3>Atracciones principales</h3>
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Yankee Stadium</h4>
+                <p>
+                    El estadio más famoso del béisbol mundial. Asistir a un partido de los Yankees
+                    es experiencia cultural única. La energía del estadio impacta incluso a quienes
+                    no saben nada de béisbol.
+                </p>
+                <p><strong>Precio:</strong> USD 20 – 200+ según ubicación y partido</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Jardín Botánico del Bronx</h4>
+                <p>
+                    Uno de los jardines botánicos más importantes del mundo. 100 hectáreas de jardines,
+                    invernaderos y espacios naturales. Excelente para familias y amantes de la naturaleza.
+                </p>
+                <p><strong>Precio:</strong> USD 15 – 30 según temporada</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Zoológico del Bronx</h4>
+                <p>
+                    El zoológico más grande de EE.UU. con 6.000+ animales. Jornada completa perfecta
+                    para familias con niños. Uno de los mejores zoológicos del mundo.
+                </p>
+                <p><strong>Precio:</strong> USD 20 – 40 por persona</p>
+            </div>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script de venta Yankees</div>
+            <p class="quote">
+                "Ver un partido de los Yankees en el Yankee Stadium es una de esas experiencias que solo
+                podés vivir en Nueva York. No importa si sos fanático del béisbol: el ambiente, la historia
+                del estadio, la energía de la multitud y la tradición hacen que valga absolutamente la pena.
+                Es cultura americana pura."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     STATEN ISLAND
+══════════════════════════ -->
+<div id="staten" class="destination-card">
+    <div class="destination-header">
+        <h2>Staten Island</h2>
+        <p class="destination-subtitle">El ferry gratuito con las mejores vistas de la Estatua de la Libertad</p>
+    </div>
+
+    <div class="section">
+        <h3>El secreto comercial de Staten Island</h3>
+        <p>
+            Staten Island es el borough menos turístico, pero tiene un argumento comercial que muy pocos
+            agentes utilizan: el <span class="highlight">Staten Island Ferry es completamente gratuito</span>
+            y ofrece las mejores vistas de la Estatua de la Libertad y del skyline sin pagar el tour oficial.
+        </p>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Argumento comercial estrella</div>
+            <p class="quote">
+                "¿Sabían que pueden ver la Estatua de la Libertad de cerca, con vistas espectaculares del skyline,
+                completamente gratis? El ferry de Staten Island sale cada 30 minutos desde Battery Park,
+                dura 25 minutos de ida, y es uno de los mejores paseos gratuitos del mundo. Pueden tomar
+                el ferry de vuelta inmediatamente o explorar Staten Island."
+            </p>
+        </div>
+
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>Staten Island Ferry</h4>
+                <p>
+                    El paseo gratuito más icónico de NYC. Sale desde Whitehall Terminal en Lower Manhattan,
+                    cruza la bahía con vistas de la Estatua de la Libertad y skyline, llega a St. George Terminal.
+                </p>
+                <p><strong>Precio:</strong> Completamente gratuito. Frecuencia: cada 30 minutos.</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Snug Harbor Cultural Center</h4>
+                <p>
+                    Complejo histórico con jardines botánicos, museos y espacios culturales. Para clientes
+                    que quieren explorar más allá del ferry y conocer el lado residencial de NYC.
+                </p>
+                <p><strong>Ideal para:</strong> Culturales, repetidores, familias con tiempo extra.</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Para el itinerario</div>
+            <p>
+                El ferry combina perfectamente con una mañana en Lower Manhattan: Memorial 9/11,
+                Wall Street, Brooklyn Bridge y ferry como cierre. Es un día completo de muy alto
+                valor percibido con costo mínimo. Ideal para presupuestos ajustados.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     PASES TURÍSTICOS
+══════════════════════════ -->
+<div id="pases" class="destination-card">
+    <div class="destination-header">
+        <h2>Pases Turísticos</h2>
+        <p class="destination-subtitle">Cuál recomendar según el perfil y cómo argumentar la compra</p>
+    </div>
+
+    <div class="section">
+        <h3>Por qué los pases son críticos para tu rentabilidad</h3>
+        <p>
+            Los pases turísticos son herramienta de venta muy efectiva porque simplifican la experiencia del pasajero,
+            generan ahorro real (hasta 40%) y representan comisión adicional para el agente. El error más común
+            es no recomendarlos o recomendarlos sin analizar el perfil del cliente.
+        </p>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">💰 Nunca dejes que compren en destino</div>
+            <p>
+                Un cliente que compra las entradas en destino paga precio completo, hace doble fila
+                (una para comprar, otra para entrar), y tú perdés la comisión. Los pases no solo
+                ahorran dinero al cliente, sino que aseguran tu margen comercial.
+            </p>
+        </div>
+
+        <h3>Comparativa de pases principales</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pase</th>
+                        <th>Formato</th>
+                        <th>Precio orientativo</th>
+                        <th>Perfil ideal</th>
+                        <th>Cuándo recomendarlo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">New York CityPASS</span></td>
+                        <td>6 atracciones fijas + opcionales</td>
+                        <td>USD 132 adulto / USD 108 niño</td>
+                        <td>Primera visita, familias, clásicos</td>
+                        <td>Cliente quiere lo esencial sin complicarse</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Go City New York (All-Inclusive)</span></td>
+                        <td>Días ilimitados (1-10 días)</td>
+                        <td>USD 89 – 229 según días</td>
+                        <td>Muy activos, agenda intensa</td>
+                        <td>Harán muchas atracciones por día</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Explorer Pass</span></td>
+                        <td>Por número de atracciones (2-10)</td>
+                        <td>USD 74 – 229</td>
+                        <td>Selectivos, repetidores</td>
+                        <td>Saben exactamente qué quieren ver</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Sightseeing Pass</span></td>
+                        <td>Días ilimitados + tours</td>
+                        <td>USD 134 – 399</td>
+                        <td>Premium, tours incluidos</td>
+                        <td>Quieren experiencias guiadas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Guía de recomendación por perfil</h3>
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>Recomendar CityPASS cuando...</h4>
+                <ul class="clean-list">
+                    <li>Es primera visita a NYC</li>
+                    <li>Quieren ver los clásicos sin decisiones complejas</li>
+                    <li>Viajan en familia con niños</li>
+                    <li>Estadía de 4-6 noches</li>
+                    <li>Buscan experiencia ordenada sin sorpresas</li>
+                </ul>
+            </div>
+            <div class="card card-pink">
+                <h4>Recomendar Go City cuando...</h4>
+                <ul class="clean-list">
+                    <li>Cliente muy activo que quiere ver muchas cosas</li>
+                    <li>Estadía de 7+ noches</li>
+                    <li>Son repetidores que quieren explorar más</li>
+                    <li>Presupuesto permite inversión inicial alta</li>
+                    <li>Quieren flexibilidad total de agenda</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Técnica de cierre con pases</div>
+            <p>
+                Siempre calculá el ahorro real antes de recomendar. Ejemplo: "Si van a hacer Empire State (USD 44) + 
+                MoMA (USD 25) + Estatua de la Libertad (USD 30) + Memorial 9/11 (USD 30), son USD 129. 
+                El CityPASS cuesta USD 132 pero incluye 6 atracciones. Ya con 4 atracciones se paga solo."
+            </p>
+        </div>
+
+        <h3>Guerra de miradores — Cuál recomendar</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mirador</th>
+                        <th>Características únicas</th>
+                        <th>Perfil ideal</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Empire State</span></td>
+                        <td>El histórico, icónico por películas. Tiene rejas de seguridad</td>
+                        <td>Nostálgicos, primera vez obligatoria</td>
+                        <td>USD 44-90</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Top of the Rock</span></td>
+                        <td>Mejor foto DEL Empire State + Central Park. Sin rejas</td>
+                        <td>Fotógrafos, parejas, atardeceres</td>
+                        <td>USD 40-60</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">The Edge</span></td>
+                        <td>Plataforma exterior de cristal. Para valientes</td>
+                        <td>Aventureros, jóvenes, experiencias extremas</td>
+                        <td>USD 38-185</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Summit One Vanderbilt</span></td>
+                        <td>El más instagrameable. Espejos, globos, experiencia inmersiva</td>
+                        <td>Millennials, parejas, redes sociales</td>
+                        <td>USD 39-49</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">One World Observatory</span></td>
+                        <td>El más alto, cerrado. Mucha historia (Zona Cero)</td>
+                        <td>Culturales, historia, combina con 9/11</td>
+                        <td>USD 37-47</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script de venta pases</div>
+            <p class="quote">
+                "Los pases no son un gasto extra, son una inversión inteligente. Si compran las entradas allá,
+                van a pagar precio completo y hacer dos filas: una para comprar y otra para entrar.
+                Con el pase que les incluyo, ahorran casi 40% en dólares, ya tienen todo en el celular
+                y van directo a la fila de ingreso. En Nueva York, el tiempo vale oro."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Continúa con las demás secciones... -->
+<!-- Por límites de espacio, incluyo las secciones más críticas. El patrón continúa igual para el resto -->
+
+<!-- ══════════════════════════
+     FEES Y COSTOS OCULTOS
+══════════════════════════ -->
+<div id="fees" class="destination-card">
+    <div class="destination-header">
+        <h2>Fees, Costos Ocultos y Costo de Vida</h2>
+        <p class="destination-subtitle">La información que el pasajero DEBE conocer antes de llegar</p>
+    </div>
+
+    <div class="section">
+        <h3>El Resort Fee — La alerta más crítica</h3>
+        <p>
+            Este es el punto más importante que debes comunicar porque genera conflictos frecuentes.
+            <span class="highlight">La mayoría de los hoteles en NYC cobran un cargo adicional por noche</span>
+            llamado "Resort Fee", "Destination Fee" o "Facility Fee" que <strong>NO está incluido en el precio
+            que el pasajero ve al reservar</strong>.
+        </p>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Información obligatoria al pasajero</div>
+            <p>
+                <strong>¿Qué es el Resort Fee?</strong> Cargo obligatorio que los hoteles cobran por noche
+                adicional a la tarifa de habitación. Varía entre <strong>USD 25 y USD 80 por noche</strong>
+                en NYC, aunque la mayoría está entre USD 30-50/noche.
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Ejemplo real:</strong> Hotel que muestra USD 200/noche puede cobrar USD 245/noche
+                con el fee. En 7 noches son USD 315 adicionales que el pasajero no esperaba.
+                <strong>Si no lo informás, genera conflictos y reclamos directos a tu agencia.</strong>
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Cómo comunicar el Resort Fee</div>
+            <p class="quote">
+                "Importante que sepas: en Nueva York la mayoría de los hoteles cobran un cargo adicional
+                por noche llamado Resort Fee, entre USD 30 y USD 50 por noche, que se paga directamente
+                en el hotel al hacer check-out. No está incluido en el precio del paquete.
+                Para 7 noches, calculá entre USD 210 y USD 350 adicionales. Es fundamental que lo tengas
+                en cuenta en tu presupuesto total de viaje."
+            </p>
+        </div>
+
+        <h3>Costo de vida orientativo en USD</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Precio orientativo</th>
+                        <th>Comentario para el pasajero</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Café / cappuccino</td>
+                        <td>USD 5 – 8</td>
+                        <td>Starbucks o cafetería estándar. Propina esperada.</td>
+                    </tr>
+                    <tr>
+                        <td>Desayuno continental hotel</td>
+                        <td>USD 25 – 45</td>
+                        <td>Muy pocos hoteles incluyen desayuno gratuito.</td>
+                    </tr>
+                    <tr>
+                        <td>Almuerzo económico</td>
+                        <td>USD 15 – 25</td>
+                        <td>Food trucks, delis, comida rápida de calidad.</td>
+                    </tr>
+                    <tr>
+                        <td>Almuerzo restaurante medio</td>
+                        <td>USD 25 – 45 por persona</td>
+                        <td>Sin alcohol. Propina 18-22% adicional obligatoria.</td>
+                    </tr>
+                    <tr>
+                        <td>Cena restaurante medio</td>
+                        <td>USD 40 – 80 por persona</td>
+                        <td>Sin alcohol. Con propina puede llegar a USD 100/persona.</td>
+                    </tr>
+                    <tr>
+                        <td>Cena para dos con vino</td>
+                        <td>USD 150 – 250</td>
+                        <td>Restaurante nivel medio-alto con propina incluida.</td>
+                    </tr>
+                    <tr>
+                        <td>Cerveza en bar</td>
+                        <td>USD 8 – 16</td>
+                        <td>Propina adicional USD 1-2 por bebida esperada.</td>
+                    </tr>
+                    <tr>
+                        <td>Coctel en rooftop</td>
+                        <td>USD 18 – 30</td>
+                        <td>Los rooftops más famosos pueden ser más caros.</td>
+                    </tr>
+                    <tr>
+                        <td>Taxi corto (hasta 3 km)</td>
+                        <td>USD 12 – 25</td>
+                        <td>Con propina 18-20%. Uber similar con surge pricing.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Presupuesto diario económico</h4>
+                <p><strong>USD 100 – 150 por persona</strong></p>
+                <p>Metro, comidas económicas, sin atracciones pagadas ese día. Muy ajustado para NYC.</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Presupuesto diario medio</h4>
+                <p><strong>USD 180 – 280 por persona</strong></p>
+                <p>Metro/taxi, 2 comidas restaurante, alguna atracción. El rango más realista y vendible.</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Presupuesto diario alto</h4>
+                <p><strong>USD 300 – 500+ por persona</strong></p>
+                <p>Taxis, cenas con vino, espectáculos Broadway, experiencias premium, compras.</p>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Cómo presentar los costos</div>
+            <p>
+                No asustes al cliente con los precios, pero tampoco los ocultes. La frase que funciona:
+                "NYC es cara, pero cuando planificás bien el presupuesto, podés disfrutar sin sorpresas.
+                Te voy a dar una tabla de costos reales para que llegues sabiendo exactamente cuánto
+                vas a gastar por día."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     PROPINAS
+══════════════════════════ -->
+<div id="propinas" class="destination-card">
+    <div class="destination-header">
+        <h2>Sistema de Propinas</h2>
+        <p class="destination-subtitle">Diferencia cultural crítica que el pasajero debe entender</p>
+    </div>
+
+    <div class="section">
+        <h3>Por qué las propinas son obligatorias en EE.UU.</h3>
+        <p>
+            Las propinas en Estados Unidos NO son opcionales: son parte del salario de los trabajadores
+            del sector servicios. No dejar propina se considera falta grave de etiqueta y puede generar
+            situaciones muy incómodas. Para muchos latinoamericanos esto genera confusión inicial.
+        </p>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Información obligatoria</div>
+            <p>
+                En NYC, los terminales de pago con tarjeta ya muestran opciones de propina preconfiguradas
+                (18%, 20%, 22% o personalizado). Esto puede sorprender al pasajero si no está preparado.
+                <strong>Informarlo antes evita situaciones incómodas y conflictos.</strong>
+            </p>
+        </div>
+
+        <h3>Guía de propinas por situación</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Situación</th>
+                        <th>Propina esperada</th>
+                        <th>Comentario crítico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Restaurante con servicio de mesa</strong></td>
+                        <td>18% – 22% del total</td>
+                        <td>La más importante. No dejarla es muy mal visto.</td>
+                    </tr>
+                    <tr>
+                        <td>Bar / coctelería</td>
+                        <td>USD 1-2 por bebida o 15-20%</td>
+                        <td>En efectivo en la barra o agregado al pago.</td>
+                    </tr>
+                    <tr>
+                        <td>Café / takeaway</td>
+                        <td>Opcional, USD 1 o 10-15%</td>
+                        <td>Terminal muestra opciones. No obligatorio.</td>
+                    </tr>
+                    <tr>
+                        <td>Taxi amarillo</td>
+                        <td>15% – 20%</td>
+                        <td>Taxímetro muestra opciones al final del viaje.</td>
+                    </tr>
+                    <tr>
+                        <td>Uber / Lyft</td>
+                        <td>10% – 15%</td>
+                        <td>Opcional desde la app, se puede agregar después.</td>
+                    </tr>
+                    <tr>
+                        <td>Maletero de hotel</td>
+                        <td>USD 2-5 por maleta</td>
+                        <td>Siempre en efectivo. Tener billetes pequeños.</td>
+                    </tr>
+                    <tr>
+                        <td>Servicio de habitación</td>
+                        <td>15% – 20%</td>
+                        <td>Verificar si ya está incluido en factura.</td>
+                    </tr>
+                    <tr>
+                        <td>Guía de tour</td>
+                        <td>USD 5-20 por persona</td>
+                        <td>Según duración y calidad del tour.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Cómo explicar las propinas</div>
+            <p class="quote">
+                "En Nueva York las propinas son parte del sistema salarial: los empleados de restaurantes
+                ganan un salario base muy bajo porque se espera que la propina complete su ingreso.
+                En restaurantes, siempre dejá entre 18% y 22% del total. Para facilitar el cálculo:
+                si la cuenta es USD 100, la propina es entre USD 18 y USD 22. Esto va a aparecer
+                como opción en el terminal de pago, así que no te vas a olvidar."
+            </p>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Tip práctico para el pasajero</div>
+            <p>
+                Recomendá llevar <strong>efectivo en billetes pequeños</strong> (USD 1, USD 5, USD 10)
+                específicamente para propinas de maleteros, guías y situaciones donde no se puede pagar
+                con tarjeta. Un buen punto de partida es USD 60-100 en efectivo para propinas durante
+                toda la estadía.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     ALERTAS CRÍTICAS
+══════════════════════════ -->
+<div id="alertas" class="destination-card">
+    <div class="destination-header">
+        <h2>Alertas Críticas</h2>
+        <p class="destination-subtitle">Lo que debes saber para evitar problemas y gestionar expectativas</p>
+    </div>
+
+    <div class="section">
+        <h3>Alertas principales que debes comunicar</h3>
+        <div class="grid-2">
+            <div class="critical-alert">
+                <div class="box-label label-red">⚠ Tamaño de habitaciones</div>
+                <p>
+                    Las habitaciones en NYC son significativamente más pequeñas que las europeas o latinoamericanas.
+                    Un cuarto estándar puede tener 18-25 m². Preparar al pasajero para esta realidad evita quejas.
+                    <strong>Frase útil: "En NYC el hotel es para dormir; la ciudad es para vivir."</strong>
+                </p>
+            </div>
+            <div class="critical-alert">
+                <div class="box-label label-red">⚠ Resort Fee obligatorio</div>
+                <p>
+                    USD 25-80 por noche adicional que la mayoría de hoteles cobra y no aparece en primera búsqueda.
+                    <strong>Siempre informarlo por escrito antes de confirmar reserva.</strong> Es la queja más frecuente.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Seguridad urbana</div>
+                <p>
+                    NYC es segura en zonas turísticas, pero informar precauciones básicas: no mostrar objetos
+                    de valor en metro, no usar celular distraídamente, evitar zonas poco iluminadas de noche,
+                    no llevar más efectivo del necesario.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Distancias y caminata</div>
+                <p>
+                    NYC implica caminar mucho: 15-25k pasos diarios típicos. <strong>Calzado cómodo es fundamental.</strong>
+                    Esto puede definir si el destino es adecuado para clientes con problemas de movilidad.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Clima extremo estacional</div>
+                <p>
+                    Verano: muy caluroso y húmedo (35-38°C). Invierno: bajo cero con viento muy frío.
+                    Informar sobre ropa adecuada según temporada, especialmente para clientes de clima cálido.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Presupuesto realista</div>
+                <p>
+                    El pasajero sin expectativas correctas de costos puede llevarse sorpresa muy desagradable.
+                    Siempre compartir tabla de costos y recomendar presupuesto diario mínimo USD 180/persona.
+                </p>
+            </div>
+        </div>
+
+        <h3>Gestión de expectativas críticas</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Expectativa incorrecta frecuente</th>
+                        <th>Realidad que debes comunicar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>"El hotel es espacioso y lujoso"</td>
+                        <td>Habitaciones pequeñas. El valor está en ubicación, no en espacio.</td>
+                    </tr>
+                    <tr>
+                        <td>"El precio del hotel es lo que pagamos"</td>
+                        <td>Se suman impuestos (~15%) y Resort Fee (USD 25-80/noche) en destino.</td>
+                    </tr>
+                    <tr>
+                        <td>"Puedo hacer todo en 3-4 días"</td>
+                        <td>NYC necesita mínimo 5-6 noches para lo esencial sin apuro.</td>
+                    </tr>
+                    <tr>
+                        <td>"Es como Buenos Aires pero más grande"</td>
+                        <td>Ritmo, costo, idioma y cultura completamente diferentes.</td>
+                    </tr>
+                    <tr>
+                        <td>"La propina es opcional"</td>
+                        <td>Propina es parte del sistema salarial. No dejarla es falta grave.</td>
+                    </tr>
+                    <tr>
+                        <td>"Desayuno está incluido en el hotel"</td>
+                        <td>90% de hoteles NYC no incluyen desayuno. Costo adicional USD 25-45.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     SCRIPT DE VENTA
+══════════════════════════ -->
+<div id="script" class="destination-card">
+    <div class="destination-header">
+        <h2>Script de Venta Consultiva</h2>
+        <p class="destination-subtitle">Argumentarios y frases de cierre para cada situación comercial</p>
+    </div>
+
+    <div class="section">
+        <h3>Apertura — Cómo presentar NYC</h3>
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Apertura general</div>
+            <p class="quote">
+                "Nueva York es uno de esos destinos que todo el mundo tiene en la lista de sueños, y cuando
+                finalmente se hace, supera todas las expectativas. No es solo una ciudad: es una experiencia
+                que cambia la forma de ver el mundo. Tiene algo para cada tipo de viajero, y lo mejor es
+                que cada barrio tiene su propia personalidad. ¿Qué imagen tienen ustedes de Nueva York?
+                ¿Qué es lo que más les gustaría vivir allá?"
+            </p>
+        </div>
+
+        <h3>Scripts por objeción o situación</h3>
+        <div class="grid-2">
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Si preguntan por seguridad</div>
+                <p class="quote">
+                    "Es una pregunta muy válida. Nueva York tiene fama de peligrosa, pero esa imagen es de hace
+                    30 años. Hoy es una de las ciudades más seguras de EE.UU. en zonas turísticas. Con precauciones
+                    básicas como en cualquier gran ciudad del mundo, van a estar completamente tranquilos.
+                    Las zonas donde van a estar son súper seguras."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Si preguntan si es cara</div>
+                <p class="quote">
+                    "Voy a ser honesto: Nueva York no es barata. Pero tampoco es imposible si planificás bien.
+                    La clave está en armar un presupuesto realista desde antes de viajar. Te voy a dar una
+                    tabla de costos reales para que lleguen sabiendo exactamente cuánto van a gastar por día.
+                    Así no hay sorpresas y pueden disfrutar sin preocupaciones."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Si dudan entre NYC y otro destino</div>
+                <p class="quote">
+                    "Nueva York es el único destino del mundo donde podés ver el Empire State, cruzar el
+                    Brooklyn Bridge, ver un show de Broadway y comer en uno de los mejores restaurantes
+                    del planeta, todo en el mismo día. Ningún otro destino te da esa densidad de experiencias
+                    icónicas. ¿Qué les ofrece el otro destino que sienten que Nueva York no tiene?"
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Si viajan con niños</div>
+                <p class="quote">
+                    "Nueva York con niños bien planificada es una experiencia que van a recordar toda la vida.
+                    El Museo de Historia Natural con los dinosaurios, Central Park, el ferry gratuito con
+                    vistas a la Estatua de la Libertad, Times Square... La clave está en no sobrecargar
+                    el itinerario y elegir bien la zona del hotel. ¿Cuántos años tienen los chicos?"
+                </p>
+            </div>
+        </div>
+
+        <h3>Cierres de venta por duración</h3>
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Recomendaciones de duración</div>
+            <p><strong>5 noches:</strong> Mínimo recomendable para ver lo esencial de Manhattan sin apuro. Primera visita básica.</p>
+            <p style="margin-top: 8px;"><strong>6-7 noches:</strong> El formato ideal para la mayoría. Manhattan completo + Brooklyn + Broadway cómodamente.</p>
+            <p style="margin-top: 8px;"><strong>8-10 noches:</strong> Para explorar todos los boroughs, incluir extensiones cercanas y disfrutar sin apuro.</p>
+            <p style="margin-top: 8px;"><strong>10+ noches:</strong> Para repetidores o combinar NYC con Washington D.C., Boston o Niágara.</p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Cierre de venta definitivo</div>
+            <p class="quote">
+                "Mi recomendación profesional es que no se queden con menos de 6 noches. Nueva York es de esos
+                destinos donde cada día descubrís algo nuevo, y si van con poco tiempo van a volver a casa
+                con la sensación de que les faltó. Con 6-7 noches pueden hacer Manhattan completo, cruzar
+                a Brooklyn para las mejores fotos, ver un show de Broadway, y tener tiempo libre para perderse
+                por los barrios y sentir la energía de la ciudad. Eso es lo que convierte un viaje en una
+                experiencia que realmente vale la pena."
+            </p>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Técnica de cierre con valor agregado</div>
+            <p>
+                Siempre terminá la presentación agregando valor: "Además del paquete, te voy a dar una guía
+                detallada con restaurantes recomendados por zona, apps imprescindibles para el metro,
+                y todos los tips que necesitás para que el viaje sea perfecto desde el primer día."
+            </p>
+        </div>
+    </div>
+</div>
+
+</div><!-- /container -->
+</main>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer>
+    <p><strong>Dr. Viaje · Guía comercial definitiva de Nueva York</strong></p>
+    <p>Material exclusivo para agentes de viajes · Capacitación comercial profesional 2024</p>
+    <p>Enfoque estratégico para mercado uruguayo y argentino</p>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     SCROLL TOP BUTTON
+══════════════════════════════════════════ -->
+<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+
+<script>
+// Smooth scroll para navegación
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const headerOffset = 100;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Mostrar/ocultar botón scroll top
+window.addEventListener('scroll', () => {
+    const scrollTop = document.querySelector('.scroll-top');
+    if (window.pageYOffset > 300) {
+        scrollTop.style.opacity = '1';
+        scrollTop.style.visibility = 'visible';
+    } else {
+        scrollTop.style.opacity = '0';
+        scrollTop.style.visibility = 'hidden';
+    }
+});
+</script>
+
+</body>
+</html>

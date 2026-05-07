@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santiago de Chile | Dr. Viaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-purple: #7B2D8E;
+      --primary-orange: #FF9800;
+      --primary-pink: #E91E63;
+      --bg-light: #f8f9fa;
+      --text-dark: #333333;
+      --text-medium: #666666;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --max-width: 1200px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--primary-purple);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .back-link {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(255,255,255,0.25);
+      text-decoration: none;
+      transform: translateX(-3px);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+      color: white;
+      padding: 40px 20px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      top: -120px;
+      right: -80px;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      bottom: -90px;
+      left: -60px;
+    }
+
+    .header-content {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      width: 84px;
+      height: 84px;
+      background: white;
+      color: var(--primary-purple);
+      border-radius: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: 900;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
+    .logo .dr {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    .logo .viaje {
+      font-size: 0.92rem;
+      line-height: 1;
+      margin-top: 3px;
+    }
+
+    .logo .com {
+      font-size: 0.72rem;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .brand-text h1 {
+      font-size: 2.9rem;
+      line-height: 1.1;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .brand-text p {
+      font-size: 1.08rem;
+      opacity: 0.95;
+      max-width: 820px;
+    }
+
+    .nav-container {
+      background: var(--primary-orange);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .nav-links {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-links a {
+      color: white;
+      white-space: nowrap;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.26);
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 35px 20px 60px;
+    }
+
+    .destination-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border-top: 6px solid var(--primary-orange);
+    }
+
+    .destination-header {
+      padding: 34px 34px 18px;
+      background: linear-gradient(135deg, rgba(123,45,142,0.06) 0%, rgba(233,30,99,0.06) 100%);
+      border-bottom: 1px solid #eee;
+    }
+
+    .destination-header h2 {
+      font-size: 2.45rem;
+      color: var(--primary-purple);
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .destination-subtitle {
+      font-size: 1.08rem;
+      color: var(--text-medium);
+      max-width: 950px;
+    }
+
+    .section {
+      padding: 30px 34px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    .section h3 {
+      font-size: 1.45rem;
+      color: var(--primary-purple);
+      margin-bottom: 16px;
+      padding-left: 14px;
+      border-left: 4px solid var(--primary-orange);
+      font-weight: 800;
+    }
+
+    .section p {
+      margin-bottom: 14px;
+      color: var(--text-dark);
+    }
+
+    .section ul {
+      padding-left: 22px;
+      margin: 14px 0 10px;
+    }
+
+    .section li {
+      margin-bottom: 10px;
+    }
+
+    .section strong {
+      color: var(--primary-purple);
+    }
+
+    .info-box,
+    .tip-box,
+    .alert-box,
+    .script-box,
+    .critical-alert {
+      padding: 22px 24px;
+      border-radius: 16px;
+      margin: 22px 0;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+      border-left: 5px solid var(--primary-purple);
+    }
+
+    .tip-box {
+      background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+      border-left: 5px solid var(--primary-orange);
+    }
+
+    .alert-box {
+      background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+      border-left: 5px solid var(--primary-pink);
+    }
+
+    .script-box {
+      background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+      border: 2px solid var(--primary-purple);
+    }
+
+    .critical-alert {
+      background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+      border: 3px solid #d32f2f;
+    }
+
+    .box-title {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: 0.2px;
+    }
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 18px;
+    }
+
+    .mini-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #ececec;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .mini-card h4 {
+      color: var(--primary-purple);
+      font-size: 1.02rem;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .data-table thead th {
+      background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+      color: white;
+      text-align: left;
+      padding: 15px 16px;
+      font-size: 0.96rem;
+      font-weight: 700;
+    }
+
+    .data-table tbody td {
+      background: white;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    footer {
+      margin-top: 34px;
+      background: linear-gradient(135deg, var(--primary-purple) 0%, #5e1f70 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 26px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .scroll-top {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-pink) 100%);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+      transition: transform 0.25s ease;
+    }
+
+    .scroll-top:hover {
+      transform: translateY(-4px);
+    }
+
+    @media (max-width: 860px) {
+      .brand-text h1 {
+        font-size: 2.2rem;
+      }
+
+      .destination-header h2 {
+        font-size: 2rem;
+      }
+
+      .two-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .section,
+      .destination-header {
+        padding: 24px 22px;
+      }
+
+      .logo-section {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      header {
+        padding: 28px 16px 42px;
+      }
+
+      .container {
+        padding: 24px 14px 40px;
+      }
+
+      .brand-text h1 {
+        font-size: 1.9rem;
+      }
+
+      .brand-text p,
+      .destination-subtitle {
+        font-size: 0.98rem;
+      }
+
+      .logo {
+        width: 72px;
+        height: 72px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header>
+    <div class="header-content">
+      <a href="#" class="back-link">← Volver a guías</a>
+
+      <div class="logo-section">
+        <div class="logo">
+          <div class="dr">Dr.</div>
+          <div class="viaje">Viaje</div>
+          <div class="com">.com</div>
+        </div>
+
+        <div class="brand-text">
+          <h1>Santiago de Chile</h1>
+          <p>
+            Guía definitiva para agentes de viajes en Uruguay. Formación comercial con enfoque consultivo,
+            perfil de cliente, zonas recomendadas, operativa, opcionales, objeciones de venta y costo de vida.
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-container">
+    <div class="nav-links">
+      <a href="#presentacion">Presentación</a>
+      <a href="#perfil">Cliente ideal</a>
+      <a href="#caracteristicas">Características</a>
+      <a href="#opcionales">Opcionales</a>
+      <a href="#temporadas">Temporadas</a>
+      <a href="#alojamientos">Alojamientos</a>
+      <a href="#ninos">Niños</a>
+      <a href="#operativa">Operativa</a>
+      <a href="#costovida">Costo de vida</a>
+      <a href="#datos">Datos útiles</a>
+      <a href="#alertas">Alertas</a>
+      <a href="#script">Script de venta</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <article class="destination-card">
+
+      <div class="destination-header">
+        <h2>🏙️ Guía comercial del destino</h2>
+        <p class="destination-subtitle">
+          Santiago se vende como una capital moderna y versátil, ideal para combinar ciudad, gastronomía,
+          compras, miradores, cultura y, según la época, nieve o viñedos. Es un destino muy útil para trabajar
+          con clase media y media-alta del mercado uruguayo.
+        </p>
+      </div>
+
+      <section class="section" id="presentacion">
+        <h3>Presentación del destino</h3>
+        <p>
+          Santiago es uno de los destinos urbanos más completos para vender desde Uruguay porque combina
+          experiencia de ciudad, buena gastronomía, barrios con identidad, compras, atractivos panorámicos
+          y la posibilidad de sumar nieve o viñedos en el mismo viaje.
+        </p>
+        <p>
+          Es un destino muy versátil para distintos perfiles de pasajero y funciona especialmente bien
+          para escapadas de 4 a 6 noches, viajes en pareja, familias con hijos grandes, grupos de amigos
+          y pasajeros que quieren una capital con más contenido que solo compras.
+        </p>
+
+        <div class="info-box">
+          <span class="box-title">📌 Enfoque comercial</span>
+          <p>
+            Santiago no se vende como “solo ciudad”. Se vende como una escapada con contenido:
+            paseos, miradores, gastronomía, compras y experiencias complementarias.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="perfil">
+        <h3>Perfil de cliente ideal y estrategia de detección</h3>
+        <p>
+          El cliente ideal para Santiago suele ser alguien que valora conocer, recorrer y aprovechar el destino.
+          No busca quedarse dentro del hotel, sino tener actividades, moverse por distintos barrios y sentir
+          que el viaje “rinde”.
+        </p>
+
+        <ul>
+          <li>Quiere un viaje con paseos y movimiento.</li>
+          <li>Pregunta por compras, gastronomía o miradores.</li>
+          <li>Busca un destino urbano pero accesible.</li>
+          <li>Ya hizo playa y quiere algo distinto.</li>
+          <li>Puede interesarse por nieve en invierno.</li>
+          <li>Funciona muy bien para escapadas de 4 a 6 noches.</li>
+        </ul>
+
+        <div class="script-box">
+          <span class="box-title">💬 Script de apertura</span>
+          <p>
+            “Si buscás un viaje más activo, Santiago funciona muy bien porque combina ciudad, buena gastronomía,
+            compras, barrios con personalidad y paseos icónicos. Además, según la fecha, podés sumarle nieve,
+            viñedos o escapadas cercanas. ¿Querés un viaje más urbano, más familiar o con foco en nieve y compras?”
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="caracteristicas">
+        <h3>Características turísticas principales</h3>
+        <p>
+          El gran argumento de venta de Santiago es la variedad. Permite vender ciudad moderna, miradores,
+          parques, cultura, gastronomía y vida nocturna dentro de una misma propuesta.
+        </p>
+        <p>
+          El Cerro San Cristóbal es uno de los opcionales urbanos más fuertes del destino porque combina
+          teleférico, funicular, espacios verdes y vistas panorámicas de la ciudad. Sky Costanera también
+          suma mucho valor como actividad breve, moderna y muy visual, ideal para pasajeros que quieren
+          una gran postal de Santiago.
+        </p>
+        <p>
+          A nivel barrial, Bellavista funciona como el sector bohemio y turístico, mientras que Lastarria
+          y Bellas Artes tienen un perfil más cultural, gastronómico y sofisticado.
+        </p>
+
+        <div class="two-columns">
+          <div class="mini-card">
+            <h4>🎡 Imperdibles</h4>
+            <ul>
+              <li>Cerro San Cristóbal</li>
+              <li>Sky Costanera</li>
+              <li>Lastarria y Bellas Artes</li>
+              <li>Bellavista</li>
+              <li>Centro histórico</li>
+            </ul>
+          </div>
+
+          <div class="mini-card">
+            <h4>🧭 Complementos de venta</h4>
+            <ul>
+              <li>Compras</li>
+              <li>Gastronomía</li>
+              <li>Viñedos</li>
+              <li>Nieve en temporada</li>
+              <li>Escapadas de ciudad</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <span class="box-title">💡 Tip de venta</span>
+          <p>
+            En Santiago no conviene vender un hotel para quedarse adentro. Es un destino para salir,
+            caminar barrios, subir a miradores, comer bien y combinar ciudad con experiencias.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="opcionales">
+        <h3>Paseos opcionales recomendados</h3>
+        <p>
+          Uno de los grandes puntos fuertes de Santiago es que permite enriquecer la venta con opcionales
+          de día completo o medio día, según el perfil del pasajero y la época del viaje. Esto ayuda mucho
+          a subir el valor percibido del destino y a personalizar mejor la propuesta.
+        </p>
+
+        <div class="two-columns">
+          <div class="mini-card">
+            <h4>🌊 Viña del Mar y Valparaíso</h4>
+            <p>
+              Es uno de los opcionales más vendibles desde Santiago para pasajeros que quieren sumar mar,
+              paisaje y contraste con la capital.
+            </p>
+            <ul>
+              <li><strong>Valparaíso:</strong> ideal para clientes que valoran cultura, arte, historia, cerros coloridos y caminatas con encanto.</li>
+              <li><strong>Viña del Mar:</strong> funciona mejor para quien busca una ciudad costera más prolija, jardines, paseo marítimo y ambiente más relajado.</li>
+              <li><strong>Perfil ideal:</strong> parejas, adultos, primera vez en Chile, pasajeros que quieren “ver más” en el mismo viaje.</li>
+              <li><strong>Cómo venderlo:</strong> como full day complementario que aporta mar, postales, cultura y un cambio total de ambiente respecto a Santiago.</li>
+            </ul>
+          </div>
+
+          <div class="mini-card">
+            <h4>❄️ Farellones y Cerro Colorado</h4>
+            <p>
+              Es el opcional estrella en temporada de invierno y uno de los más fuertes para familias,
+              grupos y pasajeros que quieren vivir la experiencia de la nieve cerca de la ciudad.
+            </p>
+            <ul>
+              <li><strong>Farellones:</strong> más familiar y lúdico, ideal para jugar en la nieve sin necesidad de ser esquiador.</li>
+              <li><strong>Cerro Colorado / El Colorado:</strong> mejor para clientes que quieren un contacto más directo con ski o snowboard, o un ambiente más de montaña.</li>
+              <li><strong>Perfil ideal:</strong> familias, adolescentes, parejas activas y pasajeros que viajan por primera vez a ver nieve.</li>
+              <li><strong>Cómo venderlo:</strong> como experiencia de día completo que transforma una escapada urbana en un viaje con nieve real.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <span class="box-title">📌 Cómo posicionar Viña del Mar y Valparaíso</span>
+          <p>
+            Este opcional sirve muy bien cuando el pasajero siente que “solo ciudad” puede quedarse corto.
+            Agregar costa, arquitectura, arte y paseo marítimo hace que el viaje se perciba más completo.
+          </p>
+        </div>
+
+        <div class="tip-box">
+          <span class="box-title">💡 Tip de venta</span>
+          <p>
+            Si el cliente viaja 4 noches, proponelo como opcional solo si tiene perfil muy activo.
+            Si viaja 5 o 6 noches, ya se puede vender con más comodidad y sin que el pasajero sienta
+            que “corrió” todo el viaje.
+          </p>
+        </div>
+
+        <div class="alert-box">
+          <span class="box-title">⚠️ Diferencia comercial clave</span>
+          <p>
+            Farellones no se vende igual que Cerro Colorado. Farellones es más fácil para el pasajero
+            familiar o que solo quiere disfrutar la nieve. Cerro Colorado funciona mejor cuando hay una
+            búsqueda más deportiva o de montaña.
+          </p>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Opcional</th>
+              <th>Mejor perfil de cliente</th>
+              <th>Clave de venta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Viña del Mar + Valparaíso</td>
+              <td>Parejas, adultos, primera vez en Chile, pasajeros culturales</td>
+              <td>Mar, contraste con la capital, color, patrimonio y paseo escénico</td>
+            </tr>
+            <tr>
+              <td>Farellones</td>
+              <td>Familias, niños, pasajeros que quieren nieve sin esquiar</td>
+              <td>Experiencia de nieve divertida, accesible y muy visual</td>
+            </tr>
+            <tr>
+              <td>Cerro Colorado / El Colorado</td>
+              <td>Adolescentes, parejas activas, pasajeros deportivos</td>
+              <td>Montaña, ski, snowboard y sensación de centro invernal real</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="critical-alert">
+          <span class="box-title">🚨 Alertas para vender nieve</span>
+          <ul>
+            <li>Estos opcionales dependen mucho de clima, nevadas y estado del camino.</li>
+            <li>Conviene aclarar que la disponibilidad puede variar durante la temporada.</li>
+            <li>En días de mucha demanda, es importante prever reservas y salidas tempranas.</li>
+            <li>Hay que preparar bien al pasajero con ropa adecuada para montaña y bajas temperaturas.</li>
+            <li>El camino tiene curvas y altura, por lo que conviene advertirlo a pasajeros sensibles al traslado.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="temporadas">
+        <h3>Temporadas: cuándo vender qué</h3>
+        <p>
+          Santiago se vende de forma distinta según el objetivo del pasajero. Para ciudad, paseos,
+          gastronomía y compras, las mejores ventanas suelen ser primavera y otoño.
+        </p>
+        <p>
+          Si el cliente busca <strong>Santiago + nieve</strong>, la ventana natural es de junio a agosto.
+          Es una muy buena oportunidad comercial para familias y grupos, porque transforma una capital
+          en una experiencia mucho más completa.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Periodo</th>
+              <th>Cómo venderlo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Junio a agosto</td>
+              <td>Ideal para nieve, escapada invernal, compras y viajes familiares con experiencia de montaña.</td>
+            </tr>
+            <tr>
+              <td>Septiembre a noviembre</td>
+              <td>Muy buena etapa para ciudad, paseos, gastronomía y barrios.</td>
+            </tr>
+            <tr>
+              <td>Diciembre a febrero</td>
+              <td>Sirve para city break y compras, aunque puede haber calor fuerte.</td>
+            </tr>
+            <tr>
+              <td>Marzo a mayo</td>
+              <td>Excelente para clientes que buscan una experiencia urbana más tranquila.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert-box">
+          <span class="box-title">⚠️ Alerta comercial</span>
+          <p>
+            En invierno, si el pasajero viaja con expectativa de nieve, aclarale que en la ciudad puede no nevar
+            aunque sí haya centros de montaña operativos cerca. Esto evita reclamos por falsas expectativas.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="alojamientos">
+        <h3>Alojamientos: qué recomendar según el cliente</h3>
+        <p>
+          El formato recomendado es hotel urbano con desayuno. Santiago no es un destino para all inclusive.
+          La ubicación pesa más que la cantidad de servicios internos del hotel.
+        </p>
+
+        <div class="two-columns">
+          <div class="mini-card">
+            <h4>📍 Providencia</h4>
+            <p><strong>Para quién:</strong> primera vez en Santiago, familias, parejas, pasajeros que buscan equilibrio.</p>
+            <p><strong>Ventajas:</strong> buena conectividad, restaurantes, comercio y acceso cómodo a varios puntos turísticos.</p>
+          </div>
+
+          <div class="mini-card">
+            <h4>📍 Las Condes / El Golf</h4>
+            <p><strong>Para quién:</strong> público premium, corporativo, parejas, clientes que priorizan confort.</p>
+            <p><strong>Ventajas:</strong> hoteles modernos, compras y entorno más ordenado.</p>
+          </div>
+
+          <div class="mini-card">
+            <h4>📍 Lastarria / Bellas Artes</h4>
+            <p><strong>Para quién:</strong> parejas, viajeros culturales y clientes que disfrutan caminar.</p>
+            <p><strong>Ventajas:</strong> mucha identidad, gastronomía, cultura y ambiente urbano atractivo.</p>
+          </div>
+
+          <div class="mini-card">
+            <h4>📍 Bellavista</h4>
+            <p><strong>Para quién:</strong> grupos de amigos, parejas jóvenes, clientes que priorizan salida nocturna.</p>
+            <p><strong>Ventajas:</strong> bohemia, bares, restaurantes y ambiente turístico.</p>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <span class="box-title">💡 Tip de venta</span>
+          <p>
+            En Santiago el barrio hace gran parte del viaje. Si elegís bien la zona, el cliente siente que todo le queda
+            más cómodo y la experiencia mejora muchísimo.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="ninos">
+        <h3>¿Es recomendable para niños?</h3>
+        <p>
+          Sí, pero depende de la edad y del tipo de familia. Santiago funciona mejor para niños cuando la familia
+          entiende que es un viaje urbano, con paseos, traslados y algo de caminata.
+        </p>
+        <p>
+          La combinación de parques, miradores, teleférico y opcionales de nieve hace que el destino gane mucho valor
+          familiar, sobre todo desde los 6 años en adelante.
+        </p>
+
+        <ul>
+          <li><strong>0 a 5 años:</strong> recomendable solo si la familia acepta un ritmo urbano. Mejor Providencia o Las Condes.</li>
+          <li><strong>6 a 12 años:</strong> buen destino por teleférico, parques, miradores y opcionales de nieve.</li>
+          <li><strong>Adolescentes:</strong> muy recomendable por compras, gastronomía, barrios con onda y nieve en temporada.</li>
+        </ul>
+
+        <div class="alert-box">
+          <span class="box-title">⚠️ Alertas para familias</span>
+          <ul>
+            <li>Es un destino con caminatas.</li>
+            <li>No es un viaje de resort.</li>
+            <li>Conviene priorizar buena ubicación antes que tamaño del hotel.</li>
+            <li>En invierno, si combinan con montaña, hay que equipar bien a los niños.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="operativa">
+        <h3>Información operativa: cómo llegar</h3>
+        <p>
+          El aeropuerto de referencia es el <strong>Aeropuerto Arturo Merino Benítez (SCL)</strong>.
+          Es la principal puerta de entrada para pasajeros que llegan a Santiago y permite una operativa sencilla
+          para escapadas urbanas o viajes combinados con montaña.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Zona de alojamiento</th>
+              <th>Tiempo estimado desde SCL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Centro / Plaza de Armas / Lastarria</td>
+              <td>20 a 30 minutos aproximadamente, según tránsito.</td>
+            </tr>
+            <tr>
+              <td>Providencia</td>
+              <td>25 a 35 minutos aproximadamente.</td>
+            </tr>
+            <tr>
+              <td>Las Condes / El Golf</td>
+              <td>30 a 45 minutos aproximadamente, según horario.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-box">
+          <span class="box-title">📌 Recomendación operativa</span>
+          <p>
+            No vendas Santiago pensando solo en “cerca del aeropuerto”. En una ciudad, dormir bien ubicado
+            pesa más que ahorrar unos minutos de traslado inicial.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="costovida">
+        <h3>Costo de vida de referencia en USD</h3>
+        <p>
+          En esta guía solo se incluyen referencias de costo de vida, para ayudar al agente a orientar al pasajero
+          y evitar sorpresas de gasto en destino.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Referencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Café o merienda simple</td>
+              <td>USD 5-10</td>
+            </tr>
+            <tr>
+              <td>Almuerzo sencillo / menú ejecutivo</td>
+              <td>USD 6-15</td>
+            </tr>
+            <tr>
+              <td>Cena media por persona, sin alcohol</td>
+              <td>USD 15-30</td>
+            </tr>
+            <tr>
+              <td>Cena en zona más sofisticada</td>
+              <td>USD 30+</td>
+            </tr>
+            <tr>
+              <td>Metro</td>
+              <td>Alrededor de USD 1 por tramo</td>
+            </tr>
+            <tr>
+              <td>Taxi o app en trayecto corto o medio</td>
+              <td>USD 5-12 aprox.</td>
+            </tr>
+            <tr>
+              <td>Presupuesto diario perfil económico</td>
+              <td>USD 35-55</td>
+            </tr>
+            <tr>
+              <td>Presupuesto diario perfil medio</td>
+              <td>USD 60-100</td>
+            </tr>
+            <tr>
+              <td>Presupuesto diario perfil cómodo/premium</td>
+              <td>USD 120+</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="script-box">
+          <span class="box-title">💬 Frase útil para cotización</span>
+          <p>
+            “Para gastos personales en Santiago, calculá un promedio de USD 60 a 100 por persona por día si querés
+            moverte cómodo, comer bien y hacer vida urbana sin contar el hotel.”
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="datos">
+        <h3>Datos históricos e interesantes para enriquecer tu venta</h3>
+        <p>
+          Santiago gana mucho valor comercial porque permite vender ciudad y, al mismo tiempo, sumar contraste:
+          barrios culturales, zonas bohemias, montaña, nieve y costa en una misma escapada.
+        </p>
+        <p>
+          Si el pasajero quiere una experiencia más artística o con identidad, Lastarria y Bellavista suman
+          muchísimo. Si busca una postal moderna de ciudad, Sky Costanera es uno de los mejores argumentos
+          visuales de la propuesta.
+        </p>
+        <p>
+          Y si el viaje incluye invierno, el hecho de poder ver nieve a poca distancia de la ciudad transforma
+          por completo la percepción del destino y lo vuelve mucho más memorable.
+        </p>
+      </section>
+
+      <section class="section" id="alertas">
+        <h3>Alertas críticas para evitar reclamos</h3>
+
+        <div class="critical-alert">
+          <span class="box-title">🚨 Puntos clave a aclarar antes de vender</span>
+          <ul>
+            <li>Santiago no es playa ni resort; es ciudad y experiencia urbana.</li>
+            <li>La elección del barrio es determinante en la experiencia final.</li>
+            <li>El tránsito puede alterar bastante los tiempos de traslado.</li>
+            <li>En invierno puede hacer frío importante, sobre todo si se combina con montaña.</li>
+            <li>Si viajan menores, conviene verificar con tiempo permisos y documentación vigente.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="script">
+        <h3>Script de venta consultiva completo</h3>
+
+        <div class="script-box">
+          <span class="box-title">💬 Objeción: “No sé si Santiago es para mí porque no quiero solo ciudad”</span>
+          <p>
+            “Justamente Santiago funciona porque no es solo ciudad. Tenés barrios con mucha personalidad, miradores,
+            parques enormes, gastronomía, compras y, según la época, podés sumarle nieve, costa o viñedos.”
+          </p>
+        </div>
+
+        <div class="script-box">
+          <span class="box-title">💬 Objeción: “Voy con niños”</span>
+          <p>
+            “Se puede vender bien con niños, pero hay que elegir la zona correcta y no pensarlo como un viaje de resort.
+            Si nos enfocamos en Providencia o Las Condes y armamos paseos como teleférico, parques y, en invierno,
+            un buen opcional de nieve, puede funcionar muy bien.”
+          </p>
+        </div>
+
+        <div class="script-box">
+          <span class="box-title">💬 Objeción: “Quiero algo cómodo”</span>
+          <p>
+            “Entonces la clave no es gastar más en hotel, sino dormir bien ubicado. En Santiago la zona define mucho
+            la experiencia: si elegimos bien, el cliente gana tiempo y comodidad.”
+          </p>
+        </div>
+
+        <div class="script-box">
+          <span class="box-title">💬 Cierre de venta</span>
+          <p>
+            “Para aprovechar Santiago de verdad, te recomiendo mínimo 4 noches. Con eso ya podés recorrer barrios,
+            hacer miradores y disfrutar la ciudad sin correr. Si además querés sumar nieve, costa o viñedos,
+            lo ideal es pensar 5 o 6 noches.”
+          </p>
+        </div>
+      </section>
+
+    </article>
+
+    <footer>
+      <p><strong>Dr. Viaje</strong> · Guía interna de capacitación comercial</p>
+      <p>Santiago de Chile · Formato unificado para futuras guías</p>
+    </footer>
+  </main>
+
+  <button class="scroll-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+</body>
+</html>

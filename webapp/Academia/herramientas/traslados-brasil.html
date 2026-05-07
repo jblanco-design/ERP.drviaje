@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traslados Brasil 2026 · Dr.Viaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <style>
+    :root {
+      --primary:#7B2D8E;
+      --pink:#E91E63;
+      --orange:#FF9800;
+      --navy:#16324f;
+      --blue:#2457a6;
+      --blue-soft:#edf4ff;
+      --green-b:#1d7a46;
+      --green-soft:#e9f8ef;
+      --amber-b:#a66a00;
+      --amber-soft:#fff6e5;
+      --red-b:#b42318;
+      --red-soft:#fff0f0;
+      --line:#dbe4f0;
+      --muted:#5b6b7f;
+      --text:#1f2a37;
+      --card:#ffffff;
+      --shadow:0 10px 30px rgba(22,50,79,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
+
+    /* ── HERO ── */
+    .hero{
+      background:linear-gradient(135deg,var(--primary) 0%,#9c27b0 40%,var(--pink) 100%);
+      color:#fff;padding:52px 24px 44px;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .hero::before{content:"";position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.05);top:-130px;right:-80px;}
+    .hero::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:rgba(255,152,0,.10);bottom:-80px;left:-60px;}
+    .hero .eyebrow{
+      display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+      padding:7px 14px;border-radius:999px;margin-bottom:16px;position:relative;z-index:1;
+    }
+    .hero h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.9rem,4.5vw,3rem);
+      margin-bottom:12px;position:relative;z-index:1;line-height:1.12;
+    }
+    .hero p{max-width:720px;margin:0 auto 0;font-size:1rem;line-height:1.7;opacity:.93;position:relative;z-index:1;}
+    .hero-stats{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px;position:relative;z-index:1;}
+    .hero-stat{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:14px 20px;text-align:center;min-width:110px;}
+    .hero-stat strong{display:block;font-size:1.45rem;font-weight:800;color:#ffd36a;}
+    .hero-stat span{font-size:11px;opacity:.9;letter-spacing:.02em;}
+
+    /* ── WRAP ── */
+    .wrap{max-width:1100px;margin:0 auto;padding:40px 24px 80px;}
+
+    /* ── SEARCH PANEL ── */
+    .search-panel{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      padding:28px;box-shadow:var(--shadow);margin-bottom:28px;
+      position:sticky;top:78px;z-index:10;
+    }
+    .search-title{
+      display:flex;align-items:center;gap:10px;
+      font-size:1.05rem;font-weight:800;color:var(--navy);
+      margin-bottom:20px;
+    }
+    .search-title svg{color:var(--orange);flex-shrink:0;}
+
+    .filters-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+    }
+    .filter-group{display:flex;flex-direction:column;gap:6px;}
+    .filter-group label{
+      font-size:.78rem;font-weight:800;color:var(--primary);
+      text-transform:uppercase;letter-spacing:.06em;
+    }
+    .filter-group select,
+    .filter-group input{
+      padding:11px 14px;
+      border:2px solid var(--line);border-radius:12px;
+      font-size:.92rem;color:var(--text);
+      background:#f8fafc;font-family:'Inter',sans-serif;
+      transition:border-color .2s,box-shadow .2s,transform .2s;
+    }
+    .filter-group select:focus,
+    .filter-group input:focus{
+      outline:none;border-color:var(--pink);background:#fff;
+      box-shadow:0 0 0 3px rgba(233,30,99,.1);
+      transform:translateY(-1px);
+    }
+    .filter-group select:hover,
+    .filter-group input:hover{border-color:var(--primary);}
+
+    /* ── RESULTS PANEL ── */
+    .results-panel{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      box-shadow:var(--shadow);overflow:hidden;
+    }
+    .results-header{
+      background:linear-gradient(135deg,var(--primary),#9c27b0);
+      color:#fff;padding:16px 24px;
+      display:flex;justify-content:space-between;align-items:center;
+      font-weight:700;font-size:1rem;
+    }
+    .results-count{
+      background:var(--pink);color:#fff;
+      padding:5px 14px;border-radius:999px;
+      font-size:.85rem;font-weight:800;
+    }
+
+    .results-container{max-height:640px;overflow-y:auto;}
+    .results-container::-webkit-scrollbar{width:7px;}
+    .results-container::-webkit-scrollbar-track{background:#f1f5f9;}
+    .results-container::-webkit-scrollbar-thumb{background:var(--primary);border-radius:4px;opacity:.7;}
+    .results-container::-webkit-scrollbar-thumb:hover{background:var(--pink);}
+
+    /* región separador */
+    .region-header{
+      background:linear-gradient(90deg,rgba(255,152,0,.1),rgba(123,45,142,.06));
+      color:var(--primary);
+      padding:12px 24px;
+      font-weight:800;font-size:.82rem;
+      text-transform:uppercase;letter-spacing:.06em;
+      border-left:5px solid var(--orange);
+      position:sticky;top:0;z-index:5;
+      backdrop-filter:blur(8px);
+    }
+
+    /* item de traslado */
+    .transfer-item{
+      padding:18px 24px;
+      border-bottom:1px solid var(--line);
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:20px;align-items:center;
+      transition:background .2s,border-left .2s,padding-left .2s,transform .2s;
+    }
+    .transfer-item:last-child{border-bottom:none;}
+    .transfer-item:hover{
+      background:linear-gradient(90deg,rgba(233,30,99,.025),rgba(255,152,0,.02));
+      border-left:4px solid var(--pink);
+      padding-left:calc(24px - 4px);
+      transform:translateX(2px);
+    }
+    .transfer-info h3{
+      font-size:.97rem;font-weight:700;color:var(--navy);
+      margin-bottom:5px;line-height:1.4;
+    }
+    .transfer-details{font-size:.83rem;color:var(--muted);line-height:1.5;}
+    .transfer-details strong{color:var(--primary);}
+
+    /* precio */
+    .price-box{
+      text-align:right;
+      background:linear-gradient(135deg,rgba(233,30,99,.06),rgba(255,152,0,.05));
+      padding:12px 16px;border-radius:14px;
+      border:2px solid rgba(233,30,99,.12);
+      min-width:130px;flex-shrink:0;
+    }
+    .price-amount{
+      font-size:1.65rem;font-weight:900;color:var(--pink);
+      line-height:1;margin-bottom:3px;
+    }
+    .price-label{
+      font-size:.7rem;color:var(--primary);
+      text-transform:uppercase;font-weight:700;letter-spacing:.05em;
+    }
+
+    /* sin resultados */
+    .no-results{
+      padding:56px 24px;text-align:center;color:var(--muted);
+    }
+    .no-results svg{
+      width:52px;height:52px;color:var(--orange);opacity:.6;
+      margin:0 auto 14px;display:block;
+    }
+    .no-results h3{color:var(--primary);margin-bottom:6px;font-size:1.1rem;}
+    .no-results p{font-size:.9rem;}
+
+    /* footer notas */
+    .footer-notes{
+      background:var(--navy);color:#fff;
+      padding:18px 24px;font-size:.85rem;line-height:1.65;
+    }
+    .footer-notes strong{color:#ffd36a;}
+
+    /* ── ALERT ── */
+    .alert{
+      display:flex;gap:14px;align-items:flex-start;
+      background:var(--amber-soft);border:1px solid #ffc86b;border-radius:16px;
+      padding:16px 20px;margin-bottom:24px;
+    }
+    .alert-icon{font-size:1.4rem;flex-shrink:0;}
+    .alert strong{display:block;font-size:.9rem;color:var(--amber-b);margin-bottom:3px;}
+    .alert p{font-size:.85rem;color:#664d00;line-height:1.6;margin:0;}
+
+    /* ── SCROLL TOP ── */
+    .scroll-top{
+      position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+      border-radius:50%;border:none;cursor:pointer;
+      background:var(--primary);color:#fff;font-size:1.2rem;
+      box-shadow:0 6px 20px rgba(0,0,0,.2);
+      opacity:0;visibility:hidden;transition:.3s ease;z-index:999;
+    }
+    .scroll-top.visible{opacity:1;visibility:visible;}
+    .scroll-top:hover{background:var(--pink);transform:translateY(-3px);}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:760px){
+      .filters-grid{grid-template-columns:1fr;}
+      .transfer-item{grid-template-columns:1fr;gap:12px;}
+      .price-box{text-align:left;}
+      .search-panel{position:static;border-radius:16px;padding:20px;}
+      .results-header{font-size:.9rem;padding:14px 16px;}
+      .region-header{padding:10px 16px;}
+      .transfer-item{padding:16px;}
+      .hero-stats{gap:8px;}
+      .hero-stat{min-width:80px;padding:10px 12px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- navbar global -->
+<script src="../js/navbar-inject.js"></script>
+
+<!-- ══════════════════════════ HERO ══════════════════════════ -->
+<header class="hero">
+  <span class="eyebrow">🇧🇷 Herramientas · Dr.Viaje</span>
+  <h1>Traslados Brasil 2026</h1>
+  <p>Buscador de tarifas netas por persona — servicio regular. Filtrá por destino, tipo de servicio o buscá libremente.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong id="statTotal">50+</strong><span>Traslados</span></div>
+    <div class="hero-stat"><strong>10</strong><span>Regiones</span></div>
+    <div class="hero-stat"><strong>USD</strong><span>Tarifa neta</span></div>
+    <div class="hero-stat"><strong>2026</strong><span>Temporada</span></div>
+  </div>
+</header>
+
+<!-- ══════════════════════════ MAIN ══════════════════════════ -->
+<main class="wrap">
+
+  <!-- ALERTA CONDICIONES -->
+  <div class="alert">
+    <span class="alert-icon">⚠️</span>
+    <div>
+      <strong>Condiciones generales — leer antes de cotizar</strong>
+      <p>Tarifas netas en USD por persona, base servicio regular. Mínimo 2 pasajeros. <strong>No válidas</strong> para feriados, Carnaval, congresos, Rock in Rio, eventos especiales, Fórmula 1, Navidad ni Año Nuevo. Sujeto a confirmación de disponibilidad y cambios sin previo aviso. Consultar suplementos por servicios privados, horarios nocturnos o equipaje extra.</p>
+    </div>
+  </div>
+
+  <!-- PANEL DE BÚSQUEDA -->
+  <section class="search-panel" aria-label="Filtros de búsqueda">
+    <div class="search-title">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      Buscar Traslados
+    </div>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="regionFilter">Región / Destino</label>
+        <select id="regionFilter">
+          <option value="">Todos los destinos</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="serviceFilter">Tipo de Servicio</label>
+        <select id="serviceFilter">
+          <option value="">Todos los servicios</option>
+          <option value="roundtrip">Ida y Vuelta</option>
+          <option value="oneway">Solo Ida</option>
+          <option value="citytour">Traslado + City Tour</option>
+          <option value="hotel">Entre Hoteles</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="searchInput">Búsqueda libre</label>
+        <input type="text" id="searchInput" placeholder="Ej: búzios, GIG, natal, lancha…">
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL DE RESULTADOS -->
+  <section class="results-panel" aria-label="Resultados">
+    <div class="results-header">
+      <span>Resultados de búsqueda</span>
+      <span class="results-count" id="resultsCount">0 traslados</span>
+    </div>
+    <div class="results-container" id="resultsContainer">
+      <!-- Contenido dinámico -->
+    </div>
+    <div class="footer-notes">
+      <strong>Recordá:</strong> Tarifas netas en USD · Por persona · Base regular · Mínimo 2 pax ·
+      No válidas en feriados, Carnaval, Rock in Rio, F1, Navidad y Año Nuevo ·
+      Consultar suplementos privados y horarios nocturnos.
+    </div>
+  </section>
+
+</main>
+
+<!-- SCROLL TOP -->
+<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button>
+
+<script>
+  // ── BASE DE DATOS COMPLETA DE TRASLADOS BRASIL 2026 ──────────────────
+  const trasladosData = [
+    // RIO DE JANEIRO
+    { region:"RIO DE JANEIRO", service:"Transfer In + Out (Arpt GIG / Hotel Zona Sur / Arpt GIG)", price:35, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Tarifas NET. Mínimo 2 pax. No válidas para feriados.", type:"roundtrip" },
+    { region:"RIO DE JANEIRO", service:"Transfer In + Out (Arpt GIG / Hotel Barra da Tijuca / Arpt GIG)", price:49, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Tarifas NET. Mínimo 2 pax. No válidas para feriados.", type:"roundtrip" },
+
+    // BÚZIOS | CABO FRIO | ARRAIAL DO CABO
+    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Arpt GIG / Búzios / Arpt GIG)", price:49, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Hotel Zona Sur / Búzios / Hotel Zona Sur)", price:49, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Hotel Barra da Tijuca / Búzios / Hotel Barra da Tijuca)", price:71, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Arpt GIG / Cabo Frio / Arpt GIG)", price:76, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", service:"Transfer In + Out (Arpt GIG / Arraial do Cabo / Arpt GIG)", price:78, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+
+    // ANGRA DOS REIS | PARATY | ILHA GRANDE
+    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / Angra dos Reis / Arpt GIG)", price:118, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / Paraty / Arpt GIG)", price:120, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / Ilha Grande / Arpt GIG)*", price:151, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"*Incluye lancha", type:"roundtrip" },
+    { region:"ANGRA DOS REIS | PARATY | ILHA GRANDE", service:"Transfer In + Out (Arpt GIG / I.G. (Araçatiba o Praia Vermelha) / Arpt GIG)*", price:176, currency:"USD", validity:"01/01/2026 - 20/12/2026", notes:"*Incluye lancha", type:"roundtrip" },
+
+    // SÃO PAULO
+    { region:"SÃO PAULO", service:"Transfer In + Out (Arpt GRU / Hotel Centro / Arpt GRU) - PVT", price:89, currency:"USD", validity:"01/02/2026 - 30/06/2026", notes:"Servicio privado", type:"roundtrip" },
+
+    // SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Arpt SSA / Hotel SSA / Arpt SSA)", price:20, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"Por persona, base regular", type:"roundtrip" },
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out + City Tour Histórico (Arpt SSA / Hotel SSA / Arpt SSA)*", price:33, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"*City tour incluido", type:"citytour" },
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In or Out (Arpt SSA / Hotel SSA) - One Way", price:11, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"Solo ida", type:"oneway" },
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer Hotel en Salvador / Hotel Litoral Norte o viceversa", price:40, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"Entre hoteles", type:"hotel" },
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Arpt SSA / Litoral Norte** / Arpt SSA)", price:40, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"**Praia do Forte, Imbassaí, Costa do Sauípe, Guarajuba", type:"roundtrip" },
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In or Out (Arpt SSA / Litoral Norte**) - One Way", price:29, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"**Praia do Forte, Imbassaí, Costa do Sauípe, Guarajuba", type:"oneway" },
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Hotel SSA / MSP / Hotel SSA) Semiterrestre***", price:75, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"***Bus+Lancha. Salida 8:30am Hoteles SSA, retorno 4:30pm Terminal Marítimo MSP", type:"roundtrip" },
+    { region:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", service:"Transfer In + Out (Hotel SSA / MSP / Hotel SSA) Catamarã***", price:88, currency:"USD", validity:"01/04/2026 - 30/03/2027", notes:"***Bus+Catamarã. Salida 8:30am Hoteles SSA, retorno 4:30pm Terminal Marítimo MSP", type:"roundtrip" },
+
+    // PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ
+    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Hotel Porto Seguro / Arpt BPS)", price:24, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Hotel Arraial D'Ajuda / Arpt BPS)", price:35, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa", type:"roundtrip" },
+    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Hotel Santo André (Sta Cruz Cabrália) / Arpt BPS)", price:53, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Santa Cruz Cabrália", type:"roundtrip" },
+    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Trancoso / Arpt BPS)", price:71, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa", type:"roundtrip" },
+    { region:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", service:"Transfer In + Out (Arpt BPS / Santo André / Arpt BPS)", price:84, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+
+    // NATAL | PIPA | TOUROS
+    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (Arpt NAT / Hotel Natal / Arpt NAT)", price:31, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (NAT) + City Tour d'Playa Carnaupiim", price:37, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Con city tour", type:"citytour" },
+    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (Arpt NAT / Pipa / Hotel NAT)", price:78, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"NATAL | PIPA | TOUROS", service:"Transfer In + Out (Arpt NAT / Touros / Arpt NAT)", price:85, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"NATAL | PIPA | TOUROS", service:"Transfer Triangular (Arpt NAT / FH NAT / FH Pipa / Arpt NAT)", price:83, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular", type:"roundtrip" },
+    { region:"NATAL | PIPA | TOUROS", service:"Transfer Triangular (Arpt NAT / FH Pipa / FH NAT / Arpt NAT)", price:100, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular", type:"roundtrip" },
+
+    // JOÃO PESSOA | CONDE
+    { region:"JOÃO PESSOA | CONDE", service:"Transfer In + Out (Arpt JPA / Hotel JP / Arpt JPA)", price:29, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+    { region:"JOÃO PESSOA | CONDE", service:"Transfer In + Out (Arpt JPA / Arpt JPA)", price:80, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Servicio regular", type:"roundtrip" },
+
+    // FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS
+    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel FLN Centro / Arpt FLN)", price:29, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Centro de Florianópolis", type:"roundtrip" },
+    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel FLN Canasvieiras / Arpt FLN)", price:33, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Canasvieiras", type:"roundtrip" },
+    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Canasvieiras do Santinho / Arpt FLN)", price:33, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"Canasvieiras do Santinho", type:"roundtrip" },
+    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel Balneário Camboriú* / Arpt FLN)", price:62, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"*Camboriú, Praia dos Carnés, Camboriú do Santo Amaro, Itajaí y alrededores", type:"roundtrip" },
+    { region:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", service:"Transfer In + Out (Arpt FLN / Hotel Bombinhas** / Arpt FLN)", price:94, currency:"USD", validity:"01/01/2026 - 31/12/2026", notes:"**Bombinhas, Itapema, Mariscal, Piçarras, Porto Belo, Praia y alrededores", type:"roundtrip" }
+  ];
+
+  // ── REFERENCIAS DOM ───────────────────────────────────────
+  const regionFilter    = document.getElementById('regionFilter');
+  const serviceFilter   = document.getElementById('serviceFilter');
+  const searchInput     = document.getElementById('searchInput');
+  const resultsContainer= document.getElementById('resultsContainer');
+  const resultsCount    = document.getElementById('resultsCount');
+  const statTotal       = document.getElementById('statTotal');
+  let filteredData = [...trasladosData];
+
+  // ── NORMALIZAR TEXTO (sin tildes, minúsculas) ─────────────
+  function normalize(text) {
+    return text.toString().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  // ── POBLAR SELECT DE REGIONES ─────────────────────────────
+  function populateRegionFilter() {
+    const regions = [...new Set(trasladosData.map(i => i.region))]
+      .sort((a, b) => normalize(a).localeCompare(normalize(b)));
+    regions.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r; opt.textContent = r;
+      regionFilter.appendChild(opt);
+    });
+  }
+
+  // ── APLICAR FILTROS ───────────────────────────────────────
+  function applyFilters() {
+    const rVal = normalize(regionFilter.value);
+    const sVal = serviceFilter.value;
+    const qVal = normalize(searchInput.value.trim());
+
+    filteredData = trasladosData.filter(item => {
+      const ir = normalize(item.region);
+      const is = normalize(item.service);
+      const in_ = normalize(item.notes || '');
+      const matchRegion  = !rVal || ir.includes(rVal);
+      const matchService = !sVal || item.type === sVal;
+      const matchSearch  = !qVal || ir.includes(qVal) || is.includes(qVal) || in_.includes(qVal);
+      return matchRegion && matchService && matchSearch;
+    });
+    renderResults();
+  }
+
+  // ── RENDERIZAR RESULTADOS ─────────────────────────────────
+  function renderResults() {
+    resultsCount.textContent = `${filteredData.length} traslado${filteredData.length !== 1 ? 's' : ''}`;
+
+    if (filteredData.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="no-results">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <h3>Sin resultados</h3>
+          <p>Probá con otros filtros o términos de búsqueda más generales.</p>
+        </div>`;
+      return;
+    }
+
+    // Agrupar por región (manteniendo orden de aparición)
+    const groups = {};
+    filteredData.forEach(item => {
+      if (!groups[item.region]) groups[item.region] = [];
+      groups[item.region].push(item);
+    });
+
+    let html = '';
+    Object.entries(groups).forEach(([region, items]) => {
+      html += `<div class="region-header">🇧🇷 ${region}</div>`;
+      items.forEach(item => {
+        html += `
+          <div class="transfer-item">
+            <div class="transfer-info">
+              <h3>${item.service}</h3>
+              <div class="transfer-details">
+                <strong>Validez:</strong> ${item.validity}
+                ${item.notes ? `<br><strong>Obs.:</strong> ${item.notes}` : ''}
+              </div>
+            </div>
+            <div class="price-box">
+              <div class="price-amount">${item.currency} ${item.price}</div>
+              <div class="price-label">por persona</div>
+            </div>
+          </div>`;
+      });
+    });
+    resultsContainer.innerHTML = html;
+  }
+
+  // ── INICIALIZAR ───────────────────────────────────────────
+  function init() {
+    statTotal.textContent = trasladosData.length;
+    populateRegionFilter();
+    renderResults();
+    regionFilter.addEventListener('change', applyFilters);
+    serviceFilter.addEventListener('change', applyFilters);
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+
+  // ── SCROLL TOP ────────────────────────────────────────────
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.pageYOffset > 300));
+  scrollBtn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+</script>
+</body>
+</html>

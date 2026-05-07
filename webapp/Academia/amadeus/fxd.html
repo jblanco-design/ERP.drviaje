@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amadeus FXD · Master Pricer · Dr.Viaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <style>
+    :root {
+      --primary:#7B2D8E;
+      --pink:#E91E63;
+      --orange:#FF9800;
+      --navy:#16324f;
+      --blue:#2457a6;
+      --blue-soft:#edf4ff;
+      --green:#147a46;
+      --green-soft:#edf9f1;
+      --amber:#a66300;
+      --amber-soft:#fff7e8;
+      --red:#b42318;
+      --red-soft:#fff1f1;
+      --purple:#6941c6;
+      --purple-soft:#f5f1ff;
+      --line:#d9e4f2;
+      --muted:#5b6b7f;
+      --text:#1f2a37;
+      --surface:#ffffff;
+      --surface-2:#f8fbff;
+      --shadow:0 12px 32px rgba(22,50,79,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(123,45,142,.07), transparent 26%),
+        radial-gradient(circle at top right, rgba(233,30,99,.07), transparent 24%),
+        #f3f7fc;
+      color:var(--text);
+      padding-top:0;
+    }
+
+    /* ── HERO ── */
+    .fxd-hero{
+      background:
+        linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.01)),
+        linear-gradient(135deg, var(--primary) 0%, #9c27b0 45%, var(--pink) 100%);
+      color:#fff;
+      padding:56px 24px 48px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .fxd-hero::before{content:"";position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.07);filter:blur(2px);top:-130px;right:-60px;}
+    .fxd-hero::after{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,152,0,.10);bottom:-80px;left:-50px;}
+    .fxd-hero .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);
+      padding:7px 14px;border-radius:999px;margin-bottom:16px;
+      position:relative;z-index:1;
+    }
+    .fxd-hero h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.9rem,4vw,3rem);
+      margin-bottom:14px;position:relative;z-index:1;line-height:1.1;max-width:900px;margin-left:auto;margin-right:auto;
+    }
+    .fxd-hero p{
+      max-width:860px;margin:0 auto 24px;
+      font-size:1.02rem;line-height:1.72;
+      opacity:.93;position:relative;z-index:1;
+    }
+    .fxd-hero-btns{
+      display:flex;flex-wrap:wrap;gap:14px;justify-content:center;
+      position:relative;z-index:1;margin-bottom:28px;
+    }
+    .btn-back{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(255,255,255,.15);color:#fff;
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:999px;padding:12px 22px;
+      font-weight:700;font-size:.9rem;
+      text-decoration:none;transition:.2s;
+    }
+    .btn-back:hover{background:rgba(255,255,255,.25);transform:translateY(-2px);}
+
+    .fxd-hero-stats{
+      display:grid;grid-template-columns:repeat(4,1fr);
+      gap:14px;max-width:760px;margin:0 auto;
+      position:relative;z-index:1;
+    }
+    .fxd-hero-stat{
+      background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;padding:16px;backdrop-filter:blur(6px);
+    }
+    .fxd-hero-stat strong{display:block;font-size:22px;margin-bottom:5px;}
+    .fxd-hero-stat span{display:block;font-size:12px;opacity:.9;line-height:1.4;}
+
+    /* ── WRAP ── */
+    .wrap{max-width:1240px;margin:0 auto;padding:48px 24px 80px;}
+
+    /* ── STICKY NAV ── */
+    .quick-nav{
+      display:flex;flex-wrap:wrap;gap:10px;
+      margin:0 0 28px;padding:10px;
+      border-radius:20px;border:1px solid var(--line);
+      background:rgba(255,255,255,.88);backdrop-filter:blur(8px);
+      box-shadow:var(--shadow);
+      position:sticky;top:78px;z-index:8;
+    }
+    .quick-nav a{
+      text-decoration:none;color:var(--navy);
+      background:#fff;border:1px solid var(--line);
+      padding:10px 14px;border-radius:999px;
+      font-size:13px;font-weight:700;transition:.2s;
+    }
+    .quick-nav a:hover{background:var(--blue-soft);border-color:#c9dafc;transform:translateY(-1px);}
+
+    /* ── WARNING BANNER ── */
+    .warning{
+      display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;
+      background:linear-gradient(180deg,#fff7f7,#fff1f1);
+      border:1px solid #f1c6c6;color:var(--red);
+      border-radius:22px;padding:18px 22px;
+      box-shadow:var(--shadow);margin-bottom:28px;
+    }
+    .warning .icon{
+      width:46px;height:46px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      background:#fff;border:1px solid #f1c6c6;font-size:22px;
+    }
+    .warning strong{display:block;margin-bottom:6px;font-size:1rem;}
+    .warning p{margin:0;font-size:.9rem;line-height:1.6;color:var(--red);}
+
+    /* ── SECTION ── */
+    .section-title{
+      font-family:'Playfair Display',serif;
+      font-size:1.5rem;color:var(--navy);
+      margin:34px 0 10px;scroll-margin-top:130px;
+    }
+    .section-note{color:var(--muted);font-size:.93rem;line-height:1.74;margin-bottom:18px;max-width:1040px;}
+
+    /* ── ACADEMY STRIP ── */
+    .academy-strip{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;margin-bottom:18px;
+    }
+    .academy-box{
+      background:var(--surface);border:1px solid var(--line);
+      border-radius:20px;padding:16px;box-shadow:var(--shadow);
+    }
+    .mini-icon{
+      width:38px;height:38px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      margin-bottom:12px;font-size:18px;
+      background:var(--blue-soft);color:var(--blue);
+    }
+    .academy-box strong{display:block;margin-bottom:6px;font-size:.88rem;color:var(--navy);}
+    .academy-box span{display:block;font-size:.82rem;line-height:1.55;color:var(--muted);}
+
+    /* ── CHIPS ── */
+    .chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;margin-bottom:28px;}
+    .chip{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:8px 12px;border-radius:999px;
+      background:#fff;border:1px solid var(--line);
+      font-size:.78rem;font-weight:700;color:var(--navy);
+    }
+
+    /* ── FLOW ── */
+    .flow{
+      display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:14px;margin:14px 0 28px;
+    }
+    .flow-step{
+      background:var(--surface);border:1px solid var(--line);
+      border-radius:20px;padding:16px;
+      text-align:center;box-shadow:var(--shadow);
+    }
+    .step-no{
+      width:34px;height:34px;margin:0 auto 10px;
+      border-radius:999px;display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:800;
+      background:var(--blue-soft);color:var(--blue);
+    }
+    .flow-step strong{display:block;color:var(--navy);font-size:.9rem;margin-bottom:5px;}
+    .flow-step span{display:block;color:var(--muted);font-size:.82rem;line-height:1.45;}
+
+    /* ── CARDS ── */
+    .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:28px;}
+    .card-wide{grid-column:1 / -1;}
+
+    .card{
+      background:var(--surface);border:1px solid var(--line);
+      border-radius:24px;padding:22px;
+      box-shadow:var(--shadow);position:relative;overflow:hidden;
+    }
+    .card::before{
+      content:"";position:absolute;inset:0 auto 0 0;
+      width:6px;background:var(--blue);
+    }
+    .card.green::before{background:var(--green);}
+    .card.amber::before{background:var(--amber);}
+    .card.red::before{background:var(--red);}
+    .card.purple::before{background:var(--purple);}
+
+    .card-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:14px;}
+    .card-title{display:flex;gap:12px;align-items:flex-start;}
+
+    .icon-badge{
+      width:46px;height:46px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;background:var(--blue-soft);color:var(--blue);flex:0 0 auto;
+    }
+    .card.green .icon-badge{background:var(--green-soft);color:var(--green);}
+    .card.amber .icon-badge{background:var(--amber-soft);color:var(--amber);}
+    .card.red .icon-badge{background:var(--red-soft);color:var(--red);}
+    .card.purple .icon-badge{background:var(--purple-soft);color:var(--purple);}
+
+    .badge{
+      display:inline-block;font-size:11px;font-weight:800;
+      letter-spacing:.04em;text-transform:uppercase;
+      padding:6px 10px;border-radius:999px;
+      background:var(--blue-soft);color:var(--blue);margin-bottom:8px;
+    }
+    .badge.green{background:var(--green-soft);color:var(--green);}
+    .badge.amber{background:var(--amber-soft);color:var(--amber);}
+    .badge.red{background:var(--red-soft);color:var(--red);}
+    .badge.purple{background:var(--purple-soft);color:var(--purple);}
+
+    .card h3,.card h4{margin:0;font-size:1.15rem;color:var(--navy);line-height:1.2;}
+    .card p{margin:0 0 14px;color:var(--muted);line-height:1.74;font-size:.9rem;}
+
+    /* ── CMD ── */
+    .cmd{
+      background:#0f172a;color:#eff6ff;
+      border-radius:18px;padding:15px 16px;
+      font-family:Consolas,Monaco,monospace;
+      font-size:15px;overflow:auto;
+      margin:0 0 14px;white-space:pre-line;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+    }
+    code{
+      background:#e8edf5;color:#1e3a5f;
+      padding:2px 6px;border-radius:5px;
+      font-family:Consolas,Monaco,monospace;font-size:.88em;
+    }
+    .cmd code{background:transparent;color:#93c5fd;padding:0;}
+
+    /* ── MINI LIST ── */
+    .mini-list{margin:0;padding-left:18px;color:var(--text);}
+    .mini-list li{margin:0 0 8px;line-height:1.6;font-size:.88rem;}
+
+    /* ── INSIGHT ── */
+    .insight{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+    .insight-box{
+      background:var(--surface-2);border:1px solid var(--line);
+      border-radius:16px;padding:13px 14px;
+    }
+    .insight-box strong{display:block;font-size:.82rem;color:var(--navy);margin-bottom:5px;}
+    .insight-box span{display:block;font-size:.82rem;color:var(--muted);line-height:1.5;}
+
+    /* ── TIPS ── */
+    .tip{
+      margin-top:14px;border-radius:16px;
+      padding:12px 14px;font-size:.84rem;line-height:1.58;
+      border:1px solid transparent;
+    }
+    .tip.blue{background:var(--blue-soft);color:var(--blue);border-color:#dbe7ff;}
+    .tip.green{background:var(--green-soft);color:var(--green);border-color:#d5ecdf;}
+    .tip.amber{background:var(--amber-soft);color:var(--amber);border-color:#f2deb2;}
+    .tip.red{background:var(--red-soft);color:var(--red);border-color:#f2c6c6;}
+
+    /* ── TABLE ── */
+    .table-wrap{
+      overflow:auto;background:var(--surface);
+      border:1px solid var(--line);border-radius:24px;
+      box-shadow:var(--shadow);margin-top:14px;margin-bottom:28px;
+    }
+    table{width:100%;border-collapse:collapse;min-width:860px;}
+    th,td{padding:13px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:.88rem;line-height:1.58;}
+    th{background:#f8fbff;color:var(--navy);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;z-index:1;}
+    tbody tr:last-child td{border-bottom:none;}
+
+    /* ── FOOTER ── */
+    .page-footer{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;text-align:center;padding:40px 24px;}
+    .page-footer img{height:36px;margin-bottom:14px;opacity:.85;}
+    .page-footer p{font-size:.85rem;opacity:.6;margin-top:8px;}
+    .page-footer a{color:rgba(255,255,255,.7);text-decoration:none;}
+
+    @media(max-width:980px){
+      .fxd-hero-stats,.academy-strip,.cards,.flow,.insight{grid-template-columns:1fr;}
+      .card-wide{grid-column:auto;}
+      .quick-nav{position:static;}
+      .fxd-hero h1{font-size:1.9rem;}
+    }
+  </style>
+</head>
+<body>
+
+  <script src="../js/navbar-inject.js"></script>
+
+  <!-- HERO -->
+  <div class="fxd-hero">
+    <span class="eyebrow">✈️ Amadeus · FXD / Master Pricer</span>
+    <h1>Guía completa para usar FXD y buscar vuelos sin PNR</h1>
+    <p>FXD es el comando de Master Pricer pensado para <strong>buscar, comparar y seleccionar</strong> recomendaciones de vuelos y tarifas. Puede usarse <strong>sin PNR previo</strong>, empezando desde cero, y también sobre un PNR ya creado cuando necesitás re-trabajar un itinerario.</p>
+    <div class="fxd-hero-btns">
+      <a href="guia-rapida.html" class="btn-back">
+        ← Volver a Guía Rápida
+      </a>
+      <a href="reservas-basico.pdf" target="_blank" class="btn-back">
+        📄 Manual Básico PDF
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+    <div class="fxd-hero-stats">
+      <div class="fxd-hero-stat">
+        <strong>0</strong>
+        <span>PNR necesario para empezar</span>
+      </div>
+      <div class="fxd-hero-stat">
+        <strong>RT</strong>
+        <span>búsqueda ida y vuelta desde cero</span>
+      </div>
+      <div class="fxd-hero-stat">
+        <strong>MD</strong>
+        <span>recorre grupos y pantallas</span>
+      </div>
+      <div class="fxd-hero-stat">
+        <strong>FXZ / FXU</strong>
+        <span>toma la recomendación elegida</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- QUICK NAV -->
+    <nav class="quick-nav">
+      <a href="#fxd-resumen">Resumen</a>
+      <a href="#fxd-flujo">Flujo</a>
+      <a href="#fxd-cards">Uso práctico</a>
+      <a href="#fxd-tabla">Tabla rápida</a>
+      <a href="#fxd-troubleshooting">Troubleshooting</a>
+      <a href="#fxd-diferencia">FXD vs FXX vs FXP</a>
+    </nav>
+
+    <!-- WARNING -->
+    <div class="warning">
+      <div class="icon">⚠️</div>
+      <div>
+        <strong>Idea clave para formación</strong>
+        <p>FXD es una herramienta de <strong>shopping</strong>: primero busca y compara; después permite abrir la opción elegida con <strong>FXS</strong> y tomarla con <strong>FXZ</strong> o <strong>FXU</strong>. No sustituye todo el flujo de reserva y emisión, pero mejora mucho la etapa de búsqueda y validación.</p>
+      </div>
+    </div>
+
+    <!-- RESUMEN -->
+    <h2 class="section-title" id="fxd-resumen">Resumen ejecutivo</h2>
+    <div class="academy-strip">
+      <div class="academy-box">
+        <div class="mini-icon">🔎</div>
+        <strong>Qué hace</strong>
+        <span>Busca recomendaciones de vuelos y tarifas con Master Pricer.</span>
+      </div>
+      <div class="academy-box">
+        <div class="mini-icon">🧾</div>
+        <strong>Cuándo usarlo</strong>
+        <span>Cuando querés comparar opciones desde cero, sin arrancar por disponibilidad tradicional.</span>
+      </div>
+      <div class="academy-box">
+        <div class="mini-icon">🧭</div>
+        <strong>Ventaja principal</strong>
+        <span>Puede lanzarse sin PNR previo, muy útil en la fase de búsqueda y comparación.</span>
+      </div>
+      <div class="academy-box">
+        <div class="mini-icon">✅</div>
+        <strong>Salida natural</strong>
+        <span>Tomar la recomendación elegida con FXZ o FXU y continuar el proceso normal.</span>
+      </div>
+    </div>
+
+    <p class="section-note">FXD puede ejecutarse sin PNR con estructura de fechas y tramos — ejemplo: <code>FXDJFK/D15JUNMIA/D20JUNJFK</code> — y también sobre un PNR ya creado: <code>FXD</code> o <code>FXD/S2-3</code>.</p>
+
+    <div class="chip-row">
+      <span class="chip">📌 Sin PNR</span>
+      <span class="chip">📌 Ida y vuelta</span>
+      <span class="chip">📌 Filtros por aerolínea</span>
+      <span class="chip">📌 Filtros de horario</span>
+      <span class="chip">📌 Non-stop</span>
+      <span class="chip">📌 Recomendaciones con TST</span>
+    </div>
+
+    <!-- FLUJO -->
+    <h2 class="section-title" id="fxd-flujo">Flujo de trabajo recomendado</h2>
+    <p class="section-note">Secuencia clara: lanzar la búsqueda, revisar grupos con MD, abrir una recomendación con FXSn, tomar la opción con FXZn o FXUn y volver al display con MPFXD si querés seguir comparando.</p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-no">1</div>
+        <strong>FXD</strong>
+        <span>Lanzar la búsqueda</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-no">2</div>
+        <strong>MD</strong>
+        <span>Recorrer más grupos</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-no">3</div>
+        <strong>FXSn</strong>
+        <span>Abrir una opción concreta</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-no">4</div>
+        <strong>FXZn / FXUn</strong>
+        <span>Tomar la recomendación</span>
+      </div>
+      <div class="flow-step">
+        <div class="step-no">5</div>
+        <strong>MPFXD</strong>
+        <span>Volver al display</span>
+      </div>
+    </div>
+
+    <!-- CARDS USO PRÁCTICO -->
+    <h2 class="section-title" id="fxd-cards">Uso práctico de FXD</h2>
+    <div class="cards">
+
+      <!-- Card 01 -->
+      <article class="card">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🛫</div>
+            <div>
+              <span class="badge">Card 01</span>
+              <h3>Búsqueda básica ida</h3>
+            </div>
+          </div>
+        </div>
+        <p>La estructura mínima sin PNR es origen + fecha + destino.</p>
+        <div class="cmd">FXDMVD/D15NOVMAD</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo:</strong> Montevideo → Madrid, salida el 15 de noviembre.</li>
+          <li><strong>FXD</strong> = Master Pricer.</li>
+          <li><strong>MVD</strong> = origen · <strong>/D15NOV</strong> = fecha · <strong>MAD</strong> = destino.</li>
+        </ul>
+        <div class="insight">
+          <div class="insight-box"><strong>Qué memorizar</strong><span>Origen + fecha + destino.</span></div>
+          <div class="insight-box"><strong>Cuándo usarlo</strong><span>Cuando todavía no querés armar un PNR.</span></div>
+        </div>
+        <div class="tip blue"><strong>Recordatorio clave:</strong> esta búsqueda arranca sin PNR, directamente desde cero.</div>
+      </article>
+
+      <!-- Card 02 -->
+      <article class="card green">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🔁</div>
+            <div>
+              <span class="badge green">Card 02</span>
+              <h3>Búsqueda ida y vuelta</h3>
+            </div>
+          </div>
+        </div>
+        <p>Para buscar ida y vuelta se agregan dos tramos fechados: salida y regreso.</p>
+        <div class="cmd">FXDMVD/D15NOVMAD/D30NOVMVD</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo:</strong> Montevideo → Madrid el 15NOV, regreso el 30NOV.</li>
+          <li><strong>Primer tramo:</strong> <code>MVD/D15NOVMAD</code></li>
+          <li><strong>Segundo tramo:</strong> <code>/D30NOVMVD</code></li>
+        </ul>
+        <div class="insight">
+          <div class="insight-box"><strong>Qué memorizar</strong><span>Salida + regreso en la misma entrada.</span></div>
+          <div class="insight-box"><strong>Cuándo usarlo</strong><span>Cuando querés una lectura global del viaje completo.</span></div>
+        </div>
+        <div class="tip green"><strong>Recordatorio clave:</strong> esta es la estructura base a memorizar para ida y vuelta.</div>
+      </article>
+
+      <!-- Card IMPORTANTE: Display -->
+      <article class="card red card-wide">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🧭</div>
+            <div>
+              <span class="badge red">Card importante</span>
+              <h3>Cómo leer el display y desplazarte entre opciones</h3>
+            </div>
+          </div>
+        </div>
+        <p>Cuando FXD devuelve recomendaciones, la lectura se hace por <strong>grupos</strong>. <strong>MD</strong> sirve para avanzar entre grupos, <strong>FXSn</strong> para abrir una recomendación concreta y <strong>MPFXD</strong> para volver al display original.</p>
+        <div class="cmd">FXDMVD/D15NOVMAD/D30NOVMVD
+MD
+FXS2
+MPFXD</div>
+        <ul class="mini-list">
+          <li><strong>FXD</strong> = lanza la búsqueda.</li>
+          <li><strong>MD</strong> = pasa al siguiente grupo / pantalla.</li>
+          <li><strong>FXS2</strong> = abre el detalle de la recomendación 2.</li>
+          <li><strong>MPFXD</strong> = vuelve al display de grupos.</li>
+        </ul>
+        <div class="insight">
+          <div class="insight-box"><strong>Error frecuente</strong><span>Quedarse solo con la primera pantalla y descartar la búsqueda.</span></div>
+          <div class="insight-box"><strong>Buenas prácticas</strong><span>Avanzar con MD antes de descartar una búsqueda sin resultados.</span></div>
+        </div>
+        <div class="tip red"><strong>Recordatorio clave:</strong> si la primera pantalla no te convence, seguí con <strong>MD</strong> antes de decidir.</div>
+      </article>
+
+      <!-- Card 03 -->
+      <article class="card green">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">✅</div>
+            <div>
+              <span class="badge green">Card 03</span>
+              <h3>Cómo reservar la opción elegida</h3>
+            </div>
+          </div>
+        </div>
+        <p>Después de revisar el display, la recomendación elegida se toma con <strong>FXZn</strong> (sin TST) o <strong>FXUn</strong> (con TST).</p>
+        <div class="cmd">FXS2
+FXZ2
+
+FXS2
+FXU2</div>
+        <ul class="mini-list">
+          <li><strong>Ruta simple:</strong> abrís la rec. 2 y la tomás con <code>FXZ2</code>.</li>
+          <li><strong>Ruta con TST:</strong> abrís la rec. 2 y la tomás con <code>FXU2</code>.</li>
+        </ul>
+        <div class="tip green"><strong>Recordatorio clave:</strong> si querés que la opción quede ya con TST, la salida natural es <strong>FXU</strong>.</div>
+      </article>
+
+      <!-- Card 04 -->
+      <article class="card">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">👥</div>
+            <div>
+              <span class="badge">Card 04</span>
+              <h3>Buscar para más de un pasajero</h3>
+            </div>
+          </div>
+        </div>
+        <p>FXD permite indicar cantidad de plazas directamente en la entrada. El número va delante del origen.</p>
+        <div class="cmd">FXD2MVD/D15NOVMAD/D30NOVMVD</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo:</strong> dos pasajeros, ida y vuelta Montevideo → Madrid.</li>
+          <li><strong>2</strong> delante del origen = número de plazas.</li>
+        </ul>
+        <div class="tip blue"><strong>Recordatorio clave:</strong> pedí la cantidad correcta desde el inicio si ya sabés cuántos viajan.</div>
+      </article>
+
+      <!-- Card 05 -->
+      <article class="card amber">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🕒</div>
+            <div>
+              <span class="badge amber">Card 05</span>
+              <h3>Filtrar por horario</h3>
+            </div>
+          </div>
+        </div>
+        <p>FXD admite filtros de hora de salida, llegada y ventana horaria mediante <code>/TD</code>, <code>/TA</code> y <code>/W</code>.</p>
+        <div class="cmd">FXDMVD/D15NOV/TD1000MAD/D30NOVMVD
+FXDMVD/D15NOV/TA2000MAD
+FXDMVD/D15NOV/TD0900/W3MAD</div>
+        <ul class="mini-list">
+          <li><strong>/TD1000</strong> = salida alrededor de las 10:00.</li>
+          <li><strong>/TA2000</strong> = llegada alrededor de las 20:00.</li>
+          <li><strong>/W3</strong> = ventana horaria de ±3 horas.</li>
+        </ul>
+        <div class="tip amber"><strong>Recordatorio clave:</strong> si el cliente pide franja horaria, filtrala desde FXD directamente.</div>
+      </article>
+
+      <!-- Card 06 -->
+      <article class="card">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🏷️</div>
+            <div>
+              <span class="badge">Card 06</span>
+              <h3>Incluir o excluir aerolíneas</h3>
+            </div>
+          </div>
+        </div>
+        <p>FXD permite buscar con aerolíneas incluidas (<code>//A</code>) o excluidas (<code>//A-</code>).</p>
+        <div class="cmd">FXDMVD/D15NOVMAD/D30NOVMVD//AIB,UX
+FXDMVD/D15NOVMAD/D30NOVMVD//A-LA</div>
+        <ul class="mini-list">
+          <li><strong>Ejemplo 1:</strong> solo Iberia y Air Europa.</li>
+          <li><strong>Ejemplo 2:</strong> excluir LATAM.</li>
+        </ul>
+        <div class="tip blue"><strong>Recordatorio clave:</strong> muy útil cuando el cliente pide o descarta una compañía concreta.</div>
+      </article>
+
+      <!-- Card 07 -->
+      <article class="card green">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">📍</div>
+            <div>
+              <span class="badge green">Card 07</span>
+              <h3>Buscar sin escalas o con conexión</h3>
+            </div>
+          </div>
+        </div>
+        <p>FXD permite filtrar por categoría de vuelo: <code>//FN</code> para non-stop y <code>//FC1</code> para connecting.</p>
+        <div class="cmd">FXDMVD/D15NOVMAD/D30NOVMVD//FN
+FXDMVD/D15NOVMAD/D30NOVMVD//FC1</div>
+        <ul class="mini-list">
+          <li><strong>//FN</strong> = directos / sin escalas.</li>
+          <li><strong>//FC1</strong> = con conexión.</li>
+        </ul>
+        <div class="tip green"><strong>Recordatorio clave:</strong> si el pasajero solo quiere directo, este filtro ahorra mucho tiempo.</div>
+      </article>
+
+      <!-- Card 08 -->
+      <article class="card purple">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">⚙️</div>
+            <div>
+              <span class="badge purple">Card 08</span>
+              <h3>Cabina, moneda y otros ajustes útiles</h3>
+            </div>
+          </div>
+        </div>
+        <p>FXD permite afinar la búsqueda con cabina preferida, moneda, Unifares, price to beat y PTC.</p>
+        <div class="cmd">FXDMVD/D15NOVMAD//KC
+FXDMVD/D15NOVMAD/R,FC-USD
+FXDMVD/D15NOVMAD//R,U
+FXDMVD/D15NOVMAD//PB1200
+FXDMVD/D15NOVMAD//RYTH</div>
+        <ul class="mini-list">
+          <li><strong>//KC</strong> = cabina preferida.</li>
+          <li><strong>/R,FC-USD</strong> = respuesta en USD.</li>
+          <li><strong>//R,U</strong> = Unifares.</li>
+          <li><strong>//PB1200</strong> = price to beat.</li>
+          <li><strong>//RYTH</strong> = passenger type code.</li>
+        </ul>
+        <div class="tip blue"><strong>Recordatorio clave:</strong> muchas veces el valor de FXD está en los filtros, no solo en la búsqueda básica.</div>
+      </article>
+
+      <!-- Card Extra: FXD sobre PNR -->
+      <article class="card card-wide">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🧩</div>
+            <div>
+              <span class="badge">Card extra</span>
+              <h3>FXD sobre un PNR ya creado</h3>
+            </div>
+          </div>
+        </div>
+        <p>Aunque esta guía está enfocada en trabajar FXD sin PNR, el mismo comando puede aplicarse sobre un PNR existente para pedir recomendaciones sobre el itinerario actual.</p>
+        <div class="cmd">FXD
+FXD/S2-3
+FXD//X
+FXD//O
+FXD//KC</div>
+        <ul class="mini-list">
+          <li><strong>FXD</strong> = recomendaciones sobre el PNR actual.</li>
+          <li><strong>FXD/S2-3</strong> = trabajar solo segmentos 2 y 3.</li>
+          <li><strong>FXD//X</strong> = mantener mismos puntos de conexión.</li>
+          <li><strong>FXD//O</strong> = mantener mismo origen / destino aeropuerto.</li>
+        </ul>
+        <div class="tip blue"><strong>Recordatorio clave:</strong> FXD sirve tanto para buscar desde cero como para re-trabajar un itinerario ya armado.</div>
+      </article>
+
+    </div>
+
+    <!-- TABLA RÁPIDA -->
+    <h2 class="section-title" id="fxd-tabla">Tabla rápida de comandos FXD</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Uso</th>
+            <th>Comando</th>
+            <th>Qué hace</th>
+            <th>Lectura rápida</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Búsqueda simple</td><td><code>FXDMVD/D15NOVMAD</code></td><td>Busca un tramo sin PNR</td><td>Punto de partida básico</td></tr>
+          <tr><td>Ida y vuelta</td><td><code>FXDMVD/D15NOVMAD/D30NOVMVD</code></td><td>Busca salida y regreso</td><td>Estructura clave a memorizar</td></tr>
+          <tr><td>2 pasajeros</td><td><code>FXD2MVD/D15NOVMAD/D30NOVMVD</code></td><td>Pide dos plazas</td><td>Útil para dobles o parejas</td></tr>
+          <tr><td>Horario</td><td><code>FXDMVD/D15NOV/TD1000MAD</code></td><td>Filtra por hora de salida</td><td>Reduce ruido</td></tr>
+          <tr><td>Incluir aerolíneas</td><td><code>FXDMVD/D15NOVMAD/D30NOVMVD//AIB,UX</code></td><td>Restringe a ciertas compañías</td><td>Muy comercial</td></tr>
+          <tr><td>Excluir aerolínea</td><td><code>FXDMVD/D15NOVMAD/D30NOVMVD//A-LA</code></td><td>Quita una compañía</td><td>Limpia resultados</td></tr>
+          <tr><td>Directos</td><td><code>FXDMVD/D15NOVMAD/D30NOVMVD//FN</code></td><td>Solo sin escalas</td><td>Ideal para cliente sensible al tiempo</td></tr>
+          <tr><td>Navegar</td><td><code>MD</code></td><td>Avanza entre grupos</td><td>No te quedes en la primera pantalla</td></tr>
+          <tr><td>Ver una opción</td><td><code>FXS2</code></td><td>Abre la recomendación 2</td><td>Revisar antes de tomar</td></tr>
+          <tr><td>Tomar opción</td><td><code>FXZ2</code> / <code>FXU2</code></td><td>Reserva la recomendación</td><td>FXU deja TST; FXZ no</td></tr>
+          <tr><td>Volver al display</td><td><code>MPFXD</code></td><td>Regresa a grupos</td><td>Muy útil tras revisar una opción</td></tr>
+          <tr><td>Sobre un PNR</td><td><code>FXD</code> / <code>FXD/S2-3</code></td><td>Recomendaciones sobre el PNR actual</td><td>Sirve para re-trabajar</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TROUBLESHOOTING -->
+    <h2 class="section-title" id="fxd-troubleshooting">Troubleshooting FXD</h2>
+    <p class="section-note">Los mensajes de FXD describen por qué la búsqueda o la toma de la recomendación no avanzó. Tres escenarios principales: no hubo recomendaciones, sí hubo pero no confirmaron, o la entrada fue rechazada por permisos.</p>
+    <div class="cards">
+
+      <!-- Caso 1 -->
+      <article class="card red">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🚫</div>
+            <div>
+              <span class="badge red">Caso 1</span>
+              <h3>No aparecen opciones</h3>
+            </div>
+          </div>
+        </div>
+        <p>Si FXD no devuelve opciones, lo primero es asumir que la búsqueda puede estar demasiado cerrada. Revisá filtros de aerolínea, cabina, horarios, conexiones, Unifares, PTC y price to beat.</p>
+        <div class="cmd">FXDMVD/D15NOVMAD/D30NOVMVD
+FXDMVD/D15NOVMAD
+FXDMAD/D30NOVMVD</div>
+        <ul class="mini-list">
+          <li><strong>Quitá filtros:</strong> <code>//FN</code>, <code>//A...</code>, <code>//KC</code>, <code>//R,U</code>, <code>//PB...</code></li>
+          <li><strong>Separá la búsqueda:</strong> si ida y vuelta no da nada, probá solo ida y luego vuelta.</li>
+          <li><strong>Probá fecha cercana:</strong> la fecha exacta puede no tener cupo o no operar.</li>
+        </ul>
+        <div class="tip red"><strong>Regla práctica:</strong> si una búsqueda no devuelve nada, simplificala antes de asumir que no existe oferta.</div>
+      </article>
+
+      <!-- Caso 2 -->
+      <article class="card amber">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">⚠️</div>
+            <div>
+              <span class="badge amber">Caso 2</span>
+              <h3>Hay recomendación, pero no deja reservar</h3>
+            </div>
+          </div>
+        </div>
+        <p>Puede pasar que FXD muestre una recomendación y que al tomarla con <strong>FXZ</strong> o <strong>FXU</strong> falle la confirmación. Mensaje típico: <strong>UNABLE TO SATISFY, NEED CONFIRMED FLIGHT STATUS</strong>.</p>
+        <div class="cmd">FXD
+MD
+FXS2
+FXU2
+
+AN16SEPSYDDUB/AEK415,EK163</div>
+        <ul class="mini-list">
+          <li><strong>Revisá la recomendación:</strong> abrila con <code>FXS</code>.</li>
+          <li><strong>Movete a otros grupos:</strong> usá <code>MD</code>.</li>
+          <li><strong>Validá disponibilidad real</strong> antes de tomar.</li>
+          <li><strong>Si falla siempre la misma:</strong> tomá otra recomendación o rearmá el tramo manualmente.</li>
+        </ul>
+        <div class="tip amber"><strong>Regla práctica:</strong> que FXD muestre una recomendación no garantiza que siga confirmable al venderla.</div>
+      </article>
+
+      <!-- Tabla errores -->
+      <article class="card card-wide">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🧾</div>
+            <div>
+              <span class="badge">Lectura de errores</span>
+              <h3>Mensajes más comunes y qué hacer</h3>
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap" style="margin-top:0;">
+          <table>
+            <thead>
+              <tr><th>Mensaje</th><th>Qué suele significar</th><th>Qué revisar</th><th>Qué hacer</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>UNABLE TO SATISFY, NEED CONFIRMED FLIGHT STATUS</strong></td>
+                <td>La recomendación apareció, pero ya no confirma al reservar.</td>
+                <td>Revisar con <code>FXS</code>, probar más grupos con <code>MD</code>.</td>
+                <td>Probar otra recomendación o rearmar el tramo manualmente.</td>
+              </tr>
+              <tr>
+                <td><strong>UNABLE TO FARE - NO INVENTORY FOR FLIGHT REQUESTED</strong></td>
+                <td>No hay inventario válido para uno de los vuelos solicitados.</td>
+                <td>Revisar si el vuelo opera con <code>SN</code>.</td>
+                <td>Rebook manual o escalar a soporte.</td>
+              </tr>
+              <tr>
+                <td><strong>ENTRY NOT AUTHORISED [FA,FX]</strong></td>
+                <td>Problema de permisos o configuración de oficina.</td>
+                <td>Repetir la entrada y confirmar si persiste.</td>
+                <td>Escalar con input, output y <code>$$DUMP</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>No aparecen recomendaciones</strong></td>
+                <td>Búsqueda demasiado filtrada o combinación sin propuesta válida.</td>
+                <td>Revisar filtros de aerolínea, cabina, horarios, conexiones, Unifares.</td>
+                <td>Simplificar la búsqueda y probar por tramos separados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- Plan B -->
+      <article class="card green">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">🛠️</div>
+            <div>
+              <span class="badge green">Plan B</span>
+              <h3>Alternativas si FXD falla</h3>
+            </div>
+          </div>
+        </div>
+        <p>Si FXD no devuelve algo usable o la recomendación no confirma, no conviene quedarse bloqueado. La salida más segura es volver al flujo manual clásico con AN / SS / FXX / FXP.</p>
+        <div class="cmd">AN15NOVMVDMAD
+SS1Y1
+FXX
+FXP</div>
+        <ul class="mini-list">
+          <li><strong>Opción A:</strong> rehacer la búsqueda con un FXD más simple.</li>
+          <li><strong>Opción B:</strong> buscar ida y vuelta por separado.</li>
+          <li><strong>Opción C:</strong> validar operación con <code>SN</code>.</li>
+          <li><strong>Opción D:</strong> volver al flujo manual clásico.</li>
+        </ul>
+        <div class="tip green"><strong>Regla práctica:</strong> FXD es excelente para comparar, pero si falla, el plan B es el flujo clásico.</div>
+      </article>
+
+      <!-- Escalación -->
+      <article class="card purple">
+        <div class="card-top">
+          <div class="card-title">
+            <div class="icon-badge">📤</div>
+            <div>
+              <span class="badge purple">Escalación</span>
+              <h3>Cuándo escalar y qué guardar</h3>
+            </div>
+          </div>
+        </div>
+        <p>Si la búsqueda parece válida y aun así falla siempre igual, Amadeus recomienda recopilar datos técnicos antes de escalar: error exacto, escenario para reproducirlo y <code>$$DUMP</code> inmediatamente después.</p>
+        <div class="cmd">$$DUMP</div>
+        <ul class="mini-list">
+          <li>Guardar el <strong>input exacto</strong>.</li>
+          <li>Guardar el <strong>mensaje exacto</strong>.</li>
+          <li>Tomar el <strong>timestamp</strong> y correr <code>$$DUMP</code>.</li>
+          <li>Anotar <strong>ruta, fechas, filtros, aerolínea y resultado esperado</strong>.</li>
+        </ul>
+        <div class="tip blue"><strong>Regla práctica:</strong> sin input, output y $$DUMP, el troubleshooting con soporte queda mucho más débil.</div>
+      </article>
+
+    </div>
+
+    <!-- FXD VS FXX VS FXP -->
+    <h2 class="section-title" id="fxd-diferencia">Diferencia práctica entre FXD, FXX y FXP</h2>
+    <p class="section-note"><strong>FXD</strong> sirve para buscar y comparar recomendaciones incluso sin PNR. <strong>FXX</strong> cotiza el itinerario de un PNR ya creado sin almacenar. <strong>FXP</strong> cotiza y almacena la tarifa en TST dentro del PNR.</p>
+
+    <div class="warning">
+      <div class="icon">📌</div>
+      <div>
+        <strong>Nota final de capacitación</strong>
+        <p>FXD no reemplaza todo el flujo de reserva y emisión: su fortaleza está en <strong>buscar, comparar y seleccionar</strong>. Después de tomar una opción, el trabajo sigue con nombres, datos básicos, cierre, pricing final y emisión. Consultá la <a href="guia-rapida.html" style="color:var(--red);font-weight:700;">Guía Rápida</a> para el flujo completo.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    <img src="../images/logo-white.png" alt="Dr.Viaje">
+    <p>Centro de Capacitación · <a href="../index.html">Volver al inicio</a> · <a href="guia-rapida.html">Guía Rápida Amadeus</a></p>
+    <p style="margin-top:6px;">Plataforma de uso interno · Dr.Viaje © 2026</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr. Viaje | Parques Temáticos de Orlando · Guía Completa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <style>
+    :root {
+      --primary-purple: #7B2D8E;
+      --primary-orange: #FF9800;
+      --primary-pink:   #E91E63;
+      --magic-blue:     #006ED2;
+      --magic-gold:     #FFD700;
+      --magic-red:      #CC0000;
+      --magic-green:    #1A7D40;
+      --bg-light:       #f8f9fa;
+      --text-dark:      #333333;
+      --text-medium:    #666666;
+      --white:          #ffffff;
+      --shadow:         0 10px 30px rgba(0,0,0,0.08);
+      --shadow-hover:   0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:      20px;
+      --radius-lg:      16px;
+      --radius-md:      12px;
+      --transition:     all 0.3s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
+
+    /* ══ HEADER ══ */
+    header {
+      background: linear-gradient(135deg, #001f5b 0%, #0057B8 40%, #6d0c91 100%);
+      color: var(--white);
+      padding: 50px 0 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: ""; position: absolute; border-radius: 50%;
+      background: rgba(255,215,0,0.08);
+      width: 320px; height: 320px; top: -120px; right: -80px;
+    }
+    header::after {
+      content: ""; position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      width: 200px; height: 200px; bottom: -80px; left: -40px;
+    }
+    .header-content { position: relative; z-index: 2; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,215,0,0.2); border: 1px solid rgba(255,215,0,0.35);
+      color: var(--magic-gold); padding: 8px 16px; border-radius: 999px;
+      font-size: 0.88rem; font-weight: 700; margin-bottom: 18px; letter-spacing: 0.03em;
+    }
+    header h1 { font-size: clamp(2.2rem,5vw,3.8rem); font-weight: 800; line-height: 1.06; margin-bottom: 12px; letter-spacing: -0.03em; }
+    .header-subtitle { font-size: 1.05rem; opacity: 0.93; max-width: 820px; margin-bottom: 32px; }
+
+    /* KPIs */
+    .kpi-row { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; margin-top: 8px; }
+    .kpi {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px; padding: 18px 14px; text-align: center; backdrop-filter: blur(6px);
+    }
+    .kpi strong { display: block; font-size: 1.6rem; font-weight: 800; color: var(--magic-gold); margin-bottom: 4px; }
+    .kpi span { font-size: 0.82rem; opacity: 0.9; }
+
+    /* ══ INTERNAL NAV ══ */
+    nav { position: sticky; top: 72px; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .nav-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 13px 0; scrollbar-width: none; }
+    .nav-scroll::-webkit-scrollbar { display: none; }
+    .nav-scroll a {
+      white-space: nowrap;
+      background: linear-gradient(135deg, rgba(0,110,210,0.1), rgba(109,12,145,0.1));
+      color: var(--magic-blue); border: 1px solid rgba(0,110,210,0.15);
+      padding: 9px 16px; border-radius: 999px; font-size: 0.88rem; font-weight: 700; transition: var(--transition);
+    }
+    .nav-scroll a:hover { background: linear-gradient(135deg, var(--magic-blue), #6d0c91); color: var(--white); transform: translateY(-1px); }
+
+    /* ══ MAIN ══ */
+    main { padding: 32px 0 80px; }
+    section[id] { scroll-margin-top: 140px; }
+
+    /* Park cards */
+    .park-card {
+      background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow);
+      border-top: 6px solid var(--magic-blue); padding: 32px; margin-bottom: 32px; transition: var(--transition);
+    }
+    .park-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .park-card.disney { border-top-color: #003087; }
+    .park-card.universal { border-top-color: #000000; }
+    .park-card.seaworld { border-top-color: #0077B6; }
+    .park-card.legoland { border-top-color: #E3000B; }
+    .park-card.busch { border-top-color: #336600; }
+
+    .park-header { border-bottom: 2px solid var(--bg-light); padding-bottom: 20px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .park-header .icon { font-size: 2.8rem; flex-shrink: 0; line-height: 1; }
+    .park-header h2 { font-size: 1.65rem; font-weight: 800; color: var(--text-dark); margin-bottom: 6px; }
+    .park-header .park-meta { color: var(--text-medium); font-size: 0.95rem; }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .tag { display: inline-block; background: rgba(0,110,210,0.1); color: var(--magic-blue); padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+    .tag.purple { background: rgba(109,12,145,0.1); color: #6d0c91; }
+    .tag.red { background: rgba(204,0,0,0.1); color: var(--magic-red); }
+    .tag.green { background: rgba(26,125,64,0.1); color: var(--magic-green); }
+    .tag.gold { background: rgba(255,215,0,0.2); color: #a07800; }
+    .tag.dark { background: rgba(0,0,0,0.08); color: #333; }
+
+    /* Section label */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      background: linear-gradient(135deg, var(--magic-blue), #6d0c91);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 10px;
+    }
+    .card-body-text { color: var(--text-medium); font-size: 0.95rem; margin-bottom: 14px; line-height: 1.7; }
+
+    /* Info boxes */
+    .info-box { background: rgba(0,110,210,0.06); border-left: 4px solid var(--magic-blue); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 16px 20px; margin: 16px 0; }
+    .info-box.red { border-left-color: var(--magic-red); background: rgba(204,0,0,0.06); }
+    .info-box.orange { border-left-color: #FF9800; background: rgba(255,152,0,0.07); }
+    .info-box.green { border-left-color: var(--magic-green); background: rgba(26,125,64,0.07); }
+    .info-box.gold { border-left-color: #c8a000; background: rgba(255,215,0,0.09); }
+    .info-box.purple { border-left-color: #6d0c91; background: rgba(109,12,145,0.07); }
+    .info-box strong { display: block; font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: var(--text-dark); }
+    .info-box p, .info-box ul { font-size: 0.92rem; color: var(--text-medium); }
+    .info-box ul { padding-left: 18px; }
+    .info-box ul li { margin-bottom: 4px; }
+
+    /* Pill */
+    .pill {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--magic-blue), #6d0c91);
+      color: var(--white); padding: 5px 12px; border-radius: 999px;
+      font-size: 0.78rem; font-weight: 700; margin-bottom: 10px; letter-spacing: 0.03em;
+    }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); margin: 16px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--white); min-width: 580px; }
+    thead th { background: linear-gradient(135deg, #003087, #6d0c91); color: var(--white); padding: 13px 14px; text-align: left; font-size: 0.9rem; font-weight: 700; }
+    tbody td { padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-medium); font-size: 0.93rem; vertical-align: top; }
+    tbody tr:nth-child(even) td { background: #fafafa; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #f0f4ff; }
+
+    /* Attraction list */
+    ul.clean-list { padding-left: 0; list-style: none; display: grid; gap: 8px; }
+    ul.clean-list li { color: var(--text-medium); padding-left: 20px; position: relative; font-size: 0.95rem; }
+    ul.clean-list li::before { content: "⭐"; position: absolute; left: 0; font-size: 0.85rem; }
+
+    ul.tip-list { padding-left: 0; list-style: none; display: grid; gap: 8px; }
+    ul.tip-list li { color: var(--text-medium); padding-left: 20px; position: relative; font-size: 0.95rem; }
+    ul.tip-list li::before { content: "💡"; position: absolute; left: 0; font-size: 0.85rem; }
+
+    /* Two col */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } .kpi-row { grid-template-columns: 1fr 1fr; } }
+
+    /* Mini attraction cards */
+    .attraction-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+    .attraction-card {
+      background: var(--bg-light); border-radius: var(--radius-md); padding: 16px;
+      border: 1px solid rgba(0,0,0,0.06); text-align: center;
+      transition: var(--transition);
+    }
+    .attraction-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .attraction-card .ac-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .attraction-card .ac-name { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 4px; }
+    .attraction-card .ac-thrill { font-size: 0.78rem; color: var(--text-medium); }
+    .attraction-card .ac-badge { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-top: 6px; }
+    .ac-badge.extreme { background: rgba(204,0,0,0.1); color: var(--magic-red); }
+    .ac-badge.family { background: rgba(0,110,210,0.1); color: var(--magic-blue); }
+    .ac-badge.toddler { background: rgba(26,125,64,0.1); color: var(--magic-green); }
+    .ac-badge.teen { background: rgba(109,12,145,0.1); color: #6d0c91; }
+
+    /* Day planner */
+    .day-plan { background: var(--white); border-radius: var(--radius-lg); padding: 20px; border: 1px solid rgba(0,0,0,0.07); margin-bottom: 16px; }
+    .day-plan h4 { font-size: 1rem; font-weight: 800; color: var(--magic-blue); margin-bottom: 12px; border-bottom: 2px solid rgba(0,110,210,0.1); padding-bottom: 8px; }
+    .time-item { display: flex; gap: 14px; margin-bottom: 10px; align-items: flex-start; }
+    .time-item .time { min-width: 60px; font-size: 0.78rem; font-weight: 700; color: var(--magic-blue); background: rgba(0,110,210,0.1); padding: 3px 8px; border-radius: 999px; text-align: center; }
+    .time-item .desc { font-size: 0.9rem; color: var(--text-medium); }
+
+    /* Script selling */
+    .script-box { background: linear-gradient(135deg, #003087, #6d0c91); border-radius: var(--radius-xl); padding: 28px 32px; color: var(--white); margin-bottom: 20px; }
+    .script-box .script-label { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 8px; }
+    .script-box .script-text { font-size: 1rem; line-height: 1.75; font-style: italic; }
+
+    /* Miami link CTA */
+    .miami-cta {
+      display: flex; align-items: center; gap: 18px;
+      background: linear-gradient(135deg, #002868, #B71C1C);
+      border-radius: var(--radius-xl); padding: 24px 28px; margin: 24px 0;
+      color: var(--white); flex-wrap: wrap;
+    }
+    .miami-cta .mc-icon { font-size: 3rem; flex-shrink: 0; }
+    .miami-cta h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+    .miami-cta p { font-size: 0.9rem; opacity: 0.9; margin-bottom: 12px; }
+    .miami-cta a {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); color: #002868; font-weight: 800;
+      padding: 10px 20px; border-radius: 999px; font-size: 0.92rem;
+      transition: var(--transition);
+    }
+    .miami-cta a:hover { transform: translateX(4px); }
+
+    /* Price badge */
+    .price-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(26,125,64,0.12); color: var(--magic-green); border-radius: 999px; padding: 4px 12px; font-size: 0.85rem; font-weight: 700; }
+    .price-badge.expensive { background: rgba(204,0,0,0.1); color: var(--magic-red); }
+  </style>
+</head>
+<body>
+
+<script src="../js/navbar-inject.js"></script>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header>
+  <div class="container">
+    <div class="header-content">
+      <div class="badge">🎢 Orlando · Florida · Estados Unidos 🇺🇸</div>
+      <h1>Parques Temáticos<br><span style="color:#ffd700;">de Orlando</span></h1>
+      <p class="header-subtitle">La guía definitiva para el asesor: Disney, Universal, SeaWorld, LEGOLAND y más. Precios, estrategias, tips y todo lo que necesitás para vender con seguridad.</p>
+      <div class="kpi-row">
+        <div class="kpi"><strong>5+</strong><span>Complejos de parques</span></div>
+        <div class="kpi"><strong>USD 109+</strong><span>Ticket Disney base</span></div>
+        <div class="kpi"><strong>30+</strong><span>Atracciones icónicas</span></div>
+        <div class="kpi"><strong>365</strong><span>días abiertos</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ INTERNAL NAV ══ -->
+<nav>
+  <div class="container">
+    <div class="nav-scroll">
+      <a href="#overview">🗺️ Resumen</a>
+      <a href="#disney">🏰 Disney</a>
+      <a href="#universal">🎬 Universal</a>
+      <a href="#seaworld">🐬 SeaWorld</a>
+      <a href="#otros">🎡 Otros Parques</a>
+      <a href="#tickets">🎟️ Tickets</a>
+      <a href="#estrategia">⚡ Estrategia</a>
+      <a href="#dias">📅 ¿Cuántos días?</a>
+      <a href="#tips">💡 Tips Pro</a>
+      <a href="#ninos">👶 Por Edad</a>
+      <a href="#script">🎯 Script</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main>
+  <div class="container">
+
+    <!-- ── OVERVIEW ── -->
+    <section id="overview">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">🎡</div>
+          <div>
+            <h2>El universo de los parques en Orlando</h2>
+            <div class="park-meta">La mayor concentración de parques temáticos del mundo en un radio de 30 km</div>
+          </div>
+        </div>
+
+        <p class="card-body-text">Orlando no es solo Disney. Es un ecosistema de entretenimiento sin igual en el mundo. En un radio de 30 kilómetros se concentran más de 10 parques temáticos de clase mundial, outlets, shows y atracciones. El asesor que domina este destino puede armar paquetes para cualquier perfil: desde familias con bebés hasta grupos de adultos fanáticos de Universal.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Complejo</th><th>Parques incluidos</th><th>Perfil ideal</th><th>Precio base/día</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🏰 <strong>Walt Disney World</strong></td><td>Magic Kingdom, EPCOT, Hollywood Studios, Animal Kingdom + 2 parques acuáticos</td><td>Familias con niños 3-14 años</td><td><span class="price-badge expensive">USD 109–189</span></td></tr>
+              <tr><td>🎬 <strong>Universal Orlando</strong></td><td>Universal Studios, Islands of Adventure + Volcano Bay</td><td>Adolescentes y adultos</td><td><span class="price-badge expensive">USD 109–179</span></td></tr>
+              <tr><td>🐬 <strong>SeaWorld Orlando</strong></td><td>SeaWorld + Aquatica</td><td>Familias, amantes de la naturaleza</td><td><span class="price-badge">USD 89–119</span></td></tr>
+              <tr><td>🧱 <strong>LEGOLAND Florida</strong></td><td>LEGOLAND + LEGOLAND Water Park</td><td>Niños 2-12 años</td><td><span class="price-badge">USD 99–109</span></td></tr>
+              <tr><td>🦁 <strong>Busch Gardens Tampa</strong></td><td>1 parque + Sesame Place</td><td>Amantes de animales + roller coasters</td><td><span class="price-badge">USD 89–109</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Miami CTA -->
+        <div class="miami-cta">
+          <div class="mc-icon">🌴</div>
+          <div style="flex:1;">
+            <h3>¿Tu cliente también quiere visitar Miami?</h3>
+            <p>El combo Miami + Orlando es el viaje más vendido de Florida. Consultá nuestra guía completa con traslados, hoteles, documentación y tips de venta.</p>
+            <a href="miami-orlando.html">
+              Ver guía Miami + Orlando
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DISNEY ── -->
+    <section id="disney">
+      <div class="park-card disney">
+        <div class="park-header">
+          <div class="icon">🏰</div>
+          <div>
+            <h2>Walt Disney World Resort</h2>
+            <div class="park-meta">4 parques temáticos + 2 parques acuáticos + Disney Springs · Lake Buena Vista</div>
+          </div>
+        </div>
+
+        <div class="tag-row">
+          <span class="tag">Familias</span>
+          <span class="tag purple">Experiencia única</span>
+          <span class="tag gold">Premium</span>
+          <span class="tag green">Niños</span>
+        </div>
+
+        <p class="card-body-text">Walt Disney World es el complejo de entretenimiento más grande del mundo. Con 43 millas cuadradas, alberga 4 parques temáticos, 2 parques acuáticos, más de 30 hoteles, el Disney Springs (shopping y gastronomía) y decenas de atracciones. Para familias con niños de 3 a 12 años, es la experiencia número uno del viaje.</p>
+
+        <div class="section-label">Los 4 Parques Principales</div>
+
+        <div class="info-box gold">
+          <strong>🏰 Magic Kingdom — El clásico absoluto</strong>
+          <p>El parque más visitado del mundo. Cenicienta, Space Mountain, Big Thunder Mountain, Haunted Mansion, "It's a Small World" y el desfile nocturno con fuegos artificiales. <strong>Imprescindible para niños de cualquier edad.</strong></p>
+        </div>
+
+        <div class="info-box">
+          <strong>🌍 EPCOT — Tecnología y culturas del mundo</strong>
+          <p>Dividido en World Discovery (Guardians of the Galaxy, Test Track, Mission: SPACE), World Nature, World Celebration y World Showcase (11 pabellones de países con gastronomía real). <strong>Preferido por adultos.</strong> Festival de comidas internacionales varios meses al año.</p>
+        </div>
+
+        <div class="info-box purple">
+          <strong>🎬 Hollywood Studios — Star Wars y mucho más</strong>
+          <p>Galaxy's Edge (Star Wars), Toy Story Land, el Tower of Terror, Millennium Falcon: Smugglers Run, Rise of the Resistance (la mejor atracción de Disney). Shows de Indiana Jones y Fantasmic. <strong>Ideal para fanáticos de Star Wars y adolescentes.</strong></p>
+        </div>
+
+        <div class="info-box green">
+          <strong>🦁 Animal Kingdom — Naturaleza y aventura</strong>
+          <p>Pandora (Avatar: Flight of Passage y Na'vi River Journey), Kilimanjaro Safaris (animales reales), Expedition Everest y shows de animales. <strong>Único en su tipo: mezcla naturaleza real y fantasía.</strong></p>
+        </div>
+
+        <div class="section-label" style="margin-top: 20px;">Atracciones imperdibles por parque</div>
+        <div class="attraction-grid">
+          <div class="attraction-card">
+            <span class="ac-icon">🚀</span>
+            <div class="ac-name">Space Mountain</div>
+            <div class="ac-thrill">Magic Kingdom</div>
+            <span class="ac-badge teen">Teen+</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">👻</span>
+            <div class="ac-name">Haunted Mansion</div>
+            <div class="ac-thrill">Magic Kingdom</div>
+            <span class="ac-badge family">Familia</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">⚡</span>
+            <div class="ac-name">Rise of the Resistance</div>
+            <div class="ac-thrill">Hollywood Studios</div>
+            <span class="ac-badge extreme">¡Extremo!</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🛸</span>
+            <div class="ac-name">Flight of Passage</div>
+            <div class="ac-thrill">Animal Kingdom</div>
+            <span class="ac-badge extreme">¡Estrella!</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🛡️</span>
+            <div class="ac-name">Guardians of the Galaxy</div>
+            <div class="ac-thrill">EPCOT</div>
+            <span class="ac-badge teen">Teen+</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🌋</span>
+            <div class="ac-name">Expedition Everest</div>
+            <div class="ac-thrill">Animal Kingdom</div>
+            <span class="ac-badge teen">Teen+</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🧸</span>
+            <div class="ac-name">Toy Story Mania</div>
+            <div class="ac-thrill">Hollywood Studios</div>
+            <span class="ac-badge family">Familia</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🏰</span>
+            <div class="ac-name">Seven Dwarfs Mine Train</div>
+            <div class="ac-thrill">Magic Kingdom</div>
+            <span class="ac-badge family">Familia</span>
+          </div>
+        </div>
+
+        <div class="info-box orange" style="margin-top:20px;">
+          <strong>⚠️ Lightning Lane: El sistema de gestión de filas de Disney</strong>
+          <ul>
+            <li><strong>Lightning Lane Multi Pass (LLMP):</strong> USD 15-35 por persona/día. Permite reservar una atracción a la vez. Disponible desde la app a las 7 AM.</li>
+            <li><strong>Lightning Lane Single Pass (LLSP):</strong> USD 15-35 por atracción individual. Para las más populares: Tiana's Bayou Adventure, Guardians, Rise of the Resistance. Reserva desde las 7 AM.</li>
+            <li><strong>Early Park Entry:</strong> Huéspedes de hoteles Disney entran 30 minutos antes. Ideal para las filas de apertura.</li>
+          </ul>
+        </div>
+
+        <div class="info-box green">
+          <strong>✅ App My Disney Experience: Esencial</strong>
+          <ul>
+            <li>Lincar los tickets y reservas</li>
+            <li>Ver tiempos de espera en tiempo real</li>
+            <li>Reservar Lightning Lane</li>
+            <li>Pedir comida sin hacer fila (Mobile Order)</li>
+            <li>Ver el mapa interactivo</li>
+            <li>Fotos con MagicBand si contratan el servicio</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── UNIVERSAL ── -->
+    <section id="universal">
+      <div class="park-card universal">
+        <div class="park-header">
+          <div class="icon">🎬</div>
+          <div>
+            <h2>Universal Orlando Resort</h2>
+            <div class="park-meta">Universal Studios + Islands of Adventure + Volcano Bay + Epic Universe (2025)</div>
+          </div>
+        </div>
+
+        <div class="tag-row">
+          <span class="tag dark">Adolescentes</span>
+          <span class="tag dark">Adultos</span>
+          <span class="tag purple">Harry Potter</span>
+          <span class="tag red">Adrenalina</span>
+        </div>
+
+        <p class="card-body-text">Universal Orlando es el rival directo de Disney pero con un perfil diferente: más orientado a adolescentes y adultos, con rides más intensos y temáticas de películas icónicas. Harry Potter, Minions, Jurassic World, Fast & Furious, The Simpsons y mucho más. En 2025 abre <strong>Epic Universe</strong>, el parque más grande construido en décadas.</p>
+
+        <div class="section-label">Los Parques de Universal</div>
+
+        <div class="info-box purple">
+          <strong>🎬 Universal Studios Florida</strong>
+          <p>Diagon Alley (Harry Potter), Springfield (Los Simpsons), Hollywood, Minion Land con Villain-Con Minion Blast, Rip Ride Rockit coaster, Fast & Furious, E.T. Adventure. <strong>Mejor para adolescentes y adultos.</strong></p>
+        </div>
+
+        <div class="info-box">
+          <strong>🏝️ Islands of Adventure</strong>
+          <p>Hogsmeade (Harry Potter), Isla Nublar (Jurassic World), Jurassic World VelociCoaster (el más rápido de Florida), Hagrid's Magical Creatures Motorbike Adventure (el mejor ride del mundo según muchos), Marvel Super Hero Island, The Incredible Hulk Coaster. <strong>Hay que venir mínimo 1 día completo aquí.</strong></p>
+        </div>
+
+        <div class="info-box">
+          <strong>🌋 Volcano Bay</strong>
+          <p>Parque acuático de primer nivel con el volcán Ko'okiri Body Plunge (tobogán de caída libre). Pulseras TapTu™ para reservar atracciones sin hacer fila. <strong>Perfecto para un día de relax entre parques.</strong></p>
+        </div>
+
+        <div class="info-box gold">
+          <strong>🌟 EPIC UNIVERSE — Abre Mayo 2025</strong>
+          <p>El parque más ambicioso construido en décadas. Incluirá: <strong>The Wizarding World of Harry Potter (Ministry of Magic)</strong>, Celestial Park, How to Train Your Dragon, Mario Kart, DreamWorks Land. Será el parque más grande de Universal en el mundo. ¡Ya se pueden vender paquetes anticipados!</p>
+        </div>
+
+        <div class="section-label" style="margin-top:20px;">Atracciones imperdibles Universal</div>
+        <div class="attraction-grid">
+          <div class="attraction-card">
+            <span class="ac-icon">🧙</span>
+            <div class="ac-name">Hagrid's Motorbike</div>
+            <div class="ac-thrill">Islands of Adventure</div>
+            <span class="ac-badge extreme">¡Top 1!</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🦕</span>
+            <div class="ac-name">VelociCoaster</div>
+            <div class="ac-thrill">Islands of Adventure</div>
+            <span class="ac-badge extreme">Extremo</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">💛</span>
+            <div class="ac-name">Villain-Con Minion Blast</div>
+            <div class="ac-thrill">Universal Studios</div>
+            <span class="ac-badge family">Familia</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">💚</span>
+            <div class="ac-name">The Incredible Hulk</div>
+            <div class="ac-thrill">Islands of Adventure</div>
+            <span class="ac-badge extreme">Extremo</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🪄</span>
+            <div class="ac-name">Forbidden Journey</div>
+            <div class="ac-thrill">Islands of Adventure</div>
+            <span class="ac-badge teen">Teen+</span>
+          </div>
+          <div class="attraction-card">
+            <span class="ac-icon">🍩</span>
+            <div class="ac-name">The Simpsons Ride</div>
+            <div class="ac-thrill">Universal Studios</div>
+            <span class="ac-badge family">Familia</span>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>⚡ Express Pass Universal: Vale la pena</strong>
+          <ul>
+            <li>Permite entrar por la fila de Express en casi todas las atracciones (1 vez por atracción con Express, ilimitado con Express Unlimited)</li>
+            <li>Precio: USD 80–200+ por persona según la fecha</li>
+            <li><strong>Tip clave:</strong> Huéspedes de Portofino Bay, Hard Rock Hotel y Royal Pacific Resort reciben Express Pass Unlimited GRATIS incluido en la tarifa del hotel</li>
+            <li>En temporada alta (julio, navidades) puede ahorrar horas de espera</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SEAWORLD ── -->
+    <section id="seaworld">
+      <div class="park-card seaworld">
+        <div class="park-header">
+          <div class="icon">🐬</div>
+          <div>
+            <h2>SeaWorld Orlando + Aquatica</h2>
+            <div class="park-meta">Animales marinos, shows, coasters y parque acuático</div>
+          </div>
+        </div>
+
+        <div class="tag-row">
+          <span class="tag">Naturaleza</span>
+          <span class="tag green">Animales</span>
+          <span class="tag red">Coasters</span>
+          <span class="tag">Familias</span>
+        </div>
+
+        <p class="card-body-text">SeaWorld es el parque más "temático" en cuanto a naturaleza. Combina la experiencia de ver animales marinos (delfines, orcas, tiburones, manatíes) con roller coasters intensos y shows de alto nivel. Es una buena alternativa para los días entre Disney y Universal, especialmente para familias.</p>
+
+        <div class="two-col">
+          <div class="info-box green">
+            <strong>🌊 Atracciones destacadas SeaWorld</strong>
+            <ul>
+              <li><strong>Ice Breaker:</strong> Coaster con propulsión magnética y caída vertical</li>
+              <li><strong>Mako:</strong> El coaster más alto y rápido de Orlando</li>
+              <li><strong>Manta:</strong> Coaster tipo mantarraya</li>
+              <li><strong>Penguin Trek:</strong> Roller coaster familiar en zona ártica</li>
+              <li><strong>Dolphin Encounter:</strong> Nada con delfines (con cargo adicional)</li>
+              <li><strong>Discovery Cove:</strong> Parque hermano con nado con delfines (reservar con meses)</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <strong>💦 Aquatica — Parque acuático de SeaWorld</strong>
+            <ul>
+              <li>Acceso combinado con SeaWorld (ticket Plus)</li>
+              <li>Toboganes, olas, piscinas con delfines de río</li>
+              <li>Ideal para completar un día de parque acuático</li>
+              <li>Menos concurrido que Volcano Bay</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box gold">
+          <strong>🎟️ SeaWorld Fun Card</strong>
+          <p>Por el precio de 1 día de entrada, el "Fun Card" da acceso ilimitado por el resto del año calendario. Muy conveniente para quienes pasan más de 5 días en Orlando y quieren volver a SeaWorld o Aquatica.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── OTROS PARQUES ── -->
+    <section id="otros">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">🎡</div>
+          <div>
+            <h2>Otros Parques y Atracciones</h2>
+            <div class="park-meta">LEGOLAND, Busch Gardens, Icon Park, Kennedy Space Center y más</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Atracción</th><th>Distancia desde I-Drive</th><th>Ideal para</th><th>Precio aprox.</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🧱 <strong>LEGOLAND Florida</strong> (Winter Haven)</td><td>~1 hora</td><td>Niños 2-12 años. IMPRESCINDIBLE para chicos fanáticos de Lego.</td><td>USD 99–109/día</td></tr>
+              <tr><td>🦁 <strong>Busch Gardens Tampa</strong></td><td>~1.5 horas</td><td>Amantes de animales + roller coasters extremos. Combo bien con SeaWorld.</td><td>USD 89–109/día</td></tr>
+              <tr><td>🚀 <strong>Kennedy Space Center</strong></td><td>~1 hora (Cabo Cañaveral)</td><td>Adultos y adolescentes. Fascinante, educativo. Ver lanzamientos de cohetes.</td><td>USD 75–85/persona</td></tr>
+              <tr><td>🎡 <strong>ICON Park</strong> (I-Drive)</td><td>Central</td><td>Atracción complementaria. La Rueda de la Fortuna más alta de EE.UU.</td><td>USD 30–50/persona</td></tr>
+              <tr><td>🐊 <strong>Gatorland</strong></td><td>~20 min</td><td>Experiencia única con caimanes. Económico y diferente.</td><td>USD 30–40/persona</td></tr>
+              <tr><td>🎳 <strong>Fun Spot America</strong></td><td>Central (2 ubicaciones)</td><td>Parque de diversiones clásico. Go-karts, coasters económicos, sin colas.</td><td>USD 50–70/persona</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TICKETS ── -->
+    <section id="tickets">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">🎟️</div>
+          <div>
+            <h2>Tickets · Precios y cómo comprar</h2>
+            <div class="park-meta">Estrategia de tickets para maximizar el presupuesto</div>
+          </div>
+        </div>
+
+        <div class="info-box red">
+          <strong>🔴 Importante: Los precios de Disney varían por fecha (Variable Pricing)</strong>
+          <p>Disney aplica precios dinámicos. Un mismo ticket puede costar USD 109 un martes de octubre o USD 189 un sábado de diciembre. Siempre cotizar con el calendario de precios actualizado en la web oficial de Disney.</p>
+        </div>
+
+        <div class="section-label">Disney World — Tipos de tickets</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Ticket</th><th>Descripción</th><th>Precio aprox.</th><th>Recomendado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1-Day / 1-Park</td><td>1 día en 1 parque. Sin Park Hopper.</td><td>USD 109–189</td><td>Solo si es 1 día</td></tr>
+              <tr><td>Multi-Day (3-10 días)</td><td>Precio por día baja significativamente. Ej: 5 días vale ~USD 89/día</td><td>USD 345–650+</td><td>✅ Recomendado</td></tr>
+              <tr><td>Park Hopper</td><td>Agrega ~USD 65 al ticket. Permite saltar entre parques en el mismo día (desde las 2 PM).</td><td>+USD 65 por período</td><td>Para >4 días</td></tr>
+              <tr><td>Lightning Lane Multi Pass</td><td>Sistema de filas rápidas. Reservar desde las 7 AM el mismo día.</td><td>USD 15–35/día</td><td>✅ Muy recomendado</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-label" style="margin-top:20px;">Universal — Tipos de tickets</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Ticket</th><th>Descripción</th><th>Precio aprox.</th><th>Recomendado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1-Park (1 día)</td><td>1 parque: Studios o Islands of Adventure</td><td>USD 109–145</td><td>Solo si es 1 parque</td></tr>
+              <tr><td>2-Park (1 día)</td><td>Studios + Islands of Adventure en el mismo día</td><td>USD 140–179</td><td>✅ Lo mínimo</td></tr>
+              <tr><td>3-Park (incluye Volcano Bay)</td><td>Los 3 parques del resort</td><td>USD 175–220</td><td>Si pasan >2 días</td></tr>
+              <tr><td>Express Pass</td><td>Fila rápida en todas las atracciones. Una vez por atracción.</td><td>USD 80–200+</td><td>Temporada alta</td></tr>
+              <tr><td>Express Unlimited</td><td>Fila rápida ilimitada. O alojarse en hotel premium.</td><td>USD 130–250+</td><td>Pico de temporada</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box green">
+          <strong>💡 ¿Dónde comprar los tickets?</strong>
+          <ul>
+            <li><strong>Directamente en la web oficial:</strong> disneyworld.com y universalorlando.com (mismos precios, sin sorpresas)</li>
+            <li><strong>Undercover Tourist:</strong> Reseller oficial con descuentos de USD 10–30 por ticket de Disney y Universal</li>
+            <li><strong>AAA / hoteles asociados:</strong> A veces tienen descuentos exclusivos</li>
+            <li><strong>Nunca comprar en la taquilla:</strong> Filas y precios más altos</li>
+            <li>Comprar SIEMPRE antes del viaje, especialmente en temporada alta</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ESTRATEGIA ── -->
+    <section id="estrategia">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">⚡</div>
+          <div>
+            <h2>Estrategia de visita · Cómo aprovechar al máximo</h2>
+            <div class="park-meta">Los secretos que el asesor debe conocer y transmitir</div>
+          </div>
+        </div>
+
+        <div class="info-box gold">
+          <strong>🌅 Regla de oro: Llegar al abrir</strong>
+          <p>Los parques de Orlando son más agradables en las primeras 2-3 horas de apertura. Las filas en Magic Kingdom a las 9 AM son de 15 minutos; a las 12 PM son de 60+. <strong>Comenzar por la atracción más popular en cuanto abre el parque.</strong></p>
+        </div>
+
+        <div class="two-col">
+          <div class="info-box green">
+            <strong>✅ Estrategia Disney</strong>
+            <ul>
+              <li>Reservar <strong>Park Pass</strong> (reserva de parque) con anticipación desde la app My Disney Experience</li>
+              <li>Activar el Lightning Lane Multi Pass a las 7 AM desde la cama</li>
+              <li>Usar Mobile Order para el almuerzo (pedir desde las 10 AM para el mediodía)</li>
+              <li>Descanso en el hotel entre 12 y 16 PM (el calor y las colas son máximas)</li>
+              <li>Volver al parque de noche para los shows y fuegos artificiales</li>
+              <li>Mejor día para Magic Kingdom: martes o miércoles a primera hora de la semana</li>
+            </ul>
+          </div>
+          <div class="info-box purple">
+            <strong>✅ Estrategia Universal</strong>
+            <ul>
+              <li>Comenzar en <strong>Islands of Adventure</strong> y hacer Hagrid's Motorbike antes de las 9:30 AM</li>
+              <li>VelociCoaster, Forbidden Journey y Hulk: siempre antes de las 11 AM</li>
+              <li>Huéspedes de hoteles premium tienen Express Pass ilimitado: la mejor relación calidad-precio</li>
+              <li>Usar la app Universal Orlando para ver esperas en tiempo real</li>
+              <li>Butterbeer y comida de Hogsmeade: desayunar ahí antes de que llegue la multitud</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box red">
+          <strong>🔴 Errores comunes que el asesor debe evitar</strong>
+          <ul>
+            <li>No reservar Park Pass de Disney → no pueden entrar al parque elegido</li>
+            <li>No comprar Lightning Lane → horas de cola por cada atracción</li>
+            <li>Ir a Magic Kingdom un sábado en julio → el parque más concurrido del mundo, en el día más concurrido, en la semana más concurrida</li>
+            <li>Planear cenar en Disney Springs sin reserva → esperas de 1+ hora en temporada alta</li>
+            <li>Olvidar cargar el celular → la app es todo en los parques de Disney</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DÍAS RECOMENDADOS ── -->
+    <section id="dias">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">📅</div>
+          <div>
+            <h2>¿Cuántos días dedicar a cada parque?</h2>
+            <div class="park-meta">Guía de planificación por perfil de viajero</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Perfil</th><th>Disney</th><th>Universal</th><th>Otros</th><th>Total días parques</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>👨‍👩‍👧 Familia con niños (5-10 años)</td><td>4-5 días (los 4 parques + 1 extra)</td><td>1-2 días</td><td>LEGOLAND 1 día</td><td><strong>6-8 días</strong></td></tr>
+              <tr><td>👫 Pareja adultos / sin niños</td><td>2-3 días (Disney más relajado)</td><td>2 días</td><td>Kennedy Space Center</td><td><strong>4-5 días</strong></td></tr>
+              <tr><td>🧑‍🤝‍🧑 Grupo de adolescentes</td><td>2 días (Hollywood Studios + Magic Kingdom)</td><td>3 días (incl. Epic Universe)</td><td>SeaWorld 1 día</td><td><strong>5-6 días</strong></td></tr>
+              <tr><td>👨‍👩‍👦 Familia presupuesto ajustado</td><td>2-3 días (priorizar)</td><td>1 día (2-Park)</td><td>Fun Spot / Gatorland</td><td><strong>3-4 días</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-label" style="margin-top:20px;">Plan modelo: 5 días de parques</div>
+
+        <div class="day-plan">
+          <h4>📅 Día 1 — Magic Kingdom</h4>
+          <div class="time-item"><div class="time">7:30 AM</div><div class="desc">Early Entry (huéspedes Disney): Space Mountain, Seven Dwarfs Mine Train antes de la apertura oficial</div></div>
+          <div class="time-item"><div class="time">9:00 AM</div><div class="desc">Haunted Mansion, Pirates of the Caribbean, Big Thunder Mountain</div></div>
+          <div class="time-item"><div class="time">12:30 PM</div><div class="desc">Almuerzo en Be Our Guest (reservar con anticipación) o Crystal Palace</div></div>
+          <div class="time-item"><div class="time">14:00 PM</div><div class="desc">Descanso en hotel (calor y colas máximas)</div></div>
+          <div class="time-item"><div class="time">17:00 PM</div><div class="desc">Regresar para el Festival of Fantasy Parade y Tomorrowland</div></div>
+          <div class="time-item"><div class="time">22:00 PM</div><div class="desc">Happily Ever After: show de fuegos artificiales sobre el Castillo de Cenicienta</div></div>
+        </div>
+
+        <div class="day-plan">
+          <h4>📅 Día 2 — Animal Kingdom + EPCOT (Park Hopper)</h4>
+          <div class="time-item"><div class="time">8:00 AM</div><div class="desc">Animal Kingdom: Flight of Passage en Pandora (fila máxima). Luego Kilimanjaro Safaris temprano.</div></div>
+          <div class="time-item"><div class="time">12:00 PM</div><div class="desc">Almuerzo en Satu'li Canteen (Pandora). Muy bueno y sin colas.</div></div>
+          <div class="time-item"><div class="time">14:00 PM</div><div class="desc">Park Hopper a EPCOT: Guardians of the Galaxy (Lightning Lane reservado), World Showcase</div></div>
+          <div class="time-item"><div class="time">20:00 PM</div><div class="desc">EPCOT Forever o Harmonious (show nocturno en el lago)</div></div>
+        </div>
+
+        <div class="day-plan">
+          <h4>📅 Día 3 — Islands of Adventure (Universal)</h4>
+          <div class="time-item"><div class="time">8:30 AM</div><div class="desc">Llegar antes de apertura. Correr a Hagrid's Motorbike (la atracción con más espera del resort)</div></div>
+          <div class="time-item"><div class="time">10:00 AM</div><div class="desc">VelociCoaster, Jurassic World, The Incredible Hulk</div></div>
+          <div class="time-item"><div class="time">12:00 PM</div><div class="desc">Hogsmeade: Butterbeer + almuerzo en Three Broomsticks</div></div>
+          <div class="time-item"><div class="time">14:00 PM</div><div class="desc">Forbidden Journey, Flight of the Hippogriff, Spider-Man</div></div>
+          <div class="time-item"><div class="time">17:00 PM</div><div class="desc">Pasar a Universal Studios: Diagon Alley + Minion Land</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TIPS PRO ── -->
+    <section id="tips">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">💡</div>
+          <div>
+            <h2>Tips Pro para el asesor</h2>
+            <div class="park-meta">Información que marca la diferencia en la venta</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <ul class="tip-list">
+              <li>El <strong>Butterbeer</strong> de Harry Potter se puede tomar frío, caliente o helado. El helado es el más fotogénico.</li>
+              <li>Los <strong>souvenirs más baratos</strong> de Disney están en los outlets fuera del parque (Disney Outlet Store en Vineland Ave).</li>
+              <li>En <strong>EPCOT</strong>, cada pabellón tiene gastronomía real del país que representa. Es el parque favorito de los adultos foodies.</li>
+              <li>Las <strong>bebidas con alcohol</strong> solo existen en Disney desde 2012 (antes era prohibido). Ahora disponibles en todos los parques excepto Magic Kingdom.</li>
+              <li>Lluvias de tarde son habituales en verano. <strong>Siempre llevar poncho</strong> (comprar online, los del parque cuestan USD 12).</li>
+              <li>Las <strong>aplicaciones oficiales</strong> (My Disney Experience y Universal) son imprescindibles. Descargar antes de llegar.</li>
+            </ul>
+          </div>
+          <div>
+            <ul class="tip-list">
+              <li>El <strong>Agua embotellada</strong> dentro del parque cuesta USD 4-5. Llevar botella de casa y usar las fuentes de agua gratuitas (Florida tiene regulación de agua fría gratis).</li>
+              <li><strong>Disney permite ingresar comida</strong> dentro de la mochila (sin alcohol y sin vidrio). Una estrategia de ahorro excelente para familias.</li>
+              <li>Los <strong>días más tranquilos</strong> en Disney: martes, miércoles y jueves en temporada baja (enero-febrero, septiembre-octubre).</li>
+              <li>Los <strong>peores días</strong>: sábados, domingos, cualquier feriado americano, vacaciones de verano USA (junio-agosto) y Semana Santa.</li>
+              <li><strong>Character Meet & Greet</strong>: Las colas para fotos con personajes pueden ser de 45-90 minutos. Usar Lightning Lane si está disponible.</li>
+              <li><strong>Mágica experiencia gratuita:</strong> El festival de EPCOT y los espectáculos nocturnos no requieren Lightning Lane.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>🛍️ Shopping dentro y fuera de los parques</strong>
+          <ul>
+            <li><strong>Disney Springs:</strong> Shopping, gastronomía y entretenimiento gratis (sin ticket de parque). Ideal para el último día o para no-Disney.</li>
+            <li><strong>CityWalk Universal:</strong> Restaurants y tiendas. Acceso gratuito sin ticket de parque.</li>
+            <li><strong>Orlando Premium Outlets (International Drive):</strong> A 10 min de I-Drive. Nike, Michael Kors, Coach, Gucci Outlet, Kate Spade. Descuentos del 30-70%.</li>
+            <li><strong>Millenia Mall:</strong> El mall premium de Orlando. Apple, Tiffany, Louis Vuitton, Gucci.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── POR EDAD ── -->
+    <section id="ninos">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">👶</div>
+          <div>
+            <h2>Parques por edad del viajero</h2>
+            <div class="park-meta">Guía rápida para recomendar según la composición familiar</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Edad</th><th>Parque recomendado</th><th>Zonas clave</th><th>No recomendar</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0-2 años</td><td>Magic Kingdom (área de Fantasyland)</td><td>Dumbo, Carousel, "It's a Small World"</td><td>Parques de coasters (no apto)</td></tr>
+              <tr><td>3-5 años</td><td>Magic Kingdom + LEGOLAND</td><td>Fantasyland, Pixar area en Hollywood Studios</td><td>Ride intensos de Universal</td></tr>
+              <tr><td>6-10 años</td><td>Disney completo (4 parques) + LEGOLAND</td><td>Pandora, Toy Story Land, Tomorrowland</td><td>VelociCoaster, Hulk (restricción de altura)</td></tr>
+              <tr><td>11-17 años</td><td>Universal (IOA + Studios) + Disney Hollywood</td><td>Hagrid's, VelociCoaster, Galaxy's Edge, Tower of Terror</td><td>Áreas de toddlers (les aburre)</td></tr>
+              <tr><td>Adultos</td><td>EPCOT + Universal + SeaWorld</td><td>World Showcase (EPCOT), Hogsmeade, coasters</td><td>Nada → lo disfrutan todo</td></tr>
+              <tr><td>Adultos mayores</td><td>EPCOT + Animal Kingdom + Magic Kingdom</td><td>Kilimanjaro Safaris, World Showcase, shows nocturnos</td><td>Coasters extremos</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box green">
+          <strong>✅ Rider Switch / Child Swap</strong>
+          <p>Disney y Universal ofrecen el servicio "Rider Switch": si un adulto no puede subir (por ejemplo, porque cuida a un bebé), el otro adulto hace la fila, sube, y luego el primero puede subir inmediatamente sin esperar. <strong>Perfecto para familias con bebés.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SCRIPT ── -->
+    <section id="script">
+      <div class="park-card">
+        <div class="park-header">
+          <div class="icon">🎯</div>
+          <div>
+            <h2>Script de venta · Parques Orlando</h2>
+            <div class="park-meta">Guiones para las situaciones más comunes</div>
+          </div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">CUANDO PREGUNTAN "¿CUÁNTOS DÍAS DE PARQUES?"</div>
+          <div class="script-text">"Todo depende de qué parques quieren hacer y con quién viajan. Si van con chicos de 5 a 12 años y quieren hacer Disney completo, mínimo 4 días de Disney más 1-2 de Universal. Si son adultos, con 2 días de Disney y 2 de Universal se puede armar un viaje espectacular."</div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">CUANDO DICEN "ES DEMASIADO CARO"</div>
+          <div class="script-text">"Es cierto que los tickets tienen un costo, pero si lo dividís en el total del viaje, es una fracción del gasto total. Pensalo así: van a tener recuerdos de por vida. Además, comprados con anticipación y con la estrategia correcta, se pueden optimizar mucho los costos. Y hay opciones intermedias: no hace falta hacer todos los parques."</div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">CUANDO PREGUNTAN POR DISNEY VS UNIVERSAL</div>
+          <div class="script-text">"Son experiencias completamente diferentes y se complementan. Disney es magia, clásicos, personajes, desfiles y fuegos artificiales. Universal es adrenalina, Harry Potter, Star Wars, coasters extremos. Si el tiempo y el presupuesto lo permiten, hacés los dos. Si tenés que elegir y viajás con niños pequeños: Disney. Si van adolescentes o adultos: Universal también es imprescindible."</div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">PARA CERRAR CON EPIC UNIVERSE (2025)</div>
+          <div class="script-text">"¿Sabés que en mayo de 2025 abre Epic Universe, el parque más grande que ha construido Universal en décadas? Incluye Harry Potter (el Ministerio de Magia), Mario Kart, How to Train Your Dragon... Es el momento perfecto para ir a Orlando. Los que vayan este año lo van a ver recién inaugurado."</div>
+        </div>
+
+        <div class="info-box green" style="margin-top:20px;">
+          <strong>✅ Siempre incluir en el paquete</strong>
+          <ul>
+            <li>Tickets de parques reservados online con anticipación</li>
+            <li>Hotel on-site (Disney o Universal) al menos las primeras noches para aprovechar los beneficios de Early Entry</li>
+            <li>Seguro de viaje con cobertura médica (en USA, una consulta médica puede costar USD 500+)</li>
+            <li>Traslados aeropuerto–hotel (los taxis son caros; usar Mears Connect o Magical Express de un hotel Disney)</li>
+            <li>Orientación sobre las apps antes de viajar (My Disney Experience y Universal)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer style="background:linear-gradient(135deg,#003087,#6d0c91);color:#fff;text-align:center;padding:28px 16px;font-size:0.9rem;opacity:0.95;">
+  <div>🎢 <strong>Dr. Viaje · Parques Temáticos de Orlando</strong> — Guía para Asesores de Viaje</div>
+  <div style="margin-top:8px;opacity:0.7;font-size:0.82rem;">Material interno de capacitación. No distribuir fuera del equipo.</div>
+</footer>
+
+</body>
+</html>

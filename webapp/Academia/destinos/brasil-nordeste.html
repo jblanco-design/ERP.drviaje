@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Región Nordeste - Guía Brasil | Dr. Viaje</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-purple);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        nav {
+            background-color: var(--primary-orange);
+            padding: 15px 0;
+            position: sticky;
+            top: 120px;
+            z-index: 999;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-links a:hover {
+            background-color: white;
+            color: var(--primary-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: var(--primary-orange);
+        }
+
+        .destination-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .destination-card:nth-child(even) {
+            border-top-color: var(--primary-pink);
+        }
+
+        .destination-header {
+            border-bottom: 3px solid var(--bg-light);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .destination-header h2 {
+            color: var(--primary-purple);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .destination-subtitle {
+            color: var(--primary-pink);
+            font-size: 1.2rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .section h4 {
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: var(--text-medium);
+        }
+
+        .section ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-medium);
+        }
+
+        .section li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+            border-left: 5px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box::before {
+            content: "💡 TIP DE VENTA: ";
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 5px solid var(--primary-pink);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .alert-box::before {
+            content: "⚠️ ALERTA: ";
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border: 2px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 12px;
+            font-style: italic;
+            position: relative;
+        }
+
+        .script-box::before {
+            content: "💬 SCRIPT: ";
+            font-weight: 700;
+            color: var(--primary-purple);
+            font-style: normal;
+        }
+
+        .critical-alert {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: 3px solid #d32f2f;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .critical-alert::before {
+            content: "🚨 ALERTA CRÍTICA: ";
+            font-weight: 700;
+            color: #d32f2f;
+            font-size: 1.1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-pink) 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .destination-card {
+                padding: 25px;
+            }
+
+            .destination-header h2 {
+                font-size: 2rem;
+            }
+
+            nav {
+                top: 140px;
+            }
+        }
+
+        strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    Dr.<br>Viaje<br>.com
+                </div>
+                <div class="header-title">
+                    <h1>Región Nordeste</h1>
+                    <p>Alagoas, Pernambuco y Paraíba - Costa dos Corais</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#maceio-maragogi">Maceió y Maragogi</a></li>
+                <li><a href="#porto-galinhas">Porto de Galinhas</a></li>
+                <li><a href="#recife-olinda">Recife y Olinda</a></li>
+                <li><a href="#joao-pessoa">João Pessoa</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index-brasil.html" class="back-link">← Volver al índice principal</a>
+
+        <!-- MACEIÓ Y MARAGOGI -->
+        <div id="maceio-maragogi" class="destination-card">
+            <div class="destination-header">
+                <h2>MACEIÓ Y MARAGOGI</h2>
+                <p class="destination-subtitle">El Caribe Brasileño Inteligente - Costa dos Corais</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación de los Destinos</h3>
+                <p>Maceió y Maragogi conforman el corazón de la <strong>Costa dos Corais</strong> de Alagoas, la segunda barrera de arrecifes de coral más grande del mundo después de Australia. Esta maravilla natural de 130 km crea playas con aguas cristalinas de tonalidades turquesas que rivalizan directamente con el Caribe, pero con la ventaja de estar en Brasil: sin visa, sin cambio de moneda complejo, y con precios significativamente más accesibles.</p>
+                
+                <p><strong>MACEIÓ</strong>, capital de Alagoas, ostenta un título único en Brasil: posee la <strong>orla urbana más hermosa del país</strong>. Puedes bañarte en aguas cristalinas frente a edificios modernos, tomar jangadas (balsas rústicas tradicionales) desde la misma ciudad hacia piscinas naturales.</p>
+
+                <p><strong>MARAGOGI</strong> (a 125 km) es el pueblo que materializó el concepto "Caribe Brasileño" gracias a las legendarias <strong>Galés</strong>: las piscinas naturales más fotografiadas y visitadas de Brasil, formaciones de arrecifes de coral a 6 km de la costa que en marea baja crean piscinas naturales con visibilidad submarina superior a 20 metros.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué estos destinos son estratégicos?</strong> Son tu alternativa económica inteligente cuando el cliente busca "Caribe brasileño" con presupuesto ajustado. Maceió + Maragogi combinados cuestan 30-40% menos que Porto de Galinhas con calidad de playas igual o superior.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal y Estrategia de Detección</h3>
+                
+                <h4>MACEIÓ - Cliente práctico y estratégico:</h4>
+                <p>El comprador típico busca <strong>infraestructura urbana completa</strong> con acceso a múltiples experiencias. Valora tener opciones gastronómicas infinitas, y la comodidad de una gran ciudad como base para explorar destinos naturales espectaculares.</p>
+
+                <h4>MARAGOGI - Cliente "Caribe Brasileño" con presupuesto inteligente:</h4>
+                <p>El comprador típico busca la postal perfecta del Caribe (aguas turquesas, piscinas naturales) pero tiene presupuesto que no alcanza para Punta Cana o Porto de Galinhas. Valora belleza extrema, está dispuesto a pagar más que Maceió pero quiere sentir que consiguió un "negocio inteligente".</p>
+
+                <div class="script-box">
+                    "Mi recomendación estrella es dividir estratégicamente: 3-4 noches en Maceió (precios económicos, conocés la ciudad, hacés paseos a playas espectaculares como Gunga y Francês) + 4 noches en Maragogi (las Galés, relax total en pousada frente al mar turquesa). Maximizás el presupuesto: ahorrás en Maceió para invertir en Maragogi, tenés vacaciones completas con un solo aeropuerto."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>¿Son Recomendables para Niños?</h3>
+                
+                <p><strong>¡SON EL MEJOR DESTINO DE BRASIL PARA FAMILIAS CON NIÑOS!</strong></p>
+
+                <p><strong>La razón científica:</strong> La barrera de arrecifes de coral crea una laguna natural gigante donde las playas parecen piscinas inmensas. No hay olas peligrosas, el agua es cálida (28°C constante), y la arena es fina y blanca.</p>
+
+                <ul>
+                    <li><strong>Niños de 0-5 años:</strong> Paraíso absoluto. Los padres pueden relajarse completamente porque el mar es como una piscina gigante natural</li>
+                    <li><strong>Niños de 6-12 años:</strong> Edad ideal. Se fascinan con los peces de colores en las piscinas naturales</li>
+                    <li><strong>Adolescentes:</strong> Muy recomendable en Maceió (vida nocturna moderada). Maragogi puede ser aburrido de noche para ellos</li>
+                </ul>
+
+                <div class="script-box">
+                    "Si tenés niños, dejá de buscar otros destinos. Alagoas es una piscina gigante natural de agua tibia cristalina. No tenés que preocuparte por olas fuertes, corrientes peligrosas, o playas complicadas. Los padres realmente pueden descansar mientras los chicos juegan seguros en la orilla."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: Maceió - Zumbi dos Palmares (MCZ)</h4>
+                <ul>
+                    <li><strong>Centro de Maceió:</strong> 25 km (30-40 min según tráfico)</li>
+                    <li><strong>Maragogi:</strong> 125 km (2-2.5 horas por AL-101 Norte)</li>
+                </ul>
+
+                <div class="tip-box">
+                    Para llegar a Maragogi, el traslado privado no es un lujo, es una necesidad logística. Son 125 km por carretera que no conocen, y llegar a una pousada frente al mar en transporte público arruina la primera impresión de las vacaciones.
+                </div>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Maceió</th>
+                            <th>Maragogi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en barraca/restaurante</td><td>USD 10-18</td><td>USD 15-25</td></tr>
+                        <tr><td>Cena</td><td>USD 15-25</td><td>USD 20-35</td></tr>
+                        <tr><td>Jangada a piscinas naturales</td><td>USD 10-15</td><td>-</td></tr>
+                        <tr><td>Galés (obligatorio)</td><td>-</td><td>USD 40-60</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong></p>
+                <ul>
+                    <li>Maceió: USD 60-90 por persona (perfil medio)</li>
+                    <li>Maragogi: USD 70-100 por persona (perfil medio)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Alertas Críticas</h3>
+                <div class="alert-box">
+                    <strong>Dependencia crítica de mareas para las Galés:</strong> Las Galés dependen de mareas que cambian diariamente. Por eso recomiendo mínimo 3 noches en Maragogi para tener flexibilidad. Todos los paseos se confirman el día anterior verificando condiciones.<br><br>
+                    <strong>Temporada de lluvias (Mayo-Agosto):</strong> El agua turquesa se enturbia completamente con las lluvias. Si el cliente prioriza el color del mar, no vender en estos meses.
+                </div>
+            </div>
+        </div>
+
+        <!-- PORTO DE GALINHAS -->
+        <div id="porto-galinhas" class="destination-card">
+            <div class="destination-header">
+                <h2>PORTO DE GALINHAS</h2>
+                <p class="destination-subtitle">El Destino Premium Familiar del Nordeste</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Porto de Galinhas es el destino de playa más premiado de Brasil, ganador del título <strong>"Melhor Praia do Brasil"</strong> por 10 años consecutivos (1999-2009) otorgado por la revista Viagem e Turismo, récord absoluto que ningún otro destino ha logrado igualar.</p>
+
+                <p>Las <strong>piscinas naturales</strong> de Porto de Galinhas se forman a apenas 50-100 metros de la costa durante la marea baja, creando verdaderos acuarios naturales donde cientos de peces tropicales nadan entre corales milenarios. A diferencia de las Galés de Maragogi (6 km mar adentro), aquí las piscinas están <strong>visibles desde la playa</strong>.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Porto de Galinhas es fundamental?</strong> Es tu "destino premium del nordeste" sin llegar a precios de Caribe internacional. Cuando tu cliente tiene presupuesto medio-alto y busca "el mejor del nordeste", Porto es tu respuesta automática. La infraestructura turística está perfeccionada durante 30 años.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Alojamientos: Qué Recomendar Según el Cliente</h3>
+                
+                <h4>Centro de Porto de Galinhas:</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Familias que priorizan variedad gastronómica, primera vez en Porto</li>
+                    <li><strong>Ventajas:</strong> Caminan a restaurantes y jangadas sin traslados</li>
+                    <li><strong>Contras:</strong> Puede ser ruidoso, playas más concurridas</li>
+                </ul>
+
+                <h4>Muro Alto (la zona premium):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Familias con niños pequeños, parejas que buscan máxima exclusividad</li>
+                    <li><strong>Ventajas:</strong> Piscina natural gigante de 3 km protegida por barrera de arrecifes, agua calma como lago</li>
+                    <li><strong>Resorts estrella:</strong> Nannai Resort & Spa (el más exclusivo), Summerville Beach Resort (familiar premium), Enotel Porto de Galinhas (all-inclusive completo)</li>
+                </ul>
+
+                <h4>Maracaípe (la auténtica):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Parejas sin niños, surfistas, quien busca autenticidad</li>
+                    <li><strong>Ventajas:</strong> Pueblo de pescadores preservado, olas perfectas para surf, Paseo de barco por el río (santuario de caballitos de mar)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>¡ES EL DESTINO FAMILIAR MÁS PERFECCIONADO DE BRASIL!</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-3 años:</strong> Muro Alto es paraíso absoluto. Mar como piscina, resorts con Copa Baby, recreación desde 6 meses</li>
+                    <li><strong>Niños de 4-12 años:</strong> Edad ideal. Piscinas naturales son aventura controlada perfecta, paseo de caballitos de mar, jangadas seguras</li>
+                    <li><strong>Adolescentes:</strong> Muy recomendable. Surf en Maracaípe, stand-up paddle, vida nocturna moderada apropiada</li>
+                </ul>
+
+                <div class="script-box">
+                    "Porto es el destino donde los padres pueden realmente descansar. Los chicos tienen actividades todo el día, las playas son seguras, las pousadas tienen recreación, y vos podés relajar sabiendo que están seguros y felices."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: Recife - Guararapes (REC)</h4>
+                <p><strong>Distancia crítica:</strong> Recife ↔ Porto de Galinhas: 60 km (1-1.5 horas según tráfico)</p>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en barraca de playa</td><td>USD 15-28 por persona</td></tr>
+                        <tr><td>Cena en restaurante medio</td><td>USD 20-40 por persona</td></tr>
+                        <tr><td>Jangada a piscinas naturales</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Pontal de Maracaípe (caballitos)</td><td>USD 25-35 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado:</strong> USD 80-120 por persona (perfil medio)</p>
+
+                <div class="alert-box">
+                    Muchos clientes asumen que las jangadas están incluidas en el hospedaje. <strong>Siempre aclarar explícitamente que se pagan aparte.</strong>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de objeción - precio:</strong><br>
+                    "Porto es más caro que Maceió, es verdad. Pero la diferencia se justifica en infraestructura perfeccionada durante 30 años: 100+ pousadas, 80 restaurantes, múltiples paseos organizados profesionalmente, y prácticamente cero riesgo de decepción. Es pagar un poco más por garantía de satisfacción."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta:</strong><br>
+                    "5-7 noches en Porto para vivir la experiencia completa: conocés las diferentes playas, hacés las piscinas naturales en varios horarios de marea, el paseo de caballitos de mar, día en Carneiros, y tenés tiempo para relajar sin correr."
+                </div>
+            </div>
+        </div>
+
+        <!-- RECIFE Y OLINDA -->
+        <div id="recife-olinda" class="destination-card">
+            <div class="destination-header">
+                <h2>RECIFE Y OLINDA</h2>
+                <p class="destination-subtitle">El Corazón Cultural de Pernambuco</p>
+            </div>
+
+            <div class="critical-alert">
+                <h3 style="color: #d32f2f; margin-top: 0;">EL PROBLEMA DE LAS PLAYAS DE RECIFE</h3>
+                <p>Las playas urbanas de Recife, especialmente <strong>Boa Viagem</strong> y <strong>Piedade</strong>, tienen <strong>incidencia documentada de ataques de tiburones</strong> desde 1992. Esto NO es mito urbano: es realidad científica monitoreada por el CEMIT (Comité Estatal de Monitoreo de Incidentes con Tiburones).</p>
+                <p><strong>Estadísticas oficiales:</strong> Más de 60 ataques documentados desde 1992, 25 ataques fatales confirmados, 90% de incidentes en Boa Viagem y Piedade.</p>
+                <p><strong>Script obligatorio:</strong> "Como profesional responsable, debo ser completamente honesto: las playas urbanas de Recife tienen incidencia documentada de ataques de tiburones desde los años 90. Está científicamente confirmado, hay señalización oficial prohibiendo el baño, y los locales NO se bañan allí. Recife se vende como ciudad cultural fascinante, NO como destino de playa."</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación de los Destinos</h3>
+                <p>Recife y Olinda conforman el binomio cultural más fascinante del nordeste brasileño, donde la historia colonial portuguesa se fusiona con la única herencia holandesa de Brasil.</p>
+                
+                <p><strong>RECIFE</strong>, capital de Pernambuco, es conocida como la <strong>"Venecia Brasileña"</strong> por sus canales, puentes y ríos. Vivió un período único: fue capital de la colonia holandesa (1630-1654) bajo el gobierno del Conde Mauricio de Nassau.</p>
+
+                <p><strong>OLINDA</strong>, fundada en 1535, es <strong>Patrimonio de la Humanidad por UNESCO desde 1982</strong>. Este conjunto arquitectónico colonial perfectamente preservado se asienta sobre colinas con vista panorámica al mar.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué son estratégicos?</strong> Funcionan como base cultural perfecta (2-3 noches) combinada con Porto de Galinhas, Maragogi o Praia dos Carneiros. El aeropuerto de Recife es hub del nordeste con excelente conectividad.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Atractivos Principales</h3>
+                
+                <h4>RECIFE:</h4>
+                <ul>
+                    <li><strong>Recife Antigo:</strong> Marco Zero, Cais do Sertão, Paço do Frevo</li>
+                    <li><strong>Instituto Ricardo Brennand:</strong> ¡EL IMPERDIBLE ABSOLUTO! Castillo medieval en plena selva tropical</li>
+                    <li><strong>Sinagoga Kahal Zur Israel:</strong> Primera sinagoga de América (1636)</li>
+                </ul>
+
+                <h4>OLINDA:</h4>
+                <ul>
+                    <li><strong>Alto da Sé:</strong> Vista panorámica 360 grados</li>
+                    <li><strong>Ladeiras históricas:</strong> Calles empedradas empinadas con casarões coloridos</li>
+                    <li><strong>Carnaval de Olinda:</strong> El más democrático de Brasil con 400+ blocos gratuitos</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Son Recomendables para Niños?</h3>
+                
+                <ul>
+                    <li><strong>Recife:</strong> Condicional (función cultural, no playera). Niños de 7-12 años se fascinan con el Instituto Ricardo Brennand</li>
+                    <li><strong>Olinda:</strong> NO recomendable para niños pequeños. Las ladeiras empinadas sobre adoquines coloniales hacen imposible cochecitos</li>
+                </ul>
+
+                <div class="script-box">
+                    "Con niños, la estrategia inteligente es quedarse directamente en Porto de Galinhas y hacer Recife/Olinda como excursión cultural de día completo desde allá. Conocen la historia sin complicarte la logística familiar."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: Recife - Guararapes (REC)</h4>
+                <ul>
+                    <li><strong>Boa Viagem:</strong> 6 km (15-20 min)</li>
+                    <li><strong>Recife Antigo:</strong> 11 km (20-30 min según tráfico)</li>
+                    <li><strong>Olinda:</strong> 18 km (30-40 min)</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo ejecutivo</td><td>USD 10-15 por persona</td></tr>
+                        <tr><td>Cena en Recife Antigo</td><td>USD 20-35 por persona</td></tr>
+                        <tr><td>Instituto Ricardo Brennand</td><td>USD 8-10 por persona</td></tr>
+                        <tr><td>Uber Boa Viagem ↔ Olinda</td><td>USD 8-12</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado:</strong> USD 50-80 por persona (excelente relación calidad-precio)</p>
+            </div>
+        </div>
+
+        <!-- JOÃO PESSOA -->
+        <div id="joao-pessoa" class="destination-card">
+            <div class="destination-header">
+                <h2>JOÃO PESSOA</h2>
+                <p class="destination-subtitle">Donde el Sol Nace Primero - La Alternativa Inteligente</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>João Pessoa es <strong>"A Cidade Onde o Sol Nasce Primeiro"</strong> (la ciudad donde el sol nace primero), capital de Paraíba y el punto geográfico más oriental de todo el continente americano. Esta característica única significa que cada amanecer ilumina primero João Pessoa antes que cualquier otra ciudad de América.</p>
+
+                <p>El diferenciador urbanístico único: João Pessoa posee una <strong>ley de límite de altura costera</strong> que prohíbe construcciones de más de tres pisos en primera línea de playa. Esta regulación visionaria evita el "efecto muralla" de rascacielos, permitiendo que la brisa marina ventile toda la ciudad.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué João Pessoa es estratégica?</strong> Es tu "alternativa inteligente del nordeste": ofrece la belleza tropical característica sin turismo masivo, precios inflados ni caos urbano. Es el nordeste auténtico y tranquilo que busca la clase media uruguaya: calidad garantizada con presupuesto controlado.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <p>El comprador típico busca "nordeste auténtico sin circo turístico" con excelente relación costo-beneficio. Valora tranquilidad sobre movimiento nocturno, seguridad sobre prestigio social, y experiencias genuinas sobre infraestructura ostentosa.</p>
+
+                <h4>Cómo detectar a tu cliente João Pessoa:</h4>
+                <ul>
+                    <li>Menciona "tranquilo", "seguro", "económico pero lindo", "sin multitudes"</li>
+                    <li>Pregunta por "alternativas más baratas" a Porto de Galinhas/Maceió</li>
+                    <li>Dice "no me importa que no sea tan conocido si es hermoso"</li>
+                    <li>Viaja en familia con niños o pareja madura (50+ años)</li>
+                    <li>Valora "poder caminar tranquilo de noche"</li>
+                </ul>
+
+                <div class="script-box">
+                    "João Pessoa es el secreto mejor guardado del nordeste: la ciudad donde el sol nace primero en América, con playas urbanas hermosas donde realmente podés bañarte con seguridad, precios 30-40% más económicos que destinos masificados, y la tranquilidad de una capital verde sin el caos turístico."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>¡SÍ, EXCELENTE Y ALTAMENTE RECOMENDABLE PARA TODAS LAS EDADES!</strong></p>
+
+                <h4>Las razones científicas:</h4>
+                <ul>
+                    <li><strong>Playas urbanas como piscina:</strong> Protegidas por barreras de coral, sin olas peligrosas, agua tibia (28°C constante)</li>
+                    <li><strong>Seguridad excepcional:</strong> Una de las capitales más pacíficas del nordeste</li>
+                    <li><strong>Infraestructura familiar:</strong> Orla ancha y plana (perfecta para cochecitos), plazas con juegos</li>
+                </ul>
+
+                <div class="script-box">
+                    "Si viajás con chicos, João Pessoa te va a dar tranquilidad que no tiene precio. El mar es literalmente una piscina gigante de agua tibia sin olas peligrosas. Podés caminar con cochecito por una orla impecable, es súper seguro, y los paseos en barco son cortitos para que no se aburran ni se mareen."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>LA ESTRATEGIA LOGÍSTICA INTELIGENTE:</h4>
+
+                <div class="tip-box">
+                    Te voy a cotizar llegando a Recife en lugar de João Pessoa directamente. Están a solo 2 horas por autopista, el traslado te lo resuelvo, y generalmente conseguimos mejores precios y menos horas de escala. Es la estrategia que usamos los profesionales para optimizar tu presupuesto y comodidad.
+                </div>
+
+                <ul>
+                    <li><strong>Opción 1:</strong> Aeropuerto João Pessoa (JPA) - 20 km (25-30 min) a zona hotelera</li>
+                    <li><strong>Opción 2 ESTRATÉGICA:</strong> Recife (REC) - 120 km (2 horas por autopista excelente) - mejores conexiones y precios</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo ejecutivo/barraca</td><td>USD 8-15 por persona</td></tr>
+                        <tr><td>Cena en restaurante excelente</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Piscinas naturales Picãozinho</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Litoral Sul (día completo)</td><td>USD 30-45 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado:</strong> USD 55-80 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Alertas Críticas</h3>
+                <div class="alert-box">
+                    <strong>Horarios de sol únicos:</strong> Al ser el punto más oriental de América, el sol sale a las 5:00 AM y se pone a las 17:00 PM. La vida local empieza muy temprano.<br><br>
+                    <strong>Tambaba (Sector Naturista):</strong> Informar explícitamente que esta playa tiene un sector nudista oficial (perfectamente delimitado del sector familiar).<br><br>
+                    <strong>Vida nocturna limitada:</strong> NO vender a jóvenes buscando fiesta intensa. João Pessoa es tranquila: restaurantes, bares moderados, pero NO discotecas ni ambiente hasta el amanecer.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de objeción - "Nunca escuché de João Pessoa":</strong><br>
+                    "Exactamente ese es el punto: João Pessoa es el secreto del nordeste. No tiene la fama inflada de Porto de Galinhas, pero tiene las mismas playas paradisíacas a precios 30-40% más económicos. Los brasileños que conocen van a João Pessoa, los turistas van a los destinos caros. Vos elegís ser viajero inteligente."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta:</strong><br>
+                    "5-7 noches para vivir la experiencia completa: conocés las playas urbanas y piscinas naturales, hacés el litoral sul espectacular (Coqueirinho + Tambaba), el atardecer icónico de Jacaré, y tenés tiempo para relajar en la ciudad más verde del nordeste sin andar corriendo."
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            Dr.<br>Viaje<br>.com
+        </div>
+        <p><strong>Dr. Viaje - Tu especialista en destinos brasileños</strong></p>
+        <p>Guía Definitiva para Agentes de Viajes - Región Nordeste</p>
+        <p>Capacitación Profesional 2024</p>
+    </footer>
+
+    <div class="scroll-top" id="scrollTop">↑</div>
+
+    <script>
+        const scrollTop = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = 180;
+                    const elementPosition = target.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: elementPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

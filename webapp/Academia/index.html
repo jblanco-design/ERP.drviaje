@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr.Viaje — Centro de Capacitación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    /* ── Reset base ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #7B2D8E 0%, #9c27b0 40%, #E91E63 100%);
+      position: relative;
+      overflow: hidden;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px 80px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      top: -200px; left: -150px;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: rgba(255,152,0,0.12);
+      bottom: -100px; right: -80px;
+    }
+
+    /* orbe decorativo extra */
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+    .orb-1 { width:180px;height:180px; background:rgba(255,152,0,.16); top:10%;right:12%; }
+    .orb-2 { width:120px;height:120px; background:rgba(255,255,255,.06); bottom:18%;left:8%; }
+    .orb-3 { width:80px;height:80px;   background:rgba(233,30,99,.18); top:30%;left:5%; }
+
+    /* Línea ECG decorativa */
+    .hero-ecg {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      opacity: 0.12;
+    }
+
+    .hero__logo {
+      position: relative;
+      z-index: 2;
+      margin-bottom: 36px;
+      animation: fadeInDown 0.7s ease both;
+    }
+
+    .hero__logo img {
+      height: 120px;
+      width: auto;
+      filter: drop-shadow(0 8px 30px rgba(0,0,0,0.3));
+    }
+
+    .hero__badge {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.26);
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.92);
+      margin-bottom: 22px;
+      backdrop-filter: blur(6px);
+      animation: fadeInDown 0.8s ease 0.1s both;
+    }
+
+    .hero__title {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      max-width: 820px;
+      animation: fadeInUp 0.8s ease 0.15s both;
+    }
+
+    .hero__title span {
+      background: linear-gradient(90deg, #FFB703, #FF9800);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero__sub {
+      position: relative;
+      z-index: 2;
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.82);
+      max-width: 600px;
+      margin-bottom: 44px;
+      animation: fadeInUp 0.8s ease 0.22s both;
+    }
+
+    /* Stats hero */
+    .hero__stats {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 50px;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+
+    .hero__stat {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 18px 28px;
+      text-align: center;
+      min-width: 130px;
+    }
+
+    .hero__stat-num {
+      display: block;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .hero__stat-label {
+      display: block;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.72);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .hero__cta {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      color: #7B2D8E;
+      border-radius: 999px;
+      padding: 16px 36px;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      transition: all 0.25s ease;
+      animation: fadeInUp 0.8s ease 0.35s both;
+    }
+    .hero__cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+      background: #FFB703;
+      color: #fff;
+    }
+
+    .hero__cta-outline {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.7);
+      border-radius: 999px;
+      padding: 16px 36px;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      transition: all 0.25s ease;
+      animation: fadeInUp 0.8s ease 0.45s both;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .hero__cta-outline:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+      background: rgba(255,255,255,0.15);
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .hero__cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.75rem;
+      animation: bounce 2s infinite;
+    }
+
+    /* ── SECCIÓN DESTINOS ── */
+    .section {
+      padding: 70px 24px;
+    }
+
+    .container {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(90deg, rgba(123,45,142,0.1), rgba(233,30,99,0.08));
+      border: 1px solid rgba(123,45,142,0.15);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #7B2D8E;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      color: #231942;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: #666;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* ── REGIÓN TABS ── */
+    .region-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 44px;
+      flex-wrap: wrap;
+    }
+
+    .region-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.25s ease;
+      background: #fff;
+      color: #555;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    .region-tab:hover {
+      border-color: #7B2D8E;
+      color: #7B2D8E;
+      box-shadow: 0 4px 20px rgba(123,45,142,0.14);
+    }
+
+    .region-tab.active {
+      background: linear-gradient(135deg, #7B2D8E, #E91E63);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 6px 24px rgba(123,45,142,0.28);
+    }
+
+    /* ── GRID DE DESTINOS ── */
+    .destinos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .destino-card {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      transition: all 0.28s ease;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .destino-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(123,45,142,0.16);
+      border-color: rgba(123,45,142,0.1);
+    }
+
+    .destino-card__header {
+      padding: 28px 24px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .destino-card__emoji {
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 14px;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .destino-card__flag {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 1.6rem;
+      opacity: 0.4;
+    }
+
+    .destino-card__name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #231942;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .destino-card__region {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-top: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .destino-card__body {
+      padding: 0 24px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .destino-card__desc {
+      font-size: 0.88rem;
+      color: #666;
+      line-height: 1.55;
+      flex: 1;
+      margin-bottom: 18px;
+    }
+
+    .destino-card__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #7B2D8E;
+      transition: gap 0.2s ease;
+    }
+
+    .destino-card:hover .destino-card__link {
+      gap: 12px;
+    }
+
+    /* Tags en la card */
+    .destino-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .destino-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(123,45,142,0.08);
+      color: #7B2D8E;
+    }
+
+    /* Colores por región */
+    .card-caribe .destino-card__header { background: linear-gradient(135deg, rgba(3,169,244,0.08), rgba(0,188,212,0.06)); }
+    .card-caribe .destino-card__region { color: #0288D1; }
+    .card-caribe .destino-card__link { color: #0288D1; }
+    .card-caribe .destino-tag { background: rgba(3,169,244,0.1); color: #0288D1; }
+    .card-caribe:hover { box-shadow: 0 16px 48px rgba(3,169,244,0.16); }
+
+    .card-sudamerica .destino-card__header { background: linear-gradient(135deg, rgba(123,45,142,0.07), rgba(233,30,99,0.05)); }
+    .card-sudamerica .destino-card__region { color: #7B2D8E; }
+
+    .card-brasil .destino-card__header { background: linear-gradient(135deg, rgba(76,175,80,0.08), rgba(255,235,59,0.06)); }
+    .card-brasil .destino-card__region { color: #388E3C; }
+    .card-brasil .destino-card__link { color: #388E3C; }
+    .card-brasil .destino-tag { background: rgba(76,175,80,0.1); color: #388E3C; }
+    .card-brasil:hover { box-shadow: 0 16px 48px rgba(76,175,80,0.16); }
+
+    .card-usa .destino-card__header { background: linear-gradient(135deg, rgba(178,34,52,0.07), rgba(60,59,110,0.06)); }
+    .card-usa .destino-card__region { color: #B22234; }
+    .card-usa .destino-card__link { color: #B22234; }
+    .card-usa .destino-tag { background: rgba(178,34,52,0.09); color: #B22234; }
+    .card-usa:hover { box-shadow: 0 16px 48px rgba(178,34,52,0.15); }
+
+    .region-group-header.usa h3 { color: #B22234; }
+
+    /* Brasil grupo */
+    .brasil-group-header,
+    .region-group-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 8px 0 4px;
+      margin-top: 8px;
+    }
+
+    .brasil-group-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #388E3C;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brasil-group-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(76,175,80,0.3), transparent);
+    }
+
+    .region-group-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .region-group-header.caribe h3  { color: #0288D1; }
+    .region-group-header.sudamerica h3 { color: #7B2D8E; }
+
+    .region-group-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+    }
+    .region-group-header.caribe::after {
+      background: linear-gradient(90deg, rgba(2,136,209,0.3), transparent);
+    }
+    .region-group-header.sudamerica::after {
+      background: linear-gradient(90deg, rgba(123,45,142,0.3), transparent);
+    }
+
+    /* Sub-headers Costa Este / Costa Oeste */
+    .usa-coast-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 0 2px;
+      margin-top: 4px;
+    }
+    .usa-coast-header h4 {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #B22234;
+      white-space: nowrap;
+    }
+    .usa-coast-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(178,34,52,0.25), transparent);
+    }
+
+    /* ── SECCIÓN HOW TO USE ── */
+    .howto {
+      background: linear-gradient(135deg, #7B2D8E 0%, #9c27b0 50%, #E91E63 100%);
+      padding: 70px 24px;
+      color: #fff;
+    }
+
+    .howto .section-title { color: #fff; }
+    .howto .section-sub { color: rgba(255,255,255,0.75); }
+    .howto .section-tag {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .step-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      transition: all 0.25s ease;
+    }
+
+    .step-card:hover {
+      background: rgba(255,255,255,0.16);
+      transform: translateY(-4px);
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      font-weight: 900;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      font-size: 0.86rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.5;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #1a0d2e;
+      color: rgba(255,255,255,0.65);
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .footer img {
+      height: 44px;
+      width: auto;
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+
+    .footer p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .footer strong {
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* ── ANIMACIONES ── */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hero__stats { gap: 12px; }
+      .hero__stat { padding: 14px 18px; min-width: 110px; }
+      .destinos-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       NAVBAR GLOBAL
+  ══════════════════════════════════════ -->
+  <nav class="drv-navbar" role="navigation" aria-label="Navegación principal">
+    <div class="drv-navbar__inner">
+
+      <!-- Logo -->
+      <div class="drv-navbar__logo">
+        <a href="index.html" aria-label="Dr.Viaje — Inicio">
+          <img src="images/logo-color.png" alt="Dr.Viaje" />
+        </a>
+      </div>
+
+      <!-- Menú desktop -->
+      <ul class="drv-navbar__menu" role="menubar">
+
+        <!-- Inicio -->
+        <li role="none">
+          <a href="index.html" class="drv-navbar__home" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Inicio
+          </a>
+        </li>
+
+        <!-- ── DESTINOS ── -->
+        <li role="none">
+          <button class="drv-nav-trigger" aria-haspopup="true" aria-expanded="false" role="menuitem">
+            🌍 Destinos
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="drv-dropdown drv-dropdown--wide" role="menu">
+            <span class="drv-dropdown__title">🌎 Sudamérica</span>
+            <a href="destinos/bariloche.html" role="menuitem"><span class="flag">🇦🇷</span> Bariloche</a>
+            <a href="destinos/mendoza.html" role="menuitem"><span class="flag">🇦🇷</span> Mendoza</a>
+            <a href="destinos/ushuaia.html" role="menuitem"><span class="flag">🇦🇷</span> Ushuaia + El Calafate</a>
+            <a href="destinos/santiago.html" role="menuitem"><span class="flag">🇨🇱</span> Santiago de Chile</a>
+            <hr>
+            <button class="brasil-toggle" aria-haspopup="true">
+              <span class="flag">🇧🇷</span> Brasil
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="brasil-submenu">
+              <a href="destinos/brasil-rio.html">🏖️ Río + Costa Verde</a>
+              <a href="destinos/brasil-bahia.html">🥁 Bahía</a>
+              <a href="destinos/brasil-ceara.html">🌊 Ceará</a>
+              <a href="destinos/brasil-nordeste.html">🌴 Nordeste</a>
+              <a href="destinos/brasil-maranhao.html">🏜️ Maranhão</a>
+            </div>
+            <hr>
+            <span class="drv-dropdown__title">🏝️ Caribe</span>
+            <a href="destinos/cancun.html" role="menuitem"><span class="flag">🇲🇽</span> Cancún / Riviera Maya</a>
+            <a href="destinos/dominicana.html" role="menuitem"><span class="flag">🇩🇴</span> República Dominicana</a>
+            <a href="destinos/jamaica.html" role="menuitem"><span class="flag">🇯🇲</span> Jamaica</a>
+            <a href="destinos/aruba.html" role="menuitem"><span class="flag">🇦🇼</span> Aruba</a>
+            <a href="destinos/curazao.html" role="menuitem"><span class="flag">🇨🇼</span> Curaçao</a>
+            <a href="destinos/saint-martin.html" role="menuitem"><span class="flag">🇫🇷</span> Saint Martin</a>
+            <a href="destinos/san-andres.html" role="menuitem"><span class="flag">🇨🇴</span> San Andrés</a>
+            <a href="destinos/cartagena.html" role="menuitem"><span class="flag">🇨🇴</span> Cartagena de Indias</a>
+            <a href="destinos/santa-marta.html" role="menuitem"><span class="flag">🇨🇴</span> Santa Marta · Tayrona</a>
+          </div>
+        </li>
+
+        <!-- ── USA ── -->
+        <li role="none">
+          <button class="drv-nav-trigger" aria-haspopup="true" aria-expanded="false" role="menuitem">
+            🇺🇸 Estados Unidos
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="drv-dropdown" role="menu">
+            <span class="drv-dropdown__title">🗽 Costa Este</span>
+            <a href="destinos/nueva-york.html" role="menuitem">🗽 Nueva York</a>
+            <a href="destinos/miami-orlando.html" role="menuitem">🌴 Miami + Orlando</a>
+            <a href="destinos/parques-orlando.html" role="menuitem">🎢 Parques de Orlando</a>
+            <hr>
+            <span class="drv-dropdown__title">🌅 Costa Oeste</span>
+            <a href="destinos/los-angeles.html" role="menuitem">🎬 Los Ángeles</a>
+            <a href="destinos/las-vegas.html" role="menuitem">🎰 Las Vegas</a>
+            <a href="destinos/san-francisco.html" role="menuitem">🌉 San Francisco</a>
+          </div>
+        </li>
+
+        <!-- ── AMADEUS ── -->
+        <li role="none">
+          <button class="drv-nav-trigger" aria-haspopup="true" aria-expanded="false" role="menuitem">
+            ✈️ Amadeus
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="drv-dropdown" role="menu">
+            <span class="drv-dropdown__title">Amadeus GDS</span>
+            <a href="amadeus/guia-rapida.html" role="menuitem">📋 Guía Rápida de Reservas</a>
+            <a href="amadeus/fxd.html" role="menuitem">🔍 FXD · Master Pricer</a>
+            <a href="amadeus/aerolineas.html" role="menuitem">✈️ Cotización por Aerolínea</a>
+            <a href="amadeus/reservas-basico.pdf" target="_blank" role="menuitem">📄 Manual Básico PDF</a>
+          </div>
+        </li>
+
+        <!-- ── HERRAMIENTAS ── -->
+        <li role="none">
+          <button class="drv-nav-trigger" aria-haspopup="true" aria-expanded="false" role="menuitem">
+            🧰 Herramientas
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="drv-dropdown" role="menu">
+            <span class="drv-dropdown__title">🏨 Hoteles Recomendados</span>
+            <a href="hoteles/index.html" role="menuitem">🏨 Ver todos</a>
+            <a href="hoteles/cancun-riviera.html" role="menuitem"><span class="flag">🇲🇽</span> Cancún &amp; Riviera Maya</a>
+            <a href="hoteles/punta-cana.html" role="menuitem"><span class="flag">🇩🇴</span> Punta Cana</a>
+            <hr>
+            <span class="drv-dropdown__title">🚌 Traslados</span>
+            <a href="herramientas/traslados.html" role="menuitem">🚌 Buscador de Traslados 2026</a>
+            <hr>
+            <span class="drv-dropdown__title">ℹ️ Info Útil</span>
+            <a href="info-util.html" role="menuitem">🌊 Sargazo &amp; Huracanes</a>
+            <a href="info-util.html?tab=docs" role="menuitem">📄 Documentación</a>
+          </div>
+        </li>
+
+      </ul>
+
+      <!-- Hamburger móvil -->
+      <button class="drv-navbar__hamburger" aria-label="Abrir menú">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Menú móvil overlay -->
+  <div class="drv-mobile-menu" role="dialog" aria-modal="true" aria-label="Menú de navegación">
+    <div class="drv-mobile-menu__header">
+      <img src="images/logo-color.png" alt="Dr.Viaje" />
+      <button class="drv-mobile-menu__close" aria-label="Cerrar menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="drv-mobile-menu__body">
+      <a href="index.html" class="drv-mobile-link active-m">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Inicio
+      </a>
+
+      <span class="drv-mobile-section-title">🌍 Destinos — Sudamérica</span>
+      <a href="destinos/bariloche.html" class="drv-mobile-link"><span class="flag">🇦🇷</span> Bariloche</a>
+      <a href="destinos/mendoza.html" class="drv-mobile-link"><span class="flag">🇦🇷</span> Mendoza</a>
+      <a href="destinos/ushuaia.html" class="drv-mobile-link"><span class="flag">🇦🇷</span> Ushuaia + El Calafate</a>
+      <a href="destinos/santiago.html" class="drv-mobile-link"><span class="flag">🇨🇱</span> Santiago de Chile</a>
+
+      <button class="drv-mobile-brasil-toggle">
+        <span class="flag">🇧🇷</span> Brasil
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="drv-mobile-brasil-sub">
+        <a href="destinos/brasil-rio.html">🏖️ Río de Janeiro</a>
+        <a href="destinos/brasil-bahia.html">🥁 Bahía</a>
+        <a href="destinos/brasil-ceara.html">🌊 Ceará</a>
+        <a href="destinos/brasil-nordeste.html">🌴 Nordeste</a>
+        <a href="destinos/brasil-maranhao.html">🏜️ Maranhão</a>
+      </div>
+
+      <span class="drv-mobile-section-title">🏝️ Destinos — Caribe</span>
+      <a href="destinos/cancun.html" class="drv-mobile-link"><span class="flag">🇲🇽</span> Cancún / Riviera Maya</a>
+      <a href="destinos/dominicana.html" class="drv-mobile-link"><span class="flag">🇩🇴</span> República Dominicana</a>
+      <a href="destinos/jamaica.html" class="drv-mobile-link"><span class="flag">🇯🇲</span> Jamaica</a>
+      <a href="destinos/aruba.html" class="drv-mobile-link"><span class="flag">🇦🇼</span> Aruba</a>
+      <a href="destinos/curazao.html" class="drv-mobile-link"><span class="flag">🇨🇼</span> Curaçao</a>
+      <a href="destinos/saint-martin.html" class="drv-mobile-link"><span class="flag">🇫🇷</span> Saint Martin</a>
+      <a href="destinos/san-andres.html" class="drv-mobile-link"><span class="flag">🇨🇴</span> San Andrés</a>
+      <a href="destinos/cartagena.html" class="drv-mobile-link"><span class="flag">🇨🇴</span> Cartagena de Indias</a>
+      <a href="destinos/santa-marta.html" class="drv-mobile-link"><span class="flag">🇨🇴</span> Santa Marta · Tayrona</a>
+
+      <span class="drv-mobile-section-title">🇺🇸 EE.UU. — Costa Este</span>
+      <a href="destinos/nueva-york.html" class="drv-mobile-link">🗽 Nueva York</a>
+      <a href="destinos/miami-orlando.html" class="drv-mobile-link">🌴 Miami + Orlando</a>
+      <a href="destinos/parques-orlando.html" class="drv-mobile-link">🎢 Parques de Orlando</a>
+      <span class="drv-mobile-section-title">🇺🇸 EE.UU. — Costa Oeste</span>
+      <a href="destinos/los-angeles.html" class="drv-mobile-link">🎬 Los Ángeles</a>
+      <a href="destinos/las-vegas.html" class="drv-mobile-link">🎰 Las Vegas</a>
+      <a href="destinos/san-francisco.html" class="drv-mobile-link">🌉 San Francisco</a>
+
+      <span class="drv-mobile-section-title">✈️ Amadeus</span>
+      <a href="amadeus/guia-rapida.html" class="drv-mobile-link">📋 Guía Rápida de Reservas</a>
+      <a href="amadeus/fxd.html" class="drv-mobile-link">🔍 FXD · Master Pricer</a>
+      <a href="amadeus/aerolineas.html" class="drv-mobile-link">✈️ Cotización por Aerolínea</a>
+      <a href="amadeus/reservas-basico.pdf" target="_blank" class="drv-mobile-link">📄 Manual Básico PDF</a>
+
+      <span class="drv-mobile-section-title">🧰 Herramientas</span>
+      <a href="hoteles/index.html" class="drv-mobile-link">🏨 Hoteles Recomendados</a>
+      <a href="hoteles/cancun-riviera.html" class="drv-mobile-link"><span class="flag">🇲🇽</span> Cancún &amp; Riviera Maya</a>
+      <a href="hoteles/punta-cana.html" class="drv-mobile-link"><span class="flag">🇩🇴</span> Punta Cana</a>
+      <a href="herramientas/traslados.html" class="drv-mobile-link">🚌 Buscador de Traslados 2026</a>
+      <a href="info-util.html" class="drv-mobile-link">🌊 Sargazo &amp; Huracanes</a>
+      <a href="info-util.html?tab=docs" class="drv-mobile-link">📄 Documentación</a>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       HERO
+  ══════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-orb orb-1"></div>
+    <div class="hero-orb orb-2"></div>
+    <div class="hero-orb orb-3"></div>
+
+    <div class="hero__logo">
+      <img src="images/logo-color.png" alt="Dr.Viaje" />
+    </div>
+
+    <div class="hero__badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Centro de Capacitación · Vendedores
+    </div>
+
+    <h1 class="hero__title">
+      Tu guía experta para<br>vender <span>destinos increíbles</span>
+    </h1>
+
+    <p class="hero__sub">
+      Toda la información que necesitás para asesorar con confianza a tus clientes. Caribe, Sudamérica y Brasil en un solo lugar.
+    </p>
+
+    <div class="hero__stats">
+      <div class="hero__stat">
+        <span class="hero__stat-num">24</span>
+        <span class="hero__stat-label">Destinos disponibles</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-num">3</span>
+        <span class="hero__stat-label">Regiones cubiertas</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-num">5</span>
+        <span class="hero__stat-label">Destinos Brasil</span>
+      </div>
+    </div>
+
+    <div class="hero__cta-group">
+      <a href="#destinos" class="hero__cta">
+        Explorar destinos
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#amadeus" class="hero__cta-outline">
+        ✈️ Amadeus
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#recursos" class="hero__cta-outline">
+        Más herramientas
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </a>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <span>Desplazate para ver destinos</span>
+    </div>
+
+    <!-- ECG decorativo SVG -->
+    <svg class="hero-ecg" viewBox="0 0 1200 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="0,40 100,40 140,10 160,70 180,5 200,75 220,40 400,40 440,10 460,70 480,5 500,75 520,40 700,40 740,10 760,70 780,5 800,75 820,40 1000,40 1040,10 1060,70 1080,5 1100,75 1120,40 1200,40" stroke="white" stroke-width="2.5"/>
+    </svg>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       SECCIÓN DESTINOS
+  ══════════════════════════════════════ -->
+  <section class="section" id="destinos">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+          Todos los destinos
+        </div>
+        <h2 class="section-title">¿A dónde querés llevar a tus clientes?</h2>
+        <p class="section-sub">Seleccioná una región para filtrar los destinos o exploralos todos de un vistazo.</p>
+      </div>
+
+      <!-- Tabs de filtro -->
+      <div class="region-tabs" id="regionTabs">
+        <button class="region-tab active" data-region="all">
+          🌍 Todos los destinos
+        </button>
+        <button class="region-tab" data-region="sudamerica">
+          🌎 Sudamérica
+        </button>
+        <button class="region-tab" data-region="brasil">
+          🇧🇷 Brasil
+        </button>
+        <button class="region-tab" data-region="caribe">
+          🏝️ Caribe
+        </button>
+        <button class="region-tab" data-region="usa">
+          🇺🇸 Estados Unidos
+        </button>
+      </div>
+
+      <!-- Grid de destinos -->
+      <div class="destinos-grid" id="destinosGrid">
+
+        <!-- ===== SUDAMÉRICA ===== -->
+        <div class="region-group-header sudamerica" data-region="sudamerica">
+          <h3>🌎 Sudamérica</h3>
+        </div>
+
+        <a href="destinos/bariloche.html" class="destino-card card-sudamerica" data-region="sudamerica">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🏔️</span>
+            <span class="destino-card__flag">🇦🇷</span>
+            <div class="destino-card__name">Bariloche</div>
+            <div class="destino-card__region">Sudamérica · Argentina</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Montaña</span>
+              <span class="destino-tag">Nieve</span>
+              <span class="destino-tag">Naturaleza</span>
+            </div>
+            <p class="destino-card__desc">La Perla de la Patagonia con sus lagos, montañas nevadas, chocolate artesanal y el imponente Cerro Catedral para esquí.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/mendoza.html" class="destino-card card-sudamerica" data-region="sudamerica">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🍷</span>
+            <span class="destino-card__flag">🇦🇷</span>
+            <div class="destino-card__name">Mendoza</div>
+            <div class="destino-card__region">Sudamérica · Argentina</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Enoturismo</span>
+              <span class="destino-tag">Montaña</span>
+              <span class="destino-tag">Gastronomía</span>
+            </div>
+            <p class="destino-card__desc">Capital mundial del Malbec, con bodegas de clase mundial, el imponente Aconcagua y una gastronomía única en la tierra del sol y el buen vino.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/ushuaia.html" class="destino-card card-sudamerica" data-region="sudamerica">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🧊</span>
+            <span class="destino-card__flag">🇦🇷</span>
+            <div class="destino-card__name">Ushuaia + El Calafate</div>
+            <div class="destino-card__region">Sudamérica · Argentina</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Fin del mundo</span>
+              <span class="destino-tag">Glaciares</span>
+              <span class="destino-tag">Patagonia</span>
+            </div>
+            <p class="destino-card__desc">La ciudad más austral del mundo y el imponente Glaciar Perito Moreno. Una combinación mágica de paisajes extremos e inolvidables.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/santiago.html" class="destino-card card-sudamerica" data-region="sudamerica">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🏙️</span>
+            <span class="destino-card__flag">🇨🇱</span>
+            <div class="destino-card__name">Santiago de Chile</div>
+            <div class="destino-card__region">Sudamérica · Chile</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Ciudad</span>
+              <span class="destino-tag">Gastronomía</span>
+              <span class="destino-tag">Cultura</span>
+            </div>
+            <p class="destino-card__desc">Una metrópolis moderna con los Andes como telón de fondo, vibrante escena gastronómica, barrios bohemios y acceso a playas y viñedos.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- ===== BRASIL ===== -->
+        <div class="brasil-group-header" data-region="brasil">
+          <h3>🇧🇷 Brasil — Regiones</h3>
+        </div>
+
+        <a href="destinos/brasil-rio.html" class="destino-card card-brasil" data-region="brasil">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🏖️</span>
+            <span class="destino-card__flag">🇧🇷</span>
+            <div class="destino-card__name">Río de Janeiro + Costa Verde</div>
+            <div class="destino-card__region">Brasil · Región Sudeste</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Río</span>
+              <span class="destino-tag">Búzios</span>
+              <span class="destino-tag">Angra · Arraial · Cabo Frio</span>
+            </div>
+            <p class="destino-card__desc">La Cidade Maravilhosa más la Costa Verde: Copacabana, Ipanema, el Cristo, Búzios, Angra dos Reis, Arraial do Cabo y Cabo Frio. Un destino completo para todos los perfiles.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/brasil-bahia.html" class="destino-card card-brasil" data-region="brasil">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🥁</span>
+            <span class="destino-card__flag">🇧🇷</span>
+            <div class="destino-card__name">Bahía</div>
+            <div class="destino-card__region">Brasil · Región Nordeste</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Afrobrasileiro</span>
+              <span class="destino-tag">Playas</span>
+              <span class="destino-tag">Gastronomía</span>
+            </div>
+            <p class="destino-card__desc">Salvador da Bahia, el alma afrobrasileña del país. Pelourinho colonial, acarajé, capoeira y playas de ensueño como Morro de São Paulo.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/brasil-ceara.html" class="destino-card card-brasil" data-region="brasil">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌊</span>
+            <span class="destino-card__flag">🇧🇷</span>
+            <div class="destino-card__name">Ceará</div>
+            <div class="destino-card__region">Brasil · Región Nordeste</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Kite surf</span>
+              <span class="destino-tag">Dunas</span>
+              <span class="destino-tag">Playas</span>
+            </div>
+            <p class="destino-card__desc">Fortaleza y sus playas de aguas cálidas, las dunas doradas de Jericoacoara, el viento perfecto para deportes náuticos y una hospitalidad única.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/brasil-nordeste.html" class="destino-card card-brasil" data-region="brasil">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌴</span>
+            <span class="destino-card__flag">🇧🇷</span>
+            <div class="destino-card__name">Nordeste de Brasil</div>
+            <div class="destino-card__region">Brasil · Región Nordeste</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Recife</span>
+              <span class="destino-tag">Maceió</span>
+              <span class="destino-tag">Playas cristalinas</span>
+            </div>
+            <p class="destino-card__desc">Recife, Maceió, Natal y Porto Seguro: las joyas menos exploradas de Brasil con playas de aguas transparentes y una cultura vibrante.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/brasil-maranhao.html" class="destino-card card-brasil" data-region="brasil">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🏜️</span>
+            <span class="destino-card__flag">🇧🇷</span>
+            <div class="destino-card__name">Maranhão</div>
+            <div class="destino-card__region">Brasil · Región Norte-Nordeste</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Lençóis Maranhenses</span>
+              <span class="destino-tag">Dunas</span>
+              <span class="destino-tag">Exclusivo</span>
+            </div>
+            <p class="destino-card__desc">Los majestuosos Lençóis Maranhenses, un paisaje de dunas blancas con lagunas de agua cristalina que parece sacado de otro planeta.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- ===== CARIBE ===== -->
+        <div class="region-group-header caribe" data-region="caribe">
+          <h3>🏝️ Caribe</h3>
+        </div>
+
+        <a href="destinos/cancun.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌺</span>
+            <span class="destino-card__flag">🇲🇽</span>
+            <div class="destino-card__name">Cancún / Riviera Maya</div>
+            <div class="destino-card__region">Caribe · México</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">All inclusive</span>
+              <span class="destino-tag">Cenotes</span>
+              <span class="destino-tag">Ruinas mayas</span>
+            </div>
+            <p class="destino-card__desc">El Caribe mexicano con sus aguas turquesas, resorts de lujo, cenotes místicos y la cultura maya. El destino internacional #1 para argentinos.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/dominicana.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌴</span>
+            <span class="destino-card__flag">🇩🇴</span>
+            <div class="destino-card__name">República Dominicana</div>
+            <div class="destino-card__region">Caribe · República Dominicana</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Punta Cana</span>
+              <span class="destino-tag">All inclusive</span>
+              <span class="destino-tag">Merengue</span>
+            </div>
+            <p class="destino-card__desc">Punta Cana, Las Terrenas y Samaná: playas infinitas con palmeras, resorts todo incluido y la alegría contagiosa del pueblo dominicano.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/jamaica.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🎵</span>
+            <span class="destino-card__flag">🇯🇲</span>
+            <div class="destino-card__name">Jamaica</div>
+            <div class="destino-card__region">Caribe · Jamaica</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Reggae</span>
+              <span class="destino-tag">Montego Bay</span>
+              <span class="destino-tag">Cultura</span>
+            </div>
+            <p class="destino-card__desc">La tierra del reggae, Bob Marley y el Blue Mountain Coffee. Playas espectaculares en Negril, Montego Bay y la vibrante Kingston.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/aruba.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">☀️</span>
+            <span class="destino-card__flag">🇦🇼</span>
+            <div class="destino-card__name">Aruba</div>
+            <div class="destino-card__region">Caribe · Aruba</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Sin huracanes</span>
+              <span class="destino-tag">Eagle Beach</span>
+              <span class="destino-tag">Buceo</span>
+            </div>
+            <p class="destino-card__desc">La isla feliz: sol garantizado 365 días, Eagle Beach elegida entre las mejores del mundo, vida nocturna y actividades acuáticas de primer nivel.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <a href="destinos/curazao.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🪸</span>
+            <span class="destino-card__flag">🇨🇼</span>
+            <div class="destino-card__name">Curaçao</div>
+            <div class="destino-card__region">Caribe · Curaçao</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Willemstad</span>
+              <span class="destino-tag">Arrecifes</span>
+              <span class="destino-tag">Multicultural</span>
+            </div>
+            <p class="destino-card__desc">La joya más colorida del Caribe: Willemstad Patrimonio de la Humanidad, arrecifes de coral vírgenes y una fusión cultural única entre Europa y el Caribe.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Saint Martin -->
+        <a href="destinos/saint-martin.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">⚜️</span>
+            <span class="destino-card__flag">🇫🇷🇳🇱</span>
+            <div class="destino-card__name">Saint Martin</div>
+            <div class="destino-card__region">Caribe · Francia / Países Bajos</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Gastronomía</span>
+              <span class="destino-tag">Dos países</span>
+              <span class="destino-tag">Orient Bay</span>
+            </div>
+            <p class="destino-card__desc">Dos países en una sola isla: el lado francés con la mejor gastronomía del Caribe y el holandés con animación y compras. El Caribe más sofisticado para repetidores y parejas.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Santa Marta -->
+        <a href="destinos/santa-marta.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌿</span>
+            <span class="destino-card__flag">🇨🇴</span>
+            <div class="destino-card__name">Santa Marta · Tayrona</div>
+            <div class="destino-card__region">Caribe · Colombia</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Parque Tayrona</span>
+              <span class="destino-tag">Selva + Caribe</span>
+              <span class="destino-tag">Minca</span>
+            </div>
+            <p class="destino-card__desc">El único lugar del mundo donde la selva húmeda tropical llega a la playa caribeña. Tayrona, Minca y Barranquilla: la Colombia más natural y auténtica del norte.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Cartagena -->
+        <a href="destinos/cartagena.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🏰</span>
+            <span class="destino-card__flag">🇨🇴</span>
+            <div class="destino-card__name">Cartagena de Indias</div>
+            <div class="destino-card__region">Caribe · Colombia</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Ciudad amurallada</span>
+              <span class="destino-tag">UNESCO</span>
+              <span class="destino-tag">Barú</span>
+            </div>
+            <p class="destino-card__desc">Ciudad colonial Patrimonio de la Humanidad con calles de colores, gastronomía de nivel mundial y Barú a 45 min: el Caribe de aguas turquesas que completa el viaje perfecto.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- San Andrés -->
+        <a href="destinos/san-andres.html" class="destino-card card-caribe" data-region="caribe">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌊</span>
+            <span class="destino-card__flag">🇨🇴</span>
+            <div class="destino-card__name">San Andrés</div>
+            <div class="destino-card__region">Caribe · Colombia</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Mar de 7 colores</span>
+              <span class="destino-tag">Raizal</span>
+              <span class="destino-tag">Snorkel</span>
+            </div>
+            <p class="destino-card__desc">El Caribe colombiano con uno de los mares más bonitos del mundo. El Acuario, Johnny Cay, cultura raizal y vuelos directos: Caribe de postal sin salir del continente.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- ===== ESTADOS UNIDOS ===== -->
+        <div class="region-group-header usa" data-region="usa">
+          <h3>🇺🇸 Estados Unidos</h3>
+        </div>
+
+        <!-- Sub-header Costa Este -->
+        <div class="usa-coast-header" data-region="usa">
+          <h4>🗽 Costa Este</h4>
+        </div>
+
+        <!-- Nueva York -->
+        <a href="destinos/nueva-york.html" class="destino-card card-usa" data-region="usa">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🗽</span>
+            <span class="destino-card__flag">🇺🇸</span>
+            <div class="destino-card__name">Nueva York</div>
+            <div class="destino-card__region">Estados Unidos · NYC</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">5 Boroughs</span>
+              <span class="destino-tag">Broadway</span>
+              <span class="destino-tag">ESTA / Visado</span>
+            </div>
+            <p class="destino-card__desc">La ciudad más icónica del mundo: Manhattan, Brooklyn, visados, propinas, resort fees y todo lo que el vendedor necesita saber para cerrar un viaje a NYC con confianza.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Miami + Orlando -->
+        <a href="destinos/miami-orlando.html" class="destino-card card-usa" data-region="usa">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌴</span>
+            <span class="destino-card__flag">🇺🇸</span>
+            <div class="destino-card__name">Miami + Orlando</div>
+            <div class="destino-card__region">Estados Unidos · Florida</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">South Beach</span>
+              <span class="destino-tag">Parques</span>
+              <span class="destino-tag">Compras</span>
+            </div>
+            <p class="destino-card__desc">El combo estrella de Florida: South Beach y Wynwood en Miami, luego Disney y Universal en Orlando. Traslados, documentación ESTA, hoteles, presupuesto y script de venta completo.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Parques Orlando -->
+        <a href="destinos/parques-orlando.html" class="destino-card card-usa" data-region="usa">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🎢</span>
+            <span class="destino-card__flag">🇺🇸</span>
+            <div class="destino-card__name">Parques de Orlando</div>
+            <div class="destino-card__region">Estados Unidos · Florida</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Disney</span>
+              <span class="destino-tag">Universal</span>
+              <span class="destino-tag">Epic Universe 2025</span>
+            </div>
+            <p class="destino-card__desc">Guía completa de Disney World, Universal (con el nuevo Epic Universe), SeaWorld y LEGOLAND. Precios, tickets, estrategia de visita y recomendaciones por edad para cerrar ventas con confianza.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Sub-header Costa Oeste -->
+        <div class="usa-coast-header" data-region="usa">
+          <h4>🌅 Costa Oeste</h4>
+        </div>
+
+        <!-- Los Ángeles -->
+        <a href="destinos/los-angeles.html" class="destino-card card-usa" data-region="usa">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🎬</span>
+            <span class="destino-card__flag">🇺🇸</span>
+            <div class="destino-card__name">Los Ángeles</div>
+            <div class="destino-card__region">Estados Unidos · California</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Hollywood</span>
+              <span class="destino-tag">Beverly Hills</span>
+              <span class="destino-tag">Universal Studios</span>
+            </div>
+            <p class="destino-card__desc">La capital mundial del entretenimiento: Hollywood, playas del Pacífico, Universal Studios, Disneyland y el lifestyle californiano. Guía completa con logística, zonas, visa y scripts de venta.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Las Vegas -->
+        <a href="destinos/las-vegas.html" class="destino-card card-usa" data-region="usa">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🎰</span>
+            <span class="destino-card__flag">🇺🇸</span>
+            <div class="destino-card__name">Las Vegas</div>
+            <div class="destino-card__region">Estados Unidos · Nevada</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">El Strip</span>
+              <span class="destino-tag">Gran Cañón</span>
+              <span class="destino-tag">Shows</span>
+            </div>
+            <p class="destino-card__desc">La ciudad del entretenimiento sin igual: shows de talla mundial, gastronomía top, resort fees, excursiones al Gran Cañón y todo lo que el asesor necesita saber antes de vender Las Vegas.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- San Francisco -->
+        <a href="destinos/san-francisco.html" class="destino-card card-usa" data-region="usa">
+          <div class="destino-card__header">
+            <span class="destino-card__emoji">🌉</span>
+            <span class="destino-card__flag">🇺🇸</span>
+            <div class="destino-card__name">San Francisco</div>
+            <div class="destino-card__region">Estados Unidos · California</div>
+          </div>
+          <div class="destino-card__body">
+            <div class="destino-card__tags">
+              <span class="destino-tag">Golden Gate</span>
+              <span class="destino-tag">Alcatraz</span>
+              <span class="destino-tag">Costa Oeste</span>
+            </div>
+            <p class="destino-card__desc">La ciudad más compacta y caminable de EE.UU.: Golden Gate, Alcatraz, Fisherman's Wharf, colinas empinadas y la base perfecta para el road trip por la Costa Oeste y el Valle de Napa.</p>
+            <span class="destino-card__link">
+              Ver guía completa
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       HOW TO USE
+  ══════════════════════════════════════ -->
+  <section class="howto">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          ¿Cómo usar esta plataforma?
+        </div>
+        <h2 class="section-title">Tu aliada para vender mejor</h2>
+        <p class="section-sub">Seguí estos pasos para aprovechar al máximo cada guía de destino.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Explorá el destino</div>
+          <p class="step-desc">Ingresá a la guía del destino que tu cliente quiere conocer y estudiá la información clave.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Consultá tips de venta</div>
+          <p class="step-desc">Cada guía incluye argumentos de venta, objeciones frecuentes y comparativas de hoteles.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Conocé temporadas</div>
+          <p class="step-desc">Revisá las mejores épocas para viajar, temporadas altas y bajas y eventos especiales.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">Asesorá con confianza</div>
+          <p class="step-desc">Con toda la info lista, brindá asesoramiento experto y cerrá la venta con seguridad.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       AMADEUS SECTION
+  ══════════════════════════════════════ -->
+  <section id="amadeus" style="background:#fff;padding:64px 24px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+          Amadeus GDS
+        </div>
+        <h2 class="section-title">Herramientas Amadeus para vender vuelos</h2>
+        <p class="section-sub">Guías operativas para dominar los comandos clave del GDS: desde armar una reserva básica hasta buscar tarifas con FXD.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:16px;">
+
+        <!-- Guía Rápida -->
+        <a href="amadeus/guia-rapida.html" style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;border:1px solid #eee;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,0,0,.08)'">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#7B2D8E,#E91E63);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">📋</div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:#1a1a2e;margin:0 0 8px;">Guía Rápida de Reservas</h3>
+            <p style="color:#666;font-size:.93rem;line-height:1.6;margin:0;">Ayuda memoria operativa con los comandos clave para generar una reserva completa en Amadeus: disponibilidad, precio, PNR y grabación de tarifa.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="background:#f3e8ff;color:#7B2D8E;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">✈️ Disponibilidad</span>
+            <span style="background:#eaf1ff;color:#2f55c8;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">💰 Tarifas</span>
+            <span style="background:#e8f7ef;color:#177245;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">📁 PNR</span>
+          </div>
+          <span style="color:#7B2D8E;font-weight:700;font-size:.9rem;">Ver guía rápida →</span>
+        </a>
+
+        <!-- FXD Master Pricer -->
+        <a href="amadeus/fxd.html" style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;border:1px solid #eee;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,0,0,.08)'">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#1565C0,#0288D1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">🔍</div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:#1a1a2e;margin:0 0 8px;">FXD · Master Pricer</h3>
+            <p style="color:#666;font-size:.93rem;line-height:1.6;margin:0;">Guía avanzada del comando FXD para buscar y comparar recomendaciones de vuelo y tarifa sin necesitar un PNR previo.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="background:#eaf1ff;color:#1565C0;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">🔎 Búsqueda avanzada</span>
+            <span style="background:#e8f7ef;color:#177245;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">⚡ Filtros y navegación</span>
+            <span style="background:#fff6e5;color:#a66a00;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">🛠️ Troubleshooting</span>
+          </div>
+          <span style="color:#1565C0;font-weight:700;font-size:.9rem;">Ver guía FXD →</span>
+        </a>
+
+        <!-- Cotización por Aerolínea -->
+        <a href="amadeus/aerolineas.html" style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;border:1px solid #eee;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,0,0,.08)'">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#FF6B35,#E91E63);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">✈️</div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:#1a1a2e;margin:0 0 8px;">Cotización por Aerolínea</h3>
+            <p style="color:#666;font-size:.93rem;line-height:1.6;margin:0;">Comandos <strong>/FF</strong> y familias tarifarias de 9 aerolíneas: LATAM, GOL, JetSmart, SKY, Aerolíneas Arg., Avianca, Air Europa, Iberia y Copa. Equipaje, asientos y tips.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="background:#fff7ed;color:#c2410c;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">⌨️ Comandos /FF</span>
+            <span style="background:#f3e8ff;color:#7B2D8E;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">9 aerolíneas</span>
+            <span style="background:linear-gradient(90deg,#ff6b35,#e91e63);color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">✦ NDC</span>
+          </div>
+          <span style="color:#E91E63;font-weight:700;font-size:.9rem;">Ver guía de aerolíneas →</span>
+        </a>
+
+        <!-- Manual Básico PDF -->
+        <a href="amadeus/reservas-basico.pdf" target="_blank" style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;border:1px solid #eee;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,0,0,.08)'">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#E91E63,#FF9800);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">📄</div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:#1a1a2e;margin:0 0 8px;">Manual Básico PDF</h3>
+            <p style="color:#666;font-size:.93rem;line-height:1.6;margin:0;">Documento oficial de referencia con los fundamentos de Amadeus para completar el curso básico y tenerlo siempre a mano.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="background:#fff0f0;color:#c62828;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">📥 Descarga directa</span>
+            <span style="background:#f2f4f7;color:#475467;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">Curso básico oficial</span>
+          </div>
+          <span style="color:#E91E63;font-weight:700;font-size:.9rem;">Abrir PDF →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       RESOURCES SECTION
+  ══════════════════════════════════════ -->
+  <section id="recursos" style="background:#f8f9fa;padding:64px 24px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2m8 0h2a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-2M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+          Recursos adicionales
+        </div>
+        <h2 class="section-title">Más herramientas para vender mejor</h2>
+        <p class="section-sub">Accedé a nuestras guías de hoteles recomendados e información útil para el asesoramiento.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:16px;">
+
+        <!-- Hoteles Recomendados -->
+        <a href="hoteles/index.html" style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;border:1px solid #eee;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,0,0,.08)'">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#7B2D8E,#E91E63);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">🏨</div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:#1a1a2e;margin:0 0 8px;">Hoteles Recomendados</h3>
+            <p style="color:#666;font-size:.93rem;line-height:1.6;margin:0;">Guías comerciales por destino: cómo vender cada cadena, qué perfil encaja y cómo hacer el upsell correcto.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="background:#eaf1ff;color:#2f55c8;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">Cancún · Riviera Maya</span>
+            <span style="background:#e8f7ef;color:#177245;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">Punta Cana</span>
+            <span style="background:#f2f4f7;color:#475467;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">+ más próximamente</span>
+          </div>
+          <span style="color:#7B2D8E;font-weight:700;font-size:.9rem;">Ver hoteles →</span>
+        </a>
+
+        <!-- Traslados -->
+        <a href="herramientas/traslados.html" style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;border:1px solid #eee;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,0,0,.08)'">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#1d7a46,#16a34a);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">🚌</div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:#1a1a2e;margin:0 0 8px;">Traslados Brasil 2026</h3>
+            <p style="color:#666;font-size:.93rem;line-height:1.6;margin:0;">Buscador de tarifas netas por persona. Filtrá por destino, tipo de servicio o búsqueda libre. 10 regiones de Brasil cubiertas.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="background:#dcfce7;color:#166534;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">🇧🇷 10 regiones</span>
+            <span style="background:#fff7ed;color:#9a3412;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">💵 Tarifas netas USD</span>
+            <span style="background:#eaf1ff;color:#2f55c8;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">🔍 Buscador</span>
+          </div>
+          <span style="color:#1d7a46;font-weight:700;font-size:.9rem;">Ver traslados →</span>
+        </a>
+
+        <!-- Info Útil -->
+        <a href="info-util.html" style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:14px;border:1px solid #eee;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 40px rgba(0,0,0,.13)'" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,0,0,.08)'">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#7b2cbf,#ff4d8d);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">ℹ️</div>
+          <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:#1a1a2e;margin:0 0 8px;">Info Útil</h3>
+            <p style="color:#666;font-size:.93rem;line-height:1.6;margin:0;">Guía sobre sargazo y temporada de huracanes, más documentación orientativa para viajeros desde Uruguay.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="background:#fff0f0;color:#c62828;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">🌊 Sargazo · Huracanes</span>
+            <span style="background:#eaf1ff;color:#2f55c8;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;">📄 Documentación</span>
+          </div>
+          <span style="color:#7b2cbf;font-weight:700;font-size:.9rem;">Ver info útil →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  <footer class="footer">
+    <img src="images/logo-white.png" alt="Dr.Viaje" />
+    <p>
+      <strong>Dr.Viaje.com</strong> · Centro de Capacitación para Vendedores<br>
+      Plataforma de uso interno · Todos los derechos reservados © 2026
+    </p>
+  </footer>
+
+
+  <!-- ══════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════ -->
+  <script src="js/nav.js"></script>
+  <script>
+    // Filtro de destinos por región
+    (function () {
+      var tabs   = document.querySelectorAll('.region-tab');
+      var cards  = document.querySelectorAll('#destinosGrid [data-region]');
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var region = tab.dataset.region;
+
+          // Activar tab
+          tabs.forEach(function (t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+
+          // Filtrar cards
+          cards.forEach(function (card) {
+            if (region === 'all' || card.dataset.region === region) {
+              card.style.display = '';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

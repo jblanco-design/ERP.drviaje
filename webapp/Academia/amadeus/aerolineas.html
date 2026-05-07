@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amadeus · Cotización por Aerolínea · Dr.Viaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <style>
+    :root {
+      --primary:#7B2D8E;
+      --pink:#E91E63;
+      --orange:#FF9800;
+      --navy:#16324f;
+      --blue:#2457a6;
+      --blue-soft:#edf4ff;
+      --green-b:#1d7a46;
+      --green-soft:#e9f8ef;
+      --amber-b:#a66a00;
+      --amber-soft:#fff6e5;
+      --red-b:#b42318;
+      --red-soft:#fff0f0;
+      --line:#dbe4f0;
+      --muted:#5b6b7f;
+      --text:#1f2a37;
+      --card:#ffffff;
+      --shadow:0 10px 30px rgba(22,50,79,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
+
+    /* ── HERO ── */
+    .aq-hero{
+      background:linear-gradient(135deg,var(--primary) 0%,#9c27b0 45%,var(--pink) 100%);
+      color:#fff;padding:52px 24px 44px;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .aq-hero::before{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.06);top:-120px;right:-80px;}
+    .aq-hero::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:rgba(255,152,0,.10);bottom:-80px;left:-60px;}
+    .aq-hero .eyebrow{
+      display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+      padding:7px 14px;border-radius:999px;margin-bottom:16px;position:relative;z-index:1;
+    }
+    .aq-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:14px;position:relative;z-index:1;line-height:1.15;}
+    .aq-hero p{max-width:820px;margin:0 auto 0;font-size:1.02rem;line-height:1.7;opacity:.93;position:relative;z-index:1;}
+    .hero-stats{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px;position:relative;z-index:1;}
+    .hero-stat{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:14px 20px;text-align:center;min-width:110px;}
+    .hero-stat strong{display:block;font-size:1.5rem;font-weight:800;color:#ffd36a;}
+    .hero-stat span{font-size:11px;opacity:.9;letter-spacing:.02em;}
+
+    /* ── WRAP ── */
+    .wrap{max-width:1220px;margin:0 auto;padding:44px 24px 80px;}
+
+    /* ── QUICK NAV ── */
+    .quick-nav{
+      display:flex;flex-wrap:wrap;gap:8px;
+      margin:0 0 36px;padding:10px;
+      border-radius:20px;border:1px solid var(--line);
+      background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+      box-shadow:var(--shadow);position:sticky;top:78px;z-index:8;
+    }
+    .quick-nav a{
+      text-decoration:none;color:var(--navy);
+      background:#fff;border:1px solid var(--line);
+      padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:700;transition:.2s ease;
+    }
+    .quick-nav a:hover{background:var(--blue-soft);border-color:#c9dafc;transform:translateY(-1px);}
+
+    /* ── ALERT ── */
+    .alert{
+      display:flex;gap:14px;align-items:flex-start;
+      background:var(--amber-soft);border:1px solid #ffc86b;border-radius:16px;
+      padding:18px 20px;margin-bottom:32px;
+    }
+    .alert-icon{font-size:1.6rem;flex-shrink:0;}
+    .alert strong{display:block;font-size:.95rem;color:var(--amber-b);margin-bottom:4px;}
+    .alert p{font-size:.88rem;color:#664d00;line-height:1.6;margin:0;}
+    .alert.alert-blue{background:var(--blue-soft);border-color:#b8cff5;}
+    .alert.alert-blue strong{color:var(--blue);}
+    .alert.alert-blue p{color:#1a3060;}
+    .alert.alert-green{background:var(--green-soft);border-color:#86efac;}
+    .alert.alert-green strong{color:var(--green-b);}
+    .alert.alert-green p{color:#14532d;}
+
+    /* ── SECTION TITLE ── */
+    .section-title{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--navy);margin:40px 0 6px;scroll-margin-top:140px;}
+    .section-note{color:var(--muted);font-size:.92rem;line-height:1.65;margin-bottom:20px;max-width:980px;}
+
+    /* ── AIRLINE CARD ── */
+    .airline-card{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      box-shadow:var(--shadow);margin-bottom:32px;overflow:hidden;
+      scroll-margin-top:140px;
+    }
+    .airline-header{
+      display:flex;align-items:center;gap:16px;
+      padding:20px 24px;border-bottom:1px solid var(--line);
+    }
+    .airline-logo{
+      width:56px;height:56px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:.85rem;flex-shrink:0;font-weight:900;
+      background:var(--blue-soft);color:var(--blue);
+    }
+    .airline-info h2{font-size:1.25rem;color:var(--navy);margin-bottom:6px;}
+    .airline-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+    .airline-code{
+      background:var(--blue-soft);color:var(--blue);
+      border-radius:999px;padding:4px 12px;font-size:11.5px;font-weight:800;letter-spacing:.04em;
+    }
+    .airline-note{font-size:12px;color:var(--muted);}
+    .airline-note a{color:var(--blue);font-weight:700;}
+
+    /* ── FARE TABLE ── */
+    .fare-table-wrap{overflow-x:auto;padding:0 24px 24px;}
+    .fare-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.875rem;}
+    .fare-table thead tr th{
+      background:#f8fafc;color:var(--navy);font-weight:800;font-size:.78rem;
+      text-transform:uppercase;letter-spacing:.05em;
+      padding:12px 14px;border-bottom:2px solid var(--line);
+      text-align:left;white-space:nowrap;
+    }
+    .fare-table tbody tr td{
+      padding:13px 14px;border-bottom:1px solid var(--line);
+      vertical-align:top;color:var(--text);
+    }
+    .fare-table tbody tr:last-child td{border-bottom:none;}
+    .fare-table tbody tr:hover td{background:#f8fafc;}
+
+    .fare-name{font-weight:800;color:var(--navy);font-size:.9rem;}
+    .fare-cmd{
+      font-family:monospace;background:#1e293b;color:#7dd3fc;
+      padding:4px 10px;border-radius:8px;font-size:.82rem;
+      white-space:nowrap;display:inline-block;letter-spacing:.03em;
+    }
+    .fare-cmd.cmd-green{color:#86efac;}
+    .fare-cmd.cmd-yellow{color:#fde68a;}
+    .fare-cmd.cmd-pink{color:#f9a8d4;}
+
+    /* inclusion pills */
+    .pill-row{display:flex;flex-wrap:wrap;gap:6px;}
+    .pill{
+      display:inline-flex;align-items:center;gap:4px;
+      font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;
+      white-space:nowrap;
+    }
+    .pill-green{background:#dcfce7;color:#166534;}
+    .pill-blue{background:#dbeafe;color:#1e40af;}
+    .pill-orange{background:#fff7ed;color:#9a3412;}
+    .pill-purple{background:#f3e8ff;color:#6b21a8;}
+    .pill-red{background:#fee2e2;color:#991b1b;}
+    .pill-gray{background:#f1f5f9;color:#475569;}
+
+    /* tier badges */
+    .tier-badge{
+      display:inline-block;padding:3px 10px;border-radius:999px;
+      font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+      margin-top:4px;
+    }
+    .tier-basic{background:#f1f5f9;color:#475569;}
+    .tier-light{background:#dbeafe;color:#1e40af;}
+    .tier-standard{background:#dcfce7;color:#166534;}
+    .tier-flex{background:linear-gradient(90deg,#6d28d9,#db2777);color:#fff;}
+    .tier-full{background:linear-gradient(90deg,#1d4ed8,#059669);color:#fff;}
+
+    /* NDC chip */
+    .ndc-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      background:linear-gradient(90deg,#ff6b35,#e91e63);
+      color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.04em;
+      padding:4px 11px;border-radius:999px;
+    }
+
+    /* ── TIPS BOX ── */
+    .tips-box{
+      background:linear-gradient(135deg,#1e1b4b 0%,var(--primary) 100%);
+      color:#fff;border-radius:20px;padding:28px;margin-bottom:32px;
+    }
+    .tips-box h3{font-size:1.1rem;margin-bottom:14px;font-family:'Playfair Display',serif;}
+    .tips-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+    .tips-list li{display:flex;gap:10px;align-items:flex-start;font-size:.88rem;line-height:1.6;opacity:.95;}
+    .tips-list li::before{content:"▶";color:#ffd36a;flex-shrink:0;margin-top:2px;font-size:.72rem;}
+
+    /* ── INFO CARD ── */
+    .info-card{
+      background:#fff;border:1px solid var(--line);border-radius:18px;
+      padding:20px 22px;box-shadow:var(--shadow);
+    }
+    .info-card h4{font-size:.95rem;color:var(--navy);margin-bottom:10px;font-weight:800;}
+    .info-card ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+    .info-card ul li{display:flex;gap:8px;font-size:.87rem;color:var(--muted);line-height:1.55;}
+    .info-card ul li::before{content:"•";color:var(--primary);font-weight:900;flex-shrink:0;}
+    .code-inline{background:#f1f5f9;padding:2px 7px;border-radius:6px;font-family:monospace;font-size:.82rem;}
+
+    /* ── GRIDS ── */
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:32px;}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:32px;}
+
+    /* ── RESUMEN TABLE WRAPPER ── */
+    .resumen-wrap{
+      background:#fff;border:1px solid var(--line);border-radius:20px;
+      overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px;
+    }
+
+    /* ── FOOTER ── */
+    .page-footer{
+      text-align:center;padding:40px 24px 56px;
+      color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);margin-top:20px;
+    }
+    .page-footer strong{color:var(--navy);}
+
+    /* ── SCROLL TOP ── */
+    .scroll-top{
+      position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+      border-radius:50%;border:none;cursor:pointer;
+      background:var(--primary);color:#fff;font-size:1.2rem;
+      box-shadow:0 6px 20px rgba(0,0,0,.2);
+      opacity:0;visibility:hidden;transition:.3s ease;z-index:999;
+    }
+    .scroll-top.visible{opacity:1;visibility:visible;}
+    .scroll-top:hover{background:var(--pink);transform:translateY(-3px);}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:780px){
+      .grid-2,.grid-3{grid-template-columns:1fr;}
+      .fare-table{font-size:.78rem;}
+      .hero-stats{gap:8px;}
+      .hero-stat{min-width:80px;padding:10px 12px;}
+      .airline-header{flex-direction:column;align-items:flex-start;}
+      .fare-table-wrap{padding:0 12px 16px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- navbar global -->
+<script src="../js/navbar-inject.js"></script>
+
+<!-- ══════════════════════════ HERO ══════════════════════════ -->
+<header class="aq-hero">
+  <span class="eyebrow">✈️ Amadeus GDS · Dr.Viaje</span>
+  <h1>Cotización por Aerolínea</h1>
+  <p>Comandos <strong>/FF</strong>, tarifas familiares, equipaje incluido y tips de venta para cada carrier.<br>Actualizado abril 2025.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>9</strong><span>Aerolíneas</span></div>
+    <div class="hero-stat"><strong>/FF</strong><span>Comando clave</span></div>
+    <div class="hero-stat"><strong>4</strong><span>Carriers NDC</span></div>
+    <div class="hero-stat"><strong>100%</strong><span>Amadeus GDS</span></div>
+  </div>
+</header>
+
+<!-- ══════════════════════════ MAIN ══════════════════════════ -->
+<main class="wrap">
+
+  <!-- QUICK NAV -->
+  <nav class="quick-nav" aria-label="Ir a aerolínea">
+    <a href="#latam">🟣 LATAM</a>
+    <a href="#gol">🟡 GOL</a>
+    <a href="#jetsmart">🔵 JetSmart</a>
+    <a href="#sky">🟢 SKY</a>
+    <a href="#aerolineas">🔵 Aerolíneas Arg.</a>
+    <a href="#avianca">🔴 Avianca</a>
+    <a href="#aireuropa">🌐 Air Europa</a>
+    <a href="#iberia">🟠 Iberia</a>
+    <a href="#copa">🔵 Copa</a>
+    <a href="#resumen">📋 Resumen</a>
+    <a href="#tips">💡 Tips</a>
+  </nav>
+
+  <!-- ALERT GENERAL -->
+  <div class="alert">
+    <span class="alert-icon">💡</span>
+    <div>
+      <strong>¿Cómo usar este módulo?</strong>
+      <p>Después de mostrar disponibilidad en Amadeus, ingresá el comando <strong>/FF-[CÓDIGO]</strong> para cotizar la tarifa específica de cada aerolínea. Los carriers marcados con <span class="ndc-chip" style="font-size:10px;padding:2px 8px;">NDC</span> requieren <strong>modo gráfico activo</strong> en tu terminal para ver el contenido correcto.</p>
+    </div>
+  </div>
+
+  <!-- ══ LATAM ══ -->
+  <section id="latam" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#e8f0fe;color:#005BAC;">LA</div>
+      <div class="airline-info">
+        <h2>LATAM Airlines</h2>
+        <div class="airline-meta">
+          <span class="airline-code">LA · LAN</span>
+          <span class="ndc-chip">✦ NDC</span>
+          <span class="airline-note">Consultar tarifas LA y sección NDC LA en Amadeus</span>
+        </div>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Beneficios extra</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Basic</span><br><span class="tier-badge tier-basic">Básica</span></td>
+            <td><code class="fare-cmd">/FF-QP</code></td>
+            <td><div class="pill-row"><span class="pill pill-blue">🎒 Art. personal</span></div></td>
+            <td><span class="pill pill-red">Sin bolso de mano</span> <span class="pill pill-red">Sin cambios</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Light</span><br><span class="tier-badge tier-light">Light</span></td>
+            <td><code class="fare-cmd cmd-green">/FF-SL</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">Sin maleta facturada</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Standard</span><br><span class="tier-badge tier-standard">Estándar</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-KM</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">Asiento estándar</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Full</span><br><span class="tier-badge tier-flex">Full Flex</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-KD</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento estándar</span> <span class="pill pill-purple">🔄 Cambios sin cargo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ GOL ══ -->
+  <section id="gol" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#fff8e1;color:#d97706;">G3</div>
+      <div class="airline-info">
+        <h2>GOL Linhas Aéreas</h2>
+        <div class="airline-meta">
+          <span class="airline-code">G3 · GOL</span>
+          <span class="airline-note">Ref. ejemplo: <code class="code-inline">1G3AD20MAYMVDRIO</code></span>
+        </div>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Basic</span><br><span class="tier-badge tier-basic">Básica</span></td>
+            <td><code class="fare-cmd">/FF-BI</code></td>
+            <td><div class="pill-row"><span class="pill pill-blue">🎒 Art. personal</span></div></td>
+            <td><span class="pill pill-red">Sin bolso de mano</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Light</span><br><span class="tier-badge tier-light">Light</span></td>
+            <td><code class="fare-cmd cmd-green">/FF-LI</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">Sin maleta</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Classic</span><br><span class="tier-badge tier-standard">Classic</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-CL</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Flex</span><br><span class="tier-badge tier-flex">Flex</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-FL</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">🔄 Mayor flexibilidad</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ JETSMART ══ -->
+  <section id="jetsmart" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#eff6ff;color:#2563eb;">FUL</div>
+      <div class="airline-info">
+        <h2>JetSmart</h2>
+        <div class="airline-meta">
+          <span class="airline-code">FUL · JetSmart</span>
+          <span class="airline-note">Low cost · Sudamérica</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-blue" style="margin:0 24px 16px;border-radius:12px;">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        <strong>Atención: Travel vs Light</strong>
+        <p>JetSmart tiene dos tarifas que se complementan: <strong>Travel</strong> incluye maleta facturada pero <em>sin bolso de mano</em>; <strong>Light</strong> incluye bolso de mano pero <em>sin maleta</em>. Preguntá siempre qué necesita el cliente antes de cotizar.</p>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Beneficios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Basic</span><br><span class="tier-badge tier-basic">Básica</span></td>
+            <td><code class="fare-cmd">/FF-TS</code></td>
+            <td><div class="pill-row"><span class="pill pill-blue">🎒 Art. personal</span></div></td>
+            <td><span class="pill pill-red">Solo artículo personal</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Travel</span><br><span class="tier-badge tier-light">Travel</span></td>
+            <td><code class="fare-cmd cmd-green">/FF-i0</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-orange">⚠️ Sin bolso de mano</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Light</span><br><span class="tier-badge tier-light">Light</span></td>
+            <td><code class="fare-cmd">/FF-i1</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-orange">⚠️ Sin maleta facturada</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Smart</span><br><span class="tier-badge tier-standard">Smart</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-i2</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento incluido</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Flex</span><br><span class="tier-badge tier-flex">Flex</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-i3</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento</span> <span class="pill pill-purple">↩️ Reembolso</span> <span class="pill pill-purple">🔄 Cambio nombre</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ SKY ══ -->
+  <section id="sky" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#f0fdf4;color:#16a34a;">H2</div>
+      <div class="airline-info">
+        <h2>SKY Airline</h2>
+        <div class="airline-meta">
+          <span class="airline-code">H2 · SKY</span>
+          <span class="airline-note">Low cost · Chile y Sudamérica</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-blue" style="margin:0 24px 16px;border-radius:12px;">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        <strong>Standard: maleta sin bolso de mano</strong>
+        <p>SKY <strong>Standard (/FF-ED)</strong> incluye maleta facturada y asiento, pero <em>no incluye bolso de mano</em>. Para tener todo, cotizar <strong>Max (/FF-PL)</strong>.</p>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Beneficios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Zero</span><br><span class="tier-badge tier-basic">Zero</span></td>
+            <td><code class="fare-cmd">/FF-ZO</code></td>
+            <td><div class="pill-row"><span class="pill pill-blue">🎒 Art. personal</span></div></td>
+            <td><span class="pill pill-red">Solo artículo personal</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Light</span><br><span class="tier-badge tier-light">Light</span></td>
+            <td><code class="fare-cmd cmd-green">/FF-LT</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">Sin maleta</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Standard</span><br><span class="tier-badge tier-standard">Standard</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-ED</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento estándar</span> <span class="pill pill-orange">⚠️ Sin bolso de mano</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Max</span><br><span class="tier-badge tier-full">Max</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-PL</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento estándar</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Flex</span><br><span class="tier-badge tier-flex">Flex</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-FL</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">🔄 Cambio nombre/fecha/destino</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ AEROLÍNEAS ARGENTINAS ══ -->
+  <section id="aerolineas" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#eff6ff;color:#1d4ed8;">AR</div>
+      <div class="airline-info">
+        <h2>Aerolíneas Argentinas</h2>
+        <div class="airline-meta">
+          <span class="airline-code">AR · ARG</span>
+          <span class="airline-note">Recargo +3% · RT desde MVD sin recargo</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert" style="margin:0 24px 16px;border-radius:12px;">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        <strong>Recargo del 3% — importante informar al cliente</strong>
+        <p>Aerolíneas Argentinas aplica un <strong>recargo del 3%</strong> en la mayoría de los mercados. En vuelos de ida y vuelta (<strong>RT</strong>) saliendo desde <strong>MVD (Montevideo)</strong> este recargo <strong>no aplica</strong>. Siempre avisale al cliente para evitar sorpresas al momento de emitir.</p>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Límites y notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Promo</span><br><span class="tier-badge tier-basic">Promo</span></td>
+            <td><code class="fare-cmd">/FF-EE</code></td>
+            <td><div class="pill-row"><span class="pill pill-blue">🎒 Art. personal</span></div></td>
+            <td><span class="pill pill-red">Sin equipaje adicional</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Base</span><br><span class="tier-badge tier-light">Base</span></td>
+            <td><code class="fare-cmd cmd-green">/FF-EB</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">Sin maleta</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Plus</span><br><span class="tier-badge tier-standard">Plus</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-EP</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-orange">⚠️ Doméstico: máx. 15 kg</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Flex</span><br><span class="tier-badge tier-flex">Flex</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-EF</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">Internacional: máx. 23 kg</span> <span class="pill pill-purple">🔄 Cambios permitidos</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ AVIANCA ══ -->
+  <section id="avianca" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#fff0f0;color:#c0392b;">AV</div>
+      <div class="airline-info">
+        <h2>Avianca</h2>
+        <div class="airline-meta">
+          <span class="airline-code">AV · AVA</span>
+          <span class="ndc-chip">✦ NDC</span>
+          <span class="airline-note">Modo gráfico Amadeus obligatorio</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-green" style="margin:0 24px 16px;border-radius:12px;">
+      <span class="alert-icon">🌎</span>
+      <div>
+        <strong>Destinos habilitados con Avianca desde el mercado local</strong>
+        <p>ADZ · CTG · SMR · MCO · MIA · SDQ · PUJ · PTY · HAV · CUN · AUA · CUR</p>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Beneficios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Basic</span><br><span class="tier-badge tier-basic">Basic</span></td>
+            <td><span class="pill pill-orange" style="font-size:11px;">Sin código AMS</span></td>
+            <td><div class="pill-row"><span class="pill pill-blue">🎒 Art. personal</span></div></td>
+            <td><span class="pill pill-red">Sin bolso de mano</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Light</span><br><span class="tier-badge tier-light">Light</span></td>
+            <td><code class="fare-cmd cmd-green">/FF-LIGHT</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">Sin maleta</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Classic</span><br><span class="tier-badge tier-standard">Classic</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-CLASSIC</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento estándar</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Flex</span><br><span class="tier-badge tier-flex">Flex</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-FLEX</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento Plus</span> <span class="pill pill-purple">🔄 Cambios sin cargo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ AIR EUROPA ══ -->
+  <section id="aireuropa" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#e0f2fe;color:#0369a1;">UX</div>
+      <div class="airline-info">
+        <h2>Air Europa</h2>
+        <div class="airline-meta">
+          <span class="airline-code">UX · AEA</span>
+          <span class="airline-note">Conexión Europa vía Madrid</span>
+        </div>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Beneficios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Lite</span><br><span class="tier-badge tier-light">Lite</span></td>
+            <td><code class="fare-cmd cmd-green">/FF-LITE</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">Sin maleta facturada</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Standard</span><br><span class="tier-badge tier-standard">Standard</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-STANDARD</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Flex</span><br><span class="tier-badge tier-flex">Flex</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-FLEX</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento preferente</span> <span class="pill pill-purple">🔄 Cambios sin cargo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ IBERIA ══ -->
+  <section id="iberia" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#fff7ed;color:#c2410c;">IB</div>
+      <div class="airline-info">
+        <h2>Iberia</h2>
+        <div class="airline-meta">
+          <span class="airline-code">IB · IBE</span>
+          <span class="ndc-chip">✦ NDC</span>
+          <span class="airline-note">Modo gráfico Amadeus obligatorio</span>
+        </div>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Beneficios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Básica</span><br><span class="tier-badge tier-basic">Básica</span></td>
+            <td><code class="fare-cmd">/FF-BASICA</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-red">Sin maleta</span> <span class="pill pill-red">Sin cambios</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Óptima</span><br><span class="tier-badge tier-standard">Óptima</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-OPTIMA</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-gray">💺 Asiento solo en check-in</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Comfort</span><br><span class="tier-badge tier-full">Comfort</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-COMFORT</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento estándar</span> <span class="pill pill-purple">1️⃣ 1er cambio gratis</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Flexible</span><br><span class="tier-badge tier-flex">Flexible</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-FLEX</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento estándar</span> <span class="pill pill-purple">🔄 Cambios sin cargo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ COPA ══ -->
+  <section id="copa" class="airline-card">
+    <div class="airline-header">
+      <div class="airline-logo" style="background:#dbeafe;color:#1e40af;">CM</div>
+      <div class="airline-info">
+        <h2>Copa Airlines</h2>
+        <div class="airline-meta">
+          <span class="airline-code">CM · CMP</span>
+          <span class="ndc-chip">✦ NDC</span>
+          <span class="airline-note">Hub Ciudad de Panamá (PTY)</span>
+        </div>
+      </div>
+    </div>
+    <div class="fare-table-wrap">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Familia tarifaria</th>
+            <th>Comando</th>
+            <th>Equipaje incluido</th>
+            <th>Beneficios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="fare-name">Basic</span><br><span class="tier-badge tier-basic">Basic</span></td>
+            <td><code class="fare-cmd">/FF-BASIC</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+              </div>
+            </td>
+            <td><span class="pill pill-red">Sin maleta</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Classic</span><br><span class="tier-badge tier-standard">Classic</span></td>
+            <td><code class="fare-cmd cmd-yellow">/FF-CLASSIC</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳 Maleta facturada</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento regular</span></td>
+          </tr>
+          <tr>
+            <td><span class="fare-name">Full</span><br><span class="tier-badge tier-flex">Full</span></td>
+            <td><code class="fare-cmd cmd-pink">/FF-FULL</code></td>
+            <td>
+              <div class="pill-row">
+                <span class="pill pill-blue">🎒 Art. personal</span>
+                <span class="pill pill-green">💼 Bolso de mano</span>
+                <span class="pill pill-green">🧳🧳 2 maletas facturadas</span>
+              </div>
+            </td>
+            <td><span class="pill pill-purple">💺 Asiento Premium</span> <span class="pill pill-purple">🔄 Cambios gratis</span> <span class="pill pill-green">↩️ Reembolsable</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ RESUMEN COMPARATIVO ══ -->
+  <h2 class="section-title" id="resumen">📋 Resumen comparativo — tarifa media por aerolínea</h2>
+  <p class="section-note">Un vistazo rápido a qué incluye cada aerolínea en su familia tarifaria intermedia (con maleta).</p>
+
+  <div class="resumen-wrap">
+    <div class="fare-table-wrap" style="padding:0;">
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>Aerolínea</th>
+            <th>Tarifa media</th>
+            <th>Comando</th>
+            <th>💼 Bolso</th>
+            <th>🧳 Maleta</th>
+            <th>💺 Asiento</th>
+            <th>NDC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>LATAM</strong></td>
+            <td>Standard</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-KM</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-gray">–</span></td>
+            <td><span class="ndc-chip" style="font-size:9px;padding:2px 8px;">NDC</span></td>
+          </tr>
+          <tr>
+            <td><strong>GOL</strong></td>
+            <td>Classic</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-CL</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-gray">–</span></td>
+            <td><span class="pill pill-gray">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>JetSmart</strong></td>
+            <td>Smart</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-i2</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-gray">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>SKY</strong></td>
+            <td>Max</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-PL</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-gray">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>Aerolíneas Arg.</strong></td>
+            <td>Plus</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-EP</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-gray">–</span></td>
+            <td><span class="pill pill-gray">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>Avianca</strong></td>
+            <td>Classic</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-CLASSIC</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="ndc-chip" style="font-size:9px;padding:2px 8px;">NDC</span></td>
+          </tr>
+          <tr>
+            <td><strong>Air Europa</strong></td>
+            <td>Standard</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-STANDARD</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-gray">–</span></td>
+            <td><span class="pill pill-gray">No</span></td>
+          </tr>
+          <tr>
+            <td><strong>Iberia</strong></td>
+            <td>Óptima</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-OPTIMA</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-orange">Check-in*</span></td>
+            <td><span class="ndc-chip" style="font-size:9px;padding:2px 8px;">NDC</span></td>
+          </tr>
+          <tr>
+            <td><strong>Copa</strong></td>
+            <td>Classic</td>
+            <td><code class="fare-cmd" style="font-size:.78rem;">/FF-CLASSIC</code></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="pill pill-green">✔</span></td>
+            <td><span class="ndc-chip" style="font-size:9px;padding:2px 8px;">NDC</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p style="font-size:.8rem;color:var(--muted);margin-bottom:40px;padding-left:4px;">* Iberia Óptima: el asiento se asigna en el check-in, no al momento de reservar.</p>
+
+  <!-- ══ TIPS GENERALES ══ -->
+  <h2 class="section-title" id="tips">💡 Tips generales de cotización</h2>
+  <p class="section-note">Buenas prácticas para aplicar el comando <strong>/FF</strong> en Amadeus y maximizar la conversión con cada cliente.</p>
+
+  <div class="tips-box">
+    <h3>⚡ Lo que un agente profesional siempre tiene claro</h3>
+    <ul class="tips-list">
+      <li>Mostrá disponibilidad primero (<code class="code-inline" style="background:rgba(255,255,255,.15);color:#fff;">AN</code>) antes de usar <code class="code-inline" style="background:rgba(255,255,255,.15);color:#fff;">/FF-[CÓDIGO]</code> para cotizar la familia tarifaria.</li>
+      <li>LATAM, Avianca, Iberia y Copa son <strong>NDC</strong>: necesitás modo gráfico activo en Amadeus para ver el contenido correcto. Sin él, podés estar viendo precios o condiciones incorrectas.</li>
+      <li>Siempre preguntá al cliente si lleva maleta facturada o solo equipaje de mano — eso define la tarifa y puede cambiar el precio considerablemente.</li>
+      <li>GOL, SKY y Aerolíneas usan <code class="code-inline" style="background:rgba(255,255,255,.15);color:#fff;">/FF-FL</code> para sus tarifas Flex — no los confundas entre sí al cotizar rápido.</li>
+      <li>SKY Standard incluye maleta pero <em>no bolso de mano</em>. JetSmart Travel tiene el mismo comportamiento. Explicalo siempre al cliente.</li>
+      <li>Aerolíneas Argentinas cobra +3% de recargo. Avisale al cliente antes de emitir para que no haya reclamos. En RT desde MVD no aplica.</li>
+      <li>Copa Full incluye <strong>2 maletas</strong>, asiento premium y es reembolsable: ideal para corporativos o viajeros frecuentes exigentes.</li>
+    </ul>
+  </div>
+
+  <div class="grid-2">
+    <div class="info-card">
+      <h4>🏷️ Qué incluye cada nivel tarifario</h4>
+      <ul>
+        <li><strong>Básica / Zero / Promo:</strong> Solo artículo personal. Sin equipaje extra, sin cambios.</li>
+        <li><strong>Light / Base / Lite:</strong> Artículo personal + bolso de mano. Sin maleta facturada.</li>
+        <li><strong>Standard / Classic / Óptima / Plus:</strong> Todo lo anterior + maleta facturada.</li>
+        <li><strong>Flex / Full / Flexible / Comfort:</strong> Todo incluido + cambios sin cargo y/o reembolso.</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>❓ Preguntas clave antes de cotizar</h4>
+      <ul>
+        <li>¿Lleva maleta despachada o solo equipaje de mano?</li>
+        <li>¿Necesita flexibilidad para cambiar fecha o vuelo?</li>
+        <li>¿Viaja solo, en pareja o con familia? (volumen de equipaje)</li>
+        <li>¿Es viajero frecuente de alguna aerolínea específica?</li>
+        <li>¿El vuelo es doméstico o internacional? (límites de peso)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="info-card">
+      <h4>🧳 Límites de equipaje más comunes</h4>
+      <ul>
+        <li>Artículo personal: hasta 8 kg / formato reducido</li>
+        <li>Bolso de mano: hasta 10 kg (varía por carrier)</li>
+        <li>Maleta doméstica AR Plus: máx. 15 kg</li>
+        <li>Maleta internacional estándar: hasta 23 kg</li>
+        <li>Copa Full: 2 maletas de hasta 23 kg c/u</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>🔧 Comandos Amadeus complementarios</h4>
+      <ul>
+        <li><code class="code-inline">/FF-[COD]</code> — Cotizar familia tarifaria</li>
+        <li><code class="code-inline">FXD</code> — Explorar opciones y filtros</li>
+        <li><code class="code-inline">TQT</code> — Ver condiciones de la tarifa</li>
+        <li><code class="code-inline">TST</code> — Ver el cálculo de precio (TST)</li>
+        <li><code class="code-inline">TTP</code> — Emitir el billete</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>🔴 Carriers NDC en Amadeus</h4>
+      <ul>
+        <li>LATAM, Avianca, Iberia y Copa operan con NDC.</li>
+        <li>Requieren <strong>modo gráfico activo</strong> para ver contenido completo.</li>
+        <li>El NDC puede mostrar precios distintos al GDS clásico — siempre comparar.</li>
+        <li>Si el comando /FF no responde bien, verificar que el modo gráfico esté activo.</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+  <strong>Dr.Viaje · Amadeus GDS · Cotización por Aerolínea</strong><br>
+  Material exclusivo para agentes de viajes · Actualizado abril 2025<br>
+  LATAM · GOL · JetSmart · SKY · Aerolíneas Argentinas · Avianca · Air Europa · Iberia · Copa
+</footer>
+
+<!-- SCROLL TOP -->
+<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button>
+
+<script>
+  // Scroll suave con offset para doble navbar
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.pageYOffset - 140;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  // Botón scroll top
+  const btn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => btn.classList.toggle('visible', window.pageYOffset > 300));
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+</body>
+</html>

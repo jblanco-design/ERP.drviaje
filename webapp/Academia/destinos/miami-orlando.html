@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr. Viaje | Guía Miami + Orlando · Florida</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <style>
+    :root {
+      --primary-purple: #7B2D8E;
+      --primary-orange: #FF9800;
+      --primary-pink:   #E91E63;
+      --critical-red:   #d32f2f;
+      --usa-blue:       #002868;
+      --usa-red:        #BF0A30;
+      --bg-light:       #f8f9fa;
+      --text-dark:      #333333;
+      --text-medium:    #666666;
+      --white:          #ffffff;
+      --shadow:         0 10px 30px rgba(0,0,0,0.08);
+      --shadow-hover:   0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:      20px;
+      --radius-lg:      16px;
+      --radius-md:      12px;
+      --transition:     all 0.3s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
+
+    /* ══ HEADER ══ */
+    header {
+      background: linear-gradient(135deg, var(--usa-blue) 0%, #1565C0 45%, #B71C1C 100%);
+      color: var(--white);
+      padding: 50px 0 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: ""; position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      width: 280px; height: 280px; top: -100px; right: -60px;
+    }
+    header::after {
+      content: ""; position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      width: 200px; height: 200px; bottom: -90px; left: -40px;
+    }
+    .header-content { position: relative; z-index: 2; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      color: var(--white); padding: 8px 16px; border-radius: 999px;
+      font-size: 0.88rem; font-weight: 700; margin-bottom: 18px; letter-spacing: 0.03em;
+    }
+    header h1 { font-size: clamp(2.2rem,5vw,3.8rem); font-weight: 800; line-height: 1.06; margin-bottom: 12px; letter-spacing: -0.03em; }
+    .header-subtitle { font-size: 1.05rem; opacity: 0.93; max-width: 820px; margin-bottom: 32px; }
+
+    /* KPIs */
+    .kpi-row { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; margin-top: 8px; }
+    .kpi {
+      background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px; padding: 18px 14px; text-align: center; backdrop-filter: blur(6px);
+    }
+    .kpi strong { display: block; font-size: 1.6rem; font-weight: 800; color: #ffd36a; margin-bottom: 4px; }
+    .kpi span { font-size: 0.82rem; opacity: 0.9; }
+
+    /* ══ INTERNAL NAV ══ */
+    nav { position: sticky; top: 72px; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .nav-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 13px 0; scrollbar-width: none; }
+    .nav-scroll::-webkit-scrollbar { display: none; }
+    .nav-scroll a {
+      white-space: nowrap;
+      background: linear-gradient(135deg, rgba(0,40,104,0.1), rgba(191,10,48,0.1));
+      color: var(--usa-blue); border: 1px solid rgba(0,40,104,0.15);
+      padding: 9px 16px; border-radius: 999px; font-size: 0.88rem; font-weight: 700; transition: var(--transition);
+    }
+    .nav-scroll a:hover { background: linear-gradient(135deg, var(--usa-blue), var(--usa-red)); color: var(--white); transform: translateY(-1px); }
+
+    /* ══ MAIN ══ */
+    main { padding: 32px 0 80px; }
+    section[id] { scroll-margin-top: 140px; }
+    .destination-card { background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow); border-top: 6px solid var(--usa-blue); padding: 32px; margin-bottom: 32px; transition: var(--transition); }
+    .destination-card:nth-child(even) { border-top-color: var(--usa-red); }
+    .destination-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .destination-header { border-bottom: 2px solid var(--bg-light); padding-bottom: 20px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .destination-header .icon { font-size: 2.6rem; flex-shrink: 0; line-height: 1; }
+    .destination-header h2 { font-size: 1.65rem; font-weight: 800; color: var(--usa-blue); margin-bottom: 6px; }
+    .destination-header p { color: var(--text-medium); font-size: 0.95rem; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .tag { background: rgba(0,40,104,0.1); color: var(--usa-blue); padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+    .tag.red { background: rgba(191,10,48,0.1); color: var(--usa-red); }
+    .tag.orange { background: rgba(255,152,0,0.15); color: #e65100; }
+    .tag.green { background: rgba(56,142,60,0.12); color: #2e7d32; }
+
+    /* ── Section titles ── */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      background: linear-gradient(135deg, var(--usa-blue), var(--usa-red));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 10px;
+    }
+    .card-title { font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin-bottom: 10px; }
+    .card-body-text { color: var(--text-medium); font-size: 0.95rem; margin-bottom: 14px; line-height: 1.7; }
+
+    /* Info boxes */
+    .info-box { background: linear-gradient(135deg, rgba(0,40,104,0.06), rgba(191,10,48,0.06)); border-left: 4px solid var(--usa-blue); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 16px 20px; margin: 16px 0; }
+    .info-box.red { border-left-color: var(--usa-red); background: rgba(191,10,48,0.06); }
+    .info-box.orange { border-left-color: var(--primary-orange); background: rgba(255,152,0,0.07); }
+    .info-box.green { border-left-color: #388e3c; background: rgba(56,142,60,0.07); }
+    .info-box strong { display: block; font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; color: var(--text-dark); }
+    .info-box p, .info-box ul { font-size: 0.92rem; color: var(--text-medium); }
+    .info-box ul { padding-left: 18px; }
+    .info-box ul li { margin-bottom: 4px; }
+
+    /* Pill highlight */
+    .pill {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--usa-blue), var(--usa-red));
+      color: var(--white); padding: 5px 12px; border-radius: 999px;
+      font-size: 0.78rem; font-weight: 700; margin-bottom: 10px; letter-spacing: 0.03em;
+    }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); margin: 16px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--white); min-width: 600px; }
+    thead th { background: linear-gradient(135deg, var(--usa-blue), var(--usa-red)); color: var(--white); padding: 13px 14px; text-align: left; font-size: 0.9rem; font-weight: 700; }
+    tbody td { padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-medium); font-size: 0.93rem; vertical-align: top; }
+    tbody tr:nth-child(even) td { background: #fafafa; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #f0f4ff; }
+
+    /* Lists */
+    ul.clean-list { padding-left: 0; list-style: none; display: grid; gap: 8px; }
+    ul.clean-list li { color: var(--text-medium); padding-left: 20px; position: relative; font-size: 0.95rem; }
+    ul.clean-list li::before { content: "✓"; position: absolute; left: 0; color: var(--usa-blue); font-weight: 800; }
+    ul.cross-list { padding-left: 0; list-style: none; display: grid; gap: 8px; }
+    ul.cross-list li { color: var(--text-medium); padding-left: 20px; position: relative; font-size: 0.95rem; }
+    ul.cross-list li::before { content: "✗"; position: absolute; left: 0; color: var(--usa-red); font-weight: 800; }
+
+    /* Two-col grid */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } .kpi-row { grid-template-columns: 1fr 1fr; } }
+
+    /* Mini cards */
+    .mini-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 12px; margin-top: 14px; }
+    .mini-card { background: var(--bg-light); border-radius: var(--radius-md); padding: 16px; text-align: center; border: 1px solid rgba(0,0,0,0.06); }
+    .mini-card .mc-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .mini-card .mc-title { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); }
+    .mini-card .mc-desc { font-size: 0.8rem; color: var(--text-medium); margin-top: 4px; }
+
+    /* Parques CTA */
+    .parks-cta {
+      display: flex; align-items: center; gap: 18px;
+      background: linear-gradient(135deg, #0D47A1, #880E4F);
+      border-radius: var(--radius-xl); padding: 24px 28px; margin: 24px 0;
+      color: var(--white); flex-wrap: wrap;
+    }
+    .parks-cta .pc-icon { font-size: 3rem; flex-shrink: 0; }
+    .parks-cta h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+    .parks-cta p { font-size: 0.9rem; opacity: 0.9; margin-bottom: 12px; }
+    .parks-cta a {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); color: #0D47A1; font-weight: 800;
+      padding: 10px 20px; border-radius: 999px; font-size: 0.92rem;
+      transition: var(--transition);
+    }
+    .parks-cta a:hover { transform: translateX(4px); }
+
+    /* Quote */
+    .quote { font-size: 1rem; font-weight: 600; color: var(--usa-blue); font-style: italic; line-height: 1.7; }
+
+    /* Script selling */
+    .script-box { background: linear-gradient(135deg, #002868, #BF0A30); border-radius: var(--radius-xl); padding: 28px 32px; color: var(--white); margin-bottom: 20px; }
+    .script-box .script-label { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-bottom: 8px; }
+    .script-box .script-text { font-size: 1rem; line-height: 1.75; font-style: italic; }
+
+    /* Highlight chip */
+    .chip { display: inline-flex; align-items: center; gap: 5px; background: rgba(0,40,104,0.1); color: var(--usa-blue); border-radius: 999px; padding: 4px 12px; font-size: 0.82rem; font-weight: 600; margin: 3px; }
+    .chip.red { background: rgba(191,10,48,0.1); color: var(--usa-red); }
+    .chip.orange { background: rgba(255,152,0,0.12); color: #e65100; }
+  </style>
+</head>
+<body>
+
+<script src="../js/navbar-inject.js"></script>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header>
+  <div class="container">
+    <div class="header-content">
+      <div class="badge">🌴 Estado de Florida · Estados Unidos 🇺🇸</div>
+      <h1>Miami + Orlando<br><span style="color:#ffd36a;">La Florida Completa</span></h1>
+      <p class="header-subtitle">El combo más vendido de Estados Unidos: sol, cultura, magia y parques temáticos. Todo lo que el asesor necesita para cerrar viajes con confianza.</p>
+      <div class="kpi-row">
+        <div class="kpi"><strong>2 ciudades</strong><span>en 1 viaje</span></div>
+        <div class="kpi"><strong>ESTA</strong><span>o Visa B1/B2</span></div>
+        <div class="kpi"><strong>365</strong><span>días de sol</span></div>
+        <div class="kpi"><strong>USD</strong><span>Propina obligatoria</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ INTERNAL NAVIGATION ══ -->
+<nav>
+  <div class="container">
+    <div class="nav-scroll">
+      <a href="#intro">🗺️ El Viaje</a>
+      <a href="#miami">🌴 Miami</a>
+      <a href="#barrios">🏙️ Barrios</a>
+      <a href="#orlando">🎡 Orlando</a>
+      <a href="#parques-link">🎢 Parques</a>
+      <a href="#documentacion">📄 Doc & ESTA</a>
+      <a href="#vuelos">✈️ Vuelos</a>
+      <a href="#traslados">🚗 Traslados</a>
+      <a href="#hoteles">🏨 Hoteles</a>
+      <a href="#temporadas">📅 Temporadas</a>
+      <a href="#presupuesto">💰 Presupuesto</a>
+      <a href="#objeciones">🛡️ Objeciones</a>
+      <a href="#script">🎯 Script</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main>
+  <div class="container">
+
+    <!-- ── INTRO ── -->
+    <section id="intro">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🌴🎡</div>
+          <div>
+            <h2>Miami + Orlando: el combo estrella de Florida</h2>
+            <p>Sol de Miami + Magia de Orlando = el viaje perfecto para toda la familia y parejas</p>
+          </div>
+        </div>
+        <div class="tag-row">
+          <span class="tag">Familia</span>
+          <span class="tag">Cultura</span>
+          <span class="tag red">Parques temáticos</span>
+          <span class="tag orange">Gastronomía</span>
+          <span class="tag green">All inclusive opcional</span>
+        </div>
+        <p class="card-body-text">Florida es el destino número uno de Estados Unidos para viajeros latinoamericanos. La combinación Miami + Orlando cubre todos los perfiles: playa y cultura para los adultos, parques de clase mundial para los chicos y una infraestructura turística insuperable para el asesor. Volar a Miami, recorrerla 3 o 4 noches, trasladarse a Orlando y cerrar con Disney o Universal, es el itinerario que se vende prácticamente solo cuando el asesor conoce bien el producto.</p>
+        <div class="info-box green">
+          <strong>💡 Argumento de venta principal</strong>
+          <p>"Florida es el destino que combina lo mejor de todo: playa de South Beach, arte en Wynwood, compras en Sawgrass, magia en Disney y adrenalina en Universal. Todo en un solo viaje, sin cambiar de moneda ni de idioma turístico."</p>
+        </div>
+
+        <!-- CTA Parques -->
+        <div class="parks-cta">
+          <div class="pc-icon">🎢</div>
+          <div style="flex:1;">
+            <h3>¿Tu cliente pregunta por parques en Orlando?</h3>
+            <p>Tenemos una guía dedicada con precios, tickets, tips y estrategia de visita para Disney, Universal, SeaWorld y más.</p>
+            <a href="parques-orlando.html">
+              Ver guía de Parques de Orlando
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MIAMI ── -->
+    <section id="miami">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🌴</div>
+          <div>
+            <h2>Miami · La Ciudad del Sol</h2>
+            <p>Arte Deco, Caribe, cultura latina y gastronomía de primer nivel</p>
+          </div>
+        </div>
+
+        <div class="pill">¿Por qué Miami?</div>
+        <p class="card-body-text">Miami es una ciudad única en Estados Unidos: latinoamericana por su alma, europea por su arquitectura, caribeña por su playa y cosmopolita por su gastronomía. Los viajeros de habla hispana se sienten cómodos porque el español es segunda lengua oficial. Es una ciudad para explorar a pie, en bici y en Uber.</p>
+
+        <div class="two-col">
+          <div class="info-box green">
+            <strong>✅ Lo que sí tiene Miami</strong>
+            <ul>
+              <li>South Beach y el Art Decó de Ocean Drive</li>
+              <li>Wynwood, el barrio del street art</li>
+              <li>Bayside y el puerto con cruceros</li>
+              <li>Little Havana y la cultura cubana</li>
+              <li>Compras en Sawgrass Mills (el outlet más grande de USA)</li>
+              <li>Brickell, el Manhattan latino</li>
+              <li>Vida nocturna top: clubs, rooftops y drag shows</li>
+            </ul>
+          </div>
+          <div class="info-box orange">
+            <strong>⚠️ Lo que no tiene Miami</strong>
+            <ul>
+              <li>Parques temáticos (esos son en Orlando)</li>
+              <li>Atracciones para chicos pequeños en cantidad</li>
+              <li>Hoteles baratos en la zona de playa</li>
+              <li>Transporte público eficiente (se necesita auto o Uber)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BARRIOS ── -->
+    <section id="barrios">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🏙️</div>
+          <div>
+            <h2>Barrios clave de Miami</h2>
+            <p>Guía rápida para orientar a tu cliente</p>
+          </div>
+        </div>
+
+        <div class="mini-cards">
+          <div class="mini-card">
+            <span class="mc-icon">🏖️</span>
+            <div class="mc-title">South Beach</div>
+            <div class="mc-desc">Playa icónica, Art Decó, Ocean Drive, bares y clubs. El más turístico y caro.</div>
+          </div>
+          <div class="mini-card">
+            <span class="mc-icon">🎨</span>
+            <div class="mc-title">Wynwood</div>
+            <div class="mc-desc">Distrito del arte urbano. Galerías, restaurants trendy, murales mundialmente famosos.</div>
+          </div>
+          <div class="mini-card">
+            <span class="mc-icon">🌆</span>
+            <div class="mc-title">Brickell</div>
+            <div class="mc-desc">Centro financiero y de negocios. Hoteles modernos, rooftops, vida nocturna sofisticada.</div>
+          </div>
+          <div class="mini-card">
+            <span class="mc-icon">🎶</span>
+            <div class="mc-title">Little Havana</div>
+            <div class="mc-desc">Cuba en Miami. Calle Ocho, dominó, café cubano y son. Muy auténtico y fotogénico.</div>
+          </div>
+          <div class="mini-card">
+            <span class="mc-icon">🚢</span>
+            <div class="mc-title">Bayside</div>
+            <div class="mc-desc">Puerto, paseos en lancha, compras, restaurants y vistas al horizonte de Miami.</div>
+          </div>
+          <div class="mini-card">
+            <span class="mc-icon">🛍️</span>
+            <div class="mc-title">Sawgrass Mills</div>
+            <div class="mc-desc">Outlet más grande de EE.UU. (25 km de Ft. Lauderdale). Obligatorio para compradores.</div>
+          </div>
+          <div class="mini-card">
+            <span class="mc-icon">✈️</span>
+            <div class="mc-title">Aventura / Bal Harbour</div>
+            <div class="mc-desc">Shopping premium. Aventura Mall y Bal Harbour Shops, lo más exclusivo de Miami.</div>
+          </div>
+          <div class="mini-card">
+            <span class="mc-icon">🌿</span>
+            <div class="mc-title">Key Biscayne</div>
+            <div class="mc-desc">Isla tranquila a 15 min del centro. Rickenbacker Causeway y Bill Baggs State Park.</div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top:20px;">
+          <strong>🗺️ Excursiones clásicas desde Miami</strong>
+          <ul>
+            <li><strong>Everglades:</strong> Airboat 1 hora + avistamiento de caimanes. Desde USD 35 pp.</li>
+            <li><strong>Key West:</strong> La isla más al sur de EE.UU. 3,5 hs en auto o bus tour. Ambiente hippie y caribeño.</li>
+            <li><strong>Fort Lauderdale:</strong> La Venecia americana. 40 min de Miami. Canales y barcos privados.</li>
+            <li><strong>Cruceros desde Port Miami:</strong> Salida los fines de semana a Coco Cay, Nassau y Key West.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ORLANDO ── -->
+    <section id="orlando">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🎡</div>
+          <div>
+            <h2>Orlando · La Capital de la Magia</h2>
+            <p>La ciudad con más parques temáticos del mundo en una sola área</p>
+          </div>
+        </div>
+
+        <div class="pill">¿Por qué Orlando?</div>
+        <p class="card-body-text">Orlando es sinónimo de experiencias. Con más de 100 atracciones concentradas en pocos kilómetros, es el destino favorito para familias con niños y también para adultos que buscan vivir experiencias únicas. Walt Disney World, Universal Studios, SeaWorld, LEGOLAND y Busch Gardens son solo los más famosos. Además, Orlando tiene excelente infraestructura de hoteles y restaurantes a precios más accesibles que Miami.</p>
+
+        <!-- CTA Parques destacado -->
+        <div class="parks-cta" id="parques-link">
+          <div class="pc-icon">🎠</div>
+          <div style="flex:1;">
+            <h3>Guía completa de Parques de Orlando</h3>
+            <p>Precios de tickets, comparativa de parques, consejos de días y estrategia de visita para maximizar cada día. Tenemos todo en una guía separada.</p>
+            <a href="parques-orlando.html">
+              Ver guía completa de Parques
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="section-label">Zonas de alojamiento en Orlando</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Zona</th><th>Descripción</th><th>Ideal para</th><th>Precio relativo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🏰 <strong>International Drive (I-Drive)</strong></td><td>Zona turística central. Restaurants, outlets, tiendas y acceso fácil a todos los parques.</td><td>Todos los perfiles</td><td>⭐⭐⭐</td></tr>
+              <tr><td>🎪 <strong>Lake Buena Vista</strong></td><td>A minutos de Disney. Lleno de hoteles oficiales y no oficiales de Disney.</td><td>Familias Disney</td><td>⭐⭐⭐⭐</td></tr>
+              <tr><td>🎬 <strong>Universal Boulevard</strong></td><td>Acceso directo a Universal Studios y Epic Universe (2025).</td><td>Fans de Universal</td><td>⭐⭐⭐</td></tr>
+              <tr><td>🌟 <strong>Kissimmee</strong></td><td>Zona más económica. Acceso a todos los parques pero más tráfico.</td><td>Presupuesto ajustado</td><td>⭐⭐</td></tr>
+              <tr><td>🏨 <strong>Hotels on-site Disney</strong></td><td>Dentro del complejo Disney. Beneficios exclusivos: Early Entry, transportation, etc.</td><td>Máxima experiencia Disney</td><td>⭐⭐⭐⭐⭐</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DOCUMENTACIÓN ── -->
+    <section id="documentacion">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">📄</div>
+          <div>
+            <h2>Documentación · ESTA y Visa</h2>
+            <p>Requisitos según la nacionalidad del viajero</p>
+          </div>
+        </div>
+
+        <div class="info-box red">
+          <strong>🔴 IMPORTANTE: No todos los latinoamericanos califican para ESTA</strong>
+          <p>El ESTA (Electronic System for Travel Authorization) es solo para ciudadanos de países incluidos en el Visa Waiver Program. La mayoría de los países latinoamericanos <strong>NO están incluidos</strong>, por lo que sus ciudadanos necesitan Visa B1/B2.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>País</th><th>Requisito</th><th>Tiempo tramitación</th><th>Costo aprox.</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🇦🇷 Argentina</td><td><strong>ESTA</strong> (Visa Waiver desde 2023)</td><td>72 horas (recomendado 2 semanas)</td><td>USD 21</td></tr>
+              <tr><td>🇧🇷 Brasil</td><td><strong>Visa B1/B2</strong></td><td>Variable según consulado (meses)</td><td>USD 185 + biometría</td></tr>
+              <tr><td>🇨🇴 Colombia</td><td><strong>Visa B1/B2</strong></td><td>Variable según consulado</td><td>USD 185 + biometría</td></tr>
+              <tr><td>🇲🇽 México</td><td><strong>Visa B1/B2</strong></td><td>Variable según consulado</td><td>USD 185 + biometría</td></tr>
+              <tr><td>🇺🇾 Uruguay</td><td><strong>ESTA</strong></td><td>72 horas</td><td>USD 21</td></tr>
+              <tr><td>🇨🇱 Chile</td><td><strong>ESTA</strong></td><td>72 horas</td><td>USD 21</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box green">
+          <strong>✅ ESTA: Información clave para el asesor</strong>
+          <ul>
+            <li>Autoriza estadías de hasta <strong>90 días</strong> sin visa</li>
+            <li>Válido por <strong>2 años</strong> o hasta que venza el pasaporte</li>
+            <li>Solo tramitar en <strong>esta.cbp.dhs.gov</strong> (oficial). Cuidado con sitios falsificados que cobran hasta USD 60</li>
+            <li>Respuesta habitual: <strong>72 horas</strong>. Siempre tramitar con anticipación</li>
+            <li>Pasaporte debe tener chip electrónico (biométrico)</li>
+          </ul>
+        </div>
+
+        <div class="info-box orange">
+          <strong>⚠️ Customs & Border Protection al ingresar</strong>
+          <ul>
+            <li>Llenar el formulario <strong>I-94</strong> (ahora digital, se llena en la web antes de llegar)</li>
+            <li>Foto y huellas dactilares en migraciones</li>
+            <li><strong>No declarar más de USD 10.000</strong> en efectivo sin declarar</li>
+            <li>Prohibido ingresar con: frutas, vegetales, carnes, plantas</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VUELOS ── -->
+    <section id="vuelos">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">✈️</div>
+          <div>
+            <h2>Vuelos · Aeropuertos y conexiones</h2>
+            <p>Rutas, tiempos y tips para optimizar el itinerario</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="info-box">
+            <strong>🛬 Miami International Airport (MIA)</strong>
+            <ul>
+              <li>El más conectado de Florida para vuelos internacionales</li>
+              <li>Vuelos directos desde Buenos Aires, Bogotá, Lima, Medellín, São Paulo, Ciudad de México y más</li>
+              <li>25 min del Downtown Miami y South Beach</li>
+              <li>Tiempo vuelo Argentina: ~10-11 horas (directo)</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <strong>🛬 Orlando International Airport (MCO)</strong>
+            <ul>
+              <li>Vuelos internacionales directos desde varios países latinoamericanos</li>
+              <li>A 20-30 min de los principales parques y I-Drive</li>
+              <li>Código IATA: MCO</li>
+              <li>Muy moderno y eficiente para familias con equipaje</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px;">Estrategia de itinerario</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Estrategia</th><th>Descripción</th><th>Ideal para</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>✅ <strong>Llegar MIA + salir MCO</strong></td><td>Vuelo de entrada a Miami, traslado a Orlando al final y vuelta desde allá. Evita manejar de regreso.</td><td>Viaje combinado clásico</td></tr>
+              <tr><td>⭐ <strong>Llegar MIA + salir MIA</strong></td><td>Ruta circular: MIA → Orlando (auto/bus) → MIA. Más caro por devolver el auto en MIA.</td><td>Presupuesto sin preocupación</td></tr>
+              <tr><td>🔄 <strong>Todo desde MCO</strong></td><td>Vuelan a Orlando directo, hacen parques y de excursión van a Miami 1 día.</td><td>Familias con foco en parques</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TRASLADOS ── -->
+    <section id="traslados">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🚗</div>
+          <div>
+            <h2>Traslados · Moverse por Florida</h2>
+            <p>Auto de alquiler, shuttles y transporte interno</p>
+          </div>
+        </div>
+
+        <div class="info-box green">
+          <strong>🚗 AUTO DE ALQUILER: La opción más recomendada</strong>
+          <p>Florida está diseñada para el auto. La distancia Miami–Orlando es de aprox. <strong>380 km (4 horas)</strong> por la Turnpike (autopista de peaje). Manejar en Florida es sencillo, las rutas son anchas y bien señalizadas. El GPS del celular funciona perfecto.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Opción</th><th>Precio aprox.</th><th>Pros</th><th>Contras</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🚗 Auto de alquiler</td><td>USD 30-80/día + peajes + nafta</td><td>Libertad total, acceso a todos los parques</td><td>Requiere licencia internacional, peajes SunPass</td></tr>
+              <tr><td>🚌 Shuttle Miami–Orlando</td><td>USD 40-60 pp (solo ida)</td><td>Económico, no se maneja</td><td>Horarios fijos, sin paradas intermedias</td></tr>
+              <tr><td>✈️ Vuelo interno MIA–MCO</td><td>USD 60-150 pp</td><td>1 hora de viaje</td><td>Suma aeropuerto–aeropuerto, no conviene para familias con mucho equipaje</td></tr>
+              <tr><td>🚐 Transfer privado</td><td>USD 180-350 por vehículo</td><td>Comodidad puerta a puerta</td><td>Caro para viajeros individuales</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box orange">
+          <strong>⚠️ Peajes en Florida: SunPass</strong>
+          <ul>
+            <li>Florida tiene muchas autopistas de peaje. Los autos de alquiler suelen incluir un transponder automático (E-PASS o SunPass) y cobran los peajes al final del alquiler.</li>
+            <li>Costo orientativo Miami–Orlando por Turnpike: USD 5-8 por auto.</li>
+            <li>Algunas agencias cobran un fee administrativo por cada peaje (USD 3-5 adicional). ¡Revisar contrato!</li>
+          </ul>
+        </div>
+
+        <div class="info-box">
+          <strong>🚌 Transporte dentro de Miami</strong>
+          <ul>
+            <li><strong>Uber / Lyft:</strong> La mejor opción para no tener auto en Miami. Económico y confiable.</li>
+            <li><strong>Metromover:</strong> Tren elevado gratuito en el Downtown y Brickell. Ideal para explorar el centro.</li>
+            <li><strong>Citi Bike:</strong> Bicicletas públicas disponibles en South Beach y Miami Beach.</li>
+            <li><strong>Free Trolley:</strong> Autobuses gratuitos en Wynwood, Brickell y South Beach en horarios limitados.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HOTELES ── -->
+    <section id="hoteles">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🏨</div>
+          <div>
+            <h2>Hoteles · Dónde alojarse</h2>
+            <p>Recomendaciones por zona y perfil de viajero</p>
+          </div>
+        </div>
+
+        <div class="section-label">Miami — Opciones por zona</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Zona</th><th>Hoteles referencia</th><th>Precio/noche</th><th>Perfil</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🏖️ South Beach</td><td>Cadillac Hotel, The Betsy, Surfcomber, SLS South Beach</td><td>USD 180–450+</td><td>Parejas, luna de miel</td></tr>
+              <tr><td>🌆 Mid Beach / Collins Ave</td><td>Fontainebleau, Eden Roc, W South Beach, Loews Miami Beach</td><td>USD 250–600+</td><td>Lujo y experiencia</td></tr>
+              <tr><td>🏙️ Brickell / Downtown</td><td>EAST Miami, JW Marriott, Four Seasons, Kimpton EPIC</td><td>USD 200–500+</td><td>Negocios, adultos</td></tr>
+              <tr><td>✈️ Airport Area</td><td>Marriott Miami Airport, Hyatt Regency, Holiday Inn</td><td>USD 120–200</td><td>Tránsito, presupuesto</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box red">
+          <strong>🔴 Resort Fee en Miami</strong>
+          <p>La mayoría de hoteles de South Beach cobran un <strong>Resort Fee</strong> diario de USD 25 a USD 60 (no incluido en el precio online). Este cargo cubre WiFi, acceso a la piscina, toallas de playa y otros servicios. <strong>Siempre informar al cliente antes de reservar.</strong></p>
+        </div>
+
+        <div class="section-label" style="margin-top:20px;">Orlando — Opciones por zona</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Tipo</th><th>Ejemplos</th><th>Precio/noche</th><th>Ventaja principal</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🏰 On-site Disney</td><td>Disney's All-Star, Pop Century, Coronado Springs, Grand Floridian</td><td>USD 130–700+</td><td>Early Park Entry + Disney Transport gratis</td></tr>
+              <tr><td>🎬 On-site Universal</td><td>Cabana Bay, Aventura, Portofino Bay, Hard Rock Hotel</td><td>USD 150–450+</td><td>Early Entry a Universal + Express Pass incluido (hoteles premium)</td></tr>
+              <tr><td>🏨 I-Drive / Independientes</td><td>Marriott, Hilton, Hyatt, Wyndham, Rosen Hotels</td><td>USD 100–300</td><td>Precio accesible, shuttles a los parques</td></tr>
+              <tr><td>🏠 Casas vacacionales (VRBO/Airbnb)</td><td>Kissimmee y áreas aledañas</td><td>USD 80–250</td><td>Ideal para grupos y familias grandes</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TEMPORADAS ── -->
+    <section id="temporadas">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">📅</div>
+          <div>
+            <h2>Temporadas · Mejor época para viajar</h2>
+            <p>Clima, precios y ocupación en Florida a lo largo del año</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Período</th><th>Clima</th><th>Precios</th><th>Ocupación</th><th>¿Recomendado?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Dic – Feb (invierno USA)</td><td>Agradable 20-28°C</td><td>📈 Alto</td><td>Muy alta</td><td>✅ Temporada alta. Clima ideal, sin lluvia.</td></tr>
+              <tr><td>Mar – May (primavera)</td><td>Cálido 25-32°C</td><td>🟡 Medio</td><td>Alta</td><td>✅ Muy buena época. Cuidado: Spring Break en Marzo.</td></tr>
+              <tr><td>Jun – Ago (verano)</td><td>Caluroso y húmedo 32-36°C</td><td>⬆️ Muy alto</td><td>Máxima</td><td>⚠️ Aguaceros diarios por la tarde. Parques muy llenos. Huracanes.</td></tr>
+              <tr><td>Sep – Oct (otoño)</td><td>Cálido 28-33°C</td><td>📉 Bajo</td><td>Baja</td><td>✅ Temporada baja. Mejores precios pero riesgo de huracanes.</td></tr>
+              <tr><td>Noviembre</td><td>Agradable 24-29°C</td><td>🟡 Medio</td><td>Media</td><td>✅ Excelente. Comienza a llenarse para Thanksgiving.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box red">
+          <strong>🌀 Temporada de Huracanes: Junio a Noviembre</strong>
+          <p>La temporada oficial de huracanes en el Atlántico va de junio a noviembre (pico en agosto-octubre). Si el cliente viaja en este período, <strong>SIEMPRE recomendar seguro de viaje con cobertura por huracán y cancelación</strong>. También verificar que el hotel tenga política de cancelación flexible.</p>
+        </div>
+
+        <div class="info-box orange">
+          <strong>🎄 Navidad y Año Nuevo en Florida</strong>
+          <p>El período del 20 de diciembre al 5 de enero es el más caro y concurrido del año en parques y hoteles. Disney y Universal cobran precios máximos. Los parques implementan <strong>Park Pass reservations</strong> obligatorias. Ideal para quien quiere experimentar la magia navideña en Disney.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PRESUPUESTO ── -->
+    <section id="presupuesto">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">💰</div>
+          <div>
+            <h2>Presupuesto · Cuánto cuesta Florida</h2>
+            <p>Referencia de gastos diarios y totales</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Categoría</th><th>Presupuesto ajustado</th><th>Presupuesto medio</th><th>Premium / Lujo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🏨 Hotel (por noche)</td><td>USD 80–120</td><td>USD 150–250</td><td>USD 300–600+</td></tr>
+              <tr><td>🍽️ Comida (por día/persona)</td><td>USD 30–50</td><td>USD 60–100</td><td>USD 120–200+</td></tr>
+              <tr><td>🚗 Auto de alquiler (por día)</td><td>USD 35–55</td><td>USD 55–90</td><td>USD 100–200+</td></tr>
+              <tr><td>🎢 Parques (por día)</td><td>USD 109–119 (Disney base)</td><td>USD 120–159</td><td>USD 159+ + extras</td></tr>
+              <tr><td>🛍️ Compras</td><td>USD 100–300 total</td><td>USD 300–600 total</td><td>USD 1000+ total</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box">
+          <strong>💵 Propinas en USA: Obligatorio saber esto</strong>
+          <ul>
+            <li><strong>Restaurantes:</strong> 18-22% sobre el total</li>
+            <li><strong>Bares:</strong> USD 1-2 por bebida</li>
+            <li><strong>Taxi / Uber:</strong> 15-20%</li>
+            <li><strong>Hoteles (bellboy):</strong> USD 2-3 por bolso</li>
+            <li><strong>Tours y excursiones:</strong> 15-20% al guía</li>
+            <li>En muchos restaurantes el sistema ya sugiere la propina automáticamente en la terminal de pago</li>
+          </ul>
+        </div>
+
+        <div class="info-box green">
+          <strong>💡 Tips de ahorro</strong>
+          <ul>
+            <li><strong>Parques:</strong> Comprar tickets online con anticipación. Las taquillas cobran más.</li>
+            <li><strong>Comida:</strong> Mercados, food courts y supermercados como Publix ahorran hasta 50%.</li>
+            <li><strong>Shopping:</strong> Premium Outlets International Drive y Sawgrass Mills tienen descuentos enormes.</li>
+            <li><strong>Parques combo:</strong> Multi-day tickets bajan el precio diario significativamente.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── OBJECIONES ── -->
+    <section id="objeciones">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🛡️</div>
+          <div>
+            <h2>Objeciones frecuentes y cómo responderlas</h2>
+            <p>Argumentos para cerrar la venta</p>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>💬 "Es muy caro"</strong>
+          <p>"Florida tiene opciones para todos los presupuestos. Si comparás con Europa, acá podés hacer compras increíbles que amortizan el viaje. Un par de Nike en el outlet vale la mitad que en Argentina. Y los niños viven la experiencia Disney una sola vez en la vida."</p>
+        </div>
+        <div class="info-box orange">
+          <strong>💬 "La visa es difícil de obtener"</strong>
+          <p>"Si son argentinos, chilenos o uruguayos, con el ESTA en 72 horas tienen el permiso de entrada. Para otras nacionalidades, es un trámite que gestionamos juntos. El proceso es más simple de lo que parece."</p>
+        </div>
+        <div class="info-box orange">
+          <strong>💬 "Me da miedo manejar allá"</strong>
+          <p>"Manejar en Florida es de los más sencillos del mundo. Las rutas son amplias, el GPS lo hace todo y hay un auto de alquiler por USD 35 diarios. Es la única forma de aprovechar el viaje al 100%."</p>
+        </div>
+        <div class="info-box orange">
+          <strong>💬 "Los parques son muy caros y llenos"</strong>
+          <p>"Es verdad que tienen un costo, pero si viajan con chicos, la experiencia no tiene precio. Y con la estrategia correcta —llegar temprano, Lightning Lane, reservas anticipadas— se disfruta sin colas de más de 30 minutos."</p>
+        </div>
+        <div class="info-box orange">
+          <strong>💬 "Prefiero el Caribe, es más barato"</strong>
+          <p>"Florida y Caribe no se comparan, se combinan. Florida ofrece parques, compras, gastronomía y cultura que el Caribe no tiene. Si su cliente viaja con familia, Florida siempre gana."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SCRIPT ── -->
+    <section id="script">
+      <div class="destination-card">
+        <div class="destination-header">
+          <div class="icon">🎯</div>
+          <div>
+            <h2>Script de venta · Florida Completa</h2>
+            <p>Guión para la primera consulta</p>
+          </div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">APERTURA</div>
+          <div class="script-text">"¡Qué buena elección! Florida es el destino más completo de Estados Unidos para familias latinoamericanas. Imaginate: llegás a Miami, recorrés South Beach, Wynwood, comprás en los outlets... y después manejás hasta Orlando y vivís la magia de Disney. ¿Viajan con chicos?"</div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">SI TIENEN NIÑOS</div>
+          <div class="script-text">"Perfecto. Entonces el viaje tiene sentido armarlo con 3-4 noches en Miami y 4-5 en Orlando, dependiendo de cuántos parques quieren hacer. Walt Disney World solo puede llevarte fácil 2-3 días, y Universal otros 2. Para chicos de 5 a 12 años es la experiencia de la vida."</div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">SI SON ADULTOS / PAREJA</div>
+          <div class="script-text">"Entonces les recomiendo focalizarse en Miami: South Beach, Wynwood, el Art Decó, los rooftops, la gastronomía... y si quieren vivir la experiencia de un parque, Universal Studios para adultos es increíble, especialmente el Mundo Mágico de Harry Potter."</div>
+        </div>
+
+        <div class="script-box">
+          <div class="script-label">CIERRE DE PRESUPUESTO</div>
+          <div class="script-text">"Para una familia de 4 personas, un viaje de 10 noches bien organizado puede salir entre USD 4.000 y USD 7.000 en total (vuelos, hotel, parques y comidas), dependiendo de la época y las categorías elegidas. ¿Qué fecha tienen en mente? Así empezamos a armar opciones."</div>
+        </div>
+
+        <div class="info-box green" style="margin-top:20px;">
+          <strong>✅ Siempre recomendar al final</strong>
+          <ul>
+            <li>Seguro de viaje con cobertura médica + cancelación (imprescindible en USA)</li>
+            <li>Reservar parques y hoteles Disney/Universal con anticipación (especialmente en temporada alta)</li>
+            <li>Comprar tickets de Disney/Universal online desde Argentina (mismos precios, sin filas en la taquilla)</li>
+            <li>SIM card de datos o eSIM para el celular (T-Mobile o AT&T prepago funcionan muy bien)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer style="background:linear-gradient(135deg,#002868,#BF0A30);color:#fff;text-align:center;padding:28px 16px;font-size:0.9rem;opacity:0.95;">
+  <div>🌴 <strong>Dr. Viaje · Florida · Miami + Orlando</strong> — Guía para Asesores de Viaje</div>
+  <div style="margin-top:8px;opacity:0.7;font-size:0.82rem;">Material interno de capacitación. No distribuir fuera del equipo.</div>
+</footer>
+
+</body>
+</html>

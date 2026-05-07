@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Viaje | Ushuaia + El Calafate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --critical-red: #d32f2f;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.65;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1220px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white);
+            padding: 46px 0 38px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before,
+        header::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+
+        header::before {
+            width: 240px;
+            height: 240px;
+            top: -90px;
+            right: -50px;
+        }
+
+        header::after {
+            width: 180px;
+            height: 180px;
+            bottom: -70px;
+            left: -20px;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.24);
+            color: var(--white);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            margin-bottom: 18px;
+        }
+
+        .logo {
+            font-size: 1.95rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            line-height: 1.06;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .hero-subtitle {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.92);
+            max-width: 920px;
+        }
+
+        nav.main-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .nav-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 14px 0;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-links a {
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255,152,0,0.12), rgba(233,30,99,0.12));
+            color: var(--primary-purple);
+            border: 1px solid rgba(123,45,142,0.12);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: var(--white);
+        }
+
+        main {
+            padding: 28px 0 80px;
+        }
+
+        .master-card,
+        .destination-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .master-card {
+            padding: 28px;
+            border-top: 6px solid var(--primary-orange);
+            margin-bottom: 26px;
+        }
+
+        .destination-card {
+            padding: 28px;
+            border-top: 6px solid var(--primary-pink);
+            margin-bottom: 28px;
+        }
+
+        .destination-card.ushuaia {
+            border-top-color: var(--primary-orange);
+        }
+
+        .destination-card.calafate {
+            border-top-color: var(--primary-pink);
+        }
+
+        .section + .section {
+            margin-top: 34px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            font-size: clamp(1.85rem, 4vw, 2.5rem);
+            color: var(--primary-purple);
+            margin-bottom: 18px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .section h3 {
+            font-size: 1.45rem;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+            padding-left: 14px;
+            border-left: 5px solid var(--primary-orange);
+            font-weight: 800;
+        }
+
+        .section p {
+            color: var(--text-medium);
+            margin-bottom: 12px;
+        }
+
+        .destination-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            margin-bottom: 14px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-purple);
+            background: linear-gradient(135deg, rgba(255,152,0,0.12), rgba(233,30,99,0.10));
+            border: 1px solid rgba(123,45,142,0.12);
+        }
+
+        .destination-subnav {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-top: 18px;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .destination-subnav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .destination-subnav a {
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff7f1;
+            color: var(--primary-purple);
+            border: 1px solid rgba(255,152,0,0.20);
+            padding: 9px 14px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .destination-subnav a:hover {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: var(--white);
+        }
+
+        .info-box,
+        .tip-box,
+        .alert-box,
+        .script-box,
+        .critical-alert {
+            border-radius: var(--radius-lg);
+            padding: 18px 18px 18px 20px;
+            margin: 18px 0;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(33,150,243,0.08), rgba(123,45,142,0.05));
+            border-left: 5px solid var(--primary-purple);
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(255,193,7,0.13), rgba(255,152,0,0.10));
+            border-left: 5px solid var(--primary-orange);
+        }
+
+        .tip-box strong::before {
+            content: "💡 ";
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, rgba(233,30,99,0.10), rgba(255,255,255,0.95));
+            border-left: 5px solid var(--primary-pink);
+        }
+
+        .alert-box strong::before {
+            content: "⚠️ ";
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, rgba(123,45,142,0.08), rgba(63,81,181,0.08));
+            border: 2px solid rgba(123,45,142,0.22);
+        }
+
+        .script-box strong::before {
+            content: "💬 ";
+        }
+
+        .critical-alert {
+            border: 3px solid var(--critical-red);
+            background: linear-gradient(135deg, rgba(211,47,47,0.10), rgba(255,255,255,0.98));
+        }
+
+        .critical-alert strong {
+            color: var(--critical-red);
+        }
+
+        .cards-grid,
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .triple-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .mini-card,
+        .region-card,
+        .destination-tile {
+            background: var(--white);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            border-top: 6px solid var(--primary-pink);
+        }
+
+        .mini-card:nth-child(odd),
+        .region-card:nth-child(odd),
+        .destination-tile:nth-child(odd) {
+            border-top-color: var(--primary-orange);
+        }
+
+        .mini-card h4,
+        .region-card h4,
+        .destination-tile h4 {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+            color: var(--primary-purple);
+            font-weight: 800;
+        }
+
+        .mini-card p,
+        .region-card p,
+        .destination-tile p {
+            margin-bottom: 8px;
+            font-size: 0.97rem;
+            color: var(--text-medium);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 16px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            min-width: 760px;
+        }
+
+        thead th {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white);
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 0.96rem;
+            font-weight: 800;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            color: var(--text-medium);
+            vertical-align: top;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .highlight {
+            color: var(--primary-purple);
+            font-weight: 700;
+        }
+
+        .bullet-list {
+            display: grid;
+            gap: 10px;
+            margin: 14px 0 0;
+        }
+
+        .bullet-list li {
+            list-style: none;
+            position: relative;
+            padding-left: 18px;
+            color: var(--text-medium);
+        }
+
+        .bullet-list li::before {
+            content: "•";
+            color: var(--primary-orange);
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            color: var(--text-medium);
+            font-size: 0.92rem;
+            padding: 22px 0 6px;
+        }
+
+        .scroll-top {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            color: var(--white);
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 980px) {
+            .cards-grid,
+            .regions-grid,
+            .triple-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .master-card,
+            .destination-card {
+                padding: 22px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 34px 0 28px;
+            }
+
+            .master-card,
+            .destination-card {
+                padding: 18px;
+                border-radius: 18px;
+            }
+
+            .section h2 {
+                font-size: 1.85rem;
+            }
+
+            .section h3 {
+                font-size: 1.22rem;
+            }
+
+            .nav-links a,
+            .destination-subnav a {
+                font-size: 0.86rem;
+                padding: 9px 14px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+<header id="top">
+    <div class="container header-content">
+        <a href="#" class="back-link">← Volver al índice de guías</a>
+        <div class="logo">Dr. Viaje</div>
+        <h1 class="hero-title">Patagonia Austral<br>Ushuaia + El Calafate</h1>
+        <p class="hero-subtitle">
+            HTML maestro unificado para vender dos de los destinos más fuertes del sur argentino:
+            Ushuaia como experiencia austral diferencial y El Calafate como puerta de entrada
+            al universo de los glaciares.
+        </p>
+    </div>
+</header>
+
+<nav class="main-nav">
+    <div class="container nav-container nav-links">
+        <a href="#menu-destinos">Menú de destinos</a>
+        <a href="#ushuaia">Ushuaia</a>
+        <a href="#calafate">El Calafate</a>
+        <a href="#combo">Cómo venderlos juntos</a>
+    </div>
+</nav>
+
+<main>
+    <div class="container">
+
+        <section id="menu-destinos" class="master-card">
+            <div class="section">
+                <h2>🧭 Menú de destinos</h2>
+                <p>
+                    Este archivo está pensado para navegar entre ambos destinos desde un mismo HTML,
+                    manteniendo la misma estética y lógica comercial de Dr. Viaje.
+                </p>
+
+                <div class="cards-grid">
+                    <a href="#ushuaia" class="destination-tile">
+                        <h4>🐧 Ushuaia</h4>
+                        <p>Fin del Mundo, Canal Beagle, Parque Nacional, nieve, trekking y viaje con identidad propia.</p>
+                        <p><strong>Ideal para:</strong> parejas, nieve, experiencia austral, viajes diferenciales.</p>
+                    </a>
+
+                    <a href="#calafate" class="destination-tile">
+                        <h4>🧊 El Calafate</h4>
+                        <p>Perito Moreno, Parque Nacional Los Glaciares, navegación y Patagonia de gran impacto visual.</p>
+                        <p><strong>Ideal para:</strong> primera Patagonia, contemplación, glaciares y paisajes monumentales.</p>
+                    </a>
+                </div>
+
+                <div class="info-box">
+                    <strong>Lectura comercial rápida:</strong> Ushuaia se vende más por experiencia, narrativa y diferencia;
+                    El Calafate se vende más por ícono natural, claridad de producto y efecto “wow”.
+                </div>
+            </div>
+        </section>
+
+        <article id="ushuaia" class="destination-card ushuaia">
+            <div class="destination-tag">🐧 Destino 1 · Ushuaia</div>
+
+            <div class="destination-subnav">
+                <a href="#ushuaia-presentacion">Presentación</a>
+                <a href="#ushuaia-perfil">Cliente ideal</a>
+                <a href="#ushuaia-caracteristicas">Características</a>
+                <a href="#ushuaia-opcionales">Paseos opcionales</a>
+                <a href="#ushuaia-temporadas">Temporadas</a>
+                <a href="#ushuaia-alojamientos">Alojamientos</a>
+                <a href="#ushuaia-ninos">Niños</a>
+                <a href="#ushuaia-operativa">Operativa</a>
+                <a href="#ushuaia-costos">Costo de vida</a>
+                <a href="#ushuaia-datos">Datos clave</a>
+                <a href="#ushuaia-alertas">Alertas</a>
+                <a href="#ushuaia-script">Script</a>
+            </div>
+
+            <section id="ushuaia-presentacion" class="section">
+                <h2>Ushuaia</h2>
+                <h3>Presentación del destino</h3>
+                <p>
+                    Ushuaia es uno de los destinos más diferenciales del sur porque se vende con una idea muy clara:
+                    el Fin del Mundo. Tiene una narrativa potentísima, mezcla mar y cordillera en un mismo viaje
+                    y logra que el pasajero sienta que va a un lugar distinto de verdad.
+                </p>
+                <p>
+                    Comercialmente funciona muy bien para escapadas aspiracionales, viajes de pareja, primeras
+                    Patagonias bien armadas y pasajeros que valoran experiencias más emocionales que puramente urbanas.
+                    Es un destino corto, intenso y muy vendible.
+                </p>
+
+                <div class="info-box">
+                    <strong>Posicionamiento comercial:</strong> Ushuaia no se vende solo como nieve.
+                    Se vende como experiencia austral completa: Canal Beagle, parque nacional, montañas,
+                    centros invernales y sensación de “llegar al fin del mapa”.
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> si el pasajero busca un viaje con identidad, relato y postales memorables,
+                    Ushuaia suele cerrar mejor que otros destinos cuando se presenta como experiencia y no solo como paquete.
+                </div>
+            </section>
+
+            <section id="ushuaia-perfil" class="section">
+                <h3>👥 Perfil de cliente ideal</h3>
+                <p>
+                    Encaja muy bien con parejas, pasajeros que quieren un destino singular, amantes de la naturaleza,
+                    viajeros que buscan nieve sin necesidad de un viaje exclusivamente de esquí y clientes que valoran
+                    mucho el componente emocional del itinerario.
+                </p>
+
+                <div class="cards-grid">
+                    <div class="mini-card">
+                        <h4>💑 Parejas</h4>
+                        <p>Muy fuerte para escapadas memorables, viajes románticos y propuestas con narrativa de destino único.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>❄️ Pasajeros de nieve</h4>
+                        <p>Ideal para quien quiere nieve y ambiente invernal sin tener que plantear un viaje solo técnico de esquí.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>🌿 Naturaleza y trekking</h4>
+                        <p>Perfecto para viajeros que combinan paisaje, caminatas, navegación y fotografía.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>🧭 Viaje diferencial</h4>
+                        <p>Muy fuerte para quienes ya conocen destinos clásicos y buscan algo más singular dentro de Argentina.</p>
+                    </div>
+                </div>
+
+                <div class="script-box">
+                    <strong>Script de detección:</strong><br>
+                    “¿Estáis buscando un viaje más de paisaje y experiencia, o queréis algo con nieve,
+                    navegación y sensación de destino distinto? Porque Ushuaia mezcla todo eso en pocos días.”
+                </div>
+            </section>
+
+            <section id="ushuaia-caracteristicas" class="section">
+                <h3>🏔️ Características turísticas principales</h3>
+                <p>
+                    La fortaleza comercial de Ushuaia está en un tridente clarísimo: Canal Beagle, Parque Nacional Tierra del Fuego
+                    y una experiencia adicional de trekking o nieve según la fecha. Son productos fáciles de explicar y muy aspiracionales.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>⛵ Canal Beagle</h4>
+                        <p>Navegación, fauna, faro, historia y la postal más reconocible de la ciudad.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🌲 Parque Nacional Tierra del Fuego</h4>
+                        <p>Naturaleza austral accesible, senderos, Bahía Lapataia y final de la Ruta Nacional 3.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🥾 Laguna Esmeralda</h4>
+                        <p>Trekking muy vendible para pasajero activo, con gran recompensa visual.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🎿 Circuito de los Valles</h4>
+                        <p>Centros invernales, nieve recreativa y buena reconversión fuera de invierno.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="ushuaia-opcionales" class="section">
+                <h3>🧊 Paseos opcionales</h3>
+                <p>
+                    En Ushuaia, los opcionales elevan mucho el valor del viaje. La lógica comercial más efectiva
+                    es vender una base obligatoria para primera visita y luego sumar un paseo activo o invernal según perfil.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>⛵ Navegación Canal Beagle</h4>
+                        <p><strong>Ideal para:</strong> parejas, familias, primera visita.</p>
+                        <p><strong>Valor de venta:</strong> la gran postal del destino.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🌿 Parque Nacional Tierra del Fuego</h4>
+                        <p><strong>Ideal para:</strong> todo perfil.</p>
+                        <p><strong>Valor de venta:</strong> naturaleza austral accesible y simbólica.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>💚 Laguna Esmeralda</h4>
+                        <p><strong>Ideal para:</strong> pasajeros activos, parejas, amantes del trekking.</p>
+                        <p><strong>Valor de venta:</strong> gran recompensa paisajística sin ser expedición extrema.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>❄️ Centros invernales / Valles</h4>
+                        <p><strong>Ideal para:</strong> familias, nieve recreativa, clientes que no esquían.</p>
+                        <p><strong>Valor de venta:</strong> experiencia invernal completa y muy comercial.</p>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> para una primera visita, conviene cerrar siempre
+                    <em>Canal Beagle + Parque Nacional</em>. Después, sumar <em>Laguna Esmeralda</em>
+                    si el cliente quiere actividad o <em>centros invernales</em> si viaja en temporada de nieve.
+                </div>
+            </section>
+
+            <section id="ushuaia-temporadas" class="section">
+                <h3>🗓️ Temporadas y ventanas de venta</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Temporada</th>
+                                <th>Qué se vende mejor</th>
+                                <th>Perfil ideal</th>
+                                <th>Comentario comercial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="highlight">Invierno</span></td>
+                                <td>Nieve, centros invernales, ambiente austral</td>
+                                <td>Familias, parejas, viajeros de nieve</td>
+                                <td>La temporada más distintiva del destino</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Verano</span></td>
+                                <td>Navegación, trekking, parque nacional</td>
+                                <td>Activos, parejas, primera Patagonia</td>
+                                <td>Muy buena para combinar experiencias sin frío extremo</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Media estación</span></td>
+                                <td>Paisaje, menos movimiento, viaje diferencial</td>
+                                <td>Parejas, repetidores</td>
+                                <td>Muy vendible si el cliente busca menos saturación</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> si el pasajero dice “quiero Ushuaia pero no necesito esquiar”,
+                    no lo lleves solo a invierno. Verano y media estación también venden excelente.
+                </div>
+            </section>
+
+            <section id="ushuaia-alojamientos" class="section">
+                <h3>🏨 Recomendaciones de alojamiento</h3>
+                <p>
+                    En Ushuaia conviene vender muy bien la ubicación porque las estadías suelen ser cortas y
+                    un hotel práctico mejora mucho la percepción global del viaje.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>🏙️ Centro</h4>
+                        <p><strong>Ideal para:</strong> primeras visitas, viajes cortos, pasajeros sin auto.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🌌 Vista / entorno tranquilo</h4>
+                        <p><strong>Ideal para:</strong> parejas y pasajeros contemplativos.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>❄️ Perfil nieve</h4>
+                        <p><strong>Ideal para:</strong> clientes invernales con foco en actividades de nieve.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🚶 Estadía corta</h4>
+                        <p><strong>Ideal para:</strong> escapadas de 3 o 4 noches.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="ushuaia-ninos" class="section">
+                <h3>🧒 ¿Es recomendable para niños?</h3>
+                <p>
+                    Sí, especialmente si el viaje se arma con lógica. Navegación y parque son muy amigables para familias,
+                    mientras que la nieve recreativa en invierno amplía todavía más la venta.
+                </p>
+
+                <div class="cards-grid">
+                    <div class="mini-card">
+                        <h4>0 a 5 años</h4>
+                        <p>Conviene priorizar navegación, paseos suaves y tiempos de descanso.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>6 a 12 años</h4>
+                        <p>Muy buena edad para parque nacional y nieve recreativa.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>Adolescentes</h4>
+                        <p>Gran destino por trekking, aventura, nieve y fotografía.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>Familias activas</h4>
+                        <p>Laguna Esmeralda puede funcionar bien si todos tienen predisposición física.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="ushuaia-operativa" class="section">
+                <h3>✈️ Información operativa</h3>
+                <p>
+                    El aeropuerto de referencia es <strong>USH</strong>. Operativamente es un destino cómodo:
+                    el tramo al centro suele ser corto y eso juega muy a favor en viajes de pocas noches.
+                </p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trayecto de referencia</th>
+                                <th>Tiempo estimado</th>
+                                <th>Comentario comercial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Aeropuerto → centro</td>
+                                <td>10 a 20 min</td>
+                                <td>Destino muy cómodo en llegada y salida</td>
+                            </tr>
+                            <tr>
+                                <td>Ciudad → puerto</td>
+                                <td>Corto</td>
+                                <td>Facilita mucho la venta de navegación</td>
+                            </tr>
+                            <tr>
+                                <td>Ciudad → parque o valles</td>
+                                <td>Variable según excursión</td>
+                                <td>La mayoría de opcionales se organiza sin complejidad para el pasajero</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="ushuaia-costos" class="section">
+                <h3>💵 Costo de vida orientativo en USD</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Referencia orientativa</th>
+                                <th>Comentario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Cappuccino</td>
+                                <td>USD 3,5</td>
+                                <td>Buena referencia de consumo cotidiano</td>
+                            </tr>
+                            <tr>
+                                <td>Comida económica</td>
+                                <td>USD 25</td>
+                                <td>Restauración relativamente cara</td>
+                            </tr>
+                            <tr>
+                                <td>Comida para dos</td>
+                                <td>USD 60</td>
+                                <td>Muy útil para venta en pareja</td>
+                            </tr>
+                            <tr>
+                                <td>Ticket local</td>
+                                <td>USD 1,26</td>
+                                <td>Movilidad básica</td>
+                            </tr>
+                            <tr>
+                                <td>Presupuesto diario orientativo</td>
+                                <td>Desde USD 50–90</td>
+                                <td>Puede subir mucho con excursiones</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="ushuaia-datos" class="section">
+                <h3>📚 Datos clave</h3>
+                <ul class="bullet-list">
+                    <li>La combinación de Canal Beagle y Cordillera es uno de los rasgos más distintivos del destino.</li>
+                    <li>El Parque Nacional Tierra del Fuego añade mucho valor simbólico a la venta.</li>
+                    <li>Laguna Esmeralda es uno de los trekkings más recomendables para estadías cortas.</li>
+                    <li>El Circuito de los Valles refuerza el destino tanto en invierno como fuera de temporada.</li>
+                    <li>Ushuaia tiene una carga emocional y narrativa muy superior a la media dentro del mercado nacional.</li>
+                </ul>
+            </section>
+
+            <section id="ushuaia-alertas" class="section">
+                <h3>🚨 Alertas críticas</h3>
+
+                <div class="critical-alert">
+                    <strong>Expectativa correcta:</strong> no vender Ushuaia solo como destino de nieve.
+                    Fuera del invierno sigue siendo muy fuerte por navegación, parque y trekking.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Perfil físico:</strong> no todos los pasajeros son adecuados para trekking.
+                    Hay que filtrar bien antes de ofrecer Laguna Esmeralda como paseo base.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Clima:</strong> el viento, el frío y la sensación térmica deben explicarse bien para evitar frustración.
+                </div>
+            </section>
+
+            <section id="ushuaia-script" class="section">
+                <h3>🗣️ Script de venta consultiva</h3>
+
+                <div class="script-box">
+                    <strong>Apertura:</strong><br>
+                    “Ushuaia es un destino muy especial porque no es solo paisaje: tiene identidad.
+                    Podéis navegar por el Beagle, entrar a un parque nacional entre mar y montaña,
+                    hacer nieve en temporada y sentir realmente que estáis viajando a un lugar distinto.”
+                </div>
+
+                <div class="tip-box">
+                    <strong>Cierre recomendado:</strong> Ushuaia se vende mejor con un mínimo de
+                    <strong>3 noches</strong>, pero para disfrutarla bien conviene trabajar en
+                    <strong>4 noches</strong>.
+                </div>
+            </section>
+        </article>
+
+        <article id="calafate" class="destination-card calafate">
+            <div class="destination-tag">🧊 Destino 2 · El Calafate</div>
+
+            <div class="destination-subnav">
+                <a href="#calafate-presentacion">Presentación</a>
+                <a href="#calafate-perfil">Cliente ideal</a>
+                <a href="#calafate-caracteristicas">Características</a>
+                <a href="#calafate-opcionales">Paseos opcionales</a>
+                <a href="#calafate-temporadas">Temporadas</a>
+                <a href="#calafate-alojamientos">Alojamientos</a>
+                <a href="#calafate-ninos">Niños</a>
+                <a href="#calafate-operativa">Operativa</a>
+                <a href="#calafate-costos">Costo de vida</a>
+                <a href="#calafate-datos">Datos clave</a>
+                <a href="#calafate-alertas">Alertas</a>
+                <a href="#calafate-script">Script</a>
+            </div>
+
+            <section id="calafate-presentacion" class="section">
+                <h2>El Calafate</h2>
+                <h3>Presentación del destino</h3>
+                <p>
+                    El Calafate es uno de los destinos más fáciles de vender dentro de la Patagonia porque tiene
+                    un héroe comercial clarísimo: el Glaciar Perito Moreno. El pasajero entiende de inmediato
+                    qué va a ver y por qué el viaje vale la pena.
+                </p>
+                <p>
+                    Además, no se agota en una sola excursión. La pertenencia al Parque Nacional Los Glaciares,
+                    las navegaciones, las estancias y la posibilidad de combinarlo con El Chaltén lo convierten
+                    en un destino muy sólido para primera Patagonia.
+                </p>
+
+                <div class="info-box">
+                    <strong>Posicionamiento comercial:</strong> El Calafate se vende como puerta de entrada
+                    a una de las experiencias naturales más icónicas de Argentina y como base cómoda para vivir
+                    glaciares, navegación y paisaje patagónico de gran escala.
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> cuando el cliente no sabe bien qué elegir en Patagonia,
+                    El Calafate suele cerrar muy bien porque el producto se entiende rápido y genera mucho “wow”.
+                </div>
+            </section>
+
+            <section id="calafate-perfil" class="section">
+                <h3>👥 Perfil de cliente ideal</h3>
+                <p>
+                    Es muy fuerte para primera visita a Patagonia, parejas, viajeros contemplativos, clientes
+                    que buscan naturaleza monumental y pasajeros que prefieren una propuesta clara y segura.
+                </p>
+
+                <div class="cards-grid">
+                    <div class="mini-card">
+                        <h4>💑 Parejas</h4>
+                        <p>Muy buen destino para viajes de paisaje, contemplación y excursiones de alto impacto visual.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>🧭 Primera Patagonia</h4>
+                        <p>Ideal para quien quiere un gran ícono natural fácil de entender.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>🌨️ Naturaleza monumental</h4>
+                        <p>Perfecto para clientes que sueñan con glaciares, hielo, lagos y paisajes de gran escala.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>🥾 Activos moderados</h4>
+                        <p>Muy buena base para sumar navegación, caminatas suaves o extensión a El Chaltén.</p>
+                    </div>
+                </div>
+
+                <div class="script-box">
+                    <strong>Script de detección:</strong><br>
+                    “¿Os atrae más una Patagonia de glaciar, grandes paisajes y excursiones muy icónicas?
+                    Porque si queréis una experiencia visual potente y fácil de disfrutar, El Calafate encaja muy bien.”
+                </div>
+            </section>
+
+            <section id="calafate-caracteristicas" class="section">
+                <h3>🏔️ Características turísticas principales</h3>
+                <p>
+                    El núcleo comercial del destino está en el Glaciar Perito Moreno y el Parque Nacional Los Glaciares.
+                    El primero es el gran producto emocional; el segundo amplía el valor del viaje y lo convierte en
+                    una Patagonia más rica y más completa.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>🧊 Glaciar Perito Moreno</h4>
+                        <p>Está a 80 km del centro y ofrece pasarelas, miradores y gran facilidad de visita.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🌍 Parque Nacional Los Glaciares</h4>
+                        <p>Refuerza la venta con escala natural, prestigio internacional y valor patrimonial.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>⛵ Navegaciones</h4>
+                        <p>Suben mucho el valor percibido y permiten vivir el glaciar desde otra perspectiva.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🥾 Extensiones</h4>
+                        <p>El Chaltén, Lago Roca, estancias y 4x4 alargan muy bien la estadía.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="calafate-opcionales" class="section">
+                <h3>🚢 Paseos opcionales</h3>
+                <p>
+                    En El Calafate, los opcionales son la clave para escalar el viaje desde una visita correcta
+                    a una experiencia mucho más recordable y rentable.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>🧊 Perito Moreno + pasarelas</h4>
+                        <p><strong>Ideal para:</strong> todo perfil.</p>
+                        <p><strong>Valor de venta:</strong> el gran imprescindible del destino.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>⛵ Navegación frente al glaciar</h4>
+                        <p><strong>Ideal para:</strong> parejas, primera visita, premium.</p>
+                        <p><strong>Valor de venta:</strong> mejora mucho el impacto y la percepción de exclusividad.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🥾 Trekking sobre hielo</h4>
+                        <p><strong>Ideal para:</strong> activos y premium.</p>
+                        <p><strong>Valor de venta:</strong> experiencia única y muy diferenciadora.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🏞️ El Chaltén / estancias / Lago Roca</h4>
+                        <p><strong>Ideal para:</strong> viajes largos y clientes que quieren más profundidad.</p>
+                        <p><strong>Valor de venta:</strong> amplía el viaje y evita que se perciba como “solo un glaciar”.</p>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> si el pasajero hace primera visita, no negocies la base:
+                    <em>Perito Moreno</em>. Lo que después se negocia es si sube a navegación, trekking o extensión.
+                </div>
+            </section>
+
+            <section id="calafate-temporadas" class="section">
+                <h3>🗓️ Temporadas y ventanas de venta</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Temporada</th>
+                                <th>Qué se vende mejor</th>
+                                <th>Perfil ideal</th>
+                                <th>Comentario comercial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="highlight">Primavera / verano</span></td>
+                                <td>Perito Moreno, navegación, extensión</td>
+                                <td>Primera Patagonia, parejas, viajeros generales</td>
+                                <td>La venta más simple para el público amplio</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Otoño</span></td>
+                                <td>Paisaje, menor movimiento, viaje contemplativo</td>
+                                <td>Parejas y pasajeros tranquilos</td>
+                                <td>Muy buena relación entre impacto y menos saturación</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Invierno</span></td>
+                                <td>Glaciar con otro clima</td>
+                                <td>Pasajeros más decididos o amantes del frío</td>
+                                <td>Hay que explicar mejor operativa y abrigo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert-box">
+                    <strong>Alerta:</strong> vender verano no significa vender calor.
+                    En El Calafate el viento y la amplitud térmica siguen siendo parte importante de la experiencia.
+                </div>
+            </section>
+
+            <section id="calafate-alojamientos" class="section">
+                <h3>🏨 Recomendaciones de alojamiento</h3>
+                <p>
+                    La mayoría de servicios turísticos se organiza desde El Calafate, por eso conviene pensar el hotel
+                    como base operativa y no solo como vista bonita.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>🏙️ Centro</h4>
+                        <p><strong>Ideal para:</strong> primeras visitas, parejas, pasajeros sin auto.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🌄 Vista / afueras</h4>
+                        <p><strong>Ideal para:</strong> parejas y perfil más contemplativo.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🚐 Perfil excursión</h4>
+                        <p><strong>Ideal para:</strong> clientes con muchas salidas programadas.</p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🥾 Viaje combinado</h4>
+                        <p><strong>Ideal para:</strong> pasajeros que luego siguen a Chaltén o Ushuaia.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="calafate-ninos" class="section">
+                <h3>🧒 ¿Es recomendable para niños?</h3>
+                <p>
+                    Sí, aunque se vende distinto que Bariloche. No es un destino lúdico clásico,
+                    pero el impacto visual del glaciar funciona muy bien en familias si el viaje tiene buen ritmo.
+                </p>
+
+                <div class="cards-grid">
+                    <div class="mini-card">
+                        <h4>0 a 5 años</h4>
+                        <p>Conviene priorizar Perito Moreno, tiempos de descanso y actividades tranquilas.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>6 a 12 años</h4>
+                        <p>Muy buena edad para glaciar y navegación suave.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>Adolescentes</h4>
+                        <p>Puede funcionar muy bien por trekking, hielo y fotografía.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>Familias contemplativas</h4>
+                        <p>Encaja mejor que en familias que necesiten mucha recreación infantil continua.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="calafate-operativa" class="section">
+                <h3>✈️ Información operativa</h3>
+                <p>
+                    El aeropuerto de referencia es <strong>FTE</strong>. El trayecto hasta la ciudad ronda
+                    normalmente los 25 a 30 minutos.
+                </p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trayecto de referencia</th>
+                                <th>Tiempo estimado</th>
+                                <th>Comentario comercial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Aeropuerto → centro</td>
+                                <td>25 a 30 min</td>
+                                <td>Operativa simple y fácil de explicar</td>
+                            </tr>
+                            <tr>
+                                <td>Centro → Perito Moreno</td>
+                                <td>Excursión de día</td>
+                                <td>El glaciar está a 80 km por camino pavimentado</td>
+                            </tr>
+                            <tr>
+                                <td>Centro → El Chaltén</td>
+                                <td>Trayecto largo</td>
+                                <td>Se recomienda con más noches o perfil activo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="calafate-costos" class="section">
+                <h3>💵 Costo de vida orientativo en USD</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Referencia orientativa</th>
+                                <th>Comentario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Café</td>
+                                <td>USD 2,5 – 4</td>
+                                <td>Buen dato de gasto cotidiano</td>
+                            </tr>
+                            <tr>
+                                <td>Comida económica</td>
+                                <td>USD 15</td>
+                                <td>Base útil para venta consultiva</td>
+                            </tr>
+                            <tr>
+                                <td>Cena media</td>
+                                <td>USD 30 – 40</td>
+                                <td>Puede subir según zona y bebida</td>
+                            </tr>
+                            <tr>
+                                <td>Taxi corto</td>
+                                <td>USD 5 – 7</td>
+                                <td>Dato fácil de explicar al pasajero</td>
+                            </tr>
+                            <tr>
+                                <td>Presupuesto diario económico</td>
+                                <td>USD 57</td>
+                                <td>Muy ajustado y sin grandes extras</td>
+                            </tr>
+                            <tr>
+                                <td>Presupuesto diario medio</td>
+                                <td>USD 236</td>
+                                <td>Con excursiones y mayor comodidad</td>
+                            </tr>
+                            <tr>
+                                <td>Presupuesto premium</td>
+                                <td>USD 742</td>
+                                <td>Viaje de alta gama</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="calafate-datos" class="section">
+                <h3>📚 Datos clave</h3>
+                <ul class="bullet-list">
+                    <li>Perito Moreno es uno de los activos turísticos más fáciles de vender del país.</li>
+                    <li>El Parque Nacional Los Glaciares aporta prestigio, escala y profundidad a la propuesta.</li>
+                    <li>El destino permite ir de una venta simple a una premium gracias a navegación y trekking sobre hielo.</li>
+                    <li>La extensión a El Chaltén ayuda mucho a elevar el viaje en clientes activos.</li>
+                    <li>Es un destino muy fuerte para primera Patagonia.</li>
+                </ul>
+            </section>
+
+            <section id="calafate-alertas" class="section">
+                <h3>🚨 Alertas críticas</h3>
+
+                <div class="critical-alert">
+                    <strong>Expectativa correcta:</strong> no vender El Calafate como destino económico.
+                    Es Patagonia con gasto medio/alto, especialmente si el cliente suma excursiones.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Clima:</strong> el viento y la amplitud térmica deben explicarse bien,
+                    incluso fuera del invierno.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Duración:</strong> con pocas noches, conviene no sobrecargar el viaje.
+                    La base tiene que ser Perito Moreno; luego se evalúan extras.
+                </div>
+            </section>
+
+            <section id="calafate-script" class="section">
+                <h3>🗣️ Script de venta consultiva</h3>
+
+                <div class="script-box">
+                    <strong>Apertura:</strong><br>
+                    “El Calafate lo recomiendo mucho cuando queréis una Patagonia más icónica y visual.
+                    El Perito Moreno es de esos lugares que justifican el viaje por sí solos,
+                    y luego se puede completar con navegación, estancia o incluso El Chaltén.”
+                </div>
+
+                <div class="tip-box">
+                    <strong>Cierre recomendado:</strong> El Calafate se vende bien con un mínimo de
+                    <strong>3 noches</strong>, pero la mejor lectura comercial está en
+                    <strong>4 noches</strong> si se quiere sumar algo más que la visita básica al glaciar.
+                </div>
+            </section>
+        </article>
+
+        <section id="combo" class="master-card">
+            <div class="section">
+                <h2>🔗 Cómo vender Ushuaia + El Calafate juntos</h2>
+                <p>
+                    Esta combinación funciona muy bien porque no compiten entre sí:
+                    <strong>Ushuaia</strong> aporta el componente más emocional, diferente y experiencial,
+                    mientras que <strong>El Calafate</strong> aporta el gran ícono natural de la Patagonia argentina.
+                    Juntos forman un viaje muy potente, fácil de explicar y con mucho valor percibido.
+                </p>
+
+                <div class="info-box">
+                    <strong>Cómo llegar de uno a otro:</strong> la forma más lógica y vendible de combinarlos es
+                    <strong>en avión</strong>. La referencia comercial más útil es un vuelo directo de aproximadamente
+                    <strong>1 hora y 20 minutos</strong>. Por tierra no conviene venderlo al pasajero turístico estándar,
+                    porque el trayecto es mucho más largo, incómodo y normalmente implica combinaciones.
+                </div>
+
+                <div class="triple-grid">
+                    <div class="destination-tile">
+                        <h4>🐧 Ushuaia → 🧊 El Calafate</h4>
+                        <p>Muy buena secuencia si quieres empezar con un destino más experiencial y cerrar con un gran ícono visual.</p>
+                    </div>
+                    <div class="destination-tile">
+                        <h4>🧊 El Calafate → 🐧 Ushuaia</h4>
+                        <p>Ideal si el cliente entiende primero la Patagonia por glaciar y luego quieres elevar el viaje con un destino más singular.</p>
+                    </div>
+                    <div class="destination-tile">
+                        <h4>✈️ Criterio real de venta</h4>
+                        <p>El orden se define muchas veces mejor por tarifa y operativa aérea que por romanticismo del itinerario.</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Duración total</th>
+                                <th>Distribución sugerida</th>
+                                <th>Tipo de viaje</th>
+                                <th>Comentario comercial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="highlight">6 noches</span></td>
+                                <td>3 Ushuaia + 3 El Calafate</td>
+                                <td>Clásicos esenciales</td>
+                                <td>Buena base mínima, pero sin mucha profundidad</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">7 noches</span></td>
+                                <td>4 Ushuaia + 3 El Calafate o 3 + 4</td>
+                                <td>Combinación ideal de venta</td>
+                                <td>La opción más equilibrada para la mayoría de los clientes</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">8 noches</span></td>
+                                <td>4 Ushuaia + 4 El Calafate</td>
+                                <td>Viaje muy disfrutable</td>
+                                <td>Mejor ritmo y más margen para opcionales</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">9 a 10 noches</span></td>
+                                <td>4 Ushuaia + 5/6 El Calafate</td>
+                                <td>Patagonia más completa</td>
+                                <td>Permite incluso sumar Chaltén o más navegación</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> si el pasajero pide “Patagonia con impacto y sin perder tiempo”,
+                    esta combinación es una de las mejores del mercado argentino.
+                </div>
+
+                <div class="script-box">
+                    <strong>Script sugerido:</strong><br>
+                    “Yo los vendería juntos porque se complementan perfecto: Ushuaia tiene más identidad de experiencia,
+                    navegación, nieve y sensación de viaje distinto; El Calafate tiene el gran ícono natural, que es el Perito Moreno.
+                    Lo más cómodo es combinarlos en avión, porque entre ambos hay vuelos de alrededor de 1 hora y 20 minutos.
+                    Para hacerlo bien, yo recomendaría mínimo 6 noches entre los dos destinos, pero el punto más equilibrado
+                    para disfrutarlo de verdad es 7 u 8 noches.”
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            Guía visual Dr. Viaje · HTML maestro unificado · Ushuaia + El Calafate
+        </footer>
+    </div>
+</main>
+
+<button class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" aria-label="Volver arriba">
+    ↑
+</button>
+
+</body>
+</html>

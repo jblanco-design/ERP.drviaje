@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de Jamaica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary-purple:#7B2D8E;
+      --primary-orange:#FF9800;
+      --primary-pink:#E91E63;
+      --bg-light:#f8f9fa;
+      --text-dark:#333333;
+      --text-medium:#666666;
+      --white:#ffffff;
+      --shadow:0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover:0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --radius-sm:10px;
+      --max-width:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      color:var(--text-dark);
+      background:var(--bg-light);
+      line-height:1.65;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max-width),calc(100% - 32px));margin:0 auto}
+
+    header.hero{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.14), transparent 35%),
+        linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:72px 0 48px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      z-index:0;
+    }
+    .hero::before{
+      width:280px;height:280px;top:-80px;right:-80px;
+    }
+    .hero::after{
+      width:180px;height:180px;bottom:-40px;left:-40px;
+    }
+
+    .hero-inner{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.3fr .9fr;
+      gap:28px;
+      align-items:stretch;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(8px);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.2px;
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0 0 14px;
+      font-size:clamp(34px,5vw,56px);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .hero p.lead{
+      margin:0;
+      font-size:18px;
+      max-width:760px;
+      color:rgba(255,255,255,.92);
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:var(--radius-xl);
+      padding:26px;
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+      align-self:stretch;
+    }
+
+    .hero-card h3{
+      margin:0 0 12px;
+      font-size:18px;
+    }
+
+    .hero-card p{
+      margin:0 0 14px;
+      color:rgba(255,255,255,.92);
+      font-size:15px;
+    }
+
+    .hero-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:13px;
+      font-weight:600;
+      color:var(--white);
+    }
+
+ nav.sticky-nav{
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--primary-orange);
+  box-shadow: var(--shadow);
+}
+
+section[id]{
+  scroll-margin-top: 90px;
+}
+
+    .nav-inner{
+      width:min(var(--max-width),calc(100% - 32px));
+      margin:0 auto;
+      display:flex;
+      gap:12px;
+      overflow:auto;
+      padding:15px 0;
+      scrollbar-width:none;
+    }
+
+    .nav-inner::-webkit-scrollbar{display:none}
+
+    .nav-link{
+      white-space:nowrap;
+      padding:10px 16px;
+      border-radius:25px;
+      background:rgba(255,255,255,.18);
+      color:var(--white);
+      font-size:14px;
+      font-weight:700;
+      transition:.25s ease;
+    }
+
+    .nav-link:hover{
+      background:var(--white);
+      color:var(--primary-orange);
+      transform:translateY(-1px);
+    }
+
+    main{padding:28px 0 72px}
+
+    .section{
+      margin:22px 0;
+      background:var(--white);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:34px;
+    }
+
+    .section-header{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .eyebrow{
+      display:inline-block;
+      margin-bottom:8px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--primary-pink);
+    }
+
+    .section h2{
+      margin:0;
+      font-size:30px;
+      line-height:1.15;
+      letter-spacing:-.03em;
+    }
+
+    .section-intro{
+      color:var(--text-medium);
+      max-width:920px;
+      margin:0;
+    }
+
+    .kpi-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:26px;
+    }
+
+    .kpi{
+      background:linear-gradient(180deg,#fff,#faf6fc);
+      border:1px solid rgba(123,45,142,.08);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+
+    .kpi .label{
+      display:block;
+      font-size:12px;
+      color:var(--text-medium);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:8px;
+    }
+
+    .kpi strong{
+      display:block;
+      font-size:24px;
+      line-height:1.1;
+      color:var(--primary-purple);
+      margin-bottom:6px;
+    }
+
+    .kpi span{
+      font-size:14px;
+      color:var(--text-medium);
+    }
+
+    .info-box{
+      margin-top:22px;
+      border-left:6px solid var(--primary-purple);
+      background:#faf5fc;
+      border-radius:16px;
+      padding:18px 20px;
+    }
+
+    .info-box.orange{
+      border-left-color:var(--primary-orange);
+      background:#fff8ef;
+    }
+
+    .info-box.pink{
+      border-left-color:var(--primary-pink);
+      background:#fff3f8;
+    }
+
+    .info-box strong{
+      color:var(--primary-purple);
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .cards-2,
+    .cards-3{
+      display:grid;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+
+    .card{
+      background:var(--white);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+      transition:.25s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-hover);
+    }
+
+    .card h3,
+    .card h4{
+      margin:0 0 10px;
+      line-height:1.2;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--text-medium);
+      font-size:15px;
+    }
+
+    .destination{
+      padding:0;
+      overflow:hidden;
+    }
+
+    .destination-top{
+      padding:28px 30px 14px;
+      background:
+        linear-gradient(135deg, rgba(123,45,142,.08), rgba(233,30,99,.05));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+
+    .destination-number{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;height:40px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      font-weight:800;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .destination h3{
+      margin:0 0 8px;
+      font-size:28px;
+      line-height:1.12;
+      letter-spacing:-.03em;
+    }
+
+    .destination-subtitle{
+      margin:0;
+      color:var(--text-medium);
+      max-width:940px;
+    }
+
+    .destination-body{
+      padding:24px 30px 30px;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .mini-card{
+      background:#fcfcfd;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .mini-card h4{
+      margin:0 0 10px;
+      font-size:16px;
+      color:var(--primary-purple);
+    }
+
+    ul.clean{
+      margin:0;
+      padding-left:18px;
+    }
+
+    ul.clean li{margin:0 0 8px}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      margin-top:18px;
+    }
+
+    thead th{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:15px 16px;
+      text-align:left;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    tbody td{
+      background:var(--white);
+      padding:15px 16px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      vertical-align:top;
+      font-size:15px;
+    }
+
+    tbody tr:last-child td{border-bottom:none}
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#f2eef8;
+      color:var(--primary-purple);
+    }
+
+    .script-box{
+      background:linear-gradient(135deg,#fff7ef,#fff3f8);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:20px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .script-box p{
+      margin:0 0 12px;
+    }
+
+    .script-box p:last-child{margin-bottom:0}
+
+    footer{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:28px 0 34px;
+      margin-top:36px;
+    }
+
+    footer p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      text-align:center;
+      font-size:14px;
+    }
+
+    #scrollTopBtn{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:52px;
+      height:52px;
+      border:none;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-orange),var(--primary-pink));
+      color:var(--white);
+      font-size:22px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow-hover);
+      display:none;
+      z-index:100;
+    }
+
+    @media (max-width: 1080px){
+      .hero-inner,
+      .two-col,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media (max-width: 860px){
+      .hero-inner,
+      .two-col,
+      .cards-2,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr;
+      }
+
+      .section,
+      .destination-body,
+      .destination-top{
+        padding-left:22px;
+        padding-right:22px;
+      }
+
+      nav.sticky-nav{top:0}
+      .section h2{font-size:26px}
+      .destination h3{font-size:24px}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">Dr. Viaje · Guía comercial Caribe</div>
+        <h1>Jamaica</h1>
+        <p class="lead">
+          Jamaica no se vende como un Caribe neutro: se vende como un destino con personalidad. Mezcla playas potentes, ritmo, naturaleza tropical, cultura auténtica, hoteles all inclusive y experiencias con más carácter local que otros destinos caribeños.
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <h3>Clave comercial rápida</h3>
+        <p>
+          Si el cliente quiere un Caribe fácil pero con más alma que el típico resort, Jamaica funciona muy bien. La venta correcta no es solo “playa”, sino “playa + ambiente + música + excursiones + identidad”.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">Parejas</span>
+          <span class="pill">Adultos</span>
+          <span class="pill">Familias activas</span>
+          <span class="pill">Grupos</span>
+          <span class="pill">Luna de miel</span>
+          <span class="pill">Caribe con carácter</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky-nav">
+    <div class="nav-inner">
+      <a class="nav-link" href="#pais">País</a>
+      <a class="nav-link" href="#montegobay">Montego Bay</a>
+      <a class="nav-link" href="#negril">Negril</a>
+      <a class="nav-link" href="#ochorios">Ocho Rios</a>
+      <a class="nav-link" href="#kingston">Kingston</a>
+      <a class="nav-link" href="#comparativa">Comparativa</a>
+      <a class="nav-link" href="#traslados">Traslados</a>
+      <a class="nav-link" href="#temporadas">Temporadas</a>
+      <a class="nav-link" href="#objeciones">Objeciones</a>
+      <a class="nav-link" href="#noches">Noches</a>
+      <a class="nav-link" href="#script">Script</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <section class="section" id="pais">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Visión general</span>
+          <h2>Jamaica como producto turístico</h2>
+        </div>
+        <p class="section-intro">
+          Es un Caribe ideal para vender a clientes que quieren playa, pero también ambiente, excursiones y una sensación de destino más vivo. Tiene mejor encaje con viajeros que valoran identidad local que con quien solo busca “resort y nada más”.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="label">Aeropuerto clave</span>
+          <strong>MBJ</strong>
+          <span>Puerta principal para Montego Bay, Negril y buena parte del norte turístico.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Aeropuerto cultural</span>
+          <strong>KIN</strong>
+          <span>La mejor entrada para Kingston y una alternativa para Ocho Rios.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Estilo país</span>
+          <strong>Caribe con carácter</strong>
+          <span>Más música, más identidad y más vida local que un destino de resort estándar.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Mejor venta</span>
+          <strong>7 noches mín.</strong>
+          <span>10 noches ideal para combinar descanso, salidas y excursiones sin prisa.</span>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:26px;">
+        <div>
+          <div class="info-box">
+            <strong>Frase de venta base:</strong>
+            “Jamaica es para quien quiere Caribe, pero con más alma. No solo te llevas playa y hotel; te llevas ambiente, música, naturaleza y una sensación de viaje mucho más viva.”
+          </div>
+
+          <div class="cards-2">
+            <div class="card">
+              <h3>Cliente ideal</h3>
+              <ul class="clean">
+                <li>Parejas que quieren un Caribe con ambiente y romanticismo.</li>
+                <li>Adultos que valoran beach clubs, sunsets, música y hoteles con personalidad.</li>
+                <li>Familias activas que quieren excursiones y naturaleza además de playa.</li>
+                <li>Grupos de amigos que buscan un Caribe social y con más movimiento.</li>
+                <li>Repetidores de Caribe que ya hicieron Punta Cana o Riviera Maya y quieren algo distinto.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Pregunta de detección</h3>
+              <p>
+                “¿Buscáis una Jamaica más cómoda y completa, más de playa relajada, más de aventura en cascadas y naturaleza, o queréis meter también un toque cultural?”
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="height:100%;">
+            <h3>Cómo posicionarla bien</h3>
+            <ul class="clean">
+              <li><strong>Montego Bay</strong>: el producto más fácil de vender; playa, all inclusive, golf, nightlife y operativa cómoda.</li>
+              <li><strong>Negril</strong>: para playa larga, sunsets, relajación y hoteles con vibra más adulta o romántica.</li>
+              <li><strong>Ocho Rios</strong>: el mejor para mezclar resort con cascadas, naturaleza y actividades.</li>
+              <li><strong>Kingston</strong>: no es la venta principal de sol y playa; se usa como extensión cultural o viaje urbano con personalidad.</li>
+            </ul>
+
+            <div class="tag-row">
+              <span class="tag">Playa</span>
+              <span class="tag">Reggae</span>
+              <span class="tag">Excursiones</span>
+              <span class="tag">Naturaleza tropical</span>
+              <span class="tag">Más identidad local</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="montegobay">
+      <div class="destination-top">
+        <div class="destination-number">1</div>
+        <h3>Montego Bay</h3>
+        <p class="destination-subtitle">
+          El “producto completo” de Jamaica. Es la zona más cómoda comercialmente para vender una primera vez en el destino porque combina cercanía al aeropuerto, playa, resorts, golf, excursiones y vida nocturna.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas que quieren un Caribe fácil, con buen hotel y salidas.</li>
+              <li>Familias que priorizan resort y operativa simple.</li>
+              <li>Grupos que quieren ambiente sin traslados largos.</li>
+              <li>Clientes premium que valoran golf, villas o hoteles de más nivel.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Entrada más cómoda para la mayoría de ventas Jamaica.</li>
+              <li>Buena variedad hotelera: all inclusive, solo adultos, villas, boutique.</li>
+              <li>Sirve como base para una primera lectura del destino.</li>
+              <li>Menos fricción operativa que Negril.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Doctor’s Cave Beach.</li>
+              <li>Montego Bay Marine Park.</li>
+              <li>Rose Hall Great House.</li>
+              <li>Hip Strip y ambiente nocturno.</li>
+              <li>Rafting en Martha Brae y escapadas cercanas.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>MBJ → zona hotelera de Montego Bay:</strong> aprox. 10 a 20 min.</li>
+              <li>Es el destino con mejor relación entre comodidad de llegada y experiencia completa.</li>
+              <li>Ideal para clientes que valoran poco traslado el día de entrada.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender Montego Bay:</strong> “Es Jamaica sin complicaciones: llegas rápido, tienes hotelería muy completa y puedes quedarte en modo resort o salir a vivir el destino.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              All inclusive de buen nivel para familias o adultos, resorts de playa con vida nocturna cerca, villas para grupos y producto premium con golf para tickets más altos.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Montego Bay como “la zona más salvaje o más auténtica” de Jamaica. Su fuerza comercial es la comodidad y el equilibrio, no la sensación de escapada remota.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="negril">
+      <div class="destination-top">
+        <div class="destination-number">2</div>
+        <h3>Negril</h3>
+        <p class="destination-subtitle">
+          Es la Jamaica de playa larga, sunsets y ritmo más relajado. Se vende muy bien a parejas, lunas de miel, adultos y clientes que quieren un Caribe bonito y tranquilo, con un punto social al caer la tarde.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas y lunas de miel.</li>
+              <li>Adultos que priorizan playa y desconexión.</li>
+              <li>Viajeros que buscan hoteles con encanto o solo adultos.</li>
+              <li>Clientes que valoran una estética más relajada y menos urbana.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Seven Mile Beach como argumento visual muy potente.</li>
+              <li>Atardeceres muy vendibles.</li>
+              <li>Buen equilibrio entre relax y vida nocturna ligera.</li>
+              <li>Zona cliffside muy atractiva para producto romántico o boutique.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Seven Mile Beach.</li>
+              <li>Rick’s Café y los sunsets sobre el acantilado.</li>
+              <li>Hoteles sobre playa y hoteles boutique en los cliffs.</li>
+              <li>Snórquel, salidas en barco y escapadas de naturaleza cercanas.</li>
+              <li>Dream Weekend en verano para cliente más festivo.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>MBJ → Negril:</strong> aprox. 1 h 20 min a 1 h 45 min.</li>
+              <li>El traslado es asumible, pero ya no es venta de “llego y entro al hotel”.</li>
+              <li>Conviene anticiparlo desde el principio para evitar objeciones.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box pink">
+          <strong>Cómo vender Negril:</strong> “Si lo que queréis es una playa larga de verdad, atardeceres espectaculares y un Caribe más calmado, Negril encaja mucho mejor que una zona de resort masiva.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Solo adultos y boutique para pareja, hoteles sobre los cliffs para un perfil más especial, y all inclusive de playa para quien quiere comodidad sin renunciar a una imagen más romántica.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Negril a quien odia los traslados o necesita actividad constante todo el día. Aquí gana el cliente que disfruta del ritmo lento, de la playa y del sunset como experiencia central.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="ochorios">
+      <div class="destination-top">
+        <div class="destination-number">3</div>
+        <h3>Ocho Rios</h3>
+        <p class="destination-subtitle">
+          Es la Jamaica más versátil para vender playa con excursiones. Funciona muy bien con familias activas, parejas que quieren hacer cosas y viajeros que buscan cascadas, naturaleza y aventura además del hotel.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Familias que no quieren pasar todo el viaje dentro del resort.</li>
+              <li>Parejas que valoran excursiones y naturaleza.</li>
+              <li>Grupos con perfil activo.</li>
+              <li>Clientes que quieren un Caribe “más de hacer” que “solo de tumbona”.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Destino muy reconocible por Dunn’s River Falls.</li>
+              <li>Mezcla muy fácil de vender: resort + cascadas + aventura.</li>
+              <li>Más diferencial que un simple producto de playa.</li>
+              <li>Buen encaje para familias y multigeneracional.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Dunn’s River Falls.</li>
+              <li>Blue Hole.</li>
+              <li>Mystic Mountain.</li>
+              <li>Dolphin Cove y actividades acuáticas.</li>
+              <li>Jardines, cuevas, mercados y excursiones de naturaleza.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>MBJ → Ocho Rios:</strong> aprox. 1 h 30 min a 2 h.</li>
+              <li><strong>KIN → Ocho Rios:</strong> aprox. 1 h 30 min a 2 h.</li>
+              <li>Comercialmente puede entrar por cualquiera de los dos aeropuertos según tarifa aérea y routing.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender Ocho Rios:</strong> “Es el Jamaica ideal si queréis resort, pero también salir a cascadas, naturaleza y actividades. Tiene más contenido de viaje que una estancia de solo playa.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              All inclusive familiares o de pareja, hoteles de tamaño medio y resorts bien posicionados para combinar descanso con excursiones frecuentes.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Ocho Rios como el producto más relajado de Jamaica. Su fuerza está en la mezcla de hotel y actividad; si el cliente solo quiere arena y cero movimiento, probablemente Negril encaje mejor.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="kingston">
+      <div class="destination-top">
+        <div class="destination-number">4</div>
+        <h3>Kingston</h3>
+        <p class="destination-subtitle">
+          No es la venta principal de playa, sino el complemento cultural más potente del país. Sirve para quien quiere entender la música, la cocina, la historia y el pulso urbano de Jamaica.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Viajeros culturales y foodies.</li>
+              <li>Clientes repeaters que ya conocen el Caribe de resort.</li>
+              <li>Viajeros urbanos o combinados playa + ciudad.</li>
+              <li>Amantes de Bob Marley, reggae y la identidad jamaicana.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Capital cultural de Jamaica.</li>
+              <li>Mejor lectura del país real y no solo del producto playa.</li>
+              <li>Muy buena gastronomía y ambiente local.</li>
+              <li>Complementa bien una estancia de costa.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Paseos y puntos clave</h4>
+            <ul class="clean">
+              <li>Bob Marley Museum.</li>
+              <li>Devon House.</li>
+              <li>National Gallery of Jamaica.</li>
+              <li>Port Royal.</li>
+              <li>Blue Mountains como salida de naturaleza y café.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>KIN → Kingston / New Kingston:</strong> aprox. 20 a 35 min.</li>
+              <li>Muy útil como pre o post de 1 o 2 noches.</li>
+              <li>No suele venderse como sustituto de una zona de playa.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender Kingston:</strong> “Si queréis entender de verdad Jamaica y no solo dormir en un resort, Kingston le da al viaje cultura, música, historia y cocina.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Hoteles urbanos bien ubicados en New Kingston o propiedades con perfil corporativo-cosmopolita para estancias cortas y operativas.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Kingston como playa. Se usa como extensión cultural, city break o cierre con personalidad para un viaje que haya empezado en costa.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="comparativa">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Lectura rápida</span>
+          <h2>Comparativa comercial de destinos</h2>
+        </div>
+        <p class="section-intro">
+          Esta tabla sirve para leer rápido el encaje de cada zona y bajar la recomendación en la primera llamada o durante la cotización.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Destino</th>
+            <th>Producto principal</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Montego Bay</strong></td>
+            <td>Caribe completo y cómodo</td>
+            <td>Primera vez en Jamaica, familias, parejas, grupos</td>
+            <td>“La entrada más fácil a Jamaica: resort, playa, ambiente y excursiones sin complicarte.”</td>
+          </tr>
+          <tr>
+            <td><strong>Negril</strong></td>
+            <td>Playa larga + sunset + relax</td>
+            <td>Parejas, adultos, lunas de miel</td>
+            <td>“La Jamaica más relajada y fotogénica para quien pone la playa y el atardecer por delante.”</td>
+          </tr>
+          <tr>
+            <td><strong>Ocho Rios</strong></td>
+            <td>Resort + cascadas + aventura</td>
+            <td>Familias activas, parejas con ganas de hacer cosas</td>
+            <td>“Si no queréis quedaros quietos en el hotel, Ocho Rios os da mucho más juego.”</td>
+          </tr>
+          <tr>
+            <td><strong>Kingston</strong></td>
+            <td>Cultura + música + ciudad</td>
+            <td>Viajeros culturales, repeaters, combinados</td>
+            <td>“No es la playa: es el alma de Jamaica.”</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="traslados">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Operativa</span>
+          <h2>Tiempos medios de traslado</h2>
+        </div>
+        <p class="section-intro">
+          Usa siempre rangos orientativos, no tiempos exactos. En Jamaica el tráfico, la ubicación exacta del hotel y el tipo de transfer pueden mover bastante el tiempo final.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Destino</th>
+            <th>Aeropuerto</th>
+            <th>Tiempo medio orientativo</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Montego Bay</strong></td>
+            <td>MBJ</td>
+            <td>10 a 20 min</td>
+            <td>El más cómodo para vender una llegada sin desgaste.</td>
+          </tr>
+          <tr>
+            <td><strong>Negril</strong></td>
+            <td>MBJ</td>
+            <td>1 h 20 min a 1 h 45 min</td>
+            <td>Traslado asumible, pero conviene avisarlo desde la venta.</td>
+          </tr>
+          <tr>
+            <td><strong>Ocho Rios</strong></td>
+            <td>MBJ</td>
+            <td>1 h 30 min a 2 h</td>
+            <td>Buena opción si la tarifa entra mejor por la costa oeste.</td>
+          </tr>
+          <tr>
+            <td><strong>Ocho Rios</strong></td>
+            <td>KIN</td>
+            <td>1 h 30 min a 2 h</td>
+            <td>Alternativa muy válida según vuelos o combinados con Kingston.</td>
+          </tr>
+          <tr>
+            <td><strong>Kingston</strong></td>
+            <td>KIN</td>
+            <td>20 a 35 min</td>
+            <td>Muy buen acceso para city break o extensión cultural.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box pink">
+        <strong>Tip de venta operativa:</strong> si el cliente penaliza mucho los traslados, empuja Montego Bay. Si acepta carretera por una playa más potente o más relax, Negril gana valor. Si quiere excursiones, el trayecto de Ocho Rios se justifica mejor.
+      </div>
+    </section>
+
+    <section class="section" id="temporadas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Estacionalidad</span>
+          <h2>Temporadas comerciales</h2>
+        </div>
+        <p class="section-intro">
+          Jamaica se puede vender todo el año, pero no con el mismo discurso. La clave está en ajustar bien expectativas de clima, precio y ambiente.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Lectura comercial</th>
+            <th>Cómo venderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diciembre – abril</strong></td>
+            <td>Temporada seca y de mayor demanda</td>
+            <td>La mejor ventana para vender playa con clima más estable y sensación premium. Ideal para primeras ventas y cliente más conservador.</td>
+          </tr>
+          <tr>
+            <td><strong>Mayo – junio</strong></td>
+            <td>Shoulder season interesante</td>
+            <td>Buen equilibrio entre precio, clima y ocupación. Muy útil para ventas con mejor valor sin ir a temporada más sensible.</td>
+          </tr>
+          <tr>
+            <td><strong>Julio – agosto</strong></td>
+            <td>Verano potente, ambiente alto y eventos</td>
+            <td>Encaja bien con cliente social, vacaciones de verano y perfiles que valoran vida y movimiento.</td>
+          </tr>
+          <tr>
+            <td><strong>Junio – noviembre</strong></td>
+            <td>Temporada húmeda y ventana de huracanes</td>
+            <td>Se puede vender, pero con discurso más honesto: precio, vegetación, lluvias más probables y necesidad de seguro/cancelación flexible.</td>
+          </tr>
+          <tr>
+            <td><strong>Agosto – octubre</strong></td>
+            <td>Pico más sensible dentro de la temporada de huracanes</td>
+            <td>Solo vender bien explicado y con cliente flexible. Mejor hablar de oportunidad de precio, no de clima perfecto.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Meses más fáciles para vender</h4>
+          <p>
+            De diciembre a abril si el cliente quiere certidumbre, y mayo-junio si busca una relación muy buena entre precio y experiencia.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Meses que exigen mejor argumentación</h4>
+          <p>
+            De junio a noviembre, especialmente agosto-octubre, porque aquí la venta ya depende más de la tolerancia del cliente al riesgo climático.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="objeciones">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Ventas</span>
+          <h2>Cómo manejar objeciones</h2>
+        </div>
+        <p class="section-intro">
+          Jamaica funciona mejor cuando se encuadra bien. No hace falta “defenderla”; hace falta vender el perfil correcto para cada cliente.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>“Quiero Caribe, pero no algo demasiado fiestero.”</h4>
+          <p>
+            Respuesta: Jamaica tiene ambiente, sí, pero puedes llevar el viaje hacia una versión muy tranquila. Negril y determinados hoteles de Montego Bay funcionan perfectamente para un viaje relajado y elegante.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“No quiero pasarme el viaje en carretera.”</h4>
+          <p>
+            Respuesta: entonces priorizamos Montego Bay. Si queréis Negril u Ocho Rios, os lo planteo sabiendo que el traslado existe, pero que luego el destino devuelve ese tiempo con una experiencia más específica.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“¿No es solo reggae, fiesta y resort?”</h4>
+          <p>
+            Respuesta: no. Jamaica también es cascadas, cuevas, jardines, Blue Mountains, gastronomía y una lectura cultural mucho más fuerte que otros caribes más uniformes.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Me preocupa la temporada de huracanes.”</h4>
+          <p>
+            Respuesta: es una preocupación lógica. En esas fechas la venta se hace con más cautela, con seguro, tarifas atractivas y sabiendo que el clima puede ser más variable. Si buscáis máxima estabilidad, mejor diciembre-abril.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Queremos playa muy bonita.”</h4>
+          <p>
+            Respuesta: si la prioridad absoluta es playa y atardecer, Negril suele ser la respuesta más clara. Si queréis playa con más operativa y hotel, Montego Bay. Si queréis además excursiones, Ocho Rios.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Queremos conocer la Jamaica real.”</h4>
+          <p>
+            Respuesta: ahí es donde Jamaica se diferencia de verdad. Puedes meter Kingston, salir de los hoteles, sumar gastronomía, música y cultura, y el viaje sube mucho de nivel.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box orange">
+        <strong>Alerta crítica:</strong> no vendas Jamaica como si todas sus zonas fueran iguales. En este país la segmentación manda mucho: Montego Bay es comodidad, Negril es playa y sunset, Ocho Rios es actividad, Kingston es cultura.
+      </div>
+    </section>
+
+    <section class="section" id="noches">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Duración ideal</span>
+          <h2>Noches recomendadas</h2>
+        </div>
+        <p class="section-intro">
+          Mantengo la misma lógica comercial que venimos usando: 7 noches como mínimo recomendable y 10 noches como duración ideal cuando el cliente quiere vivir mejor el destino.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Mínimo recomendable</th>
+            <th>Ideal</th>
+            <th>Lectura comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Montego Bay</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Perfecto para quien quiere un único hotel base con excursiones puntuales.</td>
+          </tr>
+          <tr>
+            <td><strong>Negril</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Funciona mejor cuando se disfruta sin prisa, especialmente en pareja o viaje relax.</td>
+          </tr>
+          <tr>
+            <td><strong>Ocho Rios</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>La duración larga permite amortizar excursiones, cascadas y actividad sin correr.</td>
+          </tr>
+          <tr>
+            <td><strong>Kingston</strong></td>
+            <td>1 noche opcional</td>
+            <td>2 noches opcional</td>
+            <td>Se recomienda como añadido cultural, no como base principal de playa.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Combinado fácil</h4>
+          <p>
+            7 noches en una sola zona de costa para una venta simple y competitiva.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Combinado que sube valor</h4>
+          <p>
+            10 noches repartidas entre 2 zonas, o 8-9 noches de playa + 1-2 noches en Kingston para darle más personalidad al viaje.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="script">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cierre comercial</span>
+          <h2>Script de venta</h2>
+        </div>
+        <p class="section-intro">
+          Guion pensado para primera llamada, respuesta comercial rápida o para acompañar una propuesta escrita.
+        </p>
+      </div>
+
+      <div class="script-box">
+        <p><strong>Apertura:</strong> “Jamaica no es solo un hotel de playa; es un Caribe con más personalidad. Según lo que busquéis, podemos llevarlo hacia una versión más cómoda, más romántica, más activa o más cultural.”</p>
+        <p><strong>Pregunta de detección:</strong> “¿Os veis más en un resort cómodo y completo, en una playa larga con atardeceres, en un viaje con cascadas y excursiones o en una mezcla con algo de cultura jamaicana real?”</p>
+        <p><strong>Lectura rápida:</strong> “Si queréis facilidad, Montego Bay. Si queréis playa y sunset, Negril. Si queréis hotel más excursiones, Ocho Rios. Si queréis alma y cultura, Kingston como complemento.”</p>
+        <p><strong>Cierre recomendado:</strong> “Para venderla bien, yo no bajaría de 7 noches. Lo ideal son 10, porque Jamaica se disfruta mucho más cuando te da tiempo a combinar descanso con un poco de vida de destino.”</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Guía comercial base · Dr. Viaje · Jamaica · Formato comercial-consultivo</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" aria-label="Subir">↑</button>
+
+  <script>
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        scrollTopBtn.style.display = 'block';
+      } else {
+        scrollTopBtn.style.display = 'none';
+      }
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de Mendoza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-purple: #7B2D8E;
+      --primary-orange: #FF9800;
+      --primary-pink: #E91E63;
+      --bg-light: #f8f9fa;
+      --text-dark: #333333;
+      --text-medium: #666666;
+      --white: #ffffff;
+      --border-light: #e9ecef;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --max-width: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+      color: var(--white);
+      padding: 70px 0 50px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: var(--white);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      font-weight: 800;
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+
+    header p {
+      font-size: 1.05rem;
+      opacity: 0.96;
+      max-width: 760px;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius);
+      padding: 24px;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--white);
+    }
+
+    .hero-card ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      font-size: 0.96rem;
+    }
+
+    .hero-card li::before {
+      content: "•";
+      color: #ffd36a;
+      font-weight: 800;
+      display: inline-block;
+      width: 16px;
+    }
+
+    nav {
+      background-color: var(--primary-orange);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      background: rgba(255,255,255,0.16);
+      color: var(--white);
+      padding: 10px 16px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .nav-links a:hover {
+      background: var(--white);
+      color: var(--primary-orange);
+      transform: translateY(-1px);
+    }
+
+    main {
+      padding: 34px 0 70px;
+    }
+
+    .section {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-light);
+    }
+
+    .section h2 {
+      color: var(--primary-purple);
+      font-size: 1.9rem;
+      margin-bottom: 18px;
+      font-weight: 800;
+    }
+
+    .section h3 {
+      color: var(--primary-pink);
+      font-size: 1.15rem;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .section p {
+      color: var(--text-medium);
+      margin-bottom: 14px;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 20px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-light);
+      transition: all 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .info-box,
+    .tip-box,
+    .alert-box,
+    .script-box {
+      padding: 22px;
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .info-box {
+      background: #f8f1fb;
+      border-left: 6px solid var(--primary-purple);
+    }
+
+    .tip-box {
+      background: #fff7eb;
+      border-left: 6px solid var(--primary-orange);
+    }
+
+    .alert-box {
+      background: #fff0f6;
+      border-left: 6px solid var(--primary-pink);
+    }
+
+    .script-box {
+      background: #f5f3ff;
+      border: 2px solid rgba(123,45,142,0.18);
+    }
+
+    .pill {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+      color: var(--white);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    ul.clean-list {
+      padding-left: 18px;
+      color: var(--text-medium);
+    }
+
+    ul.clean-list li {
+      margin-bottom: 8px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    thead th {
+      background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+      color: var(--white);
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    tbody td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+      color: var(--text-medium);
+      background: var(--white);
+    }
+
+    tbody tr:nth-child(even) td {
+      background: #fcfcfd;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .quote {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--primary-purple);
+      line-height: 1.7;
+    }
+
+    .highlight {
+      color: var(--primary-pink);
+      font-weight: 700;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .kpi {
+      background: var(--white);
+      border-top: 4px solid var(--primary-orange);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .kpi strong {
+      display: block;
+      color: var(--primary-purple);
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+
+    .kpi span {
+      color: var(--text-medium);
+      font-size: 0.92rem;
+    }
+
+    .scroll-top {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+      color: var(--white);
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-hover);
+      z-index: 1000;
+    }
+
+    footer {
+      background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 28px 20px;
+      margin-top: 20px;
+    }
+
+    footer p {
+      opacity: 0.95;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 1024px) {
+      .hero,
+      .grid-3,
+      .grid-4,
+      .kpi-row {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .section {
+        padding: 22px;
+      }
+
+      header {
+        padding: 54px 0 36px;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+      }
+
+      .nav-links a {
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header>
+    <div class="container hero">
+      <div>
+        <span class="badge">Dr. Viaje · Guía comercial</span>
+        <h1>Mendoza</h1>
+        <p>
+          Mendoza es uno de los destinos más completos de Argentina porque combina vino, gastronomía, paisaje andino,
+          montaña, termas y aventura en un mismo viaje. Comercialmente funciona muy bien porque no depende de un único
+          atractivo: sirve tanto para escapadas románticas como para viajes de amigos, amantes del vino o clientes que
+          quieren naturaleza con buenos servicios.
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <h3>Cómo vender Mendoza en una frase</h3>
+        <ul>
+          <li>Destino versátil: vino + montaña + gastronomía + relax.</li>
+          <li>Ideal para parejas, escapadas premium y viajeros de experiencia.</li>
+          <li>Muy buen destino para combinar con Buenos Aires o con Patagonia.</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="container nav-links">
+      <a href="#presentacion">Presentación</a>
+      <a href="#cliente">Cliente ideal</a>
+      <a href="#atractivos">Atractivos</a>
+      <a href="#opcionales">Paseos opcionales</a>
+      <a href="#temporadas">Temporadas</a>
+      <a href="#alojamiento">Alojamiento</a>
+      <a href="#familias">Niños</a>
+      <a href="#operativo">Operativo</a>
+      <a href="#costos">Costos</a>
+      <a href="#alertas">Alertas</a>
+      <a href="#script">Script de venta</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <section class="section" id="presentacion">
+      <h2>Presentación del destino</h2>
+      <p>
+        Mendoza destaca por su propuesta equilibrada entre ciudad, vino, alta gastronomía y excursiones de paisaje.
+        La provincia se vende muy bien porque permite armar viajes de diferente intensidad: desde una escapada corta
+        enfocada en bodegas y relax hasta un itinerario más completo que combine viñedos, montaña, termas y aventura.
+      </p>
+      <p>
+        Es un destino que transmite <span class="highlight">disfrute, calidad y variedad</span>, y eso lo convierte
+        en una opción muy comercial para clientes que quieren “algo especial” sin necesidad de irse a un viaje extremo.
+      </p>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <strong>+200</strong>
+          <span>Bodegas abiertas al turismo</span>
+        </div>
+        <div class="kpi">
+          <strong>70%</strong>
+          <span>Del vino argentino</span>
+        </div>
+        <div class="kpi">
+          <strong>38 km</strong>
+          <span>Hasta Cacheuta</span>
+        </div>
+        <div class="kpi">
+          <strong>100 km</strong>
+          <span>Hasta Valle de Uco aprox.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cliente">
+      <h2>Qué cliente compra bien Mendoza</h2>
+      <div class="grid-2">
+        <div class="card">
+          <span class="pill">Perfil ideal</span>
+          <ul class="clean-list">
+            <li>Parejas que buscan un viaje elegante, disfrutable y con componente gourmet.</li>
+            <li>Viajeros de nivel medio y medio-alto que valoran bodegas, gastronomía y paisaje.</li>
+            <li>Grupos de amigos para vino, salidas y experiencias compartidas.</li>
+            <li>Clientes activos que quieren sumar montaña, rafting, termas o excursiones panorámicas.</li>
+            <li>Viajeros que buscan un destino combinable con Buenos Aires o Patagonia.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="pill">Pregunta de detección</span>
+          <div class="script-box">
+            <p class="quote">
+              “¿Queréis un viaje más de vino y gastronomía, más de montaña y paisajes, o una mezcla de ambos?”
+            </p>
+          </div>
+          <p>
+            Esta pregunta ayuda a definir si conviene vender ciudad + bodegas, Valle de Uco, Alta Montaña,
+            Cacheuta o una combinación completa.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="atractivos">
+      <h2>Características turísticas principales</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Enoturismo</h3>
+          <p>
+            Es la gran puerta de entrada comercial del destino. Mendoza no se vende solo como lugar para catar vinos,
+            sino como experiencia completa: viñedos, gastronomía, arquitectura, paisaje y disfrute.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Montaña y Andes</h3>
+          <p>
+            La zona de precordillera y Alta Montaña amplía muchísimo el perfil del destino. Permite vender Aconcagua,
+            Puente del Inca, Uspallata, Potrerillos o Cristo Redentor como excursiones de impacto visual.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Gastronomía</h3>
+          <p>
+            Es uno de los mejores argumentos de cierre. Mendoza se asocia muy bien con cocina regional, restaurantes
+            de bodegas, viaje de nivel y escapadas de disfrute.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Clave comercial:</strong>
+        Mendoza funciona muy bien cuando se vende como un destino de <strong>experiencias equilibradas</strong>:
+        no solo vino, no solo montaña, sino una mezcla elegante de placer, paisaje y momentos memorables.
+      </div>
+    </section>
+
+    <section class="section" id="opcionales">
+      <h2>Paseos opcionales</h2>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Bodegas y rutas del vino</h3>
+          <p>
+            El opcional más fácil de vender. Funciona para parejas, amigos y clientes premium. La fortaleza está
+            en que no se vende solo vino: se vende paisaje, almuerzo, degustación y experiencia.
+          </p>
+          <div class="tip-box">
+            <strong>Ideal para:</strong> primera vez en Mendoza, escapadas románticas, clientes gourmet.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Valle de Uco</h3>
+          <p>
+            Muy potente para un perfil más aspiracional. Combina viñedos de altura, bodegas modernas, gastronomía
+            cuidada y paisaje andino. Es uno de los opcionales que más eleva la percepción de nivel del viaje.
+          </p>
+          <div class="tip-box">
+            <strong>Ideal para:</strong> parejas, premium, clientes que priorizan vino + paisaje.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Alta Montaña + Aconcagua + Puente del Inca</h3>
+          <p>
+            Uno de los mejores opcionales para romper la idea de que Mendoza es solo vino. Tiene paisajes de gran escala
+            y aporta el componente “wow” del viaje.
+          </p>
+          <div class="tip-box">
+            <strong>Ideal para:</strong> viajeros activos, amantes de la naturaleza, fotógrafos.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Termas de Cacheuta</h3>
+          <p>
+            Muy buen complemento para clientes que buscan relax. Ayuda mucho a suavizar el viaje y a introducir una
+            experiencia de bienestar que vende muy bien en parejas y también en familias.
+          </p>
+          <div class="tip-box">
+            <strong>Ideal para:</strong> parejas, familias, clientes de ritmo tranquilo.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Potrerillos</h3>
+          <p>
+            Alternativa útil para sumar aventura suave o media: rafting, trekking, canopy y paisaje. Es muy interesante
+            cuando el cliente no quiere que todo el viaje gire alrededor de bodegas.
+          </p>
+          <div class="tip-box">
+            <strong>Ideal para:</strong> familias activas, grupos de amigos, viajeros de aventura moderada.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Fiesta Nacional de la Vendimia</h3>
+          <p>
+            Si coincide con fechas, añade un valor comercial enorme. Convierte el viaje en algo más cultural,
+            más singular y con sensación de evento.
+          </p>
+          <div class="tip-box">
+            <strong>Ideal para:</strong> clientes que quieren agenda, cultura, vino y ambiente local.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Tabla rápida de paseos y enfoque comercial</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Paseo</th>
+              <th>Perfil de cliente</th>
+              <th>Cuándo venderlo</th>
+              <th>Valor comercial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bodegas</td>
+              <td>Parejas, amigos, premium</td>
+              <td>Primera visita, escapadas cortas</td>
+              <td>Es el opcional más transversal y fácil de cerrar</td>
+            </tr>
+            <tr>
+              <td>Valle de Uco</td>
+              <td>Premium, parejas, wine lovers</td>
+              <td>Cuando buscan paisaje + gastronomía</td>
+              <td>Sube percepción de nivel del viaje</td>
+            </tr>
+            <tr>
+              <td>Alta Montaña / Aconcagua</td>
+              <td>Activos, naturaleza, fotografía</td>
+              <td>Si quieren impacto visual y Andes</td>
+              <td>Rompe la idea de “solo vino”</td>
+            </tr>
+            <tr>
+              <td>Cacheuta</td>
+              <td>Parejas, familias, relax</td>
+              <td>Si buscan descanso y bienestar</td>
+              <td>Suave, compatible y muy vendible</td>
+            </tr>
+            <tr>
+              <td>Potrerillos</td>
+              <td>Familias activas, amigos</td>
+              <td>Si quieren aventura moderada</td>
+              <td>Aporta dinamismo al itinerario</td>
+            </tr>
+            <tr>
+              <td>Vendimia</td>
+              <td>Cultural, vino, agenda</td>
+              <td>Solo en fechas adecuadas</td>
+              <td>Eleva mucho el atractivo estacional</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="temporadas">
+      <h2>Temporadas y ventanas de venta</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Temporada</th>
+              <th>Qué vende mejor</th>
+              <th>Comentario comercial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Primavera</td>
+              <td>Bodegas, ciudad, montaña, Valle de Uco</td>
+              <td>Muy equilibrada para vender experiencias variadas.</td>
+            </tr>
+            <tr>
+              <td>Verano</td>
+              <td>Bodegas, Cacheuta, Potrerillos, escapadas activas</td>
+              <td>Buena para combinar relax, vino y aventura.</td>
+            </tr>
+            <tr>
+              <td>Vendimia</td>
+              <td>Cultura + vino + ambiente festivo</td>
+              <td>Venta potente, pero requiere anticipación y buena gestión de tarifas.</td>
+            </tr>
+            <tr>
+              <td>Otoño</td>
+              <td>Vino, paisaje, gastronomía</td>
+              <td>Muy buena narrativa visual y gran encaje en viajes de pareja.</td>
+            </tr>
+            <tr>
+              <td>Invierno</td>
+              <td>Ciudad, bodegas, termas, montaña escénica</td>
+              <td>Se vende bien, pero filtrando expectativas y clima de montaña.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="alojamiento">
+      <h2>Dónde alojar a cada cliente</h2>
+      <div class="grid-4">
+        <div class="card">
+          <h3>Ciudad de Mendoza</h3>
+          <p>
+            Buena base para primeras visitas, escapadas cortas y clientes que quieren moverse fácil entre gastronomía,
+            compras, excursiones y vida urbana.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Luján / Maipú</h3>
+          <p>
+            Muy interesante para viajeros centrados en bodegas. Funciona bien en parejas y clientes que priorizan
+            experiencia antes que ritmo urbano.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Valle de Uco</h3>
+          <p>
+            Opción más aspiracional. Recomendable para ventas premium, aniversarios, lunas de miel o clientes que
+            quieren paisaje y exclusividad.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Cacheuta / Potrerillos</h3>
+          <p>
+            Buena elección para clientes que quieren montaña, relax o aventura suave, aunque menos práctica
+            si van a hacer mucha vida urbana.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Tip de venta:</strong>
+        si el cliente prioriza comodidad, ciudad; si prioriza experiencia, bodegas o Valle de Uco; si prioriza relax
+        o naturaleza, Cacheuta o Potrerillos.
+      </div>
+    </section>
+
+    <section class="section" id="familias">
+      <h2>¿Sirve para viajar con niños?</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Sí, pero bien perfilado</h3>
+          <p>
+            Mendoza puede funcionar muy bien con familias si el viaje no se apoya únicamente en bodegas.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Qué vender mejor</h3>
+          <p>
+            Cacheuta, Potrerillos y algunas excursiones panorámicas ayudan a equilibrar el viaje y hacerlo más amable
+            para todas las edades.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Qué filtrar</h3>
+          <p>
+            Jornadas muy largas de bodegas, excursiones exigentes o itinerarios excesivamente gourmet para niños pequeños.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="operativo">
+      <h2>Información operativa</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Aeropuerto de referencia</h3>
+          <p>
+            El aeropuerto de llegada es MDZ. Esto favorece mucho las ventas de escapada corta y también las combinaciones
+            con otros destinos de Argentina.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Traslados</h3>
+          <p>
+            La operativa del destino es bastante cómoda. El acceso desde aeropuerto a la ciudad es funcional y favorece
+            una buena primera impresión del viaje.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Excursiones base</h3>
+          <p>
+            Cacheuta está relativamente cerca y funciona bien como salida sencilla. Valle de Uco ya implica una jornada
+            más estructurada. Alta Montaña requiere planificación de día completo.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="costos">
+      <h2>Costo de vida orientativo en USD</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Valor orientativo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Comida económica</td>
+              <td>USD 11</td>
+            </tr>
+            <tr>
+              <td>Cena para 2 en restaurante medio</td>
+              <td>USD 40</td>
+            </tr>
+            <tr>
+              <td>Cappuccino</td>
+              <td>USD 5.12</td>
+            </tr>
+            <tr>
+              <td>Billete transporte local</td>
+              <td>USD 0.91</td>
+            </tr>
+            <tr>
+              <td>Bajada de taxi</td>
+              <td>USD 2.00</td>
+            </tr>
+            <tr>
+              <td>Taxi por km</td>
+              <td>USD 1.20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        <strong>Lectura comercial:</strong>
+        Mendoza no se vende como destino barato, sino como destino con muy buena relación entre experiencia,
+        gastronomía y nivel de servicios.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Datos clave para argumentario</h2>
+      <div class="grid-2">
+        <div class="card">
+          <ul class="clean-list">
+            <li>Mendoza produce aproximadamente el 70% del vino argentino.</li>
+            <li>Cuenta con más de 200 bodegas abiertas al turismo.</li>
+            <li>Valle de Uco es una de las zonas más fuertes para venta premium.</li>
+            <li>Cacheuta ofrece más de 20 piscinas termales.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <ul class="clean-list">
+            <li>Aconcagua es la montaña más alta de América.</li>
+            <li>La Vendimia aporta un valor cultural y comercial enorme.</li>
+            <li>El destino combina ciudad, vino, montaña, relax y aventura.</li>
+            <li>Sirve muy bien para viajes cortos, medios o combinados.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="alertas">
+      <h2>Alertas críticas para vender bien Mendoza</h2>
+      <div class="grid-2">
+        <div class="alert-box">
+          <h3>No venderla solo como bodegas</h3>
+          <p>
+            Si el cliente no es especialmente afín al vino, hay que abrir rápidamente la venta hacia montaña,
+            termas, paisaje y aventura suave.
+          </p>
+        </div>
+
+        <div class="alert-box">
+          <h3>Filtrar excursiones largas</h3>
+          <p>
+            Alta Montaña y otros recorridos extensos deben ofrecerse a perfiles que toleren bien jornadas completas.
+          </p>
+        </div>
+
+        <div class="alert-box">
+          <h3>Cuidado con altura y clima</h3>
+          <p>
+            En zonas andinas conviene remarcar ropa adecuada, protección solar, hidratación y expectativas realistas.
+          </p>
+        </div>
+
+        <div class="alert-box">
+          <h3>No saturar viajes cortos</h3>
+          <p>
+            En 3 noches conviene priorizar 1 o 2 experiencias potentes y no cargar demasiado el itinerario.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="script">
+      <h2>Script comercial para vender Mendoza</h2>
+
+      <div class="script-box">
+        <h3>Apertura</h3>
+        <p class="quote">
+          “Mendoza funciona muy bien si buscáis un viaje disfrutable, con buen nivel, donde podéis mezclar bodegas,
+          gastronomía, paisaje andino y algún día de relax o montaña.”
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin-top: 18px;">
+        <div class="card">
+          <h3>Si buscan romanticismo</h3>
+          <p>
+            Enfoca en bodegas, cenas, Valle de Uco y alojamiento con encanto. Véndela como escapada elegante,
+            no solo como destino de vino.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Si quieren naturaleza</h3>
+          <p>
+            Introduce Alta Montaña, Aconcagua, Puente del Inca, Potrerillos o Cacheuta. Mendoza gana mucho cuando
+            se presenta como destino andino completo.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Si viajan con amigos</h3>
+          <p>
+            Mezcla bodegas, gastronomía, alguna experiencia outdoor y una base urbana práctica para que el viaje tenga
+            ritmo y variedad.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top: 18px;">
+        <h3 style="margin-bottom:10px;">Cierre recomendado</h3>
+        <p><strong>3 noches:</strong> primera escapada correcta.</p>
+        <p><strong>4 noches:</strong> formato ideal para combinar ciudad, bodegas y un opcional potente.</p>
+        <p><strong>5-6 noches:</strong> para vender Mendoza con más profundidad, incluyendo Valle de Uco, montaña, termas y gastronomía.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <a href="#" class="scroll-top" aria-label="Volver arriba">↑</a>
+
+  <footer>
+    <p>Guía comercial base de Mendoza · Formato Dr. Viaje</p>
+  </footer>
+
+</body>
+</html>

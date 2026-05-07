@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de Aruba</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary-purple:#7B2D8E;
+      --primary-orange:#FF9800;
+      --primary-pink:#E91E63;
+      --bg-light:#f8f9fa;
+      --text-dark:#333333;
+      --text-medium:#666666;
+      --white:#ffffff;
+      --shadow:0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover:0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --radius-sm:10px;
+      --max-width:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      color:var(--text-dark);
+      background:var(--bg-light);
+      line-height:1.65;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max-width),calc(100% - 32px));margin:0 auto}
+
+    header.hero{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.14), transparent 35%),
+        linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:72px 0 48px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      z-index:0;
+    }
+    .hero::before{
+      width:280px;height:280px;top:-80px;right:-80px;
+    }
+    .hero::after{
+      width:180px;height:180px;bottom:-40px;left:-40px;
+    }
+
+    .hero-inner{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.3fr .9fr;
+      gap:28px;
+      align-items:stretch;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(8px);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.2px;
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0 0 14px;
+      font-size:clamp(34px,5vw,56px);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .hero p.lead{
+      margin:0;
+      font-size:18px;
+      max-width:760px;
+      color:rgba(255,255,255,.92);
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:var(--radius-xl);
+      padding:26px;
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+      align-self:stretch;
+    }
+
+    .hero-card h3{
+      margin:0 0 12px;
+      font-size:18px;
+    }
+
+    .hero-card p{
+      margin:0 0 14px;
+      color:rgba(255,255,255,.92);
+      font-size:15px;
+    }
+
+    .hero-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:13px;
+      font-weight:600;
+      color:var(--white);
+    }
+
+    nav.sticky-nav{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:var(--primary-orange);
+      box-shadow:var(--shadow);
+    }
+
+    .nav-inner{
+      width:min(var(--max-width),calc(100% - 32px));
+      margin:0 auto;
+      display:flex;
+      gap:12px;
+      overflow:auto;
+      padding:15px 0;
+      scrollbar-width:none;
+    }
+
+    .nav-inner::-webkit-scrollbar{display:none}
+
+    .nav-link{
+      white-space:nowrap;
+      padding:10px 16px;
+      border-radius:25px;
+      background:rgba(255,255,255,.18);
+      color:var(--white);
+      font-size:14px;
+      font-weight:700;
+      transition:.25s ease;
+    }
+
+    .nav-link:hover{
+      background:var(--white);
+      color:var(--primary-orange);
+      transform:translateY(-1px);
+    }
+
+    section[id]{
+      scroll-margin-top:90px;
+    }
+
+    main{padding:28px 0 72px}
+
+    .section{
+      margin:22px 0;
+      background:var(--white);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:34px;
+    }
+
+    .section-header{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .eyebrow{
+      display:inline-block;
+      margin-bottom:8px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--primary-pink);
+    }
+
+    .section h2{
+      margin:0;
+      font-size:30px;
+      line-height:1.15;
+      letter-spacing:-.03em;
+    }
+
+    .section-intro{
+      color:var(--text-medium);
+      max-width:920px;
+      margin:0;
+    }
+
+    .kpi-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:26px;
+    }
+
+    .kpi{
+      background:linear-gradient(180deg,#fff,#faf6fc);
+      border:1px solid rgba(123,45,142,.08);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+
+    .kpi .label{
+      display:block;
+      font-size:12px;
+      color:var(--text-medium);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:8px;
+    }
+
+    .kpi strong{
+      display:block;
+      font-size:24px;
+      line-height:1.1;
+      color:var(--primary-purple);
+      margin-bottom:6px;
+    }
+
+    .kpi span{
+      font-size:14px;
+      color:var(--text-medium);
+    }
+
+    .info-box{
+      margin-top:22px;
+      border-left:6px solid var(--primary-purple);
+      background:#faf5fc;
+      border-radius:16px;
+      padding:18px 20px;
+    }
+
+    .info-box.orange{
+      border-left-color:var(--primary-orange);
+      background:#fff8ef;
+    }
+
+    .info-box.pink{
+      border-left-color:var(--primary-pink);
+      background:#fff3f8;
+    }
+
+    .info-box strong{
+      color:var(--primary-purple);
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .cards-2,
+    .cards-3{
+      display:grid;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+
+    .card{
+      background:var(--white);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+      transition:.25s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-hover);
+    }
+
+    .card h3,
+    .card h4{
+      margin:0 0 10px;
+      line-height:1.2;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--text-medium);
+      font-size:15px;
+    }
+
+    .destination{
+      padding:0;
+      overflow:hidden;
+    }
+
+    .destination-top{
+      padding:28px 30px 14px;
+      background:
+        linear-gradient(135deg, rgba(123,45,142,.08), rgba(233,30,99,.05));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+
+    .destination-number{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;height:40px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      font-weight:800;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .destination h3{
+      margin:0 0 8px;
+      font-size:28px;
+      line-height:1.12;
+      letter-spacing:-.03em;
+    }
+
+    .destination-subtitle{
+      margin:0;
+      color:var(--text-medium);
+      max-width:940px;
+    }
+
+    .destination-body{
+      padding:24px 30px 30px;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .mini-card{
+      background:#fcfcfd;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .mini-card h4{
+      margin:0 0 10px;
+      font-size:16px;
+      color:var(--primary-purple);
+    }
+
+    ul.clean{
+      margin:0;
+      padding-left:18px;
+    }
+
+    ul.clean li{margin:0 0 8px}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      margin-top:18px;
+    }
+
+    thead th{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:15px 16px;
+      text-align:left;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    tbody td{
+      background:var(--white);
+      padding:15px 16px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      vertical-align:top;
+      font-size:15px;
+    }
+
+    tbody tr:last-child td{border-bottom:none}
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#f2eef8;
+      color:var(--primary-purple);
+    }
+
+    .script-box{
+      background:linear-gradient(135deg,#fff7ef,#fff3f8);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:20px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .script-box p{
+      margin:0 0 12px;
+    }
+
+    .script-box p:last-child{margin-bottom:0}
+
+    footer{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:28px 0 34px;
+      margin-top:36px;
+    }
+
+    footer p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      text-align:center;
+      font-size:14px;
+    }
+
+    #scrollTopBtn{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:52px;
+      height:52px;
+      border:none;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-orange),var(--primary-pink));
+      color:var(--white);
+      font-size:22px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow-hover);
+      display:none;
+      z-index:1200;
+    }
+
+    @media (max-width: 1080px){
+      .hero-inner,
+      .two-col,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media (max-width: 860px){
+      .hero-inner,
+      .two-col,
+      .cards-2,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr;
+      }
+
+      .section,
+      .destination-body,
+      .destination-top{
+        padding-left:22px;
+        padding-right:22px;
+      }
+
+      .section h2{font-size:26px}
+      .destination h3{font-size:24px}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">Dr. Viaje · Guía comercial Caribe</div>
+        <h1>Aruba</h1>
+        <p class="lead">
+          Aruba es uno de los caribes más fáciles de vender cuando el cliente prioriza playa bonita, clima muy fiable, buena restauración, operativa sencilla y una sensación de destino seguro, limpio y moderno. No se vende tanto por “selva y excursión”, sino por comodidad, mar, ambiente agradable y vacaciones muy redondas.
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <h3>Clave comercial rápida</h3>
+        <p>
+          Aruba funciona muy bien para parejas, familias, clientes premium y repetidores de Caribe que quieren un destino pequeño, fácil de recorrer y con menos riesgo climático que otras islas de la región.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">Parejas</span>
+          <span class="pill">Familias</span>
+          <span class="pill">Premium</span>
+          <span class="pill">Clima fiable</span>
+          <span class="pill">Destino seguro</span>
+          <span class="pill">One Happy Island</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky-nav">
+    <div class="nav-inner">
+      <a class="nav-link" href="#pais">País</a>
+      <a class="nav-link" href="#palmbeach">Palm Beach</a>
+      <a class="nav-link" href="#eaglebeach">Eagle Beach</a>
+      <a class="nav-link" href="#oranjestad">Oranjestad</a>
+      <a class="nav-link" href="#babybeach">Baby Beach</a>
+      <a class="nav-link" href="#comparativa">Comparativa</a>
+      <a class="nav-link" href="#traslados">Traslados</a>
+      <a class="nav-link" href="#temporadas">Temporadas</a>
+      <a class="nav-link" href="#objeciones">Objeciones</a>
+      <a class="nav-link" href="#noches">Noches</a>
+      <a class="nav-link" href="#script">Script</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <section class="section" id="pais">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Visión general</span>
+          <h2>Aruba como producto turístico</h2>
+        </div>
+        <p class="section-intro">
+          Aruba es un Caribe de sol muy consistente, con estructura turística muy sólida y una isla pequeña que se recorre fácil. Comercialmente destaca por su clima estable, su posición fuera del cinturón principal de huracanes, sus playas icónicas y su perfil muy amable para cliente medio-alto y premium.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="label">Aeropuerto principal</span>
+          <strong>AUA</strong>
+          <span>Queen Beatrix International Airport, muy cerca de las zonas hoteleras principales.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Clima</span>
+          <strong>27°–32°C</strong>
+          <span>Temperaturas cálidas casi todo el año y lluvias normalmente breves.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Ventaja clave</span>
+          <strong>Fuera del cinturón de huracanes</strong>
+          <span>Gran argumento comercial frente a otras islas caribeñas.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Duración ideal</span>
+          <strong>7 a 10 noches</strong>
+          <span>Da tiempo a descansar, recorrer la isla y sumar paseos sin agobio.</span>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:26px;">
+        <div>
+          <div class="info-box">
+            <strong>Frase de venta base:</strong>
+            “Aruba es un Caribe muy fácil de disfrutar: playas potentes, clima muy fiable, isla cómoda, buena gastronomía y una sensación general de vacaciones limpias, seguras y bien hechas.”
+          </div>
+
+          <div class="cards-2">
+            <div class="card">
+              <h3>Cliente ideal</h3>
+              <ul class="clean">
+                <li>Parejas que quieren playa bonita, buen nivel y clima estable.</li>
+                <li>Familias que valoran aguas tranquilas, comodidad y trayectos cortos.</li>
+                <li>Cliente premium que busca un Caribe ordenado y fácil.</li>
+                <li>Repetidores de Caribe que quieren cambiar de República Dominicana o Riviera Maya.</li>
+                <li>Clientes que penalizan mucho el riesgo meteorológico.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Pregunta de detección</h3>
+              <p>
+                “¿Queréis una Aruba más animada y de resort, más tranquila y de playa elegante, más urbana con restaurantes y compras, o una mezcla con playas del sur y paseos?”
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="height:100%;">
+            <h3>Cómo posicionarla bien</h3>
+            <ul class="clean">
+              <li><strong>Palm Beach</strong>: la zona más fácil de vender; hoteles altos, ambiente, beach clubs, compras y vida nocturna.</li>
+              <li><strong>Eagle Beach</strong>: para un Caribe más abierto, más elegante y más calmado.</li>
+              <li><strong>Oranjestad</strong>: complemento urbano con shopping, restaurantes, cultura y acceso rápido al aeropuerto.</li>
+              <li><strong>Baby Beach / sur de la isla</strong>: no suele ser la base principal, pero suma valor como gran paseo de playa.</li>
+            </ul>
+
+            <div class="tag-row">
+              <span class="tag">Clima fiable</span>
+              <span class="tag">Playa</span>
+              <span class="tag">Gastronomía</span>
+              <span class="tag">Seguridad</span>
+              <span class="tag">Destino fácil</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="palmbeach">
+      <div class="destination-top">
+        <div class="destination-number">1</div>
+        <h3>Palm Beach</h3>
+        <p class="destination-subtitle">
+          Es la Aruba más vendible para una primera vez en la isla. Aquí están los high-rise hotels, el ambiente más social, buena parte del producto all inclusive o de resort clásico, compras, bares, casinos y deportes acuáticos.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas que quieren buen hotel y algo de ambiente.</li>
+              <li>Familias que buscan operativa fácil.</li>
+              <li>Clientes que valoran poder salir a cenar, comprar o pasear sin aislarse.</li>
+              <li>Perfil social que quiere un Caribe con movimiento moderado.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Zona resort por excelencia.</li>
+              <li>Aguas calmadas para baño y snorkel ligero.</li>
+              <li>Beach bars, restaurantes, tiendas y casinos cerca.</li>
+              <li>Muy buena percepción de comodidad y facilidad.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Playa larga y equipada.</li>
+              <li>Deportes acuáticos y embarcaderos.</li>
+              <li>Restaurantes y beach dining.</li>
+              <li>Centros comerciales y ocio nocturno.</li>
+              <li>Paseos al amanecer o al atardecer.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>AUA → Palm Beach:</strong> aprox. 15 a 20 min.</li>
+              <li>Traslado corto y muy cómodo para primera llegada.</li>
+              <li>Ideal para cliente que no quiere perder tiempo en carretera.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender Palm Beach:</strong> “Es la Aruba más fácil y más completa: buena playa, muy buenos hoteles, ambiente, restaurantes y una llegada comodísima desde el aeropuerto.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              High-rise resorts, hoteles de marca reconocida, producto premium de playa y opciones más sociales para cliente que valora facilidad y servicios alrededor.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Palm Beach como la zona más silenciosa o más exclusiva en intimidad. Su fuerza está en la comodidad, el ambiente y el acceso a servicios.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="eaglebeach">
+      <div class="destination-top">
+        <div class="destination-number">2</div>
+        <h3>Eagle Beach</h3>
+        <p class="destination-subtitle">
+          Es la Aruba que mejor funciona cuando el cliente imagina una gran postal del Caribe: arena blanca ancha, menos densidad hotelera, ambiente más tranquilo y una sensación general de playa más limpia visualmente y más relajada.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas que quieren calma y una playa muy bonita.</li>
+              <li>Cliente medio-alto y premium que valora estética y menos ruido.</li>
+              <li>Familias que prefieren una base más tranquila.</li>
+              <li>Viajeros que priorizan descanso real frente a ambiente nocturno.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Playa icónica y de gran amplitud.</li>
+              <li>Fofoti trees como imagen reconocible de Aruba.</li>
+              <li>Zona low-rise más tranquila.</li>
+              <li>Muy buena percepción de calidad y relax.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Una de las playas más famosas del destino.</li>
+              <li>Aguas bonitas para baño y descanso.</li>
+              <li>Ambiente más sereno que Palm Beach.</li>
+              <li>Hoteles bajos y sensación más abierta.</li>
+              <li>Ideal para caminar, tumbarse y desconectar.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>AUA → Eagle Beach:</strong> aprox. 10 a 15 min.</li>
+              <li>Zona muy cómoda para traslados cortos.</li>
+              <li>Excelente argumento para cliente que valora playa + tranquilidad.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box pink">
+          <strong>Cómo vender Eagle Beach:</strong> “Si queréis una Aruba más elegante, más tranquila y con una de las playas más bonitas del Caribe, Eagle Beach suele encajar mejor que Palm Beach.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Low-rise resorts, hoteles de playa más tranquilos, producto romántico y opciones de descanso con mejor sensación de amplitud visual.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Eagle Beach al cliente que quiere vida nocturna continua o salir caminando a mucha oferta social. Aquí gana la tranquilidad, no el movimiento.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="oranjestad">
+      <div class="destination-top">
+        <div class="destination-number">3</div>
+        <h3>Oranjestad</h3>
+        <p class="destination-subtitle">
+          La capital de Aruba sirve para dar contenido urbano al viaje: compras, restaurantes, edificios históricos, museos, tranvía, paseo marítimo y acceso comodísimo desde el aeropuerto.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Viajeros que quieren combinar playa con ciudad.</li>
+              <li>Cliente de compras, gastronomía o estancia corta.</li>
+              <li>Parejas que valoran restaurantes y paseo urbano.</li>
+              <li>Perfil que no necesita dormir en la zona más resort.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Capital colorida y muy accesible.</li>
+              <li>Shopping potente y restauración variada.</li>
+              <li>Museos, tranvía y patrimonio histórico.</li>
+              <li>Muy buena opción para complementar la lectura de isla.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Fort Zoutman y Willem III Tower.</li>
+              <li>Museo Histórico y Museo Arqueológico.</li>
+              <li>Main Street y tranvía del centro.</li>
+              <li>Tiendas, joyería, cafés, bares y casinos.</li>
+              <li>Surfside y paseo costero.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>AUA → Oranjestad:</strong> aprox. 5 a 10 min.</li>
+              <li>Perfecto para una primera o última noche muy cómoda.</li>
+              <li>Ideal para clientes que quieren meter compras o paseo urbano.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender Oranjestad:</strong> “No es la Aruba de solo tumbona, sino la que suma ciudad, compras, gastronomía y un poco más de vida local al viaje.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Hoteles urbanos, resorts integrados en la capital y opciones prácticas para quien quiere moverse por la isla con base cómoda y cercana al aeropuerto.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Oranjestad como sustituto directo de Palm o Eagle Beach. Se usa mejor como base urbana o como valor añadido para cliente que quiere algo más que solo playa.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="babybeach">
+      <div class="destination-top">
+        <div class="destination-number">4</div>
+        <h3>Baby Beach / sur de la isla</h3>
+        <p class="destination-subtitle">
+          Más que una base principal, es uno de los grandes argumentos para enriquecer el viaje. Baby Beach, cerca de San Nicolas, se vende como gran excursión de playa: agua muy calmada, laguna poco profunda y sensación de Caribe muy amable para familias.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Familias con niños.</li>
+              <li>Clientes que quieren ver otra cara de Aruba.</li>
+              <li>Viajeros que buscan una excursión sencilla y fotogénica.</li>
+              <li>Cliente que quiere sumar un día distinto desde Palm o Eagle.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Playa muy segura visualmente para baño tranquilo.</li>
+              <li>Laguna de agua clara y poca profundidad.</li>
+              <li>Buena para un día completo con parada en el sur.</li>
+              <li>Refuerza la idea de que Aruba se explora fácil.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Media luna de arena muy reconocible.</li>
+              <li>Zona ideal para baño largo y tranquilo.</li>
+              <li>Snorkel en las áreas habilitadas.</li>
+              <li>Ambiente local más relajado.</li>
+              <li>Combinable con San Nicolas.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>AUA → Baby Beach:</strong> aprox. 20 a 25 min.</li>
+              <li><strong>Palm Beach → Baby Beach:</strong> aprox. 40 a 45 min.</li>
+              <li>Se recomienda como paseo, no como venta base estándar.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender Baby Beach:</strong> “No hace falta dormir allí para disfrutarla: es una excursión muy buena para enseñar al cliente que Aruba, aunque sea pequeña, tiene más de una lectura de playa.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Uso comercial correcto</h4>
+            <p>
+              Véndela como valor añadido dentro de una estancia en Palm Beach o Eagle Beach. Suma variedad, foto y experiencia familiar sin complicar demasiado la operativa.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No conviene presentarla como la zona más práctica para todo tipo de cliente. Funciona mejor como paseo estrella del sur que como base principal para una primera venta de Aruba.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="comparativa">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Lectura rápida</span>
+          <h2>Comparativa comercial de zonas</h2>
+        </div>
+        <p class="section-intro">
+          Aruba cambia mucho según el estilo de playa y de hotel que busque el cliente, aunque operativamente todo quede cerca.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Producto principal</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Palm Beach</strong></td>
+            <td>Resort completo + ambiente</td>
+            <td>Primera vez en Aruba, parejas, familias, perfil social</td>
+            <td>“La Aruba más fácil: buena playa, buenos hoteles y todo a mano.”</td>
+          </tr>
+          <tr>
+            <td><strong>Eagle Beach</strong></td>
+            <td>Gran playa + relax</td>
+            <td>Parejas, premium, cliente tranquilo</td>
+            <td>“La Aruba de postal: más calma, más amplitud y una playa espectacular.”</td>
+          </tr>
+          <tr>
+            <td><strong>Oranjestad</strong></td>
+            <td>Ciudad + compras + gastronomía</td>
+            <td>Cliente urbano, estancias cortas, combinados</td>
+            <td>“Suma ciudad y restaurantes sin perder la comodidad caribeña.”</td>
+          </tr>
+          <tr>
+            <td><strong>Baby Beach / sur</strong></td>
+            <td>Paseo de playa familiar</td>
+            <td>Familias, clientes que quieren explorar</td>
+            <td>“Una excursión fácil para ver otra Aruba y regalarse un día de playa tranquila.”</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="traslados">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Operativa</span>
+          <h2>Tiempos medios de traslado</h2>
+        </div>
+        <p class="section-intro">
+          Aruba tiene una gran ventaja comercial: casi todo queda cerca. Es uno de los destinos donde menos pesan los traslados en comparación con otras islas del Caribe.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Aeropuerto</th>
+            <th>Tiempo medio orientativo</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Palm Beach</strong></td>
+            <td>AUA</td>
+            <td>15 a 20 min</td>
+            <td>Muy cómodo para clientes que quieren entrar rápido en modo vacaciones.</td>
+          </tr>
+          <tr>
+            <td><strong>Eagle Beach</strong></td>
+            <td>AUA</td>
+            <td>10 a 15 min</td>
+            <td>Excelente relación entre calidad de playa y facilidad operativa.</td>
+          </tr>
+          <tr>
+            <td><strong>Oranjestad</strong></td>
+            <td>AUA</td>
+            <td>5 a 10 min</td>
+            <td>La opción más corta para primera o última noche.</td>
+          </tr>
+          <tr>
+            <td><strong>Baby Beach / sur</strong></td>
+            <td>AUA</td>
+            <td>20 a 25 min</td>
+            <td>Muy asumible para excursión o para recorrer el sur de la isla.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box pink">
+        <strong>Tip de venta operativa:</strong> si el cliente odia los traslados, Aruba tiene una ventaja clara frente a muchos competidores caribeños. Aquí el argumento de “todo queda cerca” sí es real y muy útil para cerrar ventas.
+      </div>
+    </section>
+
+    <section class="section" id="temporadas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Estacionalidad</span>
+          <h2>Temporadas comerciales</h2>
+        </div>
+        <p class="section-intro">
+          Aruba se puede vender casi todo el año con bastante tranquilidad. La diferencia principal no es tanto “si se puede vender o no”, sino si el cliente prioriza mejor clima posible o mejor precio.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Lectura comercial</th>
+            <th>Cómo venderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diciembre – abril</strong></td>
+            <td>Temporada alta y seca</td>
+            <td>La ventana más fácil de vender: clima muy estable, muy buena percepción de playa y mayor demanda.</td>
+          </tr>
+          <tr>
+            <td><strong>Mayo – agosto</strong></td>
+            <td>Muy buena temporada con más viento</td>
+            <td>Ideal para cliente que quiere buen tiempo, menos presión de alta pura y alivio térmico gracias a los trade winds.</td>
+          </tr>
+          <tr>
+            <td><strong>Septiembre – noviembre</strong></td>
+            <td>Meses más interesantes en precio</td>
+            <td>Muy vendibles porque Aruba sigue siendo fuerte climáticamente y además queda fuera del cinturón principal de huracanes.</td>
+          </tr>
+          <tr>
+            <td><strong>Octubre – enero</strong></td>
+            <td>Ventana de lluvias breves</td>
+            <td>Explicar que puede haber chubascos cortos, pero normalmente no rompen el viaje ni obligan a cambiar planes enteros.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Argumento fuerte de temporada</h4>
+          <p>
+            Aruba es especialmente potente para clientes que preguntan por seguridad meteorológica y quieren minimizar el riesgo de un Caribe pasado por agua o muy condicionado por huracanes.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Cómo no venderla mal</h4>
+          <p>
+            No prometas “cero lluvia nunca”, pero sí un destino con una fiabilidad climática superior a la media caribeña y con lluvias normalmente cortas.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="objeciones">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Ventas</span>
+          <h2>Cómo manejar objeciones</h2>
+        </div>
+        <p class="section-intro">
+          Aruba tiene un perfil muy agradecido comercialmente. Las objeciones suelen ser pocas, pero conviene responderlas bien porque afectan al tipo de cliente.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>“La noto cara.”</h4>
+          <p>
+            Respuesta: sí, no suele ser el Caribe más barato, pero devuelve valor en clima, seguridad, facilidad, tiempos cortos y calidad general de la experiencia. Se justifica muy bien en cliente medio-alto y premium.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Es una isla pequeña.”</h4>
+          <p>
+            Respuesta: precisamente esa es una de sus ventajas. No necesitas cambiar de hotel ni gastar media vida en traslados. En pocos días puedes ver bastante sin cansarte.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“¿No tendrá riesgo de huracanes?”</h4>
+          <p>
+            Respuesta: Aruba está fuera del cinturón principal de huracanes y por eso es una de las islas más fuertes para vender cuando el cliente pone el clima como prioridad.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“No quiero un viaje demasiado movido.”</h4>
+          <p>
+            Respuesta: entonces orientamos la venta a Eagle Beach, donde el ambiente es más relajado, más abierto y más de descanso que en Palm Beach.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Quiero algo con ambiente, pero sin descontrol.”</h4>
+          <p>
+            Respuesta: Palm Beach encaja muy bien. Hay restaurantes, bares, compras y algo de nightlife, pero Aruba en general transmite más orden y comodidad que otros destinos muy festivos.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“¿Hace mucho viento?”</h4>
+          <p>
+            Respuesta: sí hay trade winds, sobre todo en ciertos meses, pero suelen jugar a favor porque refrescan el ambiente y hacen el clima más llevadero. Para muchos clientes es una ventaja, no un problema.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box orange">
+        <strong>Alerta crítica:</strong> no vendas Aruba como si fuera un destino de excursión selvática o de inmersión cultural profunda. Su fuerza real está en la playa, el clima, la comodidad, la calidad hotelera y la facilidad total del viaje.
+      </div>
+    </section>
+
+    <section class="section" id="noches">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Duración ideal</span>
+          <h2>Noches recomendadas</h2>
+        </div>
+        <p class="section-intro">
+          Igual que en las demás guías, la lectura comercial más sólida es 7 noches como mínimo recomendable y 10 noches como duración ideal cuando el cliente quiere vivir bien el destino.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Base / zona</th>
+            <th>Mínimo recomendable</th>
+            <th>Ideal</th>
+            <th>Lectura comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Palm Beach</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>La venta más sencilla para una estancia completa y cómoda.</td>
+          </tr>
+          <tr>
+            <td><strong>Eagle Beach</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Muy buena para viajes de relax, pareja y cliente de playa potente.</td>
+          </tr>
+          <tr>
+            <td><strong>Oranjestad</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Válida para quien quiere isla pequeña, base urbana y mucha movilidad.</td>
+          </tr>
+          <tr>
+            <td><strong>Baby Beach / sur</strong></td>
+            <td>Paseo</td>
+            <td>1 día completo</td>
+            <td>Se recomienda como excursión, no como estándar de estancia principal.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Venta simple</h4>
+          <p>
+            7 noches en Palm Beach o Eagle Beach según el perfil del cliente.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Venta que sube valor</h4>
+          <p>
+            10 noches con base en Palm o Eagle y varios días para recorrer la isla, incluyendo Oranjestad y Baby Beach sin necesidad de cambiar de hotel.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="script">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cierre comercial</span>
+          <h2>Script de venta</h2>
+        </div>
+        <p class="section-intro">
+          Guion pensado para primera llamada, respuesta rápida o acompañamiento de presupuesto.
+        </p>
+      </div>
+
+      <div class="script-box">
+        <p><strong>Apertura:</strong> “Si estáis buscando un Caribe bonito, muy fácil, con clima muy fiable y sin complicaros con trayectos largos, Aruba es una opción muy redonda.”</p>
+        <p><strong>Pregunta de detección:</strong> “¿Os encaja más una zona con más ambiente y hoteles grandes, una playa más tranquila y elegante, o queréis también meter compras y algo de ciudad?”</p>
+        <p><strong>Lectura rápida:</strong> “Palm Beach si queréis comodidad y ambiente, Eagle Beach si queréis playa top y más calma, Oranjestad si queréis sumar ciudad, y Baby Beach como gran paseo del sur.”</p>
+        <p><strong>Cierre recomendado:</strong> “Para vender Aruba bien, yo trabajaría mínimo 7 noches y, si queréis disfrutarla con calma, 10 noches es lo ideal. Da tiempo a descansar mucho y recorrer la isla sin ir corriendo.”</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Guía comercial base · Dr. Viaje · Aruba · Formato comercial-consultivo</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" aria-label="Subir">↑</button>
+
+  <script>
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        scrollTopBtn.style.display = 'block';
+      } else {
+        scrollTopBtn.style.display = 'none';
+      }
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

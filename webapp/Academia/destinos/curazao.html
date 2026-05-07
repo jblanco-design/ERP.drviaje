@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de Curaçao</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary-purple:#7B2D8E;
+      --primary-orange:#FF9800;
+      --primary-pink:#E91E63;
+      --bg-light:#f8f9fa;
+      --text-dark:#333333;
+      --text-medium:#666666;
+      --white:#ffffff;
+      --shadow:0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover:0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --radius-sm:10px;
+      --max-width:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      color:var(--text-dark);
+      background:var(--bg-light);
+      line-height:1.65;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max-width),calc(100% - 32px));margin:0 auto}
+
+    header.hero{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.14), transparent 35%),
+        linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:72px 0 48px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      z-index:0;
+    }
+    .hero::before{
+      width:280px;height:280px;top:-80px;right:-80px;
+    }
+    .hero::after{
+      width:180px;height:180px;bottom:-40px;left:-40px;
+    }
+
+    .hero-inner{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.3fr .9fr;
+      gap:28px;
+      align-items:stretch;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(8px);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.2px;
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0 0 14px;
+      font-size:clamp(34px,5vw,56px);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .hero p.lead{
+      margin:0;
+      font-size:18px;
+      max-width:760px;
+      color:rgba(255,255,255,.92);
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:var(--radius-xl);
+      padding:26px;
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+      align-self:stretch;
+    }
+
+    .hero-card h3{
+      margin:0 0 12px;
+      font-size:18px;
+    }
+
+    .hero-card p{
+      margin:0 0 14px;
+      color:rgba(255,255,255,.92);
+      font-size:15px;
+    }
+
+    .hero-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:13px;
+      font-weight:600;
+      color:var(--white);
+    }
+
+    nav.sticky-nav{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:var(--primary-orange);
+      box-shadow:var(--shadow);
+    }
+
+    .nav-inner{
+      width:min(var(--max-width),calc(100% - 32px));
+      margin:0 auto;
+      display:flex;
+      gap:12px;
+      overflow:auto;
+      padding:15px 0;
+      scrollbar-width:none;
+    }
+
+    .nav-inner::-webkit-scrollbar{display:none}
+
+    .nav-link{
+      white-space:nowrap;
+      padding:10px 16px;
+      border-radius:25px;
+      background:rgba(255,255,255,.18);
+      color:var(--white);
+      font-size:14px;
+      font-weight:700;
+      transition:.25s ease;
+    }
+
+    .nav-link:hover{
+      background:var(--white);
+      color:var(--primary-orange);
+      transform:translateY(-1px);
+    }
+
+    section[id]{
+      scroll-margin-top:90px;
+    }
+
+    main{padding:28px 0 72px}
+
+    .section{
+      margin:22px 0;
+      background:var(--white);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:34px;
+    }
+
+    .section-header{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .eyebrow{
+      display:inline-block;
+      margin-bottom:8px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--primary-pink);
+    }
+
+    .section h2{
+      margin:0;
+      font-size:30px;
+      line-height:1.15;
+      letter-spacing:-.03em;
+    }
+
+    .section-intro{
+      color:var(--text-medium);
+      max-width:920px;
+      margin:0;
+    }
+
+    .kpi-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:26px;
+    }
+
+    .kpi{
+      background:linear-gradient(180deg,#fff,#faf6fc);
+      border:1px solid rgba(123,45,142,.08);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+
+    .kpi .label{
+      display:block;
+      font-size:12px;
+      color:var(--text-medium);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:8px;
+    }
+
+    .kpi strong{
+      display:block;
+      font-size:24px;
+      line-height:1.1;
+      color:var(--primary-purple);
+      margin-bottom:6px;
+    }
+
+    .kpi span{
+      font-size:14px;
+      color:var(--text-medium);
+    }
+
+    .info-box{
+      margin-top:22px;
+      border-left:6px solid var(--primary-purple);
+      background:#faf5fc;
+      border-radius:16px;
+      padding:18px 20px;
+    }
+
+    .info-box.orange{
+      border-left-color:var(--primary-orange);
+      background:#fff8ef;
+    }
+
+    .info-box.pink{
+      border-left-color:var(--primary-pink);
+      background:#fff3f8;
+    }
+
+    .info-box strong{
+      color:var(--primary-purple);
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .cards-2,
+    .cards-3{
+      display:grid;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+
+    .card{
+      background:var(--white);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+      transition:.25s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-hover);
+    }
+
+    .card h3,
+    .card h4{
+      margin:0 0 10px;
+      line-height:1.2;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--text-medium);
+      font-size:15px;
+    }
+
+    .destination{
+      padding:0;
+      overflow:hidden;
+    }
+
+    .destination-top{
+      padding:28px 30px 14px;
+      background:
+        linear-gradient(135deg, rgba(123,45,142,.08), rgba(233,30,99,.05));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+
+    .destination-number{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;height:40px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      font-weight:800;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .destination h3{
+      margin:0 0 8px;
+      font-size:28px;
+      line-height:1.12;
+      letter-spacing:-.03em;
+    }
+
+    .destination-subtitle{
+      margin:0;
+      color:var(--text-medium);
+      max-width:940px;
+    }
+
+    .destination-body{
+      padding:24px 30px 30px;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .mini-card{
+      background:#fcfcfd;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .mini-card h4{
+      margin:0 0 10px;
+      font-size:16px;
+      color:var(--primary-purple);
+    }
+
+    ul.clean{
+      margin:0;
+      padding-left:18px;
+    }
+
+    ul.clean li{margin:0 0 8px}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      margin-top:18px;
+    }
+
+    thead th{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:15px 16px;
+      text-align:left;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    tbody td{
+      background:var(--white);
+      padding:15px 16px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      vertical-align:top;
+      font-size:15px;
+    }
+
+    tbody tr:last-child td{border-bottom:none}
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#f2eef8;
+      color:var(--primary-purple);
+    }
+
+    .script-box{
+      background:linear-gradient(135deg,#fff7ef,#fff3f8);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:20px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .script-box p{
+      margin:0 0 12px;
+    }
+
+    .script-box p:last-child{margin-bottom:0}
+
+    footer{
+      background:linear-gradient(135deg,var(--primary-purple),var(--primary-pink));
+      color:var(--white);
+      padding:28px 0 34px;
+      margin-top:36px;
+    }
+
+    footer p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      text-align:center;
+      font-size:14px;
+    }
+
+    #scrollTopBtn{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:52px;
+      height:52px;
+      border:none;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary-orange),var(--primary-pink));
+      color:var(--white);
+      font-size:22px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow-hover);
+      display:none;
+      z-index:1200;
+    }
+
+    @media (max-width: 1080px){
+      .hero-inner,
+      .two-col,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media (max-width: 860px){
+      .hero-inner,
+      .two-col,
+      .cards-2,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr;
+      }
+
+      .section,
+      .destination-body,
+      .destination-top{
+        padding-left:22px;
+        padding-right:22px;
+      }
+
+      .section h2{font-size:26px}
+      .destination h3{font-size:24px}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">Dr. Viaje · Guía comercial Caribe</div>
+        <h1>Curaçao</h1>
+        <p class="lead">
+          Curaçao se vende como un Caribe con más color, más ciudad y más personalidad cultural que la media. No es solo playa: es también arquitectura colonial, barrios con vida, snorkel, calas bonitas, gastronomía y una lectura más urbana y auténtica del Caribe neerlandés.
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <h3>Clave comercial rápida</h3>
+        <p>
+          Funciona muy bien para parejas, viajeros que quieren algo distinto al Caribe de resort puro, clientes que valoran salir a cenar o pasear por ciudad y para quien quiere combinar playa con cultura, color local y buena operativa.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">Parejas</span>
+          <span class="pill">Caribe con ciudad</span>
+          <span class="pill">Snorkel</span>
+          <span class="pill">Diving</span>
+          <span class="pill">Cultura</span>
+          <span class="pill">Fuera del cinturón de huracanes</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky-nav">
+    <div class="nav-inner">
+      <a class="nav-link" href="#pais">País</a>
+      <a class="nav-link" href="#willemstad">Willemstad</a>
+      <a class="nav-link" href="#mambo">Mambo Beach</a>
+      <a class="nav-link" href="#janthiel">Jan Thiel</a>
+      <a class="nav-link" href="#bluebay">Blue Bay</a>
+      <a class="nav-link" href="#westpunt">Westpunt</a>
+      <a class="nav-link" href="#comparativa">Comparativa</a>
+      <a class="nav-link" href="#traslados">Traslados</a>
+      <a class="nav-link" href="#temporadas">Temporadas</a>
+      <a class="nav-link" href="#objeciones">Objeciones</a>
+      <a class="nav-link" href="#noches">Noches</a>
+      <a class="nav-link" href="#script">Script</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <section class="section" id="pais">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Visión general</span>
+          <h2>Curaçao como producto turístico</h2>
+        </div>
+        <p class="section-intro">
+          Curaçao no entra tan bien como venta de “todo incluido y me olvido del mundo”, sino como Caribe con más alma visual y más recorrido. Tiene playas, pero también una capital UNESCO, barrios con mucho carácter, zonas con ambiente y una excelente lectura para cliente que quiere algo más que hotel y tumbona.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="label">Aeropuerto principal</span>
+          <strong>CUR</strong>
+          <span>Curaçao International Airport, bien conectado con la capital y principales zonas turísticas.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Gran diferencial</span>
+          <strong>Willemstad UNESCO</strong>
+          <span>La ciudad añade cultura, paseo, color y valor percibido al viaje.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Clima</span>
+          <strong>Muy vendible todo el año</strong>
+          <span>Fuera del cinturón de huracanes y con lluvias normalmente breves.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Duración ideal</span>
+          <strong>7 a 10 noches</strong>
+          <span>Da tiempo a playa, ciudad, calas del oeste y experiencia local sin prisa.</span>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:26px;">
+        <div>
+          <div class="info-box">
+            <strong>Frase de venta base:</strong>
+            “Curaçao es para quien quiere Caribe, sí, pero con más color, más ciudad, mejor paseo y una sensación de viaje más completa que la de un destino puramente resort.”
+          </div>
+
+          <div class="cards-2">
+            <div class="card">
+              <h3>Cliente ideal</h3>
+              <ul class="clean">
+                <li>Parejas que quieren playa y algo más que hotel.</li>
+                <li>Viajeros que disfrutan saliendo a cenar, pasear o ver ciudad.</li>
+                <li>Clientes que valoran snorkel, buceo y calas con agua muy clara.</li>
+                <li>Repetidores de Caribe que buscan un destino menos estándar.</li>
+                <li>Perfil medio-alto que aprecia diseño, estética y autenticidad.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Pregunta de detección</h3>
+              <p>
+                “¿Buscáis una base más urbana y con vida, una playa con ambiente, una zona más tranquila y elegante o un viaje donde además podáis recorrer calas y ver una isla con más personalidad?”
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="height:100%;">
+            <h3>Cómo posicionarlo bien</h3>
+            <ul class="clean">
+              <li><strong>Willemstad / Pietermaai</strong>: para quien quiere ciudad, color, restaurantes y cultura.</li>
+              <li><strong>Mambo Beach</strong>: la venta más social y fácil si se busca playa con servicios y ambiente.</li>
+              <li><strong>Jan Thiel</strong>: playa con servicios, restaurantes y perfil más ordenado y vacacional.</li>
+              <li><strong>Blue Bay</strong>: opción más tranquila, familiar o elegante.</li>
+              <li><strong>Westpunt</strong>: no siempre como base; muchas veces funciona mejor como gran día de playas y snorkel.</li>
+            </ul>
+
+            <div class="tag-row">
+              <span class="tag">UNESCO</span>
+              <span class="tag">Color local</span>
+              <span class="tag">Snorkel</span>
+              <span class="tag">Calas</span>
+              <span class="tag">Más personalidad</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="willemstad">
+      <div class="destination-top">
+        <div class="destination-number">1</div>
+        <h3>Willemstad / Pietermaai</h3>
+        <p class="destination-subtitle">
+          El gran rasgo diferencial de Curaçao. Willemstad aporta al viaje una lectura que pocos destinos de playa tienen: arquitectura colonial colorida, distritos históricos, terrazas, paseo urbano y sensación real de estar en una isla con identidad propia.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas que quieren ciudad + playa.</li>
+              <li>Viajeros culturales y foodies.</li>
+              <li>Clientes repeaters de Caribe.</li>
+              <li>Perfil que disfruta caminar, fotografiar y cenar fuera del hotel.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Capital UNESCO muy vendible visualmente.</li>
+              <li>Distritos con personalidad: Punda, Otrobanda, Pietermaai, Scharloo.</li>
+              <li>Más contenido de viaje que un destino de resort puro.</li>
+              <li>Muy buena base para escapadas con estilo.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Handelskade y las fachadas icónicas.</li>
+              <li>Punda y Otrobanda.</li>
+              <li>Pietermaai como zona con más restauración y ambiente.</li>
+              <li>Fort Amsterdam, Fort Rif y patrimonio histórico.</li>
+              <li>Paseo fotográfico, arquitectura y terrazas.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>CUR → Willemstad:</strong> aprox. 15 a 20 min.</li>
+              <li>Muy buena opción para primera o última noche.</li>
+              <li>Ideal para cliente que quiere empezar el viaje con contenido urbano.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender Willemstad:</strong> “No es un simple complemento; es una parte esencial del valor de Curaçao. Hace que el viaje se sienta más especial, más fotogénico y más completo que una estancia de playa convencional.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Hoteles boutique, alojamientos con diseño, propiedades urbanas con encanto y hoteles para clientes que quieren salir mucho a cenar o pasear.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Willemstad como zona de playa principal. Es una gran base urbana, pero si el cliente imagina bajar del hotel y plantarse en la arena, conviene combinarlo con otra zona.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="mambo">
+      <div class="destination-top">
+        <div class="destination-number">2</div>
+        <h3>Mambo Beach</h3>
+        <p class="destination-subtitle">
+          La playa más popular y la más fácil de vender cuando el cliente quiere una zona viva, cómoda, con servicios, beach clubs, restaurantes, tiendas y sensación de vacaciones activas.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas y grupos que quieren ambiente.</li>
+              <li>Cliente que no quiere quedarse aislado en el hotel.</li>
+              <li>Viajero que valora playa + ocio + restauración.</li>
+              <li>Perfil que quiere una zona con movimiento y vida.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Zona muy conocida y fácil de entender comercialmente.</li>
+              <li>Combina playa, shopping, dining y entretenimiento.</li>
+              <li>Muy vendible para primera visita a Curaçao.</li>
+              <li>Buena sensación de comodidad y vida alrededor.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Playa equipada y con servicios.</li>
+              <li>Mambo Beach Boulevard.</li>
+              <li>Beach clubs y ambiente diurno.</li>
+              <li>Buena base para moverse hacia Willemstad.</li>
+              <li>Zona social, dinámica y cómoda.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>CUR → Mambo Beach:</strong> aprox. 15 a 20 min.</li>
+              <li>Muy buena operativa para cliente que quiere llegar y entrar rápido en modo vacaciones.</li>
+              <li>Perfecta como base si se prioriza ambiente.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender Mambo Beach:</strong> “Es la Curaçao más fácil para quien quiere una base de playa con ambiente, restaurantes, tiendas y sensación de que siempre hay algo cerca.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Resorts y hoteles de playa orientados a cliente social, parejas activas y viajeros que quieren cercanía a ocio y restauración.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Mambo como la zona más exclusiva o más tranquila de la isla. Gana por ambiente y comodidad, no por intimidad.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="janthiel">
+      <div class="destination-top">
+        <div class="destination-number">3</div>
+        <h3>Jan Thiel</h3>
+        <p class="destination-subtitle">
+          Jan Thiel es una venta muy sólida para quien quiere una zona de playa bien montada, con restaurantes, deporte, servicios y un ambiente vacacional muy cómodo, pero normalmente más ordenado que Mambo.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas que quieren playa con servicios y buen ambiente.</li>
+              <li>Familias o viajeros activos.</li>
+              <li>Cliente que busca comodidad sin tanta sensación urbana.</li>
+              <li>Perfil que quiere restaurantes y actividad cerca.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Playa muy comercial y muy fácil de explicar.</li>
+              <li>Restaurantes, entretenimiento y deporte.</li>
+              <li>Base vacacional clara para estancia de una semana.</li>
+              <li>Muy bien percibida por cliente europeo y de pareja.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Zona de playa con varios restaurantes.</li>
+              <li>Ambiente vacacional bien estructurado.</li>
+              <li>Opciones deportivas y actividades acuáticas.</li>
+              <li>Buena mezcla entre relax y vida de destino.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>CUR → Jan Thiel:</strong> aprox. 20 a 30 min.</li>
+              <li>Tiempo asumible y razonable para una de las zonas más fáciles de vender.</li>
+              <li>Puede alargarse algo según tráfico.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box pink">
+          <strong>Cómo vender Jan Thiel:</strong> “Si queréis una base muy cómoda, con playa, restaurantes y ambiente vacacional bien resuelto, Jan Thiel suele funcionar muy bien.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Resorts, apartamentos turísticos de nivel, villas y alojamientos para cliente que busca independencia con una zona bien organizada alrededor.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Jan Thiel como la zona más auténtica o más cultural de Curaçao. Es una buena base de vacaciones, pero la parte más diferencial de la isla sigue estando en Willemstad y en las playas del oeste.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="bluebay">
+      <div class="destination-top">
+        <div class="destination-number">4</div>
+        <h3>Blue Bay</h3>
+        <p class="destination-subtitle">
+          Es la opción más clara cuando el cliente quiere tranquilidad, una playa cómoda, perfil familiar o un ambiente más elegante y menos social que Mambo o Jan Thiel.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Familias con niños.</li>
+              <li>Parejas que buscan paz y menos ruido.</li>
+              <li>Cliente medio-alto que quiere relajación real.</li>
+              <li>Viajeros que valoran playa con servicios sin masificación visual.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Playa agradable y muy funcional.</li>
+              <li>Entrada suave al mar, buena para niños.</li>
+              <li>Servicios, sombra, restaurante y centro de deportes acuáticos.</li>
+              <li>Muy cómoda operativamente por cercanía al aeropuerto.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Playa con palmeras y buen nivel de servicios.</li>
+              <li>Snorkel, diving y kayak.</li>
+              <li>Ambiente más calmado que otras zonas.</li>
+              <li>Muy buen encaje para descanso.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>CUR → Blue Bay:</strong> aprox. 10 min.</li>
+              <li>Gran ventaja para clientes que valoran trayectos cortos.</li>
+              <li>Muy fácil para estancia relajada desde el primer día.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender Blue Bay:</strong> “Si queréis una Curaçao más tranquila, cómoda y muy fácil de disfrutar, Blue Bay encaja mejor que las zonas más sociales.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Resort de playa, apartamentos o villas dentro de entorno cuidado, ideal para familia o pareja que quiere desconexión.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No vender Blue Bay a quien sueña con salir andando a muchas opciones de vida nocturna o paseo urbano. Aquí prima la calma.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section destination" id="westpunt">
+      <div class="destination-top">
+        <div class="destination-number">5</div>
+        <h3>Westpunt / playas del oeste</h3>
+        <p class="destination-subtitle">
+          La costa oeste concentra algunas de las playas y calas más bonitas para snorkel, vistas abiertas, tortugas marinas y una sensación más natural. Muchas veces se vende mejor como gran excursión o como una parte del viaje para cliente muy de playa y mar.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Viajeros que priorizan mar, snorkel y naturaleza.</li>
+              <li>Parejas y exploradores de isla.</li>
+              <li>Clientes con coche que quieren recorrer playas.</li>
+              <li>Perfil menos urbano y más paisajístico.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Gran argumento de excursión dentro del viaje.</li>
+              <li>Playas muy potentes visualmente.</li>
+              <li>Snorkel, diving y posibilidad de ver tortugas en algunas zonas.</li>
+              <li>Lectura más natural y menos construida de Curaçao.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Playa Lagun.</li>
+              <li>Playa Forti.</li>
+              <li>Playa Piskadó / Playa Grandi.</li>
+              <li>Playa Kalki.</li>
+              <li>Miradores como Santa Martha Bay.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>CUR → Westpunt:</strong> aprox. 35 a 45 min.</li>
+              <li><strong>Willemstad → oeste:</strong> aprox. 45 a 60 min según playa.</li>
+              <li>Perfecto para un día de road trip o para cliente muy de calas y snorkel.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender Westpunt:</strong> “Es la parte que le demuestra al cliente que Curaçao no es solo ciudad y hotel: también tiene una costa oeste espectacular para pasar uno o varios días de playa de verdad.”
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Uso comercial correcto</h4>
+            <p>
+              Excelente para excursiones o para enriquecer una estancia en Willemstad, Jan Thiel, Mambo o Blue Bay. En ventas estándar, suma mucho valor como paseo estrella.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No siempre es la base más práctica para primera venta si el cliente quiere salir a cenar, moverse fácil y tener ciudad cerca. Ahí ganan otras zonas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="comparativa">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Lectura rápida</span>
+          <h2>Comparativa comercial de zonas</h2>
+        </div>
+        <p class="section-intro">
+          En Curaçao la elección de zona cambia mucho el tono del viaje. Es un destino de segmentación clara.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Producto principal</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Willemstad / Pietermaai</strong></td>
+            <td>Ciudad + cultura + gastronomía</td>
+            <td>Parejas, viajeros urbanos, repeaters</td>
+            <td>“La parte que hace que Curaçao no sea solo playa.”</td>
+          </tr>
+          <tr>
+            <td><strong>Mambo Beach</strong></td>
+            <td>Playa con ambiente</td>
+            <td>Parejas, grupos, cliente social</td>
+            <td>“La base más fácil si queréis playa, servicios y vida alrededor.”</td>
+          </tr>
+          <tr>
+            <td><strong>Jan Thiel</strong></td>
+            <td>Zona vacacional bien resuelta</td>
+            <td>Parejas, familias, cliente cómodo</td>
+            <td>“Playa, restaurantes y vacaciones muy fáciles de disfrutar.”</td>
+          </tr>
+          <tr>
+            <td><strong>Blue Bay</strong></td>
+            <td>Relax + comodidad</td>
+            <td>Familias, parejas tranquilas, cliente medio-alto</td>
+            <td>“La Curaçao más serena y descansada.”</td>
+          </tr>
+          <tr>
+            <td><strong>Westpunt</strong></td>
+            <td>Calas + snorkel + naturaleza</td>
+            <td>Exploradores, amantes del mar</td>
+            <td>“La parte más natural y de playas potentes de la isla.”</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="traslados">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Operativa</span>
+          <h2>Tiempos medios de traslado</h2>
+        </div>
+        <p class="section-intro">
+          En Curaçao conviene hablar siempre de tiempos medios orientativos. La isla es manejable, pero algunas zonas y playas del oeste ya requieren asumir algo más de carretera.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Aeropuerto</th>
+            <th>Tiempo medio orientativo</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Willemstad / Pietermaai</strong></td>
+            <td>CUR</td>
+            <td>15 a 20 min</td>
+            <td>Muy buena para combinar ciudad y llegada fácil.</td>
+          </tr>
+          <tr>
+            <td><strong>Mambo Beach</strong></td>
+            <td>CUR</td>
+            <td>15 a 20 min</td>
+            <td>Base muy cómoda y de acceso sencillo.</td>
+          </tr>
+          <tr>
+            <td><strong>Jan Thiel</strong></td>
+            <td>CUR</td>
+            <td>20 a 30 min</td>
+            <td>Tiempo razonable para una de las zonas más comerciales.</td>
+          </tr>
+          <tr>
+            <td><strong>Blue Bay</strong></td>
+            <td>CUR</td>
+            <td>10 min</td>
+            <td>Una de las llegadas más fáciles de toda la isla.</td>
+          </tr>
+          <tr>
+            <td><strong>Westpunt / playas del oeste</strong></td>
+            <td>CUR</td>
+            <td>35 a 45 min</td>
+            <td>Muy bien como excursión o para cliente que prioriza playas y snorkel.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box pink">
+        <strong>Tip de venta operativa:</strong> si el cliente quiere minimizar carretera, Mambo, Willemstad y Blue Bay funcionan muy bien. Si acepta moverse para ver las mejores calas, Westpunt sube muchísimo el valor del viaje.
+      </div>
+    </section>
+
+    <section class="section" id="temporadas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Estacionalidad</span>
+          <h2>Temporadas comerciales</h2>
+        </div>
+        <p class="section-intro">
+          Curaçao es un destino muy vendible durante gran parte del año. La clave está en explicar bien que la isla tiene clima muy aprovechable y que incluso en meses más húmedos la lluvia suele ser breve y localizada.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Lectura comercial</th>
+            <th>Cómo venderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Febrero – junio</strong></td>
+            <td>Periodo más seco</td>
+            <td>Ventana excelente para vender playa, ciudad y excursiones con muy poca preocupación por lluvia.</td>
+          </tr>
+          <tr>
+            <td><strong>Julio – septiembre</strong></td>
+            <td>Muy buena temporada y verano fuerte</td>
+            <td>Sigue siendo una gran época para vender la isla, especialmente si el cliente quiere Caribe en verano y buen contenido de playa.</td>
+          </tr>
+          <tr>
+            <td><strong>Octubre – diciembre</strong></td>
+            <td>Meses más húmedos</td>
+            <td>Explicar que suele haber chubascos cortos, intensos y localizados, no una lluvia que arruine el viaje entero.</td>
+          </tr>
+          <tr>
+            <td><strong>Junio – noviembre</strong></td>
+            <td>Temporada oficial de huracanes del Caribe</td>
+            <td>Muy buen argumento para Curaçao: está fuera del cinturón de huracanes, aunque nunca se promete clima perfecto absoluto.</td>
+          </tr>
+          <tr>
+            <td><strong>Febrero / marzo, agosto / septiembre, diciembre</strong></td>
+            <td>Meses con eventos y ambiente</td>
+            <td>Carnaval, North Sea Jazz y festividad de fin de año ayudan mucho a vender la isla con más vida y valor añadido.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Meses más fáciles para vender</h4>
+          <p>
+            De febrero a junio si el cliente busca sequedad y mucha comodidad climática, y también verano si quiere combinar playa con buena energía de destino.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Cómo explicar la lluvia</h4>
+          <p>
+            No como una “temporada mala”, sino como un periodo donde puede haber chubascos cortos, pero el viaje sigue siendo muy disfrutable y comercialmente fuerte.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="objeciones">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Ventas</span>
+          <h2>Cómo manejar objeciones</h2>
+        </div>
+        <p class="section-intro">
+          Curaçao no se cierra vendiéndolo como un Caribe estándar, sino explicando bien que aporta más personalidad, más ciudad y más variedad de tonos dentro de una isla manejable.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>“Yo quería un Caribe más de resort puro.”</h4>
+          <p>
+            Respuesta: entonces hay que matizar bien la expectativa. Curaçao no destaca por ser un destino de resort cerrado, sino por dar una experiencia más completa con playa, ciudad, restaurantes y mucha más personalidad.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“¿No será demasiado urbano?”</h4>
+          <p>
+            Respuesta: no, porque precisamente lo interesante es que puedes dormir cerca de playa y tener la ciudad muy accesible. Curaçao combina ambas cosas muy bien.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Quiero playas buenas de verdad.”</h4>
+          <p>
+            Respuesta: sí las tiene, pero hay que venderlas bien por zonas. Mambo y Jan Thiel funcionan por comodidad y ambiente; el oeste destaca por calas más potentes y snorkel.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Me preocupa el tiempo.”</h4>
+          <p>
+            Respuesta: Curaçao juega muy bien esa baza porque está fuera del cinturón de huracanes. Aunque ningún destino garantiza clima perfecto siempre, aquí la venta climática es sólida.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“No quiero perder tiempo en coche.”</h4>
+          <p>
+            Respuesta: las zonas principales quedan bastante bien resueltas desde el aeropuerto. Solo el oeste requiere asumir más trayecto, pero compensa si el cliente ama las calas y el snorkel.
+          </p>
+        </div>
+        <div class="card">
+          <h4>“Busco algo diferente a Aruba o República Dominicana.”</h4>
+          <p>
+            Respuesta: ahí Curaçao encaja muy bien. Tiene más ciudad, más color, más sensación de destino y una identidad visual y cultural mucho más marcada.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box orange">
+        <strong>Alerta crítica:</strong> no vendas Curaçao como si todo el atractivo estuviera en la playa del hotel. Su fuerza real está en la combinación de ciudad, color, mar, calas, paseo y autenticidad.
+      </div>
+    </section>
+
+    <section class="section" id="noches">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Duración ideal</span>
+          <h2>Noches recomendadas</h2>
+        </div>
+        <p class="section-intro">
+          Mantengo la misma lógica comercial que venimos usando: 7 noches como mínimo razonable y 10 noches como ideal para disfrutar bien el destino.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Base / zona</th>
+            <th>Mínimo recomendable</th>
+            <th>Ideal</th>
+            <th>Lectura comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Willemstad / Pietermaai</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Muy buena para cliente que va a moverse y quiere un viaje con contenido.</td>
+          </tr>
+          <tr>
+            <td><strong>Mambo Beach</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Base sencilla y vendible para una primera Curaçao.</td>
+          </tr>
+          <tr>
+            <td><strong>Jan Thiel</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Encaja muy bien para estancia equilibrada y cómoda.</td>
+          </tr>
+          <tr>
+            <td><strong>Blue Bay</strong></td>
+            <td>7 noches</td>
+            <td>10 noches</td>
+            <td>Ideal para descanso, familia o viaje tranquilo.</td>
+          </tr>
+          <tr>
+            <td><strong>Westpunt</strong></td>
+            <td>Paseo / complemento</td>
+            <td>1 o varios días dentro del viaje</td>
+            <td>Se recomienda como valor añadido o como parte exploratoria de la isla.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Venta simple</h4>
+          <p>
+            7 noches con una sola base principal y varias salidas a Willemstad o a las playas del oeste.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Venta que sube valor</h4>
+          <p>
+            10 noches para combinar mejor playa, ciudad, snorkel, oeste de la isla y gastronomía sin sensación de viaje apretado.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="script">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cierre comercial</span>
+          <h2>Script de venta</h2>
+        </div>
+        <p class="section-intro">
+          Guion pensado para primera llamada, mail comercial o lectura rápida durante la cotización.
+        </p>
+      </div>
+
+      <div class="script-box">
+        <p><strong>Apertura:</strong> “Curaçao os puede encajar muy bien si queréis Caribe, pero no uno plano. Aquí tenéis playa, sí, pero también ciudad con mucho encanto, buenos restaurantes, snorkel y una sensación de viaje con más personalidad.”</p>
+        <p><strong>Pregunta de detección:</strong> “¿Os imagináis más en una base con ciudad y paseo, en una playa con ambiente, en una zona tranquila o en un viaje donde queráis recorrer calas y ver varias caras de la isla?”</p>
+        <p><strong>Lectura rápida:</strong> “Willemstad si queréis cultura y ciudad; Mambo si queréis playa con ambiente; Jan Thiel si queréis una base vacacional muy cómoda; Blue Bay si buscáis relax; y Westpunt para las mejores calas y snorkel.”</p>
+        <p><strong>Cierre recomendado:</strong> “Yo no bajaría de 7 noches y, si queréis disfrutar Curaçao de verdad, 10 noches es lo ideal. Es un destino que gana mucho cuando os da tiempo a combinar playa y ciudad sin correr.”</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Guía comercial base · Dr. Viaje · Curaçao · Formato comercial-consultivo</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" aria-label="Subir">↑</button>
+
+  <script>
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        scrollTopBtn.style.display = 'block';
+      } else {
+        scrollTopBtn.style.display = 'none';
+      }
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

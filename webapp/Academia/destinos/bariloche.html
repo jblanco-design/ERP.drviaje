@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bariloche | Dr.Viaje — Capacitación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --critical-red: #d32f2f;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.65;
+            padding-top: 0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white);
+            padding: 42px 0 34px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before,
+        header::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+
+        header::before {
+            width: 220px;
+            height: 220px;
+            top: -80px;
+            right: -40px;
+        }
+
+        header::after {
+            width: 160px;
+            height: 160px;
+            bottom: -70px;
+            left: -20px;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.24);
+            color: var(--white);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            margin-bottom: 18px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.95rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .destination-header {
+            max-width: 860px;
+        }
+
+        .destination-header h1 {
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            line-height: 1.08;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .destination-subtitle {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.92);
+            max-width: 860px;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .nav-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 14px 0;
+            scrollbar-width: none;
+        }
+
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-links a {
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255,152,0,0.12), rgba(233,30,99,0.12));
+            color: var(--primary-purple);
+            border: 1px solid rgba(123,45,142,0.12);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: var(--white);
+        }
+
+        main {
+            padding: 28px 0 80px;
+        }
+
+        .destination-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange);
+            overflow: hidden;
+            padding: 28px;
+        }
+
+        .section + .section {
+            margin-top: 34px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            font-size: clamp(1.85rem, 4vw, 2.5rem);
+            color: var(--primary-purple);
+            margin-bottom: 18px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .section h3 {
+            font-size: 1.45rem;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+            padding-left: 14px;
+            border-left: 5px solid var(--primary-orange);
+            font-weight: 800;
+        }
+
+        .section p {
+            color: var(--text-medium);
+            margin-bottom: 12px;
+        }
+
+        .info-box,
+        .tip-box,
+        .alert-box,
+        .script-box,
+        .critical-alert {
+            border-radius: var(--radius-lg);
+            padding: 18px 18px 18px 20px;
+            margin: 18px 0;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(33,150,243,0.08), rgba(123,45,142,0.05));
+            border-left: 5px solid var(--primary-purple);
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(255,193,7,0.13), rgba(255,152,0,0.10));
+            border-left: 5px solid var(--primary-orange);
+        }
+
+        .tip-box strong::before {
+            content: "💡 ";
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, rgba(233,30,99,0.10), rgba(255,255,255,0.95));
+            border-left: 5px solid var(--primary-pink);
+        }
+
+        .alert-box strong::before {
+            content: "⚠️ ";
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, rgba(123,45,142,0.08), rgba(63,81,181,0.08));
+            border: 2px solid rgba(123,45,142,0.22);
+        }
+
+        .script-box strong::before {
+            content: "💬 ";
+        }
+
+        .critical-alert {
+            border: 3px solid var(--critical-red);
+            background: linear-gradient(135deg, rgba(211,47,47,0.10), rgba(255,255,255,0.98));
+        }
+
+        .critical-alert strong {
+            color: var(--critical-red);
+        }
+
+        .regions-grid,
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .region-card,
+        .mini-card {
+            background: var(--white);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            border-top: 6px solid var(--primary-pink);
+        }
+
+        .region-card:nth-child(odd),
+        .mini-card:nth-child(odd) {
+            border-top-color: var(--primary-orange);
+        }
+
+        .region-card h4,
+        .mini-card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+            color: var(--primary-purple);
+            font-weight: 800;
+        }
+
+        .region-card p,
+        .mini-card p {
+            margin-bottom: 8px;
+            font-size: 0.97rem;
+        }
+
+        .bullet-list {
+            display: grid;
+            gap: 10px;
+            margin: 14px 0 0;
+        }
+
+        .bullet-list li {
+            list-style: none;
+            position: relative;
+            padding-left: 18px;
+            color: var(--text-medium);
+        }
+
+        .bullet-list li::before {
+            content: "•";
+            color: var(--primary-orange);
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 16px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            min-width: 740px;
+        }
+
+        thead th {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white);
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 0.96rem;
+            font-weight: 800;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            color: var(--text-medium);
+            vertical-align: top;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .highlight {
+            color: var(--primary-purple);
+            font-weight: 700;
+        }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            color: var(--text-medium);
+            font-size: 0.92rem;
+            padding: 22px 0 6px;
+        }
+
+        .scroll-top {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            color: var(--white);
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 900px) {
+            .regions-grid,
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .destination-card {
+                padding: 22px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 34px 0 28px;
+            }
+
+            .destination-card {
+                padding: 18px;
+                border-radius: 18px;
+            }
+
+            .section h2 {
+                font-size: 1.85rem;
+            }
+
+            .section h3 {
+                font-size: 1.22rem;
+            }
+
+            .nav-links a {
+                font-size: 0.88rem;
+                padding: 9px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+  <!-- NAVBAR GLOBAL (inyectado automáticamente) -->
+  <script src="../js/navbar-inject.js"></script>
+
+<header>
+    <div class="container header-content">
+
+        <div class="logo-section">
+            <div class="destination-header">
+                <h1>Bariloche</h1>
+                <p class="destination-subtitle">
+                    Guía comercial definitiva para vender un destino que combina nieve, lagos, bosque,
+                    chocolate, excursiones panorámicas y experiencias familiares durante todo el año.
+                </p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <div class="container nav-container nav-links">
+        <a href="#presentacion">Presentación</a>
+        <a href="#perfil">Cliente ideal</a>
+        <a href="#caracteristicas">Características</a>
+        <a href="#opcionales">Paseos opcionales</a>
+        <a href="#temporadas">Temporadas</a>
+        <a href="#alojamientos">Alojamientos</a>
+        <a href="#ninos">Niños</a>
+        <a href="#operativa">Operativa</a>
+        <a href="#costos">Costo de vida</a>
+        <a href="#datos">Datos clave</a>
+        <a href="#alertas">Alertas</a>
+        <a href="#script">Script de venta</a>
+    </div>
+</nav>
+
+<main>
+    <div class="container">
+        <article class="destination-card">
+
+            <section id="presentacion" class="section">
+                <h2>🏔️ Bariloche</h2>
+                <h3>Presentación del destino</h3>
+                <p>
+                    Bariloche es uno de los destinos más completos del Cono Sur para vender desde agencia:
+                    tiene nieve en invierno, lagos y actividades al aire libre en verano, paisajes muy
+                    reconocibles, buena gastronomía y un imaginario emocional fuerte asociado a montaña,
+                    chocolate y vacaciones familiares.
+                </p>
+                <p>
+                    Comercialmente funciona muy bien tanto en primera visita como en repetición. Puede
+                    venderse como viaje familiar, escapada romántica, vacaciones de invierno, experiencia
+                    de nieve para principiantes o viaje de naturaleza con opcionales de navegación y montaña.
+                </p>
+
+                <div class="info-box">
+                    <strong>Posicionamiento comercial:</strong> Bariloche no se vende solo como nieve.
+                    Se vende como un destino de experiencias patagónicas todo el año, con excelente capacidad
+                    para adaptarse a distintos presupuestos y perfiles de cliente.
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> si el pasajero duda entre “destino de paisaje” y “destino de actividades”,
+                    Bariloche suele cerrar muy bien porque combina las dos cosas sin perder comodidad operativa.
+                </div>
+            </section>
+
+            <section id="perfil" class="section">
+                <h3>👥 Perfil de cliente ideal</h3>
+                <p>
+                    Es un destino muy transversal, pero rinde especialmente bien cuando el pasajero busca
+                    naturaleza impactante, una escapada ordenada con servicios, paseos visuales y actividades
+                    fáciles de entender comercialmente.
+                </p>
+
+                <div class="cards-grid">
+                    <div class="mini-card">
+                        <h4>👨‍👩‍👧 Familias</h4>
+                        <p>Ideal para vacaciones con niños por la combinación de paisajes, chocolate, actividades suaves y excursiones panorámicas.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>💑 Parejas</h4>
+                        <p>Funciona muy bien para viajes románticos, aniversarios o escapadas con hotelería cálida, lago y montaña.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>❄️ Primera experiencia de nieve</h4>
+                        <p>Muy vendible para clientes que quieren conocer la nieve sin ir a un destino exclusivamente técnico de esquí.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>📸 Amantes del paisaje</h4>
+                        <p>Perfil que prioriza miradores, naturaleza, navegación, bosques y recorridos escénicos.</p>
+                    </div>
+                </div>
+
+                <div class="script-box">
+                    <strong>Script de detección:</strong><br>
+                    “¿Están buscando un viaje más de paisaje, más familiar, con nieve, o algo de montaña pero sin que sea exigente?
+                    Porque Bariloche permite armarlo de forma muy flexible según lo que más disfruten.”
+                </div>
+            </section>
+
+            <section id="caracteristicas" class="section">
+                <h3>🌄 Características turísticas principales</h3>
+                <p>
+                    La fuerza del destino está en sus clásicos muy fáciles de vender: panorámicas lacustres,
+                    miradores, bosques, navegación y, en temporada, centros de nieve. Además, tiene un muy buen
+                    equilibrio entre naturaleza y sensación de ciudad turística consolidada.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>🚠 Cerro Campanario</h4>
+                        <p>
+                            Uno de los miradores más efectivos para vender Bariloche. Se accede en aerosilla o con una caminata corta
+                            y ofrece una vista panorámica amplia de lagos, penínsulas y cerros.
+                        </p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🎿 Cerro Catedral</h4>
+                        <p>
+                            Principal polo de nieve y esquí del destino. En invierno es clave para quienes quieren vivir ambiente de montaña,
+                            y en otras épocas sigue sumando valor como zona de altura y actividades.
+                        </p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🛣️ Circuito Chico</h4>
+                        <p>
+                            Paseo panorámico clásico que resume la postal de Bariloche: lagos, bosque, Llao Llao,
+                            miradores, artesanías y puntos emblemáticos.
+                        </p>
+                    </div>
+                    <div class="region-card">
+                        <h4>🍫 Identidad Bariloche</h4>
+                        <p>
+                            Chocolate, gastronomía de montaña y estética patagónica ayudan mucho a convertir interés
+                            en compra. El destino genera una idea de viaje “vivible” y emocional.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Imperdibles para armado base:</strong> Circuito Chico, Cerro Campanario,
+                    zona del lago, tiempo libre gastronómico y, según fecha, un paseo de nieve o navegación.
+                </div>
+            </section>
+
+            <section id="opcionales" class="section">
+                <h3>🏔️ Paseos opcionales</h3>
+                <p>
+                    En Bariloche, los opcionales bien vendidos hacen subir mucho el valor percibido del viaje.
+                    La clave comercial es ofrecer una base panorámica y accesible para todos, y luego sumar
+                    paseos de navegación, naturaleza o montaña según perfil, edad de los pasajeros y época del año.
+                </p>
+
+                <div class="info-box">
+                    <strong>Cómo vender Bariloche:</strong> primero asegurar los clásicos panorámicos para primera visita
+                    y después escalar a excursiones más completas o paisajísticas. Es un destino donde el cliente
+                    suele comprar mejor cuando visualiza el “mix” entre lagos, montaña, bosque y nieve.
+                </div>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>📍 Circuito Chico + Cerro Campanario</h4>
+                        <p>
+                            Es el opcional más fácil de vender en primeras visitas porque resume la esencia visual de Bariloche:
+                            lagos, bosques, miradores y postales emblemáticas. El recorrido clásico pasa por zonas como
+                            Villa Llao Llao, Puerto Pañuelo, Colonia Suiza y distintos puntos panorámicos.
+                        </p>
+                        <p><strong>Ideal para:</strong> primera visita, familias, parejas, pasajeros mayores y viajes cortos.</p>
+                        <p><strong>Valor de venta:</strong> panorámico, accesible, muy fotogénico y apto para casi todo perfil.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🌲 Villa La Angostura</h4>
+                        <p>
+                            Muy buena excursión para pasajeros que ya quieren salir de Bariloche y conocer otro punto fuerte
+                            de la Patagonia andina. Se percibe como una villa elegante y natural, con gran valor escénico
+                            y una atmósfera más exclusiva.
+                        </p>
+                        <p><strong>Ideal para:</strong> parejas, repetidores, amantes del paisaje y clientes contemplativos.</p>
+                        <p><strong>Valor de venta:</strong> combina villa de montaña, bosques, lago y sensación de “otro destino dentro del viaje”.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>⛵ Isla Victoria + Bosque de Arrayanes</h4>
+                        <p>
+                            Uno de los opcionales más completos para quien quiere navegación y naturaleza.
+                            Parte desde Puerto Pañuelo y permite recorrer el legendario Bosque de Arrayanes
+                            y luego Isla Victoria, con senderos, playa y entorno natural muy memorable.
+                        </p>
+                        <p><strong>Ideal para:</strong> familias, parejas y clientes que buscan excursiones clásicas de alto valor percibido.</p>
+                        <p><strong>Valor de venta:</strong> experiencia icónica, navegación + caminata + naturaleza emblemática.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🌿 Puerto Blest + Cascada de los Cántaros</h4>
+                        <p>
+                            Paseo ideal para vender naturaleza patagónica más húmeda y frondosa.
+                            La navegación llega a una de las zonas más impactantes visualmente de la región,
+                            con cascada, selva valdiviana y posibilidad de complementar con lago Frías.
+                        </p>
+                        <p><strong>Ideal para:</strong> parejas, familias y pasajeros que priorizan paisaje y paseo tranquilo.</p>
+                        <p><strong>Valor de venta:</strong> navegación escénica, vegetación exuberante y entorno premium natural.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🧊 Cerro Tronador</h4>
+                        <p>
+                            Es un opcional de mayor impacto paisajístico para pasajeros que quieren montaña de verdad.
+                            El recorrido atraviesa lagos, bosques, miradores y culmina con el Ventisquero Negro,
+                            uno de los puntos más distintivos de la zona.
+                        </p>
+                        <p><strong>Ideal para:</strong> amantes de la naturaleza, viajeros activos, repetidores y clientes paisajísticos.</p>
+                        <p><strong>Valor de venta:</strong> excursión de alto impacto visual, más aventura y montaña que el paseo clásico.</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Paseo</th>
+                                <th>Perfil recomendado</th>
+                                <th>Cuándo venderlo</th>
+                                <th>Enfoque comercial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="highlight">Circuito Chico + Campanario</span></td>
+                                <td>Primera visita, familias, adultos mayores</td>
+                                <td>Siempre</td>
+                                <td>Base obligatoria para entender Bariloche y llevarse la postal clásica</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Villa La Angostura</span></td>
+                                <td>Parejas, repetidores, amantes del paisaje</td>
+                                <td>Todo el año</td>
+                                <td>Paseo escénico con sensación de exclusividad y villa patagónica</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Isla Victoria + Arrayanes</span></td>
+                                <td>Familias, parejas, primera visita</td>
+                                <td>Mejor con buen clima</td>
+                                <td>Navegación emblemática y experiencia muy recordable</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Puerto Blest</span></td>
+                                <td>Clientes contemplativos, familias, parejas</td>
+                                <td>Muy fuerte en temporadas templadas</td>
+                                <td>Paisaje premium natural con navegación y cascada</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Cerro Tronador</span></td>
+                                <td>Viajeros activos y amantes de montaña</td>
+                                <td>Cuando se busca naturaleza intensa</td>
+                                <td>Excursión de mayor impacto visual y sensación de aventura</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> para una primera visita, conviene vender
+                    <em>Circuito Chico + Cerro Campanario</em> como base obligatoria.
+                    Después, según el perfil, sumar <em>Isla Victoria</em> o <em>Puerto Blest</em> si buscan navegación,
+                    <em>Villa La Angostura</em> si priorizan paisaje y cambio de escenario,
+                    o <em>Cerro Tronador</em> si quieren una experiencia más fuerte de montaña.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Alerta:</strong> no conviene sobrecargar pasajeros con muchos opcionales de naturaleza en estancias cortas.
+                    En viajes de 3 o 4 noches, lo mejor es priorizar 1 o 2 excursiones bien elegidas.
+                    En invierno, revisar siempre estado de caminos y operativa antes de confirmar salidas de montaña.
+                </div>
+
+                <div class="script-box">
+                    <strong>Script sugerido:</strong><br>
+                    “En Bariloche yo armaría el viaje con un panorámico clásico para que vean la esencia del destino,
+                    como Circuito Chico y Cerro Campanario. Después, según lo que ustedes disfruten más,
+                    podemos sumar una navegación como Isla Victoria o Puerto Blest, o un paseo más escénico
+                    como Villa La Angostura o Cerro Tronador. Así el itinerario queda equilibrado y no se vuelve cansador.”
+                </div>
+            </section>
+
+            <section id="temporadas" class="section">
+                <h3>🗓️ Temporadas y ventanas de venta</h3>
+                <p>
+                    Bariloche cambia mucho según la estación, y eso comercialmente juega a favor. La conversación
+                    correcta no es solo “cuándo conviene ir”, sino “qué experiencia quiere vivir el pasajero”.
+                </p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Temporada</th>
+                                <th>Período</th>
+                                <th>Qué vende mejor</th>
+                                <th>Perfil ideal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="highlight">Invierno</span></td>
+                                <td>21 junio – 20 septiembre</td>
+                                <td>Nieve, centros de esquí, ambiente de montaña</td>
+                                <td>Familias, primera nieve, parejas, grupos</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Verano</span></td>
+                                <td>21 diciembre – 20 marzo</td>
+                                <td>Lagos, trekking, playas, navegación y naturaleza</td>
+                                <td>Familias activas, parejas, viajeros paisajísticos</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Otoño</span></td>
+                                <td>Marzo – mayo</td>
+                                <td>Paisaje, color, menos movimiento</td>
+                                <td>Parejas, clientes tranquilos, escapadas</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight">Primavera</span></td>
+                                <td>Septiembre – noviembre</td>
+                                <td>Menor congestión, naturaleza, buen equilibrio</td>
+                                <td>Parejas, repetidores, pasajeros que evitan alta demanda</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> si el cliente dice “quiero Bariloche pero no necesariamente esquiar”,
+                    no lo lleves de inmediato a invierno. Primavera, verano y otoño pueden cerrar mejor según presupuesto,
+                    ritmo del viaje y perfil.
+                </div>
+            </section>
+
+            <section id="alojamientos" class="section">
+                <h3>🏨 Recomendaciones de alojamiento</h3>
+                <p>
+                    En Bariloche, la zona de alojamiento influye muchísimo en la percepción del viaje. Conviene vender
+                    ubicación según experiencia buscada, no solo según tarifa.
+                </p>
+
+                <div class="regions-grid">
+                    <div class="region-card">
+                        <h4>🏙️ Centro / Centro Cívico</h4>
+                        <p><strong>Ideal para:</strong> primeras visitas, pasajeros sin auto, viajes cortos.</p>
+                        <p><strong>Ventaja:</strong> cercanía a gastronomía, comercio, chocolate y salidas.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🌊 Av. Bustillo / zona lago</h4>
+                        <p><strong>Ideal para:</strong> parejas y familias que priorizan vista y entorno.</p>
+                        <p><strong>Ventaja:</strong> sensación más escénica y patagónica, mejor experiencia visual.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🎿 Villa Cerro Catedral</h4>
+                        <p><strong>Ideal para:</strong> clientes que van centrados en nieve o esquí.</p>
+                        <p><strong>Ventaja:</strong> cercanía operativa al cerro y experiencia más de montaña.</p>
+                    </div>
+
+                    <div class="region-card">
+                        <h4>🏡 Cabañas / apart con cocina</h4>
+                        <p><strong>Ideal para:</strong> familias, grupos pequeños y estadías más largas.</p>
+                        <p><strong>Ventaja:</strong> practicidad, comodidad y mejor manejo del gasto diario.</p>
+                    </div>
+                </div>
+
+                <div class="alert-box">
+                    <strong>Alerta:</strong> vender solo por precio puede generar mala experiencia. En Bariloche,
+                    una mala ubicación puede hacer que el viaje se sienta más cansador y menos disfrutable.
+                </div>
+            </section>
+
+            <section id="ninos" class="section">
+                <h3>🧒 ¿Es recomendable para niños?</h3>
+                <p>
+                    Sí, Bariloche es muy recomendable para familias con niños, siempre que se arme el viaje con lógica
+                    de ritmo y distancias. Tiene mucha fuerza comercial justamente porque permite ofrecer experiencias
+                    memorables sin exigir demasiado físicamente.
+                </p>
+
+                <div class="cards-grid">
+                    <div class="mini-card">
+                        <h4>0 a 5 años</h4>
+                        <p>Conviene priorizar paseos cortos, paisajes, tiempo libre, chocolate y nieve suave si la temporada acompaña.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>6 a 12 años</h4>
+                        <p>Gran edad para Circuito Chico, Campanario, Piedras Blancas, navegación y actividades con componente visual.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>Adolescentes</h4>
+                        <p>Muy buen destino por nieve, aventura suave, fotografía, navegación y sensación de viaje “activo”.</p>
+                    </div>
+                    <div class="mini-card">
+                        <h4>Viaje multigeneracional</h4>
+                        <p>Puede funcionar muy bien si se equilibra paisaje, descansos y uno o dos opcionales fuertes.</p>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> para familias, Bariloche suele cerrar mejor cuando se vende
+                    como experiencia compartida y no como agenda llena de excursiones.
+                </div>
+            </section>
+
+            <section id="operativa" class="section">
+                <h3>✈️ Información operativa</h3>
+                <p>
+                    El aeropuerto de referencia es <strong>BRC – Teniente Luis Candelaria</strong>, ubicado aproximadamente a
+                    13 km de la ciudad. Operativamente es un destino muy claro para cotizar y explicar, tanto en escapadas
+                    como en viajes de vacaciones más completas.
+                </p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trayecto de referencia</th>
+                                <th>Tiempo estimado</th>
+                                <th>Observación comercial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Aeropuerto BRC → Centro</td>
+                                <td>20 a 30 min</td>
+                                <td>Traslado simple y fácil de explicar al pasajero</td>
+                            </tr>
+                            <tr>
+                                <td>Aeropuerto BRC → Av. Bustillo / zona lago</td>
+                                <td>25 a 40 min</td>
+                                <td>Depende de la ubicación exacta del hotel</td>
+                            </tr>
+                            <tr>
+                                <td>Aeropuerto BRC → Cerro Catedral</td>
+                                <td>35 a 45 min</td>
+                                <td>Importante para pasajeros enfocados en nieve</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box">
+                    <strong>Dato operativo útil:</strong> en invierno conviene advertir al pasajero que los tiempos pueden cambiar
+                    por clima, tránsito o estado de rutas, especialmente si el alojamiento está más alejado del centro.
+                </div>
+            </section>
+
+            <section id="costos" class="section">
+                <h3>💵 Costo de vida orientativo en USD</h3>
+                <p>
+                    Para venta consultiva, conviene hablar de gasto diario orientativo y no solo del paquete.
+                    Eso ayuda a que el pasajero perciba control del viaje y reduzca objeciones.
+                </p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Rango estimado</th>
+                                <th>Comentario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Café / merienda</td>
+                                <td>USD 5 – 10</td>
+                                <td>Muy útil para explicar gasto cotidiano</td>
+                            </tr>
+                            <tr>
+                                <td>Almuerzo simple</td>
+                                <td>USD 10 – 15</td>
+                                <td>Puede variar según zona turística</td>
+                            </tr>
+                            <tr>
+                                <td>Cena media</td>
+                                <td>USD 18 – 30</td>
+                                <td>Rango razonable para restaurante estándar</td>
+                            </tr>
+                            <tr>
+                                <td>Cena para dos</td>
+                                <td>USD 40 – 50</td>
+                                <td>Útil para parejas</td>
+                            </tr>
+                            <tr>
+                                <td>Taxi corto</td>
+                                <td>USD 4 – 10</td>
+                                <td>Depende de distancia y horario</td>
+                            </tr>
+                            <tr>
+                                <td>Presupuesto diario económico</td>
+                                <td>USD 35 – 50</td>
+                                <td>Sin grandes extras</td>
+                            </tr>
+                            <tr>
+                                <td>Presupuesto diario medio</td>
+                                <td>USD 60 – 90</td>
+                                <td>El rango más vendible</td>
+                            </tr>
+                            <tr>
+                                <td>Presupuesto diario premium</td>
+                                <td>USD 110+</td>
+                                <td>Mayor confort y consumo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Tip de venta:</strong> presentar estos rangos ayuda mucho a bajar la ansiedad del pasajero
+                    y mejora el cierre cuando pregunta “cuánto voy a gastar realmente por día”.
+                </div>
+            </section>
+
+            <section id="datos" class="section">
+                <h3>📚 Datos clave e históricos</h3>
+                <ul class="bullet-list">
+                    <li>Bariloche tiene una identidad turística muy consolidada, con fuerte asociación emocional a la nieve, la montaña y el chocolate.</li>
+                    <li>Cerro Catedral es uno de los nombres más reconocibles del esquí en la región y le da al destino una gran potencia comercial en invierno.</li>
+                    <li>La zona de Circuito Chico, Llao Llao y Puerto Pañuelo concentra buena parte de la postal más vendible del destino.</li>
+                    <li>En verano y media estación, Bariloche sigue siendo fuerte por lagos, navegación, senderos y paseos panorámicos.</li>
+                    <li>La amplitud de opcionales permite armar propuestas diferentes para primera visita, repetidores, familias o parejas.</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong>Lectura comercial:</strong> Bariloche es de esos destinos que “se explican solos”
+                    cuando el pasajero entiende bien la combinación entre paisaje, alojamiento y opcionales.
+                </div>
+            </section>
+
+            <section id="alertas" class="section">
+                <h3>🚨 Alertas críticas</h3>
+
+                <div class="critical-alert">
+                    <strong>Expectativa correcta:</strong> no vender Bariloche únicamente como destino de nieve.
+                    Si el viaje es fuera de invierno, hay que reposicionarlo como naturaleza, lago, montaña y excursiones.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Clima y vestimenta:</strong> en invierno hay que hablar claramente de ropa adecuada,
+                    calzado y tiempos de traslado variables. En verano, el destino puede tener días cálidos pero sigue
+                    siendo recomendable llevar abrigo liviano para noches o navegación.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Logística:</strong> no conviene cargar demasiados opcionales en estadías cortas.
+                    Un viaje bien armado vende mejor que uno sobrecargado.
+                </div>
+
+                <div class="alert-box">
+                    <strong>Ubicación del hotel:</strong> definir mal la zona de alojamiento puede cambiar mucho
+                    la experiencia general del pasajero.
+                </div>
+            </section>
+
+            <section id="script" class="section">
+                <h3>🗣️ Script de venta consultiva</h3>
+
+                <div class="script-box">
+                    <strong>Apertura:</strong><br>
+                    “Bariloche es un destino súper completo porque no depende de una sola experiencia.
+                    Si viajan en invierno, la nieve suma muchísimo; y si viajan fuera de temporada,
+                    sigue funcionando muy bien por paisajes, lagos, paseos y gastronomía.”
+                </div>
+
+                <div class="script-box">
+                    <strong>Si el cliente dice “quiero nieve pero no esquío”:</strong><br>
+                    “Perfecto, Bariloche igual funciona muy bien porque podés vivir el ambiente de montaña
+                    sin necesidad de hacer esquí técnico. Se puede combinar panorámicos, centro de nieve,
+                    tiempo libre y actividades familiares.”
+                </div>
+
+                <div class="script-box">
+                    <strong>Si el cliente dice “voy con niños”:</strong><br>
+                    “Bariloche es muy buen destino para ir con chicos porque tiene paisaje, actividades suaves,
+                    chocolate, excursiones que se disfrutan mucho en familia y la posibilidad de adaptar el ritmo del viaje.”
+                </div>
+
+                <div class="script-box">
+                    <strong>Si el cliente dice “no quiero gastar de más”:</strong><br>
+                    “Se puede armar muy bien según presupuesto. Lo importante es definir bien la zona de alojamiento
+                    y elegir uno o dos opcionales que realmente valgan la pena, en lugar de cargar el viaje de excursiones.”
+                </div>
+
+                <div class="tip-box">
+                    <strong>Cierre recomendado:</strong> Bariloche se vende mejor con un mínimo de
+                    <strong>4 noches</strong>. Si el cliente quiere sumar nieve, navegación o varios opcionales,
+                    lo ideal es <strong>5 a 6 noches</strong> para que la experiencia no quede apurada.
+                </div>
+            </section>
+
+        </article>
+
+        <footer>
+            Guía visual Dr. Viaje · Base unificada para destinos consultivos
+        </footer>
+    </div>
+</main>
+
+<button class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" aria-label="Volver arriba">
+    ↑
+</button>
+
+</body>
+</html>

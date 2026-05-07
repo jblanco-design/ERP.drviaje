@@ -1,0 +1,493 @@
+/* ====================================================
+   Dr.Viaje — CSS Global Compartido
+   Navegación y Header universal
+   ==================================================== */
+
+:root {
+  --primary-purple: #7B2D8E;
+  --primary-orange: #FF9800;
+  --primary-pink: #E91E63;
+  --bg-light: #f8f9fa;
+  --text-dark: #333333;
+  --text-medium: #666666;
+  --white: #ffffff;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 30px rgba(0,0,0,0.16);
+  --nav-height: 72px;
+  --radius-xl: 20px;
+  --radius-lg: 14px;
+  --transition: all 0.28s ease;
+}
+
+/* ---- Reset mínimo ---- */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ====================================================
+   BARRA DE NAVEGACIÓN GLOBAL
+   ==================================================== */
+.drv-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--nav-height);
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(123,45,142,0.10);
+  box-shadow: 0 2px 20px rgba(123,45,142,0.08);
+  display: flex;
+  align-items: center;
+}
+
+.drv-navbar__inner {
+  width: min(1200px, calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Logo */
+.drv-navbar__logo a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.drv-navbar__logo img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Menú principal */
+.drv-navbar__menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.drv-navbar__menu > li {
+  position: relative;
+}
+
+.drv-navbar__menu > li > a,
+.drv-navbar__menu > li > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.drv-navbar__menu > li > a:hover,
+.drv-navbar__menu > li > button:hover,
+.drv-navbar__menu > li > a.active,
+.drv-navbar__menu > li > button.active {
+  background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+  color: #fff;
+}
+
+.drv-navbar__menu > li > a svg,
+.drv-navbar__menu > li > button svg {
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.drv-navbar__menu > li > button.open svg {
+  transform: rotate(180deg);
+}
+
+/* Botón inicio */
+.drv-navbar__home {
+  background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)) !important;
+  color: #fff !important;
+}
+
+/* ---- DROPDOWN ---- */
+.drv-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 220px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(123,45,142,0.25) transparent;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(123,45,142,0.18);
+  border: 1px solid rgba(123,45,142,0.08);
+  padding: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-6px);
+  transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
+  z-index: 200;
+}
+
+.drv-dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+.drv-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.drv-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(123,45,142,0.25);
+  border-radius: 999px;
+}
+
+.drv-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.drv-dropdown__title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-medium);
+  padding: 6px 12px 4px;
+  display: block;
+}
+
+.drv-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.drv-dropdown a:hover {
+  background: linear-gradient(90deg, rgba(123,45,142,0.08), rgba(233,30,99,0.06));
+  color: var(--primary-purple);
+}
+
+.drv-dropdown a .flag {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Separador dentro del dropdown */
+.drv-dropdown hr {
+  border: none;
+  border-top: 1px solid rgba(123,45,142,0.08);
+  margin: 6px 0;
+}
+
+/* Dropdown de Destinos: ancho y anclado a la izquierda del botón */
+.drv-dropdown--wide {
+  min-width: 300px;
+  left: 0;
+  transform: translateX(0) translateY(-6px);
+}
+
+.drv-dropdown--wide.open {
+  transform: translateX(0) translateY(0);
+}
+
+/* Segundo título dentro del mismo dropdown */
+.drv-dropdown .drv-dropdown__title + .drv-dropdown__title,
+.drv-dropdown hr + .drv-dropdown__title {
+  margin-top: 2px;
+}
+
+/* Sub-dropdown Brasil */
+.drv-dropdown .brasil-group {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.drv-dropdown .brasil-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--primary-purple);
+  background: rgba(123,45,142,0.06);
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+}
+
+.drv-dropdown .brasil-toggle:hover {
+  background: rgba(123,45,142,0.12);
+}
+
+.drv-dropdown .brasil-toggle svg {
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: transform 0.22s ease;
+}
+
+.drv-dropdown .brasil-toggle.open svg {
+  transform: rotate(180deg);
+}
+
+.drv-dropdown .brasil-submenu {
+  display: none;
+  padding: 4px 0 4px 12px;
+}
+
+.drv-dropdown .brasil-submenu.open {
+  display: block;
+}
+
+.drv-dropdown .brasil-submenu a {
+  font-size: 0.84rem;
+  color: var(--text-medium);
+  padding: 7px 10px;
+}
+
+.drv-dropdown .brasil-submenu a:hover {
+  color: var(--primary-purple);
+}
+
+/* ---- Hamburger móvil ---- */
+.drv-navbar__hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(123,45,142,0.08);
+  border: none;
+  cursor: pointer;
+  color: var(--primary-purple);
+  flex-shrink: 0;
+}
+
+/* ---- Menú móvil overlay ---- */
+.drv-mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  flex-direction: column;
+  background: #fff;
+  overflow-y: auto;
+  padding: 0 0 40px;
+}
+
+.drv-mobile-menu.open {
+  display: flex;
+}
+
+.drv-mobile-menu__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(123,45,142,0.08);
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.drv-mobile-menu__header img {
+  height: 40px;
+  width: auto;
+}
+
+.drv-mobile-menu__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(123,45,142,0.08);
+  border: none;
+  cursor: pointer;
+  color: var(--primary-purple);
+}
+
+.drv-mobile-menu__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drv-mobile-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-medium);
+  padding: 14px 0 6px;
+  display: block;
+}
+
+.drv-mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.drv-mobile-link:hover, .drv-mobile-link.active-m {
+  background: linear-gradient(90deg, rgba(123,45,142,0.08), rgba(233,30,99,0.06));
+  color: var(--primary-purple);
+}
+
+.drv-mobile-link .flag { font-size: 1.2rem; }
+
+.drv-mobile-brasil-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-purple);
+  background: rgba(123,45,142,0.06);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+}
+
+.drv-mobile-brasil-toggle svg {
+  margin-left: auto;
+  transition: transform 0.22s ease;
+}
+
+.drv-mobile-brasil-toggle.open svg {
+  transform: rotate(180deg);
+}
+
+.drv-mobile-brasil-sub {
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 20px;
+}
+
+.drv-mobile-brasil-sub.open {
+  display: flex;
+}
+
+.drv-mobile-brasil-sub a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--text-medium);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.drv-mobile-brasil-sub a:hover {
+  color: var(--primary-purple);
+  background: rgba(123,45,142,0.06);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 860px) {
+  .drv-navbar__menu { display: none; }
+  .drv-navbar__hamburger { display: flex; }
+}
+
+/* ====================================================
+   OCULTAR BRANDING NATIVO DE LOS DESTINOS
+   El navbar global ya incluye el logo Dr.Viaje
+   ==================================================== */
+
+/* Back links nativos */
+a.back-link {
+  display: none !important;
+}
+
+/* Logo texto en destinos Brasil, Ushuaia y Bariloche */
+.logo-section .logo,
+.header-content .logo,
+header > .container .logo {
+  display: none !important;
+}
+
+/* ====================================================
+   CORRECCIÓN DE ELEMENTOS STICKY NATIVOS
+   Evita que headers/navs internos queden debajo
+   o encima del navbar global Dr.Viaje (72px)
+   ==================================================== */
+
+/* Headers nativos con sticky: quitar sticky,
+   ya no necesitan fijarse porque el navbar global lo reemplaza */
+header[style*="sticky"],
+header.sticky {
+  position: static !important;
+}
+
+/* Cualquier header nativo que tenga position:sticky en su CSS:
+   lo forzamos a static mediante el atributo data que inyectamos */
+.drv-navbar ~ header,
+.drv-navbar ~ * header {
+  position: static !important;
+}
+
+/* Navs internos de sección (naranja, transparente, etc.) sticky:
+   deben quedar debajo del navbar global */
+nav:not(.drv-navbar) {
+  top: 72px !important;
+  z-index: 90 !important;
+}
+
+/* Nav container wrapper (Santiago, Cancún usan .nav-container) */
+.nav-container,
+.sticky-nav {
+  top: 72px !important;
+  z-index: 90 !important;
+}
+
+/* Ajuste scroll para que las anclas no queden ocultas bajo el navbar */
+html {
+  scroll-padding-top: 144px; /* 72px navbar global + 72px nav naranja */
+}
+
+body {
+  scroll-padding-top: 144px;
+}

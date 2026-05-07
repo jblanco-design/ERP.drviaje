@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Traslados 2026 · Dr.Viaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/global.css">
+  <style>
+    :root {
+      --primary:#7B2D8E;
+      --pink:#E91E63;
+      --orange:#FF9800;
+      --navy:#16324f;
+      --blue:#2457a6;
+      --blue-soft:#edf4ff;
+      --green-b:#1d7a46;
+      --green-soft:#e9f8ef;
+      --amber-b:#a66a00;
+      --amber-soft:#fff6e5;
+      --red-b:#b42318;
+      --red-soft:#fff0f0;
+      --line:#dbe4f0;
+      --muted:#5b6b7f;
+      --text:#1f2a37;
+      --card:#ffffff;
+      --shadow:0 10px 30px rgba(22,50,79,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#f4f7fb;color:var(--text);}
+
+    /* ── HERO ── */
+    .hero{
+      background:linear-gradient(135deg,var(--primary) 0%,#9c27b0 40%,var(--pink) 100%);
+      color:#fff;padding:52px 24px 44px;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .hero::before{content:"";position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.05);top:-130px;right:-80px;}
+    .hero::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:rgba(255,152,0,.10);bottom:-80px;left:-60px;}
+    .hero .eyebrow{
+      display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);
+      padding:7px 14px;border-radius:999px;margin-bottom:16px;position:relative;z-index:1;
+    }
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);margin-bottom:12px;position:relative;z-index:1;line-height:1.12;}
+    .hero p{max-width:720px;margin:0 auto;font-size:1rem;line-height:1.7;opacity:.93;position:relative;z-index:1;}
+    .hero-stats{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px;position:relative;z-index:1;}
+    .hero-stat{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:14px 20px;text-align:center;min-width:110px;}
+    .hero-stat strong{display:block;font-size:1.45rem;font-weight:800;color:#ffd36a;}
+    .hero-stat span{font-size:11px;opacity:.9;letter-spacing:.02em;}
+
+    /* ── WRAP ── */
+    .wrap{max-width:1120px;margin:0 auto;padding:36px 24px 80px;}
+
+    /* ── ALERT ── */
+    .alert{
+      display:flex;gap:14px;align-items:flex-start;
+      background:var(--amber-soft);border:1px solid #ffc86b;border-radius:16px;
+      padding:16px 20px;margin-bottom:24px;
+    }
+    .alert-icon{font-size:1.4rem;flex-shrink:0;}
+    .alert strong{display:block;font-size:.9rem;color:var(--amber-b);margin-bottom:3px;}
+    .alert p{font-size:.85rem;color:#664d00;line-height:1.6;margin:0;}
+
+    /* ── STEP 1: SELECTOR DE PAÍS ── */
+    .country-step{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      padding:28px;box-shadow:var(--shadow);margin-bottom:20px;
+    }
+    .step-label{
+      font-size:.72rem;font-weight:800;color:var(--primary);
+      text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .step-label span{
+      background:var(--primary);color:#fff;
+      width:22px;height:22px;border-radius:50%;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:900;flex-shrink:0;
+    }
+    .country-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+    .country-card{
+      border:2px solid var(--line);border-radius:16px;padding:18px 20px;
+      cursor:pointer;transition:all .2s ease;background:#f8fafc;
+      display:flex;align-items:center;gap:14px;
+      font-weight:700;font-size:1rem;color:var(--navy);
+      user-select:none;
+    }
+    .country-card:hover{border-color:var(--primary);background:#faf5ff;transform:translateY(-2px);}
+    .country-card.active{
+      border-color:var(--primary);background:linear-gradient(135deg,rgba(123,45,142,.07),rgba(233,30,99,.05));
+      box-shadow:0 0 0 3px rgba(123,45,142,.15);
+    }
+    .country-card .flag{font-size:2rem;flex-shrink:0;}
+    .country-card .cc-info{display:flex;flex-direction:column;gap:2px;}
+    .country-card .cc-name{font-size:1rem;font-weight:800;color:var(--navy);}
+    .country-card .cc-sub{font-size:.78rem;font-weight:500;color:var(--muted);}
+
+    /* ── STEP 2: TIPO DE SERVICIO ── */
+    .service-step{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      padding:28px;box-shadow:var(--shadow);margin-bottom:20px;
+      display:none;
+    }
+    .service-step.visible{display:block;}
+    .service-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+    .service-card{
+      border:2px solid var(--line);border-radius:16px;padding:18px 20px;
+      cursor:pointer;transition:all .2s ease;background:#f8fafc;
+      display:flex;flex-direction:column;gap:6px;
+      user-select:none;
+    }
+    .service-card:hover{border-color:var(--pink);background:#fff5f8;transform:translateY(-2px);}
+    .service-card.active{
+      border-color:var(--pink);background:linear-gradient(135deg,rgba(233,30,99,.07),rgba(255,152,0,.05));
+      box-shadow:0 0 0 3px rgba(233,30,99,.15);
+    }
+    .service-card .sc-icon{font-size:1.6rem;}
+    .service-card .sc-name{font-size:.97rem;font-weight:800;color:var(--navy);}
+    .service-card .sc-desc{font-size:.78rem;color:var(--muted);line-height:1.45;}
+
+    /* ── STEP 3: FILTROS ── */
+    .filters-step{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      padding:28px;box-shadow:var(--shadow);margin-bottom:20px;
+      display:none;
+    }
+    .filters-step.visible{display:block;}
+
+    /* sub-panel privado: selector de pax */
+    .pax-selector{
+      display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;
+    }
+    .pax-btn{
+      padding:10px 18px;border:2px solid var(--line);border-radius:999px;
+      font-size:.85rem;font-weight:700;color:var(--navy);background:#f8fafc;
+      cursor:pointer;transition:all .2s;user-select:none;
+    }
+    .pax-btn:hover{border-color:var(--primary);color:var(--primary);}
+    .pax-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+    .filters-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .filter-group{display:flex;flex-direction:column;gap:6px;}
+    .filter-label{font-size:.78rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;}
+    .filter-group select,
+    .filter-group input{
+      padding:11px 14px;border:2px solid var(--line);border-radius:12px;
+      font-size:.92rem;color:var(--text);background:#f8fafc;
+      font-family:'Inter',sans-serif;transition:border-color .2s,box-shadow .2s,transform .2s;
+    }
+    .filter-group select:focus,
+    .filter-group input:focus{
+      outline:none;border-color:var(--pink);background:#fff;
+      box-shadow:0 0 0 3px rgba(233,30,99,.1);transform:translateY(-1px);
+    }
+    .filter-group select:hover,
+    .filter-group input:hover{border-color:var(--primary);}
+
+    /* ── RESULTS ── */
+    .results-panel{
+      background:#fff;border:1px solid var(--line);border-radius:22px;
+      box-shadow:var(--shadow);overflow:hidden;
+      display:none;
+    }
+    .results-panel.visible{display:block;}
+    .results-header{
+      background:linear-gradient(135deg,var(--primary),#9c27b0);
+      color:#fff;padding:16px 24px;
+      display:flex;justify-content:space-between;align-items:center;
+      font-weight:700;font-size:1rem;
+    }
+    .results-count{
+      background:var(--pink);color:#fff;
+      padding:5px 14px;border-radius:999px;
+      font-size:.85rem;font-weight:800;
+    }
+    .results-container{max-height:620px;overflow-y:auto;}
+    .results-container::-webkit-scrollbar{width:7px;}
+    .results-container::-webkit-scrollbar-track{background:#f1f5f9;}
+    .results-container::-webkit-scrollbar-thumb{background:var(--primary);border-radius:4px;}
+    .results-container::-webkit-scrollbar-thumb:hover{background:var(--pink);}
+
+    /* encabezado de zona / aeropuerto */
+    .region-header{
+      background:linear-gradient(90deg,rgba(255,152,0,.1),rgba(123,45,142,.06));
+      color:var(--primary);padding:11px 24px;
+      font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;
+      border-left:5px solid var(--orange);
+      position:sticky;top:0;z-index:5;backdrop-filter:blur(8px);
+    }
+
+    /* item regular */
+    .transfer-item{
+      padding:17px 24px;border-bottom:1px solid var(--line);
+      display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;
+      transition:background .2s,border-left .2s,padding-left .2s,transform .2s;
+    }
+    .transfer-item:last-child{border-bottom:none;}
+    .transfer-item:hover{
+      background:linear-gradient(90deg,rgba(233,30,99,.025),rgba(255,152,0,.02));
+      border-left:4px solid var(--pink);padding-left:calc(24px - 4px);transform:translateX(2px);
+    }
+    .transfer-info h3{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:4px;line-height:1.4;}
+    .transfer-details{font-size:.81rem;color:var(--muted);line-height:1.5;}
+    .transfer-details strong{color:var(--primary);}
+
+    /* precio regular — una tarifa */
+    .price-box{
+      text-align:right;
+      background:linear-gradient(135deg,rgba(233,30,99,.06),rgba(255,152,0,.05));
+      padding:12px 16px;border-radius:14px;border:2px solid rgba(233,30,99,.12);
+      min-width:120px;flex-shrink:0;
+    }
+    .price-amount{font-size:1.6rem;font-weight:900;color:var(--pink);line-height:1;margin-bottom:3px;}
+    .price-child{font-size:.85rem;font-weight:700;color:var(--primary);margin-top:4px;}
+    .price-label{font-size:.68rem;color:var(--primary);text-transform:uppercase;font-weight:700;letter-spacing:.05em;}
+
+    /* precio privado — rango elegido */
+    .price-box-pvt{
+      text-align:right;
+      background:linear-gradient(135deg,rgba(36,87,166,.08),rgba(123,45,142,.06));
+      padding:12px 16px;border-radius:14px;border:2px solid rgba(36,87,166,.15);
+      min-width:130px;flex-shrink:0;
+    }
+    .price-amount-pvt{font-size:1.6rem;font-weight:900;color:var(--blue);line-height:1;margin-bottom:3px;}
+    .price-label-pvt{font-size:.68rem;color:var(--blue);text-transform:uppercase;font-weight:700;letter-spacing:.05em;}
+
+    /* sin resultados */
+    .no-results{padding:56px 24px;text-align:center;color:var(--muted);}
+    .no-results svg{width:52px;height:52px;color:var(--orange);opacity:.6;margin:0 auto 14px;display:block;}
+    .no-results h3{color:var(--primary);margin-bottom:6px;font-size:1.1rem;}
+    .no-results p{font-size:.9rem;}
+
+    /* footer notas */
+    .footer-notes{
+      background:var(--navy);color:#fff;
+      padding:16px 24px;font-size:.83rem;line-height:1.65;
+    }
+    .footer-notes strong{color:#ffd36a;}
+
+    /* ── PLACEHOLDER (antes de elegir) ── */
+    .placeholder-msg{
+      background:#fff;border:2px dashed var(--line);border-radius:22px;
+      padding:48px 24px;text-align:center;color:var(--muted);
+      display:none;
+    }
+    .placeholder-msg.visible{display:block;}
+    .placeholder-msg svg{width:48px;height:48px;opacity:.35;margin:0 auto 14px;display:block;}
+    .placeholder-msg p{font-size:.95rem;}
+
+    /* ── SCROLL TOP ── */
+    .scroll-top{
+      position:fixed;bottom:28px;right:28px;width:44px;height:44px;
+      border-radius:50%;border:none;cursor:pointer;
+      background:var(--primary);color:#fff;font-size:1.2rem;
+      box-shadow:0 6px 20px rgba(0,0,0,.2);
+      opacity:0;visibility:hidden;transition:.3s ease;z-index:999;
+    }
+    .scroll-top.visible{opacity:1;visibility:visible;}
+    .scroll-top:hover{background:var(--pink);transform:translateY(-3px);}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:640px){
+      .country-cards,.service-cards,.filters-grid{grid-template-columns:1fr;}
+      .transfer-item{grid-template-columns:1fr;gap:10px;}
+      .price-box,.price-box-pvt{text-align:left;}
+      .hero-stats{gap:8px;}
+      .hero-stat{min-width:80px;padding:10px 12px;}
+      .country-step,.service-step,.filters-step{padding:20px;}
+    }
+  </style>
+</head>
+<body>
+
+<script src="../js/navbar-inject.js"></script>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<header class="hero">
+  <span class="eyebrow">🚌 Herramientas · Dr.Viaje</span>
+  <h1>Buscador de Traslados 2026</h1>
+  <p>Tarifas netas por persona (regular) o por ruta (privado). Elegí el país, el tipo de servicio y filtrá.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>2</strong><span>Países</span></div>
+    <div class="hero-stat"><strong id="statTotal">—</strong><span>Rutas totales</span></div>
+    <div class="hero-stat"><strong>Regular</strong><span>y Privado</span></div>
+    <div class="hero-stat"><strong>2026</strong><span>Temporada</span></div>
+  </div>
+</header>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main class="wrap">
+
+  <!-- ALERTA -->
+  <div class="alert">
+    <span class="alert-icon">⚠️</span>
+    <div>
+      <strong>Condiciones generales — leer antes de cotizar</strong>
+      <p>Tarifas netas en USD. <strong>Regular:</strong> por persona, mínimo 2 pax, servicio compartido. <strong>Privado:</strong> por vehículo/ruta según rango de pasajeros. No válidas en feriados, Carnaval, Rock in Rio, eventos especiales, Fórmula 1, Navidad ni Año Nuevo. Sujeto a disponibilidad y cambios sin previo aviso.</p>
+    </div>
+  </div>
+
+  <!-- PASO 1: PAÍS -->
+  <div class="country-step">
+    <div class="step-label"><span>1</span> Elegí el país de destino</div>
+    <div class="country-cards">
+      <div class="country-card" data-country="brasil" onclick="selectCountry('brasil')">
+        <span class="flag">🇧🇷</span>
+        <div class="cc-info">
+          <span class="cc-name">Brasil</span>
+          <span class="cc-sub">10 regiones · Río, Florianópolis, Salvador…</span>
+        </div>
+      </div>
+      <div class="country-card" data-country="rd" onclick="selectCountry('rd')">
+        <span class="flag">🇩🇴</span>
+        <div class="cc-info">
+          <span class="cc-name">República Dominicana</span>
+          <span class="cc-sub">PUJ · SDQ · POP · LRM · Entre hoteles</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2: TIPO DE SERVICIO -->
+  <div class="service-step" id="serviceStep">
+    <div class="step-label"><span>2</span> Tipo de servicio</div>
+    <div class="service-cards">
+      <div class="service-card" data-service="regular" onclick="selectService('regular')">
+        <span class="sc-icon">🚐</span>
+        <span class="sc-name">Regular (compartido)</span>
+        <span class="sc-desc">Tarifa neta por persona · Mín. 2 pax · Precio adulto y niño</span>
+      </div>
+      <div class="service-card" data-service="privado" onclick="selectService('privado')">
+        <span class="sc-icon">🚌</span>
+        <span class="sc-name">Privado (por ruta)</span>
+        <span class="sc-desc">Precio por vehículo según cantidad de pasajeros (1–6 / 7–21 / 22–33 / 34–54)</span>
+      </div>
+    </div>
+    <!-- nota RD: regular solo aeropuertos -->
+    <p id="rdRegularNote" style="display:none;margin-top:14px;font-size:.82rem;color:var(--muted);background:var(--blue-soft);border-radius:10px;padding:10px 14px;">
+      ℹ️ En República Dominicana el servicio regular solo está disponible en <strong>algunas rutas desde aeropuertos</strong>. Las rutas hotel-hotel son exclusivamente privadas.
+    </p>
+  </div>
+
+  <!-- PASO 3: FILTROS -->
+  <div class="filters-step" id="filtersStep">
+    <div class="step-label"><span>3</span> Filtrá los resultados</div>
+
+    <!-- selector de rango de pax (solo privado) -->
+    <div id="paxSelectorWrap" style="display:none;margin-bottom:20px;">
+      <div class="filter-label" style="margin-bottom:10px;">Cantidad de pasajeros (rango del vehículo)</div>
+      <div class="pax-selector">
+        <div class="pax-btn active" data-pax="1" onclick="selectPax(this)">1 – 6 pax</div>
+        <div class="pax-btn" data-pax="2" onclick="selectPax(this)">7 – 21 pax</div>
+        <div class="pax-btn" data-pax="3" onclick="selectPax(this)">22 – 33 pax</div>
+        <div class="pax-btn" data-pax="4" onclick="selectPax(this)">34 – 54 pax</div>
+      </div>
+    </div>
+
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label class="filter-label" for="zoneFilter">Zona / Origen</label>
+        <select id="zoneFilter" onchange="applyFilters()">
+          <option value="">Todas las zonas</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="searchInput">Búsqueda libre</label>
+        <input type="text" id="searchInput" placeholder="Ej: Búzios, GIG, Punta Cana, SDQ…" oninput="applyFilters()">
+      </div>
+    </div>
+  </div>
+
+  <!-- PLACEHOLDER -->
+  <div class="placeholder-msg visible" id="placeholderMsg">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+    </svg>
+    <p>Elegí un <strong>país</strong> y un <strong>tipo de servicio</strong> para ver los traslados disponibles.</p>
+  </div>
+
+  <!-- RESULTADOS -->
+  <section class="results-panel" id="resultsPanel">
+    <div class="results-header">
+      <span id="resultsTitle">Resultados</span>
+      <span class="results-count" id="resultsCount">0 traslados</span>
+    </div>
+    <div class="results-container" id="resultsContainer"></div>
+    <div class="footer-notes" id="footerNotes"></div>
+  </section>
+
+</main>
+
+<button class="scroll-top" id="scrollTop" aria-label="Volver arriba">↑</button>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// BASE DE DATOS
+// ═══════════════════════════════════════════════════════════
+
+// ── BRASIL ──────────────────────────────────────────────────
+const brasilData = [
+  // RIO DE JANEIRO
+  { zone:"RIO DE JANEIRO", route:"Arpt GIG → Hotel Zona Sur → Arpt GIG", adultPrice:35, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Mín. 2 pax. No válida feriados." },
+  { zone:"RIO DE JANEIRO", route:"Arpt GIG → Hotel Barra da Tijuca → Arpt GIG", adultPrice:35, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Mín. 2 pax. No válida feriados." },
+
+  // BÚZIOS | CABO FRIO | ARRAIAL DO CABO
+  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Arpt GIG → Búzios → Arpt GIG", adultPrice:49, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Hotel Zona Sur → Búzios → Hotel Zona Sur", adultPrice:49, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Hotel Barra da Tijuca → Búzios → Hotel Barra da Tijuca", adultPrice:71, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Arpt GIG → Cabo Frio → Arpt GIG", adultPrice:76, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"BÚZIOS | CABO FRIO | ARRAIAL DO CABO", route:"Arpt GIG → Arraial do Cabo → Arpt GIG", adultPrice:78, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+
+  // ANGRA DOS REIS | PARATY | ILHA GRANDE
+  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Angra dos Reis → Arpt GIG", adultPrice:118, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"" },
+  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Paraty → Arpt GIG", adultPrice:120, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"" },
+  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Ilha Grande → Arpt GIG", adultPrice:151, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Incluye lancha" },
+  { zone:"ANGRA DOS REIS | PARATY | ILHA GRANDE", route:"Arpt GIG → Ilha Grande (Araçatiba / Praia Vermelha) → Arpt GIG", adultPrice:176, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 20/12/2026", notes:"Incluye lancha" },
+
+  // SÃO PAULO
+  { zone:"SÃO PAULO", route:"Arpt GRU → Hotel Centro → Arpt GRU (Privado)", adultPrice:89, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/02/2026 - 30/06/2026", notes:"Servicio privado" },
+
+  // SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Hotel SSA → Arpt SSA", adultPrice:20, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"" },
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Hotel SSA → Arpt SSA + City Tour Histórico", adultPrice:33, childPrice:null, pvt:[null,null,null,null], type:"citytour", validity:"01/04/2026 - 30/03/2027", notes:"City tour incluido" },
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Hotel SSA (Solo ida)", adultPrice:11, childPrice:null, pvt:[null,null,null,null], type:"oneway", validity:"01/04/2026 - 30/03/2027", notes:"" },
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Hotel SSA → Hotel Litoral Norte (o viceversa)", adultPrice:40, childPrice:null, pvt:[null,null,null,null], type:"hotel", validity:"01/04/2026 - 30/03/2027", notes:"" },
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Litoral Norte (Praia do Forte, Imbassaí, Costa do Sauípe, Guarajuba) → Arpt SSA", adultPrice:40, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"" },
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Arpt SSA → Litoral Norte (Solo ida)", adultPrice:29, childPrice:null, pvt:[null,null,null,null], type:"oneway", validity:"01/04/2026 - 30/03/2027", notes:"" },
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Hotel SSA → Morro de São Paulo → Hotel SSA (Semiterrestre)", adultPrice:75, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"Bus + Lancha. Salida 8:30am, retorno 4:30pm" },
+  { zone:"SALVADOR | LITORAL NORTE | MORRO DE SÃO PAULO", route:"Hotel SSA → Morro de São Paulo → Hotel SSA (Catamarã)", adultPrice:88, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/04/2026 - 30/03/2027", notes:"Bus + Catamarã. Salida 8:30am, retorno 4:30pm" },
+
+  // PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ
+  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Hotel Porto Seguro → Arpt BPS", adultPrice:24, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Hotel Arraial D'Ajuda → Arpt BPS", adultPrice:35, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa" },
+  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Hotel Santo André (Sta. Cruz Cabrália) → Arpt BPS", adultPrice:53, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Trancoso → Arpt BPS", adultPrice:71, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Incluye balsa" },
+  { zone:"PORTO SEGURO | ARRAIAL D'AJUDA | SANTO ANDRÉ", route:"Arpt BPS → Santo André → Arpt BPS", adultPrice:84, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+
+  // NATAL | PIPA | TOUROS
+  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Hotel Natal → Arpt NAT", adultPrice:31, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Hotel Natal → Arpt NAT + City Tour Playa Carnaupiim", adultPrice:37, childPrice:null, pvt:[null,null,null,null], type:"citytour", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Pipa → Hotel NAT → Arpt NAT", adultPrice:78, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"NATAL | PIPA | TOUROS", route:"Arpt NAT → Touros → Arpt NAT", adultPrice:85, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"NATAL | PIPA | TOUROS", route:"Transfer Triangular: Arpt NAT / FH NAT / FH Pipa / Arpt NAT", adultPrice:83, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular" },
+  { zone:"NATAL | PIPA | TOUROS", route:"Transfer Triangular: Arpt NAT / FH Pipa / FH NAT / Arpt NAT", adultPrice:100, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"Ruta triangular" },
+
+  // JOÃO PESSOA | CONDE
+  { zone:"JOÃO PESSOA | CONDE", route:"Arpt JPA → Hotel João Pessoa → Arpt JPA", adultPrice:29, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"JOÃO PESSOA | CONDE", route:"Arpt JPA → Arpt JPA (circuito)", adultPrice:80, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+
+  // FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS
+  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel FLN Centro → Arpt FLN", adultPrice:29, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel FLN Canasvieiras → Arpt FLN", adultPrice:33, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Canasvieiras do Santinho → Arpt FLN", adultPrice:33, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel Balneário Camboriú (Camboriú, Praia dos Carnés, Itajaí) → Arpt FLN", adultPrice:62, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" },
+  { zone:"FLORIANÓPOLIS | BALNEÁRIO CAMBORIÚ | BOMBINHAS", route:"Arpt FLN → Hotel Bombinhas / Itapema / Mariscal / Porto Belo → Arpt FLN", adultPrice:94, childPrice:null, pvt:[null,null,null,null], type:"roundtrip", validity:"01/01/2026 - 31/12/2026", notes:"" }
+];
+
+// ── REPÚBLICA DOMINICANA ─────────────────────────────────────
+// pvt = [1-6pax, 7-21pax, 22-33pax, 34-54pax]
+// adultPrice / childPrice: null = no hay regular
+const rdData = [
+  // PUNTA CANA AIRPORT (PUJ)
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Punta Cana", adultPrice:13, childPrice:8, pvt:[45,120,160,210], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Uvero Alto", adultPrice:26, childPrice:13, pvt:[69,159,199,299], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[69,159,199,299], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Bayahibe", adultPrice:39, childPrice:20, pvt:[99,179,359,459], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl La Romana", adultPrice:49, childPrice:25, pvt:[119,209,399,499], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[149,279,439,499], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[149,279,439,499], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Puerto de La Romana (LRM)", adultPrice:null, childPrice:null, pvt:[119,209,399,499], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[159,279,499,599], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[359,559,799,959], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[319,519,759,859], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[359,559,799,899], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[359,559,799,859], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO PUJ (Punta Cana)", route:"Punta Cana Airport (PUJ) → Htl Miches", adultPrice:null, childPrice:null, pvt:[159,249,359,409], validity:"2026", notes:"Solo privado" },
+
+  // SANTO DOMINGO AIRPORT (SDQ)
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Punta Cana", adultPrice:49, childPrice:30, pvt:[149,219,399,599], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Uvero Alto", adultPrice:60, childPrice:39, pvt:[169,229,399,599], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[169,229,399,599], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Bayahibe", adultPrice:49, childPrice:25, pvt:[119,199,319,499], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl La Romana", adultPrice:40, childPrice:20, pvt:[119,199,319,499], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Juan Dolio", adultPrice:39, childPrice:20, pvt:[89,199,439,489], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Boca Chica", adultPrice:39, childPrice:20, pvt:[69,139,199,259], validity:"2026", notes:"" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[69,139,199,259], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[239,399,499,699], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[199,269,489,689], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[199,269,489,689], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[259,449,609,789], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO SDQ (Santo Domingo)", route:"Santo Domingo Airport (SDQ) → Htl Miches", adultPrice:null, childPrice:null, pvt:[309,489,599,1219], validity:"2026", notes:"Solo privado" },
+
+  // PUERTO PLATA AIRPORT (POP)
+  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[259,549,699,799], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[99,159,199,249], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[99,199,429,529], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[99,209,429,529], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[229,489,689,799], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[199,279,499,689], validity:"2026", notes:"Solo privado" },
+  { zone:"AEROPUERTO POP (Puerto Plata)", route:"Puerto Plata Airport (POP) → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[399,499,699,799], validity:"2026", notes:"Solo privado" },
+
+  // STGO DE LOS CABALLEROS (STI)
+  { zone:"STGO DE LOS CABALLEROS (STI)", route:"Stgo de los Caballeros (STI) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[99,199,429,529], validity:"2026", notes:"Solo privado" },
+
+  // PUERTO DE LA ROMANA (LRM)
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[129,145,315,415], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Uvero Alto", adultPrice:null, childPrice:null, pvt:[149,209,389,489], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[139,259,359,459], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[99,129,199,249], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl La Romana", adultPrice:null, childPrice:null, pvt:[89,119,189,229], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[119,145,315,415], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[119,145,315,415], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[129,209,389,489], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Samaná", adultPrice:null, childPrice:null, pvt:[299,589,998,1109], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[269,499,789,1199], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[269,499,789,1199], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[349,659,998,1249], validity:"2026", notes:"Solo privado" },
+  { zone:"PUERTO DE LA ROMANA (LRM)", route:"Puerto de La Romana (LRM) → Htl Miches", adultPrice:null, childPrice:null, pvt:[299,459,589,1199], validity:"2026", notes:"Solo privado" },
+
+  // ENTRE HOTELES (selección principal)
+  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Punta Cana → Htl Uvero Alto", adultPrice:null, childPrice:null, pvt:[65,159,199,259], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Punta Cana → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[65,159,199,259], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Uvero Alto → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[65,139,199,259], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Uvero Alto → Htl Cap Cana", adultPrice:null, childPrice:null, pvt:[99,130,190,450], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Cap Cana → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[49,89,129,199], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Punta Cana / Cap Cana / Uvero Alto", route:"Htl Cap Cana → Htl Uvero Alto", adultPrice:null, childPrice:null, pvt:[99,130,190,450], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl Punta Cana → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[109,145,315,415], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl Punta Cana → Htl La Romana", adultPrice:null, childPrice:null, pvt:[129,145,315,415], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl Bayahibe → Htl La Romana", adultPrice:null, childPrice:null, pvt:[55,150,208,335], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Bayahibe / La Romana", route:"Htl La Romana → Htl Bayahibe", adultPrice:null, childPrice:null, pvt:[55,150,208,335], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Juan Dolio → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[89,219,439,489], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Juan Dolio → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[49,139,199,299], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Boca Chica → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[89,219,439,489], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Boca Chica → Htl Santo Domingo", adultPrice:null, childPrice:null, pvt:[49,139,199,299], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Santo Domingo → Htl Juan Dolio", adultPrice:null, childPrice:null, pvt:[89,219,439,489], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Juan Dolio / Boca Chica / Santo Domingo", route:"Htl Santo Domingo → Htl Boca Chica", adultPrice:null, childPrice:null, pvt:[49,139,199,299], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Stgo de los Caballeros", adultPrice:null, childPrice:null, pvt:[199,399,629,789], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Puerto Plata", adultPrice:null, childPrice:null, pvt:[199,399,629,789], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Cabarete", adultPrice:null, childPrice:null, pvt:[259,429,609,799], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Samaná", adultPrice:null, childPrice:null, pvt:[199,489,599,699], validity:"2026", notes:"Solo privado" },
+  { zone:"ENTRE HOTELES — Santo Domingo", route:"Htl Santo Domingo → Htl Punta Cana", adultPrice:null, childPrice:null, pvt:[159,279,439,489], validity:"2026", notes:"Solo privado" },
+];
+
+// ═══════════════════════════════════════════════════════════
+// ESTADO DE LA APP
+// ═══════════════════════════════════════════════════════════
+let state = {
+  country: null,   // 'brasil' | 'rd'
+  service: null,   // 'regular' | 'privado'
+  paxRange: 0,     // 0=1-6, 1=7-21, 2=22-33, 3=34-54
+};
+
+const paxLabels = ['1 – 6 pax','7 – 21 pax','22 – 33 pax','34 – 54 pax'];
+
+// ═══════════════════════════════════════════════════════════
+// INICIALIZACIÓN
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  const total = brasilData.length + rdData.length;
+  document.getElementById('statTotal').textContent = total;
+});
+
+// ═══════════════════════════════════════════════════════════
+// SELECCIÓN DE PAÍS
+// ═══════════════════════════════════════════════════════════
+function selectCountry(country) {
+  state.country = country;
+  state.service = null;
+  state.paxRange = 0;
+
+  // UI país
+  document.querySelectorAll('.country-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-country="${country}"]`).classList.add('active');
+
+  // Mostrar step 2
+  document.getElementById('serviceStep').classList.add('visible');
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
+
+  // nota especial RD
+  document.getElementById('rdRegularNote').style.display = country === 'rd' ? 'block' : 'none';
+
+  // Ocultar pasos siguientes
+  document.getElementById('filtersStep').classList.remove('visible');
+  document.getElementById('resultsPanel').classList.remove('visible');
+  document.getElementById('placeholderMsg').classList.add('visible');
+
+  // Scroll al step 2
+  setTimeout(() => document.getElementById('serviceStep').scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SELECCIÓN DE SERVICIO
+// ═══════════════════════════════════════════════════════════
+function selectService(service) {
+  state.service = service;
+  state.paxRange = 0;
+
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-service="${service}"]`).classList.add('active');
+
+  // pax selector solo para privado
+  document.getElementById('paxSelectorWrap').style.display = service === 'privado' ? 'block' : 'none';
+  document.querySelectorAll('.pax-btn').forEach((b,i) => b.classList.toggle('active', i === 0));
+
+  // Poblar select de zonas
+  populateZoneFilter();
+
+  // Mostrar step 3 y resultados
+  document.getElementById('filtersStep').classList.add('visible');
+  document.getElementById('placeholderMsg').classList.remove('visible');
+  document.getElementById('resultsPanel').classList.add('visible');
+
+  // Reset filtros
+  document.getElementById('zoneFilter').value = '';
+  document.getElementById('searchInput').value = '';
+
+  applyFilters();
+  setTimeout(() => document.getElementById('filtersStep').scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SELECCIÓN DE RANGO PAX
+// ═══════════════════════════════════════════════════════════
+function selectPax(el) {
+  document.querySelectorAll('.pax-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  state.paxRange = parseInt(el.dataset.pax) - 1;
+  applyFilters();
+}
+
+// ═══════════════════════════════════════════════════════════
+// POBLAR SELECT DE ZONAS
+// ═══════════════════════════════════════════════════════════
+function populateZoneFilter() {
+  const data = state.country === 'brasil' ? brasilData : rdData;
+  const select = document.getElementById('zoneFilter');
+  select.innerHTML = '<option value="">Todas las zonas</option>';
+
+  const zones = [...new Set(data.map(i => i.zone))];
+  zones.forEach(z => {
+    const opt = document.createElement('option');
+    opt.value = z; opt.textContent = z;
+    select.appendChild(opt);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// NORMALIZAR TEXTO
+// ═══════════════════════════════════════════════════════════
+function normalize(t) {
+  return t.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+// ═══════════════════════════════════════════════════════════
+// APLICAR FILTROS
+// ═══════════════════════════════════════════════════════════
+function applyFilters() {
+  if (!state.country || !state.service) return;
+
+  const data = state.country === 'brasil' ? brasilData : rdData;
+  const zoneVal  = normalize(document.getElementById('zoneFilter').value);
+  const searchVal= normalize(document.getElementById('searchInput').value.trim());
+  const isPrivado= state.service === 'privado';
+
+  let filtered = data.filter(item => {
+    // Filtro de servicio
+    if (!isPrivado && item.adultPrice === null) return false; // regular: solo con precio de adulto
+    // Para privado: siempre incluir (todos tienen precios privados)
+
+    // Filtro de zona
+    const matchZone = !zoneVal || normalize(item.zone).includes(zoneVal);
+
+    // Filtro búsqueda libre
+    const matchSearch = !searchVal ||
+      normalize(item.zone).includes(searchVal) ||
+      normalize(item.route).includes(searchVal) ||
+      normalize(item.notes || '').includes(searchVal);
+
+    return matchZone && matchSearch;
+  });
+
+  renderResults(filtered, isPrivado);
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDERIZAR RESULTADOS
+// ═══════════════════════════════════════════════════════════
+function renderResults(filtered, isPrivado) {
+  const container = document.getElementById('resultsContainer');
+  const countEl   = document.getElementById('resultsCount');
+  const titleEl   = document.getElementById('resultsTitle');
+  const footerEl  = document.getElementById('footerNotes');
+
+  countEl.textContent = `${filtered.length} traslado${filtered.length !== 1 ? 's' : ''}`;
+
+  const countryName = state.country === 'brasil' ? '🇧🇷 Brasil' : '🇩🇴 Rep. Dominicana';
+  const svcName     = isPrivado ? 'Privado' : 'Regular (compartido)';
+  titleEl.textContent = `${countryName} · ${svcName}`;
+
+  if (isPrivado) {
+    titleEl.textContent += ` · ${paxLabels[state.paxRange]}`;
+  }
+
+  // Footer notas
+  if (state.country === 'brasil') {
+    footerEl.innerHTML = '<strong>Brasil:</strong> Tarifas netas en USD por persona, base servicio regular. Mín. 2 pax. No válidas en feriados, Carnaval, Rock in Rio, F1, Navidad ni Año Nuevo.';
+  } else {
+    footerEl.innerHTML = isPrivado
+      ? `<strong>Rep. Dominicana — Privado:</strong> Precio por vehículo/ruta para <strong>${paxLabels[state.paxRange]}</strong>. No incluye propinas ni extras. Sujeto a disponibilidad.`
+      : '<strong>Rep. Dominicana — Regular:</strong> Tarifa neta por persona. Precio adulto y niño (2–10 años). Mín. 2 pax. Servicio compartido.';
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="no-results">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h3>Sin resultados</h3>
+        <p>Probá con otros filtros o términos de búsqueda más generales.</p>
+      </div>`;
+    return;
+  }
+
+  // Agrupar por zona
+  const groups = {};
+  filtered.forEach(item => {
+    if (!groups[item.zone]) groups[item.zone] = [];
+    groups[item.zone].push(item);
+  });
+
+  let html = '';
+  const flag = state.country === 'brasil' ? '🇧🇷' : '🇩🇴';
+
+  Object.entries(groups).forEach(([zone, items]) => {
+    html += `<div class="region-header">${flag} ${zone}</div>`;
+    items.forEach(item => {
+      let priceHtml = '';
+      if (isPrivado) {
+        const pvtPrice = item.pvt[state.paxRange];
+        priceHtml = `
+          <div class="price-box-pvt">
+            <div class="price-amount-pvt">USD ${pvtPrice}</div>
+            <div class="price-label-pvt">por ruta · ${paxLabels[state.paxRange]}</div>
+          </div>`;
+      } else {
+        priceHtml = `
+          <div class="price-box">
+            <div class="price-amount">USD ${item.adultPrice}</div>
+            ${item.childPrice !== null ? `<div class="price-child">Niño: USD ${item.childPrice}</div>` : ''}
+            <div class="price-label">por persona</div>
+          </div>`;
+      }
+
+      const validityHtml = item.validity ? `<strong>Validez:</strong> ${item.validity}` : '';
+      const notesHtml    = item.notes    ? `<br><strong>Obs.:</strong> ${item.notes}`   : '';
+
+      html += `
+        <div class="transfer-item">
+          <div class="transfer-info">
+            <h3>${item.route}</h3>
+            <div class="transfer-details">${validityHtml}${notesHtml}</div>
+          </div>
+          ${priceHtml}
+        </div>`;
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+// ── SCROLL TOP ────────────────────────────────────────────
+const scrollBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.pageYOffset > 300));
+scrollBtn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+</script>
+</body>
+</html>

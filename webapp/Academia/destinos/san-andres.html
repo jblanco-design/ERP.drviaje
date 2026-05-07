@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Viaje | Guía comercial de San Andrés</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary-purple:#7B2D8E;
+      --primary-orange:#FF9800;
+      --primary-pink:#E91E63;
+      --bg-light:#f8f9fa;
+      --text-dark:#333333;
+      --text-medium:#666666;
+      --white:#ffffff;
+      --shadow:0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover:0 8px 30px rgba(0,0,0,0.12);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --radius-sm:10px;
+      --max-width:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      color:var(--text-dark);
+      background:var(--bg-light);
+      line-height:1.65;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max-width),calc(100% - 32px));margin:0 auto}
+
+    header.hero{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.14), transparent 35%),
+        linear-gradient(135deg,#006847,#00a86b 55%,#0099cc);
+      color:var(--white);
+      padding:72px 0 48px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+      z-index:0;
+    }
+    .hero::before{
+      width:280px;height:280px;top:-80px;right:-80px;
+    }
+    .hero::after{
+      width:180px;height:180px;bottom:-40px;left:-40px;
+    }
+
+    .hero-inner{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.3fr .9fr;
+      gap:28px;
+      align-items:stretch;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(8px);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.2px;
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0 0 14px;
+      font-size:clamp(34px,5vw,56px);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .hero p.lead{
+      margin:0;
+      font-size:18px;
+      max-width:760px;
+      color:rgba(255,255,255,.92);
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:var(--radius-xl);
+      padding:26px;
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+      align-self:stretch;
+    }
+
+    .hero-card h3{
+      margin:0 0 12px;
+      font-size:18px;
+    }
+
+    .hero-card p{
+      margin:0 0 14px;
+      color:rgba(255,255,255,.92);
+      font-size:15px;
+    }
+
+    .hero-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:13px;
+      font-weight:600;
+      color:var(--white);
+    }
+
+    nav.sticky-nav{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:#006847;
+      box-shadow:var(--shadow);
+    }
+
+    .nav-inner{
+      width:min(var(--max-width),calc(100% - 32px));
+      margin:0 auto;
+      display:flex;
+      gap:12px;
+      overflow:auto;
+      padding:15px 0;
+      scrollbar-width:none;
+    }
+
+    .nav-inner::-webkit-scrollbar{display:none}
+
+    .nav-link{
+      white-space:nowrap;
+      padding:10px 16px;
+      border-radius:25px;
+      background:rgba(255,255,255,.18);
+      color:var(--white);
+      font-size:14px;
+      font-weight:700;
+      transition:.25s ease;
+    }
+
+    .nav-link:hover{
+      background:var(--white);
+      color:#006847;
+      transform:translateY(-1px);
+    }
+
+    section[id]{
+      scroll-margin-top:90px;
+    }
+
+    main{padding:28px 0 72px}
+
+    .section{
+      margin:22px 0;
+      background:var(--white);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:34px;
+    }
+
+    .section-header{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .eyebrow{
+      display:inline-block;
+      margin-bottom:8px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--primary-pink);
+    }
+
+    .section h2{
+      margin:0;
+      font-size:30px;
+      line-height:1.15;
+      letter-spacing:-.03em;
+    }
+
+    .section-intro{
+      color:var(--text-medium);
+      max-width:920px;
+      margin:0;
+    }
+
+    .kpi-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:26px;
+    }
+
+    .kpi{
+      background:linear-gradient(180deg,#fff,#f0faf5);
+      border:1px solid rgba(0,104,71,.1);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+
+    .kpi .label{
+      display:block;
+      font-size:12px;
+      color:var(--text-medium);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:8px;
+    }
+
+    .kpi strong{
+      display:block;
+      font-size:24px;
+      line-height:1.1;
+      color:#006847;
+      margin-bottom:6px;
+    }
+
+    .kpi span{
+      font-size:14px;
+      color:var(--text-medium);
+    }
+
+    .info-box{
+      margin-top:22px;
+      border-left:6px solid #006847;
+      background:#f0faf5;
+      border-radius:16px;
+      padding:18px 20px;
+    }
+
+    .info-box.orange{
+      border-left-color:var(--primary-orange);
+      background:#fff8ef;
+    }
+
+    .info-box.pink{
+      border-left-color:var(--primary-pink);
+      background:#fff3f8;
+    }
+
+    .info-box.blue{
+      border-left-color:#0099cc;
+      background:#f0f8ff;
+    }
+
+    .info-box strong{
+      color:#006847;
+    }
+
+    .info-box.orange strong{
+      color:#b36a00;
+    }
+
+    .info-box.pink strong{
+      color:var(--primary-pink);
+    }
+
+    .info-box.blue strong{
+      color:#0077aa;
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    .cards-2,
+    .cards-3{
+      display:grid;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+
+    .card{
+      background:var(--white);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      padding:20px;
+      box-shadow:var(--shadow);
+      transition:.25s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow-hover);
+    }
+
+    .card h3,
+    .card h4{
+      margin:0 0 10px;
+      line-height:1.2;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--text-medium);
+      font-size:15px;
+    }
+
+    .destination{
+      padding:0;
+      overflow:hidden;
+    }
+
+    .destination-top{
+      padding:28px 30px 14px;
+      background:
+        linear-gradient(135deg, rgba(0,104,71,.08), rgba(0,153,204,.05));
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+
+    .destination-number{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;height:40px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#006847,#0099cc);
+      color:var(--white);
+      font-weight:800;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .destination h3{
+      margin:0 0 8px;
+      font-size:28px;
+      line-height:1.12;
+      letter-spacing:-.03em;
+    }
+
+    .destination-subtitle{
+      margin:0;
+      color:var(--text-medium);
+      max-width:940px;
+    }
+
+    .destination-body{
+      padding:24px 30px 30px;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .mini-card{
+      background:#fcfcfd;
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .mini-card h4{
+      margin:0 0 10px;
+      font-size:16px;
+      color:#006847;
+    }
+
+    ul.clean{
+      margin:0;
+      padding-left:18px;
+    }
+
+    ul.clean li{margin:0 0 8px}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      margin-top:18px;
+    }
+
+    thead th{
+      background:linear-gradient(135deg,#006847,#0099cc);
+      color:var(--white);
+      padding:15px 16px;
+      text-align:left;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    tbody td{
+      background:var(--white);
+      padding:15px 16px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      vertical-align:top;
+      font-size:15px;
+    }
+
+    tbody tr:last-child td{border-bottom:none}
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#e6f4ef;
+      color:#006847;
+    }
+
+    .script-box{
+      background:linear-gradient(135deg,#f0faf5,#e8f8f5);
+      border:1px solid rgba(0,104,71,.1);
+      border-radius:20px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .script-box p{
+      margin:0 0 12px;
+    }
+
+    .script-box p:last-child{margin-bottom:0}
+
+    footer{
+      background:linear-gradient(135deg,#006847,#0099cc);
+      color:var(--white);
+      padding:28px 0 34px;
+      margin-top:36px;
+    }
+
+    footer p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      text-align:center;
+      font-size:14px;
+    }
+
+    #scrollTopBtn{
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      width:52px;
+      height:52px;
+      border:none;
+      border-radius:50%;
+      background:linear-gradient(135deg,#006847,#0099cc);
+      color:var(--white);
+      font-size:22px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:var(--shadow-hover);
+      display:none;
+      z-index:1200;
+    }
+
+    @media (max-width: 1080px){
+      .hero-inner,
+      .two-col,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    @media (max-width: 860px){
+      .hero-inner,
+      .two-col,
+      .cards-2,
+      .cards-3,
+      .kpi-grid,
+      .mini-grid{
+        grid-template-columns:1fr;
+      }
+
+      .section,
+      .destination-body,
+      .destination-top{
+        padding-left:22px;
+        padding-right:22px;
+      }
+
+      .section h2{font-size:26px}
+      .destination h3{font-size:24px}
+    }
+  </style>
+  <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+
+  <header class="hero">
+    <div class="container hero-inner">
+      <div>
+        <div class="badge">Dr. Viaje · Guía comercial Caribe</div>
+        <h1>San Andrés 🇨🇴</h1>
+        <p class="lead">
+          San Andrés es Caribe colombiano con agua de siete colores, ambiente latino, vida nocturna real y una operativa aérea directa muy ventajosa. No es un resort cerrado: es una isla con pueblo, mercado, gastronomía local, playas trabajadas y una identidad propia que mezcla Caribe, cultura raizal y cocina criolla.
+        </p>
+      </div>
+
+      <div class="hero-card">
+        <h3>Clave comercial rápida</h3>
+        <p>
+          Funciona muy bien para parejas, clientes que quieren Caribe con menos presupuesto que el Caribe anglófono, grupos de amigos que buscan ambiente y vida nocturna, y familias que priorizan playa cómoda y mar cálido sin salir del continente.
+        </p>
+        <div class="hero-pills">
+          <span class="pill">Parejas</span>
+          <span class="pill">Presupuesto Caribe</span>
+          <span class="pill">Ambiente latino</span>
+          <span class="pill">Agua de 7 colores</span>
+          <span class="pill">Snorkel</span>
+          <span class="pill">Vida nocturna</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky-nav">
+    <div class="nav-inner">
+      <a class="nav-link" href="#pais">La Isla</a>
+      <a class="nav-link" href="#norte">Zona Norte</a>
+      <a class="nav-link" href="#centro">Centro</a>
+      <a class="nav-link" href="#sur">La Loma</a>
+      <a class="nav-link" href="#playas">Playas clave</a>
+      <a class="nav-link" href="#comparativa">Comparativa</a>
+      <a class="nav-link" href="#traslados">Traslados</a>
+      <a class="nav-link" href="#temporadas">Temporadas</a>
+      <a class="nav-link" href="#objeciones">Objeciones</a>
+      <a class="nav-link" href="#noches">Noches</a>
+      <a class="nav-link" href="#script">Script</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ══ VISIÓN GENERAL ══ -->
+    <section class="section" id="pais">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Visión general</span>
+          <h2>San Andrés como producto turístico</h2>
+        </div>
+        <p class="section-intro">
+          San Andrés no se vende como el Caribe más exclusivo, sino como el Caribe más accesible, más vivo culturalmente y con un agua que compite con cualquier destino del mundo. Su gran ventaja es combinar calidad de playa, ambiente real de isla y una operativa directa sin escalas desde las principales ciudades de Colombia y vuelos desde Argentina.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="label">Aeropuerto principal</span>
+          <strong>ADZ</strong>
+          <span>Aeropuerto Gustavo Rojas Pinilla. Vuelos directos desde Bogotá, Medellín, Cali y conexiones internacionales.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Gran diferencial</span>
+          <strong>Mar de 7 colores</strong>
+          <span>La gradación de turquesas y azules del agua alrededor de la isla es uno de los argumentos visuales más potentes del Caribe.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Clima</span>
+          <strong>27 – 32 °C</strong>
+          <span>Clima tropical cálido todo el año. Temporada de lluvias entre septiembre y noviembre, con chubascos cortos y recuperación rápida.</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Duración ideal</span>
+          <strong>5 a 7 noches</strong>
+          <span>La isla es pequeña y manejable. 5 noches está bien para descanso; 7 si el cliente quiere explorar con calma y hacer excursiones.</span>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:26px;">
+        <div>
+          <div class="info-box">
+            <strong>Frase de venta base:</strong>
+            "San Andrés es Caribe de verdad: agua de siete colores, playa, ambiente latino con vida propia y una operativa directa que hace que llegar sea muy fácil."
+          </div>
+
+          <div class="cards-2">
+            <div class="card">
+              <h3>Cliente ideal</h3>
+              <ul class="clean">
+                <li>Parejas que quieren Caribe sin salir del continente americano.</li>
+                <li>Grupos de amigos que buscan ambiente, nocturna y playa.</li>
+                <li>Familias colombianas o latinoamericanas con niños.</li>
+                <li>Clientes con presupuesto más ajustado para Caribe.</li>
+                <li>Viajeros que quieren snorkel y buceo en aguas cristalinas.</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Pregunta de detección</h3>
+              <p>
+                "¿Buscáis una isla más tranquila y de playa pura, algo con más ambiente y vida nocturna, o queréis combinar relax con excursiones y snorkel en el mar de siete colores?"
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="height:100%;">
+            <h3>Cómo posicionarlo bien</h3>
+            <ul class="clean">
+              <li><strong>Zona norte / El Acuario / Johnny Cay:</strong> el argumento más visual. La excursión que ningún cliente puede perderse.</li>
+              <li><strong>Centro / Avenida Colombia:</strong> base con más opciones de hotel, restaurantes y vida nocturna.</li>
+              <li><strong>El Cove:</strong> zona más tranquila, con marina y el mejor buceo de la isla.</li>
+              <li><strong>La Loma / sur:</strong> el corazón raizal. Cultura local auténtica y miradores únicos.</li>
+              <li><strong>Providencia:</strong> la extensión premium para cliente de naturaleza y arrecife.</li>
+            </ul>
+
+            <div class="tag-row">
+              <span class="tag">Agua de 7 colores</span>
+              <span class="tag">Raizal</span>
+              <span class="tag">Snorkel</span>
+              <span class="tag">Ambiente latino</span>
+              <span class="tag">Sin pasaporte colombiano</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ ZONA NORTE ══ -->
+    <section class="section destination" id="norte">
+      <div class="destination-top">
+        <div class="destination-number">1</div>
+        <h3>Zona Norte · El Acuario · Johnny Cay</h3>
+        <p class="destination-subtitle">
+          La venta más fotogénica y turística de San Andrés. El Acuario es el banco de arena con aguas turquesas de postal; Johnny Cay es la islita con palmeras que los clientes ven en todas las fotos. Aquí se concentra la oferta de snorkel, lanchas y la imagen icónica del destino.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Parejas que quieren la foto de isla paradisiaca.</li>
+              <li>Familias con niños: agua poco profunda y tranquila.</li>
+              <li>Clientes de primera visita a San Andrés.</li>
+              <li>Viajeros que priorizan snorkel y mar turquesa.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>El Acuario: banco de arena rodeado de agua de siete colores. Argumento visual insuperable.</li>
+              <li>Johnny Cay: islita icónica con snorkel sencillo y mucho contenido fotográfico.</li>
+              <li>Tour en lancha fácil de contratar y de incluir en el paquete.</li>
+              <li>La experiencia más reconocible de San Andrés internacionalmente.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>El Acuario (Haynes Cay): banco de arena con agua cristalina.</li>
+              <li>Johnny Cay: snorkel, palmeras, peces de colores tropicales.</li>
+              <li>Paseo en lancha o catamarán por la zona norte.</li>
+              <li>Buceo y snorkel en arrecifes cercanos.</li>
+              <li>Ambiente de playa, chiringuitos y relax al sol.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>ADZ → zona norte:</strong> aprox. 10 a 15 min.</li>
+              <li>Zona más cercana al aeropuerto de toda la isla.</li>
+              <li>Las lanchas al Acuario salen desde el muelle central. Acceso muy sencillo.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo vender la zona norte:</strong> "Es la imagen que todos tienen de San Andrés: el agua de siete colores, el banco de arena y los peces de colores. Si el cliente quiere la foto de Caribe de postal, esto lo cumple sin discusión."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Hoteles frente al mar en la Avenida Colombia, resorts con acceso a playa y establecimientos con piscina mirando al Caribe. Buena base para excursiones matutinas a las islas cercanas.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              El Acuario y Johnny Cay son excursiones de medio día, no son playas de base. No vender como "te quedas en Johnny Cay de vacaciones": se van en lancha, se disfrutan unas horas y se regresa a la isla principal.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ CENTRO / EL COVE ══ -->
+    <section class="section destination" id="centro">
+      <div class="destination-top">
+        <div class="destination-number">2</div>
+        <h3>Centro · Avenida Colombia · El Cove</h3>
+        <p class="destination-subtitle">
+          El centro de San Andrés concentra la mayor oferta hotelera, restaurantes, comercio, vida nocturna y el acceso más cómodo a todos los puntos de la isla. El Cove, en el lado occidental, aporta tranquilidad, marina y el mejor buceo de la isla.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Grupos de amigos que buscan vida nocturna y ambiente.</li>
+              <li>Parejas que quieren salir a cenar y tener opciones cerca.</li>
+              <li>Cliente que prioriza comodidad logística y hotel bien ubicado.</li>
+              <li>Buceadores que quieren acceder fácilmente a El Cove.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Máxima concentración de hoteles con vistas al mar.</li>
+              <li>Restaurantes de cocina raizal, mariscos y gastronomía colombiana.</li>
+              <li>Comercio libre de impuestos (San Andrés es zona franca).</li>
+              <li>Vida nocturna activa en la Avenida Colombia.</li>
+              <li>El Cove como alternativa tranquila y de buceo a 15 min.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>Avenida Colombia: bares, malecón y ambiente nocturno.</li>
+              <li>Compras libres de impuesto (ron, perfumes, electrónica).</li>
+              <li>Gastronomía raizal: rondón, cangrejo negro, langosta.</li>
+              <li>El Cove: marina, cayos cercanos, inmersiones en arrecife.</li>
+              <li>Playa del Centro y acceso fácil a excursiones.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>ADZ → centro:</strong> aprox. 10 min.</li>
+              <li>Muy buena conectividad interna en moto-taxi o carro de alquiler.</li>
+              <li>El Cove queda a 15-20 min del aeropuerto en dirección sur.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box orange">
+          <strong>Cómo vender el centro:</strong> "Si quieren tenerlo todo cerca, esta es la zona: hotel con vistas al mar, restaurantes a 5 minutos, vida nocturna y salida fácil hacia El Acuario o La Loma en cualquier momento."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Tipo de hotel recomendado</h4>
+            <p>
+              Hoteles frente a la Avenida Colombia, establecimientos con piscina y vista al mar, o boutiques en el centro para cliente que quiere estar en el corazón de la isla con máxima comodidad logística.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              La zona central puede ser ruidosa por las noches cerca de los bares. Para cliente que busca total tranquilidad, mejor orientar hacia El Cove o La Loma. Para cliente que quiere ambiente, es la base perfecta.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ LA LOMA / SUR ══ -->
+    <section class="section destination" id="sur">
+      <div class="destination-top">
+        <div class="destination-number">3</div>
+        <h3>La Loma · Sur · Barrio Raizal</h3>
+        <p class="destination-subtitle">
+          La Loma es el corazón cultural de San Andrés: el barrio raizal original, con la iglesia bautista más antigua de Colombia, frutos tropicales únicos, miradores excepcionales y el San Andrés más auténtico. Es lo que transforma un viaje de playa en un viaje de verdad.
+        </p>
+      </div>
+      <div class="destination-body">
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Cliente ideal</h4>
+            <ul class="clean">
+              <li>Viajeros que quieren más que playa y hotel.</li>
+              <li>Parejas o clientes culturales que buscan autenticidad.</li>
+              <li>Clientes que disfrutan de la gastronomía local más genuina.</li>
+              <li>Repeaters de San Andrés que ya conocen las playas principales.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Fortalezas comerciales</h4>
+            <ul class="clean">
+              <li>Primera Iglesia Bautista de Colombia: visita histórica y fotográfica.</li>
+              <li>Frutos exóticos y cocina raizal auténtica en puestos locales.</li>
+              <li>Miradores con vistas al mar de siete colores desde las alturas.</li>
+              <li>Cultura raizal: idioma creole, arquitectura de madera, tradición.</li>
+              <li>El contraste con el centro turístico suma valor real al viaje.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Atractivos principales</h4>
+            <ul class="clean">
+              <li>La Loma: el barrio raizal más auténtico de la isla.</li>
+              <li>Primera Iglesia Bautista de Colombia (fundada en 1847).</li>
+              <li>Frutos tropicales: mango, árbol del pan, coco, anona.</li>
+              <li>Miradores sobre el mar de siete colores.</li>
+              <li>La Piscinita / Natural Pool: cala de snorkel natural en el sur.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Operativa de llegada</h4>
+            <ul class="clean">
+              <li><strong>ADZ → La Loma:</strong> aprox. 15 a 20 min.</li>
+              <li>Se accede bien en moto-taxi, carro de alquiler o tour organizado.</li>
+              <li>La Piscinita está en el extremo sur: 20-25 min desde el centro.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box blue">
+          <strong>Cómo vender La Loma:</strong> "Es lo que hace que San Andrés sea más que una playa: hay una cultura real, un idioma propio, una historia y unos miradores desde donde el agua de siete colores se ve de una manera completamente diferente."
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h4>Uso comercial correcto</h4>
+            <p>
+              Ideal como medio día dentro del viaje. Se puede combinar con La Piscinita (Natural Pool) en el sur, que ofrece snorkel en cala natural protegida. Es la ruta interior más recomendable de toda la isla.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Alerta comercial</h4>
+            <p>
+              No es una zona de hoteles ni de vida nocturna. Como base de estadía solo tiene sentido para un perfil muy específico. Para la mayoría de clientes, funciona mejor como excursión de medio día incluida en el viaje.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PLAYAS CLAVE ══ -->
+    <section class="section" id="playas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Mar y naturaleza</span>
+          <h2>Playas y excursiones clave</h2>
+        </div>
+        <p class="section-intro">
+          San Andrés concentra sus mejores experiencias acuáticas en un perímetro muy manejable. Conocer bien cuáles recomendar según el perfil del cliente marca la diferencia entre una venta genérica y una asesoría de valor real.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>🏖️ El Acuario (Haynes Cay)</h4>
+          <p>
+            El banco de arena más famoso de la isla. Agua turquesa a la rodilla, peces de colores visibles sin gafas, snorkel sencillo y muy accesible. La excursión más fácil de vender y la que más impacta visualmente al cliente.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag">Snorkel</span>
+            <span class="tag">Foto de postal</span>
+            <span class="tag">Familias</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>🌴 Johnny Cay</h4>
+          <p>
+            Islita con palmeras a 10 min en lancha. Playa de arena blanca, aguas muy tranquilas, peces tropicales y una postal que el cliente siempre quiere llevarse. Los domingos tiene más ambiente y música en vivo.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag">Palmeras</span>
+            <span class="tag">Ambiente</span>
+            <span class="tag">Parejas</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>🤿 La Piscinita / Natural Pool</h4>
+          <p>
+            Cala natural en el extremo sur. Las rocas rompen las olas y crean una piscina natural con aguas tranquilas, coral vivo y peces. Excelente para snorkel sin lancha, directamente desde la orilla.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag">Snorkel</span>
+            <span class="tag">Natural</span>
+            <span class="tag">Sin lancha</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>🐠 El Cove · Buceo</h4>
+          <p>
+            El mejor punto de buceo de San Andrés. Arrecifes con gran visibilidad, barcos hundidos y alta biodiversidad marina. La marina del Cove concentra los centros de buceo más recomendables de la isla.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag">Buceo</span>
+            <span class="tag">Arrecifes</span>
+            <span class="tag">Buceadores</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>⛵ Providencia</h4>
+          <p>
+            La isla hermana: más pequeña, más virgen y menos turística. El arrecife de coral que la rodea es uno de los más grandes del hemisferio occidental. Se llega en avioneta o barco. Producto claramente premium.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag">Premium</span>
+            <span class="tag">Arrecife</span>
+            <span class="tag">Extensión</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>🌊 West View</h4>
+          <p>
+            Zona de snorkel directamente desde la orilla en el lado occidental de la isla. Buena visibilidad, coral y peces sin necesidad de lancha. Fácil de combinar con una vuelta en moto por la isla entera.
+          </p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag">Snorkel fácil</span>
+            <span class="tag">Desde orilla</span>
+            <span class="tag">Sin traslado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box orange" style="margin-top:22px;">
+        <strong>Tip de excursiones:</strong> El tour más vendible es el combo El Acuario + Johnny Cay en lancha en la misma mañana (3-4 horas). Para cliente que quiere más, añadir La Piscinita por la tarde es un complemento perfecto sin grandes traslados ni costes extra.
+      </div>
+    </section>
+
+    <!-- ══ COMPARATIVA ══ -->
+    <section class="section" id="comparativa">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Lectura rápida</span>
+          <h2>Comparativa comercial de zonas</h2>
+        </div>
+        <p class="section-intro">
+          San Andrés es una isla pequeña donde la zona base cambia el tono del viaje. Elegir bien según el perfil del cliente es elegir bien para el resultado final.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Producto principal</th>
+            <th>Cliente ideal</th>
+            <th>Frase de venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Zona Norte / El Acuario</strong></td>
+            <td>Playa de postal + snorkel</td>
+            <td>Primera visita, familias, parejas, fotógrafos</td>
+            <td>"El agua de siete colores en su versión más visual."</td>
+          </tr>
+          <tr>
+            <td><strong>Centro / Avenida Colombia</strong></td>
+            <td>Vistas al mar + vida nocturna + comodidad</td>
+            <td>Grupos, parejas activas, primera visita</td>
+            <td>"La base más cómoda si quieren tenerlo todo cerca."</td>
+          </tr>
+          <tr>
+            <td><strong>El Cove</strong></td>
+            <td>Marina + relax + buceo</td>
+            <td>Buceadores, parejas tranquilas, perfil medio-alto</td>
+            <td>"La San Andrés más serena y con el mejor buceo."</td>
+          </tr>
+          <tr>
+            <td><strong>La Loma / Sur</strong></td>
+            <td>Cultura raizal + autenticidad</td>
+            <td>Culturales, repeaters, viajeros curiosos</td>
+            <td>"La isla de verdad, la que hace el viaje más completo."</td>
+          </tr>
+          <tr>
+            <td><strong>Providencia</strong></td>
+            <td>Naturaleza virgen + arrecife premium</td>
+            <td>Buceadores, parejas premium, exploradores</td>
+            <td>"Para quien quiere ir más allá y ver el Caribe sin filtros."</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══ TRASLADOS ══ -->
+    <section class="section" id="traslados">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Operativa</span>
+          <h2>Tiempos medios de traslado</h2>
+        </div>
+        <p class="section-intro">
+          San Andrés es una isla pequeña (27 km²) y muy manejable. El mayor traslado interno no supera los 30 minutos. Se puede recorrer toda la isla en coche o moto en menos de una hora.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Zona / Punto</th>
+            <th>Desde aeropuerto (ADZ)</th>
+            <th>Desde centro</th>
+            <th>Comentario comercial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Centro / Avenida Colombia</strong></td>
+            <td>10 min</td>
+            <td>–</td>
+            <td>La base más operativa. Acceso inmediato a todo.</td>
+          </tr>
+          <tr>
+            <td><strong>El Acuario (en lancha)</strong></td>
+            <td>15 min al muelle + 15 min en lancha</td>
+            <td>15-20 min en lancha</td>
+            <td>Excursión de mañana muy sencilla de organizar.</td>
+          </tr>
+          <tr>
+            <td><strong>Johnny Cay (en lancha)</strong></td>
+            <td>15 min al muelle + 10 min en lancha</td>
+            <td>10-15 min en lancha</td>
+            <td>Se combina fácilmente con El Acuario en el mismo tour.</td>
+          </tr>
+          <tr>
+            <td><strong>El Cove</strong></td>
+            <td>15 a 20 min</td>
+            <td>15 min</td>
+            <td>Zona tranquila, muy accesible desde cualquier punto.</td>
+          </tr>
+          <tr>
+            <td><strong>La Loma</strong></td>
+            <td>15 a 20 min</td>
+            <td>15 min</td>
+            <td>Excursión cultural de medio día muy recomendable.</td>
+          </tr>
+          <tr>
+            <td><strong>La Piscinita / Natural Pool</strong></td>
+            <td>20 a 25 min</td>
+            <td>20 min</td>
+            <td>Se puede combinar con La Loma en el mismo día.</td>
+          </tr>
+          <tr>
+            <td><strong>Providencia</strong></td>
+            <td>25 min en avioneta</td>
+            <td>Mismo traslado</td>
+            <td>Extensión premium. Avioneta o barco rápido. Reservar con antelación.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box pink" style="margin-top:22px;">
+        <strong>Tip de operativa:</strong> En San Andrés lo más práctico para explorar es alquilar una moto o un carrito de golf por un día y dar la vuelta completa a la isla (aprox. 2-3 horas de ruta). Permite visitar varios puntos sin depender de taxis y a un costo muy razonable.
+      </div>
+    </section>
+
+    <!-- ══ TEMPORADAS ══ -->
+    <section class="section" id="temporadas">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Estacionalidad</span>
+          <h2>Temporadas comerciales</h2>
+        </div>
+        <p class="section-intro">
+          San Andrés es un destino muy vendible durante casi todo el año. La clave está en saber manejar la temporada de lluvias y el tema de huracanes con información precisa.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Periodo</th>
+            <th>Lectura comercial</th>
+            <th>Cómo venderlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diciembre – marzo</strong></td>
+            <td>Temporada alta / seca</td>
+            <td>La ventana más fácil: clima más seco, mar tranquilo, precios más altos. Ideal para primera venta o cliente que busca garantía de buen tiempo.</td>
+          </tr>
+          <tr>
+            <td><strong>Abril – junio</strong></td>
+            <td>Temporada media / muy buena</td>
+            <td>Buen clima, precios más accesibles que en temporada alta. Muy buena opción para parejas y familias con flexibilidad de fechas.</td>
+          </tr>
+          <tr>
+            <td><strong>Julio – agosto</strong></td>
+            <td>Temporada alta latinoamericana</td>
+            <td>Vacaciones colombianas y latinoamericanas. Isla muy llena, precios altos y mucho ambiente. Buena venta para grupos y parejas que disfrutan de una isla con vida.</td>
+          </tr>
+          <tr>
+            <td><strong>Septiembre – noviembre</strong></td>
+            <td>Temporada de lluvias</td>
+            <td>Chubascos frecuentes pero generalmente cortos. Septiembre y octubre son los meses más húmedos. El precio baja considerablemente. Buena opción para cliente flexible con presupuesto ajustado.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>¿Hay huracanes en San Andrés?</h4>
+          <p>
+            San Andrés está dentro de la zona de influencia del Caribe occidental y ha recibido impactos directos (el huracán Iota en 2020 fue muy significativo). No hay que negar el riesgo, pero sí contextualizarlo: históricamente los impactos directos son poco frecuentes. Vender con información honesta genera más confianza que prometer clima perfecto absoluto.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Cómo explicar la temporada de lluvias</h4>
+          <p>
+            No como "temporada mala", sino como una época con chubascos tropicales cortos que generalmente no quitan el disfrute de la isla. La temperatura sigue siendo muy agradable, el mar sigue disponible y el precio baja considerablemente respecto a temporada alta.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ OBJECIONES ══ -->
+    <section class="section" id="objeciones">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Ventas</span>
+          <h2>Cómo manejar objeciones</h2>
+        </div>
+        <p class="section-intro">
+          San Andrés tiene una reputación mixta: algunos la ven como destino masificado o de bajo perfil. El trabajo del vendedor es reencuadrar esa percepción y mostrar el San Andrés real que el cliente no conoce.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <div class="card">
+          <h4>"Me dijeron que está muy llena de turistas."</h4>
+          <p>
+            Respuesta: en temporada alta hay mucho turismo colombiano, sí. La clave es elegir bien los puntos a visitar y los horarios. El Acuario a primera hora, La Piscinita por la tarde o La Loma son experiencias sin masificación real.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿Las playas son buenas de verdad?"</h4>
+          <p>
+            Respuesta: el agua de siete colores es real y es uno de los mares más bonitos del mundo. Las playas de la Avenida Colombia son funcionales pero no espectaculares. El impacto visual llega en las excursiones al Acuario y Johnny Cay: eso es lo que el cliente tiene que ver.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Me parece caro para Colombia."</h4>
+          <p>
+            Respuesta: San Andrés es zona franca y el ron, los perfumes y la electrónica se consiguen más baratos, pero los hoteles tienen precios similares al Caribe externo. La ventaja real es que no hay vuelo internacional ni hay que salir del país.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Prefiero Cancún o República Dominicana."</h4>
+          <p>
+            Respuesta: totalmente válido si el presupuesto y el perfil lo permiten. Pero San Andrés tiene un agua igual de bonita, cultura propia y sin la logística de salida de Colombia o Argentina. Para muchos clientes es el Caribe más accesible que existe.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"¿Es seguro?"</h4>
+          <p>
+            Respuesta: las zonas hoteleras y turísticas son muy seguras. Como en cualquier destino, se recomienda no alejarse a barrios desconocidos de noche sin orientación local. La experiencia turística está muy bien organizada.
+          </p>
+        </div>
+        <div class="card">
+          <h4>"Solo tiene dos o tres días de cosas para hacer."</h4>
+          <p>
+            Respuesta: con 5-7 noches se puede explorar toda la isla, hacer todas las excursiones acuáticas, comer bien y descansar sin prisa. Si se añade Providencia, el viaje sube a otro nivel y pueden llegar a 8-10 noches sin problema.
+          </p>
+        </div>
+      </div>
+
+      <div class="info-box orange">
+        <strong>Alerta crítica:</strong> no vendas San Andrés como si todo el atractivo estuviera en la playa del hotel de la Avenida Colombia. El agua de siete colores se ve en las excursiones, no desde el malecón. Si el cliente solo se queda en el hotel sin ir a El Acuario o Johnny Cay, la experiencia quedará muy por debajo de su potencial real.
+      </div>
+    </section>
+
+    <!-- ══ NOCHES ══ -->
+    <section class="section" id="noches">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Duración ideal</span>
+          <h2>Noches recomendadas</h2>
+        </div>
+        <p class="section-intro">
+          San Andrés es una isla más pequeña que otras del Caribe, lo que permite cubrirla bien en menos noches. 5 noches es el mínimo cómodo; 7 si el cliente quiere disfrutarla sin correr y sin perder nada.
+        </p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Opción de viaje</th>
+            <th>Noches</th>
+            <th>Qué incluye</th>
+            <th>Perfil recomendado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>San Andrés básico</strong></td>
+            <td>5 noches</td>
+            <td>El Acuario + Johnny Cay, La Loma + La Piscinita y un día libre de playa y relax.</td>
+            <td>Primera vez, presupuesto ajustado, escapada de fin de semana largo.</td>
+          </tr>
+          <tr>
+            <td><strong>San Andrés completo</strong></td>
+            <td>7 noches</td>
+            <td>Todo lo anterior + El Cove, West View, vuelta en moto por la isla y más tiempo en el mar sin prisa.</td>
+            <td>Parejas, familias, cliente que quiere disfrutar sin agenda apretada.</td>
+          </tr>
+          <tr>
+            <td><strong>San Andrés + Providencia</strong></td>
+            <td>8 a 10 noches</td>
+            <td>5-7 noches en San Andrés + 2-3 en Providencia (avioneta o barco rápido). Providencia añade un arrecife premium y naturaleza virgen.</td>
+            <td>Buceadores, parejas premium, clientes que buscan algo diferencial y memorable.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cards-2">
+        <div class="card">
+          <h4>Venta simple</h4>
+          <p>
+            5 noches con base en el centro o zona norte, El Acuario + Johnny Cay, La Loma y un par de días de playa sin agenda. Venta fácil, resultado garantizado.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Venta que sube valor</h4>
+          <p>
+            7 noches con vuelta completa a la isla, excursiones acuáticas en varios puntos y, si el presupuesto lo permite, 2-3 noches en Providencia. Un viaje con mucho más contenido y mayor ticket de venta.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SCRIPT DE VENTA ══ -->
+    <section class="section" id="script">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cierre comercial</span>
+          <h2>Script de venta</h2>
+        </div>
+        <p class="section-intro">
+          Guion pensado para primera llamada, mail comercial o lectura rápida durante la cotización.
+        </p>
+      </div>
+
+      <div class="script-box">
+        <p><strong>Apertura:</strong> "San Andrés es el Caribe colombiano con uno de los mares más bonitos del mundo. El agua de siete colores no es un nombre de marketing: es literalmente lo que ven los ojos cuando llegan al Acuario o miran desde La Loma."</p>
+        <p><strong>Pregunta de detección:</strong> "¿Qué buscan más: playa y snorkel con mucho mar y foto de postal, ambiente con restaurantes y vida nocturna, relax total, o también quieren explorar la isla y conocer algo de su cultura raizal?"</p>
+        <p><strong>Lectura rápida por perfil:</strong> "Centro y zona norte si quieren estar en el corazón de la isla con todo cerca; El Cove si buscan más tranquilidad y buceo; La Loma + La Piscinita si quieren ver el San Andrés más auténtico; y si animamos a ir a Providencia, el viaje sube directamente a otro nivel."</p>
+        <p><strong>Argumento de diferenciación:</strong> "No hay que salir del continente americano, el vuelo es directo, y el agua que van a encontrar compite con cualquier Caribe del mundo. Pocas veces se puede decir eso de un destino tan accesible y con operativa tan sencilla."</p>
+        <p><strong>Cierre recomendado:</strong> "Yo no bajaría de 5 noches si quieren ver lo esencial; con 7 ya lo disfrutan sin correr. Y si tienen la posibilidad de añadir 2-3 noches en Providencia, ese viaje ya se convierte en algo que van a recordar mucho tiempo."</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Guía comercial base · Dr. Viaje · San Andrés · Formato comercial-consultivo</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" aria-label="Subir">↑</button>
+
+  <script>
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        scrollTopBtn.style.display = 'block';
+      } else {
+        scrollTopBtn.style.display = 'none';
+      }
+    });
+
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

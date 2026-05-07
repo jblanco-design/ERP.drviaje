@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Viaje | Guía Definitiva San Francisco</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --critical-red: #d32f2f;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-dark); line-height: 1.65; }
+        a { color: inherit; text-decoration: none; }
+        .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: var(--white); padding: 50px 0 40px; position: relative; overflow: hidden;
+        }
+        header::before, header::after {
+            content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.08);
+        }
+        header::before { width: 260px; height: 260px; top: -90px; right: -50px; }
+        header::after { width: 180px; height: 180px; bottom: -80px; left: -30px; }
+        .header-content { position: relative; z-index: 2; }
+        .badge {
+            display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+            color: var(--white); padding: 8px 16px; border-radius: 999px; font-size: 0.88rem; font-weight: 700;
+            margin-bottom: 18px; letter-spacing: 0.03em;
+        }
+        header h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); font-weight: 800; line-height: 1.05; margin-bottom: 12px; letter-spacing: -0.03em; }
+        .header-subtitle { font-size: 1.05rem; opacity: 0.93; max-width: 820px; margin-bottom: 32px; }
+
+        .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-top: 8px; }
+        .kpi {
+            background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
+            padding: 18px 14px; text-align: center; backdrop-filter: blur(6px);
+        }
+        .kpi strong { display: block; font-size: 1.6rem; font-weight: 800; color: #ffd36a; margin-bottom: 4px; }
+        .kpi span { font-size: 0.82rem; opacity: 0.9; }
+
+        nav {
+            position: sticky; top: 72px; z-index: 100; background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .nav-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 13px 0; scrollbar-width: none; }
+        .nav-scroll::-webkit-scrollbar { display: none; }
+        .nav-scroll a {
+            white-space: nowrap; background: linear-gradient(135deg, rgba(255,152,0,0.1), rgba(233,30,99,0.1));
+            color: var(--primary-purple); border: 1px solid rgba(123,45,142,0.15); padding: 9px 16px;
+            border-radius: 999px; font-size: 0.88rem; font-weight: 700; transition: var(--transition);
+        }
+        .nav-scroll a:hover {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink)); color: var(--white); transform: translateY(-1px);
+        }
+
+        main { padding: 32px 0 80px; }
+        /* Offset para los dos navbars apilados */
+        .destination-card[id] { scroll-margin-top: 140px; }
+
+        .destination-card {
+            background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange); padding: 32px; margin-bottom: 32px; transition: var(--transition);
+        }
+        .destination-card:nth-child(even) { border-top-color: var(--primary-pink); }
+        .destination-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+        
+        .destination-header { border-bottom: 2px solid var(--bg-light); padding-bottom: 20px; margin-bottom: 28px; }
+        .destination-header h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 800; color: var(--primary-purple); letter-spacing: -0.03em; margin-bottom: 6px; }
+        .destination-subtitle { color: var(--primary-pink); font-size: 1.05rem; font-style: italic; font-weight: 500; }
+
+        .section { margin-bottom: 32px; }
+        .section + .section { padding-top: 28px; border-top: 1px solid rgba(0,0,0,0.05); }
+        .section h3 { font-size: 1.35rem; font-weight: 800; color: var(--text-dark); padding-left: 14px; border-left: 5px solid var(--primary-orange); margin-bottom: 16px; letter-spacing: -0.01em; }
+        .section h4 { font-size: 1.05rem; font-weight: 700; color: var(--primary-purple); margin: 18px 0 10px; }
+        .section p { color: var(--text-medium); margin-bottom: 12px; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; margin-top: 16px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; margin-top: 16px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; margin-top: 16px; }
+
+        .card { background: var(--white); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.06); transition: var(--transition); }
+        .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+        .card h4 { font-size: 1rem; font-weight: 800; color: var(--primary-purple); margin-bottom: 10px; }
+        .card p { font-size: 0.95rem; color: var(--text-medium); margin-bottom: 8px; }
+        .card-orange { border-top: 4px solid var(--primary-orange); }
+        .card-pink { border-top: 4px solid var(--primary-pink); }
+        .card-purple { border-top: 4px solid var(--primary-purple); }
+
+        .info-box, .tip-box, .alert-box, .script-box, .critical-alert, .warning-box {
+            border-radius: var(--radius-lg); padding: 18px 20px; margin: 16px 0;
+        }
+        .info-box { background: linear-gradient(135deg, rgba(123,45,142,0.07), rgba(63,81,181,0.05)); border-left: 5px solid var(--primary-purple); }
+        .tip-box { background: linear-gradient(135deg, rgba(255,193,7,0.12), rgba(255,152,0,0.08)); border-left: 5px solid var(--primary-orange); }
+        .alert-box { background: linear-gradient(135deg, rgba(233,30,99,0.08), rgba(255,255,255,0.95)); border-left: 5px solid var(--primary-pink); }
+        .script-box { background: linear-gradient(135deg, rgba(123,45,142,0.07), rgba(63,81,181,0.07)); border: 2px solid rgba(123,45,142,0.2); }
+        .critical-alert { background: linear-gradient(135deg, rgba(211,47,47,0.09), rgba(255,255,255,0.98)); border: 2px solid var(--critical-red); }
+        .critical-alert strong { color: var(--critical-red); }
+
+        .box-label {
+            display: inline-block; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.06em;
+            text-transform: uppercase; margin-bottom: 8px; padding: 3px 10px; border-radius: 999px;
+        }
+        .label-purple { background: rgba(123,45,142,0.12); color: var(--primary-purple); }
+        .label-orange { background: rgba(255,152,0,0.15); color: #e65100; }
+        .label-pink { background: rgba(233,30,99,0.12); color: var(--primary-pink); }
+        .label-red { background: rgba(211,47,47,0.12); color: var(--critical-red); }
+
+        .pill {
+            display: inline-block; background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: var(--white); padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+            margin-bottom: 10px; letter-spacing: 0.03em;
+        }
+
+        .quote { font-size: 1rem; font-weight: 600; color: var(--primary-purple); font-style: italic; line-height: 1.7; }
+
+        .table-wrap { overflow-x: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); margin: 16px 0; }
+        table { width: 100%; border-collapse: collapse; background: var(--white); min-width: 680px; }
+        thead th { background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); color: var(--white); padding: 13px 14px; text-align: left; font-size: 0.9rem; font-weight: 700; }
+        tbody td { padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-medium); font-size: 0.93rem; vertical-align: top; }
+        tbody tr:nth-child(even) td { background: #fafafa; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #f5f0fb; }
+
+        ul.clean-list { padding-left: 0; list-style: none; display: grid; gap: 8px; }
+        ul.clean-list li { color: var(--text-medium); padding-left: 18px; position: relative; font-size: 0.95rem; }
+        ul.clean-list li::before { content: "•"; color: var(--primary-orange); font-weight: 900; position: absolute; left: 0; }
+
+        .highlight { color: var(--primary-purple); font-weight: 700; }
+
+        .scroll-top {
+            position: fixed; right: 20px; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
+            border: none; cursor: pointer; background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: var(--white); font-size: 1.2rem; font-weight: 700; box-shadow: var(--shadow-hover);
+            display: flex; align-items: center; justify-content: center; transition: var(--transition); z-index: 999;
+            opacity: 0; visibility: hidden;
+        }
+        .scroll-top.visible { opacity: 1; visibility: visible; }
+        .scroll-top:hover { transform: translateY(-4px); }
+
+        footer { background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); color: var(--white); text-align: center; padding: 32px 20px; margin-top: 20px; }
+        footer p { opacity: 0.93; font-size: 0.94rem; margin-bottom: 4px; }
+
+        @media (max-width: 1024px) { .kpi-row, .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); } .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+        @media (max-width: 680px) { .kpi-row, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .destination-card { padding: 22px; } header { padding: 36px 0 30px; } }
+    </style>
+</head>
+<body>
+
+<script src="../js/navbar-inject.js"></script>
+
+<header>
+    <div class="container header-content">
+        <span class="badge">Dr. Viaje · Guía comercial definitiva</span>
+        <h1>San Francisco</h1>
+        <p class="header-subtitle">
+            La ciudad más compacta, fotogénica y europea de Estados Unidos. Golden Gate, Alcatraz,
+            cable cars históricos y barrios con identidad propia. Una ciudad donde la logística es
+            exactamente opuesta a Los Ángeles: aquí el auto es un problema y caminar es la mejor experiencia.
+        </p>
+
+        <div class="kpi-row">
+            <div class="kpi">
+                <strong>121 km²</strong>
+                <span>La ciudad más compacta de EE.UU.</span>
+            </div>
+            <div class="kpi">
+                <strong>43</strong>
+                <span>Colinas empinadas en la ciudad</span>
+            </div>
+            <div class="kpi">
+                <strong>USD 50-85</strong>
+                <span>Parking hotel por noche (evitar)</span>
+            </div>
+            <div class="kpi">
+                <strong>18°C</strong>
+                <span>Temperatura media todo el año</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <div class="container">
+        <div class="nav-scroll">
+            <a href="#visa">Visa B1/B2</a>
+            <a href="#perfil">Cliente ideal</a>
+            <a href="#logistica">Sin auto</a>
+            <a href="#zonas">Alojamiento</a>
+            <a href="#atracciones">Atracciones</a>
+            <a href="#barrios">Barrios icónicos</a>
+            <a href="#extensiones">Extensiones</a>
+            <a href="#clima">Clima y niebla</a>
+            <a href="#fees">Costos ocultos</a>
+            <a href="#familias">Familias</a>
+            <a href="#alertas">Alertas críticas</a>
+            <a href="#script">Script de venta</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+<div class="container">
+
+<!-- ══════════════════════════
+     VISA B1/B2
+══════════════════════════ -->
+<div id="visa" class="destination-card">
+    <div class="destination-header">
+        <h2>Visa B1/B2 — Requisito Obligatorio</h2>
+        <p class="destination-subtitle">Primer filtro antes de cualquier reserva a Estados Unidos</p>
+    </div>
+
+    <div class="section">
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Información crítica para el agente</div>
+            <p>
+                <strong>Todos los ciudadanos uruguayos y argentinos REQUIEREN Visa B1/B2</strong>
+                para ingresar a Estados Unidos por turismo. Es el primer filtro que debes aplicar antes
+                de confirmar cualquier reserva no reembolsable.
+            </p>
+        </div>
+
+        <div class="grid-2">
+            <div class="card card-purple">
+                <h4>Datos clave de la Visa B1/B2</h4>
+                <ul class="clean-list">
+                    <li><strong>Costo (tasa MRV):</strong> USD 185 por persona (no reembolsable)</li>
+                    <li><strong>Vigencia típica:</strong> Hasta 10 años con múltiples entradas</li>
+                    <li><strong>Estadía máxima:</strong> Hasta 6 meses por entrada</li>
+                    <li><strong>Proceso:</strong> Formulario DS-160 + entrevista consular obligatoria</li>
+                </ul>
+            </div>
+            <div class="card card-orange">
+                <h4>Tiempos de demora orientativos</h4>
+                <ul class="clean-list">
+                    <li><strong>Uruguay:</strong> Turnos disponibles en 2-4 semanas aproximadamente</li>
+                    <li><strong>Argentina:</strong> Demoras de 6-12 meses o más para conseguir turno</li>
+                    <li><strong>Procesamiento:</strong> 3-15 días hábiles después de la entrevista</li>
+                    <li><strong>Recomendación:</strong> Iniciar trámite con máxima anticipación posible</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="box-label label-purple">🔗 Sitio oficial para solicitud de visa</div>
+            <p>Dirige a tus pasajeros al sitio oficial de la Embajada de Estados Unidos:</p>
+            <p style="margin-top: 12px;">
+                <a href="https://uy.usembassy.gov/es/visas-es/visas-de-no-inmigrante/" target="_blank" rel="noopener noreferrer"
+                   style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink)); color: white; padding: 12px 20px; border-radius: 999px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 15px rgba(123,45,142,0.3);">
+                    🌐 Solicitud de Visa B1/B2 — Embajada EE.UU. Uruguay
+                </a>
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script para el agente</div>
+            <p class="quote">
+                "Antes de avanzar con fechas o reservas, necesito confirmar si ya tienen la visa
+                americana vigente. Si no la tienen, el trámite cuesta USD 185 por persona y puede
+                demorar varios meses, especialmente en Argentina. Mi recomendación es asegurar
+                primero la visa y después definir las fechas del viaje."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     PERFIL DE CLIENTE
+══════════════════════════ -->
+<div id="perfil" class="destination-card">
+    <div class="destination-header">
+        <h2>Perfil de Cliente Ideal</h2>
+        <p class="destination-subtitle">La antítesis de Los Ángeles: ciudad compacta y caminable</p>
+    </div>
+
+    <div class="section">
+        <h3>Posicionamiento comercial de SF</h3>
+        <p>
+            San Francisco es la ciudad más europea de Estados Unidos: compacta, caminable, con transporte
+            público funcional y barrios con identidad cultural muy marcada. Es el destino perfecto para
+            clientes que buscan cultura urbana, gastronomía de primer nivel y proximidad a naturaleza
+            espectacular sin el caos logístico de Los Ángeles.
+        </p>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Diferenciación clave vs Los Ángeles</div>
+            <p>
+                Mientras LA requiere auto y genera estrés logístico, <strong>SF se disfruta sin auto</strong>.
+                Es más íntima, más caminable, más gastronómica y más fotogénica. Para el cliente que
+                busca "la experiencia californiana" pero sin la complejidad de manejar en autopistas,
+                SF es la respuesta perfecta.
+            </p>
+        </div>
+
+        <h3>Perfiles que compran bien SF</h3>
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Parejas gastronómicas y culturales</h4>
+                <p>
+                    SF tiene una de las mejores escenas gastronómicas del mundo, mercados como Ferry Building,
+                    barrios con identidad propia y proximidad a los viñedos de Napa y Sonoma.
+                </p>
+                <div class="pill">Duración ideal: 5-6 noches + Napa</div>
+            </div>
+            <div class="card card-pink">
+                <h4>Viajeros del circuito Costa Oeste</h4>
+                <p>
+                    SF es el punto perfecto de inicio o cierre del circuito LA → Las Vegas → Gran Cañón → SF.
+                    Aporta el contraste cultural y visual que completa la experiencia de California.
+                </p>
+                <div class="pill">Duración en SF: 3-4 noches dentro del circuito</div>
+            </div>
+            <div class="card card-purple">
+                <h4>Tecnológicos y profesionales</h4>
+                <p>
+                    Silicon Valley está a 1 hora. Para clientes del sector tech, startups o simplemente
+                    curiosos por ver las sedes de Apple, Google y Facebook, SF es la base perfecta.
+                </p>
+                <div class="pill">Duración ideal: 4-5 noches + Silicon Valley</div>
+            </div>
+            <div class="card card-orange">
+                <h4>Fotógrafos y cinéfilos</h4>
+                <p>
+                    SF es la ciudad más fotogénica de EE.UU.: Golden Gate, casas victorianas coloridas,
+                    cable cars, colinas con vistas. Cada esquina es una postal.
+                </p>
+                <div class="pill">Duración ideal: 4-6 noches</div>
+            </div>
+            <div class="card card-pink">
+                <h4>Amantes del vino</h4>
+                <p>
+                    Napa Valley y Sonoma están a 1.5 horas. Para clientes que disfrutaron Mendoza
+                    o buscan enoturismo de primer nivel, SF + Wine Country es combinación imbatible.
+                </p>
+                <div class="pill">Duración ideal: 5-7 noches</div>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <div class="box-label label-pink">⚠ Qué cliente NO encaja bien</div>
+            <ul class="clean-list">
+                <li><strong>Busca sol y playa:</strong> SF es fría incluso en verano, con niebla frecuente</li>
+                <li><strong>Movilidad muy reducida:</strong> 43 colinas empinadas hacen difícil el desplazamiento</li>
+                <li><strong>Presupuesto muy ajustado:</strong> Una de las ciudades más caras de EE.UU.</li>
+                <li><strong>Quiere vida nocturna intensa:</strong> SF cierra más temprano que NYC o Miami</li>
+                <li><strong>Familias con bebés:</strong> Colinas + cochecito = combinación imposible</li>
+            </ul>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Pregunta de detección clave</div>
+            <p class="quote">
+                "San Francisco es muy diferente a Los Ángeles: es compacta, fría incluso en verano,
+                y se disfruta caminando y en transporte público. ¿Buscan más la experiencia de los
+                íconos como Golden Gate y Alcatraz, la cultura gastronómica y los barrios únicos,
+                o quieren incluir excursiones al Wine Country o Silicon Valley?"
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     LOGÍSTICA SIN AUTO
+══════════════════════════ -->
+<div id="logistica" class="destination-card">
+    <div class="destination-header">
+        <h2>Logística: Por qué el auto es tu enemigo</h2>
+        <p class="destination-subtitle">La diferencia más importante con Los Ángeles</p>
+    </div>
+
+    <div class="section">
+        <h3>La regla de oro de San Francisco</h3>
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ NO recomiendes auto dentro de SF</div>
+            <p>
+                <strong>Tener auto en San Francisco es una pesadilla logística y financiera.</strong>
+                Parking de hotel USD 50-85/noche + epidemia de robos ("bipping") + multas por
+                estacionamiento + colinas de 30° de inclinación. <strong>Si hacen road trip, que
+                alquilen el auto el día que se van de la ciudad, no antes.</strong>
+            </p>
+        </div>
+
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Cable Cars</h4>
+                <p>
+                    Los tranvías históricos más famosos del mundo. Tres líneas que conectan Downtown
+                    con Fisherman's Wharf subiendo y bajando las colinas icónicas.
+                </p>
+                <ul class="clean-list">
+                    <li><strong>Precio:</strong> USD 8 por viaje</li>
+                    <li><strong>Powell-Hyde:</strong> La línea más escénica</li>
+                    <li><strong>Tip:</strong> CityPASS incluye cable cars ilimitados</li>
+                    <li><strong>Experiencia obligatoria</strong> para primera visita</li>
+                </ul>
+            </div>
+            <div class="card card-pink">
+                <h4>BART (Bay Area Rapid Transit)</h4>
+                <p>
+                    Sistema de metro que conecta aeropuerto, Downtown, Oakland, Berkeley
+                    y Silicon Valley. Rápido, limpio y muy práctico para el turista.
+                </p>
+                <ul class="clean-list">
+                    <li><strong>Aeropuerto → Downtown:</strong> 30 min, USD 10</li>
+                    <li><strong>Clipper Card:</strong> Tarjeta recargable universal</li>
+                    <li><strong>Silicon Valley:</strong> Directo desde SF</li>
+                    <li>Funciona hasta medianoche</li>
+                </ul>
+            </div>
+            <div class="card card-purple">
+                <h4>Uber / Lyft + Caminar</h4>
+                <p>
+                    SF es perfecta para combinar caminatas por barrios planos con Uber
+                    para subir colinas o cruzar la ciudad rápidamente.
+                </p>
+                <ul class="clean-list">
+                    <li><strong>Trayecto corto:</strong> USD 10-18</li>
+                    <li><strong>Aeropuerto:</strong> USD 45-65 (vs USD 10 en BART)</li>
+                    <li>Muy abundantes, esperas de 2-5 min</li>
+                    <li>Ideal para trayectos nocturnos</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Estrategia logística perfecta</div>
+            <p>
+                <strong>Día típico en SF:</strong> BART desde el hotel → caminar por barrio específico → 
+                Cable car para subir colina → caminar bajando con vistas → Uber de regreso al hotel.
+                Esta combinación permite ver todo sin estrés, sin costos de parking y con la flexibilidad
+                de parar donde quieran para fotos o comidas.
+            </p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script anti-auto</div>
+            <p class="quote">
+                "Para San Francisco mi recomendación profesional es NO tener auto. El parking
+                en hoteles cuesta hasta USD 85 por noche, hay epidemia de robos en autos estacionados,
+                y la ciudad es perfecta para caminar y usar los cable cars históricos. Si van a
+                hacer ruta hacia Los Ángeles o Yosemite, alquilamos el auto recién cuando se van
+                de SF. Les ahorra cientos de dólares y mucho estrés."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     ZONAS DE ALOJAMIENTO
+══════════════════════════ -->
+<div id="zonas" class="destination-card">
+    <div class="destination-header">
+        <h2>Zonas de Alojamiento</h2>
+        <p class="destination-subtitle">Dónde SÍ y dónde NUNCA alojar al pasajero</p>
+    </div>
+
+    <div class="section">
+        <h3>La realidad crítica de SF: crisis de calle visible</h3>
+        <p>
+            San Francisco tiene un problema severo y visible de personas sin hogar, consumo de drogas
+            y degradación urbana en ciertas zonas del centro. <strong>Elegir mal la zona de hotel
+            puede arruinar completamente el viaje.</strong> Esta información es crítica para el agente.
+        </p>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ ZONAS PROHIBIDAS para turistas</div>
+            <p>
+                <strong>NUNCA alojes turistas en:</strong>
+            </p>
+            <ul class="clean-list">
+                <li><strong>Tenderloin:</strong> Aunque esté cerca de Union Square y los precios sean tentadores</li>
+                <li><strong>Civic Center área profunda:</strong> Especialmente alrededor de UN Plaza</li>
+                <li><strong>SOMA profundo:</strong> Zonas alejadas del Embarcadero</li>
+                <li><strong>Market Street entre 6th y Van Ness:</strong> Concentración alta de problemas</li>
+            </ul>
+            <p style="margin-top: 10px;">
+                <strong>Un cliente mal alojado genera la peor reseña posible de tu agencia.</strong>
+            </p>
+        </div>
+
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>Fisherman's Wharf / Marina District ✅</h4>
+                <p><strong>Ideal para:</strong> Familias, primera visita, máxima seguridad</p>
+                <ul class="clean-list">
+                    <li>La zona más segura y turística de SF</li>
+                    <li>Cerca de Pier 39, Alcatraz ferry, Golden Gate</li>
+                    <li>Terreno plano (sin colinas empinadas)</li>
+                    <li>Alquiler de bicicletas para cruzar Golden Gate</li>
+                    <li>Restaurantes familiares y ambiente controlado</li>
+                </ul>
+                <p><strong>Contras:</strong> Muy comercial, precios inflados, lejos del SF auténtico</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Union Square (zona norte/este) ✅</h4>
+                <p><strong>Ideal para:</strong> Compradores, parejas, conectividad máxima</p>
+                <ul class="clean-list">
+                    <li>Centro comercial de SF (Macy's, boutiques)</li>
+                    <li>Excelente conectividad: BART, cable cars, MUNI</li>
+                    <li>Gran oferta gastronómica y teatral</li>
+                    <li>Hoteles de todas las categorías</li>
+                </ul>
+                <p><strong>CRÍTICO:</strong> Advertir que caminen hacia norte/este, NUNCA hacia oeste (Tenderloin)</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Nob Hill / Russian Hill ✅</h4>
+                <p><strong>Ideal para:</strong> Presupuesto alto, vistas espectaculares, parejas premium</p>
+                <ul class="clean-list">
+                    <li>Hoteles históricos de lujo (Fairmont, Mark Hopkins)</li>
+                    <li>Vistas panorámicas de la bahía</li>
+                    <li>Zona residencial muy segura</li>
+                    <li>Cerca de Lombard Street y Russian Hill Park</li>
+                </ul>
+                <p><strong>Contras:</strong> Colinas muy empinadas, dependencia de cable car/Uber</p>
+            </div>
+            <div class="card card-orange">
+                <h4>Embarcadero / Financial District ✅</h4>
+                <p><strong>Ideal para:</strong> Viajeros de negocios, parejas sofisticadas</p>
+                <ul class="clean-list">
+                    <li>Zona frente a la bahía con Ferry Building</li>
+                    <li>Excelente conectividad de transporte</li>
+                    <li>Ambiente más tranquilo de noche (zona de oficinas)</li>
+                    <li>Cerca de mejores restaurantes</li>
+                </ul>
+                <p><strong>Ideal para:</strong> Clientes que priorizan ubicación estratégica</p>
+            </div>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script de recomendación de zona</div>
+            <p class="quote">
+                "Para una experiencia segura y completa, mis zonas recomendadas son: Fisherman's Wharf
+                si priorizan seguridad máxima y cercanía a atracciones, Union Square si quieren estar
+                en el centro comercial y cultural, o Nob Hill si buscan vistas espectaculares y ambiente
+                más elegante. Todas estas zonas están bien conectadas y son completamente seguras."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     ATRACCIONES CLAVE
+══════════════════════════ -->
+<div id="atracciones" class="destination-card">
+    <div class="destination-header">
+        <h2>Atracciones Clave</h2>
+        <p class="destination-subtitle">Los íconos imprescindibles y cómo gestionarlos</p>
+    </div>
+
+    <div class="section">
+        <h3>Los tres íconos absolutos de SF</h3>
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Golden Gate Bridge</h4>
+                <p>
+                    El puente más fotografiado del mundo. La experiencia completa incluye cruzarlo
+                    a pie o en bicicleta y verlo desde diferentes miradores.
+                </p>
+                <ul class="clean-list">
+                    <li><strong>A pie:</strong> 2.7 km, 30-40 min, gratuito</li>
+                    <li><strong>En bicicleta:</strong> Alquiler USD 35-50/día en Fisherman's Wharf</li>
+                    <li><strong>Mejores vistas:</strong> Battery Spencer, Crissy Field, Baker Beach</li>
+                    <li><strong>Tip:</strong> Atardecer con niebla entrando es espectacular</li>
+                </ul>
+                <div class="pill">Experiencia obligatoria para todos los perfiles</div>
+            </div>
+            <div class="card card-pink">
+                <h4>Alcatraz</h4>
+                <p>
+                    La prisión federal más famosa del mundo. Audio tour en español disponible
+                    que narra las historias de Al Capone y los intentos de fuga.
+                </p>
+                <ul class="clean-list">
+                    <li><strong>Ferry:</strong> Sale de Pier 33 cada 30-45 min</li>
+                    <li><strong>Precio:</strong> USD 45-55 (incluye ferry + audio tour)</li>
+                    <li><strong>Duración:</strong> 3-4 horas total</li>
+                    <li><strong>CRÍTICO:</strong> Reserva 2-3 meses antes en temporada alta</li>
+                </ul>
+                <div class="pill">Reserva en: alcatrazcruises.com (operador oficial)</div>
+            </div>
+            <div class="card card-purple">
+                <h4>Lombard Street</h4>
+                <p>
+                    "La calle más sinuosa del mundo" con 8 curvas cerradas en una cuadra.
+                    Una de las postales más reconocibles de SF.
+                </p>
+                <ul class="clean-list">
+                    <li><strong>Ubicación:</strong> Russian Hill, entre Hyde y Leavenworth</li>
+                    <li><strong>Mejor vista:</strong> Desde la parte alta mirando hacia abajo</li>
+                    <li><strong>Tiempo:</strong> 15-20 min para foto y exploración</li>
+                    <li><strong>Combinar con:</strong> Russian Hill Park y Coit Tower</li>
+                </ul>
+                <div class="pill">Acceso gratuito, muy fotogénico</div>
+            </div>
+        </div>
+
+        <h3>Atracciones complementarias por perfil</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Atracción</th>
+                        <th>Por qué venderla</th>
+                        <th>Perfil ideal</th>
+                        <th>Precio orientativo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Painted Ladies (Alamo Square)</span></td>
+                        <td>Las casas victorianas más fotografiadas de EE.UU. con skyline de fondo</td>
+                        <td>Fotógrafos, parejas, todos</td>
+                        <td>Gratuito</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Pier 39 & Fisherman's Wharf</span></td>
+                        <td>Leones marinos, clam chowder, ambiente familiar muy seguro</td>
+                        <td>Familias, primera visita</td>
+                        <td>Acceso gratuito</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Twin Peaks</span></td>
+                        <td>Vista panorámica 360° de toda SF. Especialmente impactante al atardecer</td>
+                        <td>Parejas, fotógrafos, todos</td>
+                        <td>Gratuito (requiere Uber)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Ferry Building Marketplace</span></td>
+                        <td>Mercado gourmet con mejores productores de California. Sábados: Farmers Market</td>
+                        <td>Gastronómicos, parejas</td>
+                        <td>Gratuito (compras opcionales)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Exploratorium</span></td>
+                        <td>Museo de ciencias interactivo de clase mundial</td>
+                        <td>Familias, curiosos, días de lluvia</td>
+                        <td>USD 40 adulto / USD 30 niño</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">California Academy of Sciences</span></td>
+                        <td>Acuario + planetario + museo historia natural bajo un mismo techo</td>
+                        <td>Familias, todas las edades</td>
+                        <td>USD 40 adulto / USD 35 niño</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 CityPASS San Francisco</div>
+            <p>
+                <strong>Incluye:</strong> Cable cars ilimitados 3 días + Alcatraz + Aquarium of the Bay +
+                California Academy of Sciences + museo adicional a elegir.
+                <strong>Precio: USD 94 adulto / USD 74 niño.</strong>
+                Para quien va a hacer Alcatraz + cable cars + museos, el ahorro es del 40-50%.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     BARRIOS ICÓNICOS
+══════════════════════════ -->
+<div id="barrios" class="destination-card">
+    <div class="destination-header">
+        <h2>Barrios Icónicos</h2>
+        <p class="destination-subtitle">Cada barrio de SF es un mundo diferente</p>
+    </div>
+
+    <div class="section">
+        <h3>Por qué los barrios son el alma de SF</h3>
+        <p>
+            San Francisco tiene la mayor concentración de barrios con identidad cultural propia
+            por kilómetro cuadrado de Estados Unidos. Conocerlos es la diferencia entre un turismo
+            superficial de postales y una experiencia profunda de la ciudad más diversa del país.
+        </p>
+
+        <div class="grid-2">
+            <div class="card card-orange">
+                <h4>Chinatown</h4>
+                <p>
+                    El Chinatown más antiguo de América del Norte (1848) y el más auténtico
+                    fuera de Asia. No es decorativo: es donde vive y trabaja la comunidad china desde hace 175 años.
+                </p>
+                <ul class="clean-list">
+                    <li>Grant Avenue: entrada icónica con dragones dorados</li>
+                    <li>Dim sum auténtico desde USD 12 por persona</li>
+                    <li>Mercados de hierbas medicinales y productos únicos</li>
+                    <li>Templos budistas activos y históricos</li>
+                    <li>Combina perfecto con North Beach (barrio italiano)</li>
+                </ul>
+                <p><strong>Ideal para:</strong> Gastronómicos, culturales, todos los perfiles</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Mission District</h4>
+                <p>
+                    El barrio más gastronómico y creativo de SF. Murales de clase mundial,
+                    la mejor comida latina de la ciudad y ambiente de barrio auténtico.
+                </p>
+                <ul class="clean-list">
+                    <li>Burritos Mission: los mejores de California</li>
+                    <li>Balmy Alley: murales políticos impresionantes</li>
+                    <li>Dolores Park: el parque favorito de los locales</li>
+                    <li>Valencia Street: tiendas vintage y cafés de especialidad</li>
+                    <li>Precios más accesibles que zonas turísticas</li>
+                </ul>
+                <p><strong>Ideal para:</strong> Gastronómicos, jóvenes, repetidores, autenticidad</p>
+            </div>
+            <div class="card card-purple">
+                <h4>Castro District</h4>
+                <p>
+                    El barrio LGBTQ+ más histórico e importante del mundo. Historia, cultura
+                    y uno de los ambientes más abiertos y seguros de SF.
+                </p>
+                <ul class="clean-list">
+                    <li>Castro Theatre: cine histórico art déco de 1922</li>
+                    <li>Rainbow crosswalk: intersección más fotografiada del barrio</li>
+                    <li>Ambiente muy seguro y acogedor</li>
+                    <li>Excelente vida nocturna y restaurantes</li>
+                </ul>
+                <p><strong>Ideal para:</strong> Todos los perfiles, culturales, historia urbana</p>
+            </div>
+            <div class="card card-orange">
+                <h4>Haight-Ashbury</h4>
+                <p>
+                    La cuna del movimiento hippie de los años 60 y el "Summer of Love" de 1967.
+                    Tiendas vintage, disquerías y la arquitectura victoriana más colorida.
+                </p>
+                <ul class="clean-list">
+                    <li>Tiendas de discos de vinilo y ropa vintage únicas</li>
+                    <li>Painted Ladies de Alamo Square a 10 min caminando</li>
+                    <li>Golden Gate Park en la puerta</li>
+                    <li>Cafés bohemios y ambiente muy característico</li>
+                </ul>
+                <p><strong>Ideal para:</strong> Culturales, fotógrafos, historia de los 60s</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 La foto más icónica de SF</div>
+            <p>
+                Las <strong>Painted Ladies de Alamo Square</strong> (casas victorianas coloridas)
+                con el skyline de SF de fondo son la postal más reconocible de la ciudad después
+                del Golden Gate. <strong>Mejor momento:</strong> mañana temprano con luz dorada
+                y menos turistas. Acceso gratuito, a 15 min en Uber desde Union Square.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     EXTENSIONES
+══════════════════════════ -->
+<div id="extensiones" class="destination-card">
+    <div class="destination-header">
+        <h2>Extensiones desde San Francisco</h2>
+        <p class="destination-subtitle">Cómo convertir SF en un viaje de alto valor</p>
+    </div>
+
+    <div class="section">
+        <h3>SF como hub de experiencias exclusivas</h3>
+        <p>
+            La ubicación estratégica de San Francisco la convierte en el punto de partida para
+            algunas de las excursiones más exclusivas de Estados Unidos: desde los viñedos más
+            famosos del país hasta parques nacionales de clase mundial.
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Extensión</th>
+                        <th>Distancia</th>
+                        <th>Duración recomendada</th>
+                        <th>Perfil ideal</th>
+                        <th>Valor comercial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Napa Valley</span></td>
+                        <td>1.5 horas</td>
+                        <td>1 día completo o 1-2 noches</td>
+                        <td>Parejas, enófilos, premium</td>
+                        <td>Las bodegas más famosas de EE.UU. Experiencia gastronómica de lujo.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Sonoma County</span></td>
+                        <td>1.5 horas</td>
+                        <td>1 día completo</td>
+                        <td>Enófilos, más relajado que Napa</td>
+                        <td>Alternativa más económica a Napa con igual calidad de vinos.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Muir Woods</span></td>
+                        <td>45 minutos</td>
+                        <td>Medio día</td>
+                        <td>Naturaleza, familias, todos</td>
+                        <td>Secuoyas de 1,000+ años. Experiencia única en el mundo.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Silicon Valley</span></td>
+                        <td>1 hora</td>
+                        <td>1 día completo</td>
+                        <td>Tech, profesionales, curiosos</td>
+                        <td>Apple Park, Google, Facebook. Epicentro tecnológico mundial.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Monterey & Carmel</span></td>
+                        <td>2 horas</td>
+                        <td>1-2 noches</td>
+                        <td>Parejas, naturaleza, lujo</td>
+                        <td>Inicio de Pacific Coast Highway. Acuario de clase mundial.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Yosemite National Park</span></td>
+                        <td>4 horas</td>
+                        <td>2-3 noches mínimo</td>
+                        <td>Aventureros, naturaleza extrema</td>
+                        <td>Uno de los parques más espectaculares del mundo.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Script de venta Napa Valley</div>
+            <p class="quote">
+                "Si disfrutaron Mendoza, Napa Valley los va a sorprender. Es el valle vinícola más
+                famoso de Estados Unidos, con más de 400 bodegas en paisajes espectaculares.
+                La diferencia con Mendoza es la sofisticación: restaurantes con estrellas Michelin
+                dentro de las bodegas y experiencias muy exclusivas. Está a solo 1.5 horas de SF
+                y se puede hacer perfectamente como excursión de día completo o quedarse una noche
+                para la experiencia completa."
+            </p>
+        </div>
+
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Muir Woods — Reserva obligatoria</div>
+            <p>
+                Muir Woods Nacional Monument implementó sistema de <strong>reserva obligatoria
+                de parking y entrada</strong> que se agota con semanas de anticipación.
+                Reservar en: gomuirwoods.com. <strong>Sin reserva, no pueden entrar.</strong>
+                Alternativa: tours organizados que incluyen transporte y entrada garantizada.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     CLIMA Y "KARL THE FOG"
+══════════════════════════ -->
+<div id="clima" class="destination-card">
+    <div class="destination-header">
+        <h2>Clima y "Karl the Fog"</h2>
+        <p class="destination-subtitle">La gestión de expectativas más crítica de SF</p>
+    </div>
+
+    <div class="section">
+        <h3>El mito del verano californiano</h3>
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ La expectativa más incorrecta sobre SF</div>
+            <p>
+                <strong>"El invierno más frío que pasé fue un verano en San Francisco"</strong>
+                (frase atribuida a Mark Twain). Mientras el resto de California se asa en verano,
+                SF puede estar a 12°C con niebla densa y viento helado del Pacífico.
+                <strong>Esta es la queja número uno de turistas mal preparados.</strong>
+            </p>
+        </div>
+
+        <div class="info-box">
+            <div class="box-label label-purple">📍 "Karl the Fog" como argumento de venta</div>
+            <p>
+                La niebla de San Francisco tiene nombre propio: <strong>"Karl the Fog"</strong>
+                y es tan icónica que tiene cuenta de redes sociales con millones de seguidores.
+                En lugar de venderlo como problema, úsalo como característica única: "La niebla
+                entrando por el Golden Gate al atardecer es una de las postales más dramáticas
+                y fotogénicas del mundo."
+            </p>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Temporada</th>
+                        <th>Clima real</th>
+                        <th>Ventajas comerciales</th>
+                        <th>Alertas críticas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Primavera (Mar-May)</span></td>
+                        <td>12-18°C, variable</td>
+                        <td>Flores en bloom, menos turistas, precios moderados</td>
+                        <td>Lluvia ocasional marzo-abril</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Verano (Jun-Ago)</span></td>
+                        <td>14-20°C, niebla frecuente</td>
+                        <td>Días más largos, máxima actividad cultural</td>
+                        <td>Niebla densa puede durar días. Llevar abrigo obligatorio.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Otoño (Sep-Nov)</span></td>
+                        <td>16-24°C, "Indian Summer"</td>
+                        <td>El mejor clima del año, cielos despejados</td>
+                        <td>Temporada alta, precios máximos</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Invierno (Dec-Feb)</span></td>
+                        <td>8-14°C, lluvia ocasional</td>
+                        <td>Precios más bajos, menos multitudes</td>
+                        <td>Lluvia frecuente, días cortos</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 La regla de las capas (Layering)</div>
+            <p>
+                SF tiene microclimas extremos: puede haber 10°C de diferencia entre barrios
+                el mismo día. <strong>Consejo para el pasajero:</strong> Vestirse en capas
+                (camiseta + suéter + chaqueta cortaviento) para poder adaptarse. En un mismo
+                día pueden pasar de 12°C con niebla a 22°C con sol radiante.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     FEES Y COSTOS OCULTOS
+══════════════════════════ -->
+<div id="fees" class="destination-card">
+    <div class="destination-header">
+        <h2>Fees y Costos Ocultos</h2>
+        <p class="destination-subtitle">SF es la ciudad más cara de EE.UU. en alojamiento</p>
+    </div>
+
+    <div class="section">
+        <h3>Los costos que más sorprenden</h3>
+        <div class="critical-alert">
+            <div class="box-label label-red">⚠ Resort Fee + Impuesto hotelero combinado</div>
+            <p>
+                La mayoría de hoteles en SF cobran <strong>Resort Fee/Urban Fee de USD 35-60 por noche</strong>
+                MÁS <strong>impuesto hotelero del 14%</strong> sobre la tarifa base. Para 5 noches:
+                USD 175-300 en fees + 14% de impuestos sobre el total. <strong>El precio real puede
+                ser 30-40% más alto que el precio mostrado inicialmente.</strong>
+            </p>
+        </div>
+
+        <h3>Costo de vida orientativo en USD</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Precio orientativo</th>
+                        <th>Comentario crítico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Parking hotel por noche</td>
+                        <td>USD 50-85</td>
+                        <td>Argumento principal para NO alquilar auto en SF</td>
+                    </tr>
+                    <tr>
+                        <td>Cable car por viaje</td>
+                        <td>USD 8</td>
+                        <td>No incluido en Clipper Card. CityPASS lo incluye ilimitado.</td>
+                    </tr>
+                    <tr>
+                        <td>Café specialty</td>
+                        <td>USD 5-8</td>
+                        <td>SF tiene la mejor cultura de café de la Costa Oeste</td>
+                    </tr>
+                    <tr>
+                        <td>Clam chowder en Fisherman's Wharf</td>
+                        <td>USD 12-18</td>
+                        <td>Experiencia gastronómica local obligatoria</td>
+                    </tr>
+                    <tr>
+                        <td>Almuerzo restaurante medio</td>
+                        <td>USD 28-48 por persona</td>
+                        <td>Sin alcohol, + propina 18-22% obligatoria</td>
+                    </tr>
+                    <tr>
+                        <td>Cena restaurante medio</td>
+                        <td>USD 45-85 por persona</td>
+                        <td>Sin alcohol. Con vino puede llegar a USD 120/persona</td>
+                    </tr>
+                    <tr>
+                        <td>Uber corto (hasta 4 km)</td>
+                        <td>USD 12-25</td>
+                        <td>Más económico que LA por distancias menores</td>
+                    </tr>
+                    <tr>
+                        <td>BART aeropuerto ↔ centro</td>
+                        <td>USD 10</td>
+                        <td>30 min. Mucho más económico que Uber (USD 50-70)</td>
+                    </tr>
+                    <tr>
+                        <td>Presupuesto diario económico</td>
+                        <td>USD 110-160 por persona</td>
+                        <td>BART + comidas económicas, atracciones gratuitas</td>
+                    </tr>
+                    <tr>
+                        <td>Presupuesto diario medio</td>
+                        <td>USD 180-280 por persona</td>
+                        <td>El rango más realista para turismo completo</td>
+                    </tr>
+                    <tr>
+                        <td>Presupuesto diario alto</td>
+                        <td>USD 350-600+ por persona</td>
+                        <td>Napa, cenas premium, experiencias exclusivas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     FAMILIAS
+══════════════════════════ -->
+<div id="familias" class="destination-card">
+    <div class="destination-header">
+        <h2>¿Es Adecuado para Familias?</h2>
+        <p class="destination-subtitle">Sí, con consideraciones específicas por edad</p>
+    </div>
+
+    <div class="section">
+        <h3>SF con niños: fortalezas únicas</h3>
+        <p>
+            San Francisco ofrece experiencias familiares que no existen en otros destinos americanos:
+            cable cars históricos, Alcatraz como aventura educativa, ciencia interactiva de clase mundial
+            y la proximidad a naturaleza espectacular como Muir Woods.
+        </p>
+
+        <div class="grid-3">
+            <div class="card card-orange">
+                <h4>Niños pequeños (4-8 años)</h4>
+                <ul class="clean-list">
+                    <li>Cable cars: experiencia mágica y emocionante</li>
+                    <li>Pier 39: leones marinos y ambiente familiar</li>
+                    <li>Exploratorium: museo interactivo fascinante</li>
+                    <li>Golden Gate Park: carrusel, jardines, espacio abierto</li>
+                    <li><strong>Alerta:</strong> Cochecito muy difícil en colinas</li>
+                </ul>
+                <p><strong>Zona recomendada:</strong> Fisherman's Wharf (terreno plano)</p>
+            </div>
+            <div class="card card-pink">
+                <h4>Preadolescentes (9-13 años)</h4>
+                <ul class="clean-list">
+                    <li>Alcatraz: historia de escape fascinante para esta edad</li>
+                    <li>Cruzar Golden Gate en bicicleta</li>
+                    <li>California Academy of Sciences (acuario + planetario)</li>
+                    <li>Muir Woods: secuoyas gigantes impactan mucho</li>
+                    <li>Ferry a Sausalito como aventura</li>
+                </ul>
+                <p><strong>La edad perfecta para SF completo</strong></p>
+            </div>
+            <div class="card card-purple">
+                <h4>Adolescentes (14+ años)</h4>
+                <ul class="clean-list">
+                    <li>Mission District: murales, cultura urbana auténtica</li>
+                    <li>Haight-Ashbury: historia hippie, tiendas vintage</li>
+                    <li>Silicon Valley: Apple, Google, cultura tech</li>
+                    <li>Twin Peaks al atardecer para fotos épicas</li>
+                    <li>Castro District: diversidad y tolerancia</li>
+                </ul>
+                <p><strong>Pueden apreciar la profundidad cultural de SF</strong></p>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <div class="box-label label-pink">⚠ Consideraciones específicas para familias</div>
+            <ul class="clean-list">
+                <li><strong>Colinas extremas:</strong> 43 colinas, algunas con pendientes de 31°. Muy difícil con cochecito</li>
+                <li><strong>Clima impredecible:</strong> Llevar abrigo liviano siempre, incluso en julio</li>
+                <li><strong>Homeless visible:</strong> Explicar con naturalidad, especialmente en Downtown</li>
+                <li><strong>Alcatraz:</strong> Reservar con 2-3 meses de anticipación o se queda sin cupos</li>
+                <li><strong>Agua del Pacífico:</strong> Muy fría (15-18°C), no es para nadar</li>
+            </ul>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Estrategia familiar perfecta</div>
+            <p>
+                <strong>Base en Fisherman's Wharf</strong> (terreno plano, ambiente familiar) +
+                <strong>cable cars para subir colinas</strong> + <strong>BART para distancias largas</strong> +
+                <strong>ferry a Sausalito</strong> como aventura acuática. Esta combinación minimiza
+                el esfuerzo físico y maximiza la experiencia única de SF.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     ALERTAS CRÍTICAS
+══════════════════════════ -->
+<div id="alertas" class="destination-card">
+    <div class="destination-header">
+        <h2>Alertas Críticas</h2>
+        <p class="destination-subtitle">Información esencial para evitar quejas post-venta</p>
+    </div>
+
+    <div class="section">
+        <div class="grid-2">
+            <div class="critical-alert">
+                <div class="box-label label-red">⚠ Crisis de homeless muy visible</div>
+                <p>
+                    SF tiene una de las crisis de personas sin hogar más visibles de EE.UU.,
+                    especialmente en Tenderloin, Civic Center y partes de Market Street.
+                    <strong>No es peligroso directamente pero impacta visualmente.</strong>
+                    Preparar al cliente: "Van a ver esta realidad social; es parte de la ciudad actual."
+                </p>
+            </div>
+            <div class="critical-alert">
+                <div class="box-label label-red">⚠ Epidemia de "Bipping" (robos en autos)</div>
+                <p>
+                    SF tiene la tasa más alta de rotura de cristales de autos de EE.UU.
+                    <strong>Regla absoluta: NADA visible en el auto, ni por 5 minutos.</strong>
+                    Ni chaqueta, ni cable, ni bolsa vacía. Los ladrones actúan en segundos
+                    y en plena luz del día.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Alcatraz se agota rápidamente</div>
+                <p>
+                    Los cupos para Alcatraz se agotan con 2-3 meses de anticipación en temporada alta.
+                    Sin reserva previa, es imposible entrar. Único operador oficial: Alcatraz City Cruises.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Colinas empinadas extremas</div>
+                <p>
+                    Algunas calles tienen pendientes de hasta 31°. Muy difícil para personas con
+                    movilidad reducida, cochecitos de bebé o equipaje pesado. Cable car es necesario.
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Zona Tenderloin prohibida</div>
+                <p>
+                    Aunque esté cerca de Union Square con hoteles baratos, el Tenderloin concentra
+                    consumo de drogas visible y ambiente degradado. <strong>Nunca alojar turistas ahí.</strong>
+                </p>
+            </div>
+            <div class="alert-box">
+                <div class="box-label label-pink">⚠ Expectativas climáticas incorrectas</div>
+                <p>
+                    Turistas llegan esperando "clima californiano" y encuentran frío y niebla en pleno julio.
+                    Siempre informar que necesitan ropa de abrigo todo el año.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════
+     SCRIPT DE VENTA
+══════════════════════════ -->
+<div id="script" class="destination-card">
+    <div class="destination-header">
+        <h2>Script de Venta Consultiva</h2>
+        <p class="destination-subtitle">Argumentarios y cierres para cada situación comercial</p>
+    </div>
+
+    <div class="section">
+        <h3>Apertura general</h3>
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Presentación inicial</div>
+            <p class="quote">
+                "San Francisco es la ciudad con más personalidad de Estados Unidos. Es compacta,
+                se recorre caminando y en sus famosos cable cars históricos, y cada barrio tiene
+                su propia identidad cultural. No es el California de sol y playa que tal vez
+                imaginan: es más europea, más sofisticada, con el Golden Gate como postal permanente
+                y una gastronomía que rivaliza con Nueva York."
+            </p>
+        </div>
+
+        <h3>Scripts por situación específica</h3>
+        <div class="grid-2">
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Gestionando expectativas climáticas</div>
+                <p class="quote">
+                    "San Francisco tiene un clima muy particular: es fresca todo el año, con una
+                    niebla icónica que hace que el Golden Gate aparezca y desaparezca entre las nubes.
+                    Esa niebla ('Karl the Fog') es tan famosa que tiene cuenta de Instagram con millones
+                    de seguidores. No es una ciudad de playa y sol, sino de cultura, gastronomía
+                    y paisajes dramáticos. Siempre llevar campera liviana, incluso en verano."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Manejo de objeción sobre homeless</div>
+                <p class="quote">
+                    "Es cierto que San Francisco tiene problemas sociales visibles, como muchas
+                    grandes ciudades americanas. Pero sabemos exactamente qué zonas recomendar
+                    para alojarse y moverse tranquilos. Los voy a alojar en Fisherman's Wharf
+                    o Union Square, que son zonas turísticas seguras y bien mantenidas. Con sentido
+                    común urbano básico, van a tener una experiencia espectacular."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Vendiendo como parte del circuito Costa Oeste</div>
+                <p class="quote">
+                    "San Francisco es el contraste perfecto en el circuito Costa Oeste. Después
+                    de Los Ángeles (extensa, soleada, necesita auto), llegar a SF es como cambiar
+                    de país: compacta, fresca, caminable, con cable cars históricos. Es el balance
+                    que hace que el circuito completo sea tan satisfactorio y completo."
+                </p>
+            </div>
+            <div class="script-box">
+                <div class="box-label label-purple">💬 Para amantes del vino</div>
+                <p class="quote">
+                    "Si disfrutaron Mendoza, tienen que conocer Napa Valley. Es el epicentro
+                    vinícola de Estados Unidos, con bodegas que combinan tradición californiana
+                    con tecnología de punta. Los restaurantes dentro de las bodegas tienen
+                    estrellas Michelin y la experiencia es única en el mundo. Desde SF son
+                    solo 1.5 horas en auto por paisajes espectaculares."
+                </p>
+            </div>
+        </div>
+
+        <h3>Cierre de venta</h3>
+        <div class="info-box">
+            <div class="box-label label-purple">📍 Duraciones recomendadas</div>
+            <p><strong>3-4 noches:</strong> Mínimo para íconos principales (Golden Gate, Alcatraz, barrios esenciales)</p>
+            <p style="margin-top: 6px;"><strong>5-6 noches:</strong> Formato ideal para incluir Napa Valley o Muir Woods + Silicon Valley</p>
+            <p style="margin-top: 6px;"><strong>7-8 noches:</strong> Para explorar con profundidad + Yosemite o Monterey-Carmel</p>
+            <p style="margin-top: 6px;"><strong>Dentro de circuito Costa Oeste:</strong> 3-4 noches como base para extensiones</p>
+        </div>
+
+        <div class="script-box">
+            <div class="box-label label-purple">💬 Cierre definitivo</div>
+            <p class="quote">
+                "Mi recomendación profesional es dedicarle a San Francisco mínimo 5 noches si quieren
+                hacer los íconos principales y al menos una excursión a Napa Valley o Muir Woods.
+                Con 5-6 noches tienen tiempo para Golden Gate, Alcatraz, los barrios con más personalidad,
+                una excursión al Wine Country y todavía les queda tiempo libre para caminar por la ciudad
+                y descubrir esos rincones únicos que solo se encuentran cuando no van con apuro.
+                San Francisco se disfruta con ritmo pausado, no con agenda apretada."
+            </p>
+        </div>
+
+        <div class="tip-box">
+            <div class="box-label label-orange">💡 Valor agregado para cerrar</div>
+            <p>
+                "Además del paquete completo, les voy a dar una guía con los mejores restaurantes
+                por barrio organizados por presupuesto, cómo usar el cable car y BART para moverse
+                sin auto, reservas obligatorias para Alcatraz y Muir Woods, y todos los tips para
+                aprovechar cada día sin perder tiempo en logística."
+            </p>
+        </div>
+    </div>
+</div>
+
+</div>
+</main>
+
+<footer>
+    <p><strong>Dr. Viaje · Guía comercial definitiva de San Francisco</strong></p>
+    <p>Golden Gate · Alcatraz · Napa Valley · Silicon Valley · Muir Woods · Costa Oeste</p>
+    <p>Material exclusivo para agentes de viajes · Capacitación comercial profesional 2025</p>
+</footer>
+
+<button class="scroll-top" id="scrollTop"
+    onclick="window.scrollTo({top:0,behavior:'smooth'})"
+    aria-label="Volver arriba">↑</button>
+
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offset = target.getBoundingClientRect().top + window.pageYOffset - 140;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+    });
+});
+
+const scrollTopBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+});
+</script>
+
+</body>
+</html>

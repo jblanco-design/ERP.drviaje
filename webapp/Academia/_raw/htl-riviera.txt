@@ -1,0 +1,943 @@
+<style>
+  .mx-guide{
+    --mx-navy:#1f2a56;
+    --mx-indigo:#3949ab;
+    --mx-sky:#eef3ff;
+    --mx-gold:#d4a648;
+    --mx-sand:#f8f3ea;
+    --mx-mint:#eff8f4;
+    --mx-rose:#fff2f4;
+    --mx-ink:#253047;
+    --mx-soft:#667085;
+    --mx-line:#dde4f0;
+    --mx-white:#ffffff;
+    --mx-shadow:0 18px 40px rgba(28,41,79,.08);
+    font-family:"Lato", Arial, sans-serif;
+    color:var(--mx-ink);
+  }
+
+  .mx-guide *{box-sizing:border-box;}
+
+  .mx-guide .mx-wrap{
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  .mx-guide .mx-hero{
+    background:linear-gradient(135deg,#1f2a56 0%,#3346a8 55%,#6d78da 100%);
+    color:#fff;
+    border-radius:28px;
+    padding:42px 34px;
+    margin:28px 0 24px;
+    box-shadow:var(--mx-shadow);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .mx-guide .mx-hero:after{
+    content:"";
+    position:absolute;
+    right:-60px;
+    top:-60px;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:rgba(255,255,255,.09);
+  }
+
+  .mx-guide .mx-kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:.78rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.18);
+    padding:8px 12px;
+    border-radius:999px;
+    margin-bottom:18px;
+    font-weight:700;
+  }
+
+  .mx-guide h2,
+  .mx-guide h3,
+  .mx-guide h4{
+    font-family:"Playfair Display", Georgia, serif;
+    margin:0 0 12px;
+    line-height:1.08;
+    color:inherit;
+  }
+
+  .mx-guide .mx-hero h2{
+    font-size:2.4rem;
+    max-width:920px;
+  }
+
+  .mx-guide .mx-hero p{
+    max-width:980px;
+    margin:0;
+    color:rgba(255,255,255,.92);
+    font-size:1.03rem;
+    line-height:1.7;
+  }
+
+  .mx-guide .mx-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-top:28px;
+  }
+
+  .mx-guide .mx-stat{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:18px;
+    padding:16px;
+    backdrop-filter:blur(6px);
+  }
+
+  .mx-guide .mx-stat strong{
+    display:block;
+    font-size:1.2rem;
+    margin-bottom:4px;
+    color:#fff;
+  }
+
+  .mx-guide .mx-stat span{
+    font-size:.92rem;
+    color:rgba(255,255,255,.88);
+  }
+
+  .mx-guide .mx-section{
+    margin:26px 0;
+    background:var(--mx-white);
+    border:1px solid var(--mx-line);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:var(--mx-shadow);
+  }
+
+  .mx-guide .mx-section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    gap:20px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+
+  .mx-guide .mx-section-head h3{
+    font-size:1.85rem;
+    color:var(--mx-navy);
+  }
+
+  .mx-guide .mx-section-head p{
+    margin:0;
+    max-width:780px;
+    color:var(--mx-soft);
+    line-height:1.7;
+  }
+
+  .mx-guide .mx-destination{
+    border:1px solid var(--mx-line);
+    border-radius:24px;
+    padding:24px;
+    background:linear-gradient(180deg,#fff 0%,#fbfcff 100%);
+    margin-top:18px;
+  }
+
+  .mx-guide .mx-destination + .mx-destination{
+    margin-top:24px;
+  }
+
+  .mx-guide .mx-destination h3{
+    font-size:1.65rem;
+    color:var(--mx-navy);
+  }
+
+  .mx-guide .mx-grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+  }
+
+  .mx-guide .mx-grid-2{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+  }
+
+  .mx-guide .mx-note{
+    background:linear-gradient(180deg,#f9fbff 0%,#f1f5ff 100%);
+    border:1px solid #dbe5ff;
+    border-radius:20px;
+    padding:20px;
+  }
+
+  .mx-guide .mx-note h4{
+    color:var(--mx-indigo);
+    font-size:1.18rem;
+  }
+
+  .mx-guide .mx-note p{
+    margin:0;
+    line-height:1.7;
+    color:var(--mx-ink);
+  }
+
+  .mx-guide .mx-card{
+    border:1px solid var(--mx-line);
+    border-radius:22px;
+    padding:22px;
+    background:#fff;
+    box-shadow:0 8px 24px rgba(17,24,39,.05);
+  }
+
+  .mx-guide .mx-card h4{
+    font-size:1.28rem;
+    color:var(--mx-navy);
+    margin-bottom:10px;
+  }
+
+  .mx-guide .mx-card h4 a{
+    color:inherit;
+    text-decoration:none;
+    border-bottom:1px solid rgba(31,42,86,.18);
+  }
+
+  .mx-guide .mx-card h4 a:hover{
+    border-color:var(--mx-gold);
+  }
+
+  .mx-guide .mx-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:0 0 14px;
+  }
+
+  .mx-guide .mx-badge{
+    display:inline-flex;
+    align-items:center;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:.78rem;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+
+  .mx-guide .mx-badge.blue{background:#eaf1ff;color:#2f55c8;}
+  .mx-guide .mx-badge.gold{background:#fff4dc;color:#9a6a00;}
+  .mx-guide .mx-badge.green{background:#e8f7ef;color:#177245;}
+  .mx-guide .mx-badge.rose{background:#ffe9ef;color:#b33b67;}
+  .mx-guide .mx-badge.gray{background:#f2f4f7;color:#475467;}
+
+  .mx-guide .mx-card p{
+    margin:0 0 14px;
+    line-height:1.7;
+    color:var(--mx-ink);
+  }
+
+  .mx-guide .mx-card ul{
+    margin:0;
+    padding-left:18px;
+    color:var(--mx-ink);
+    line-height:1.7;
+  }
+
+  .mx-guide .mx-card li + li{margin-top:6px;}
+
+  .mx-guide .mx-mini{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px dashed var(--mx-line);
+    font-size:.95rem;
+    color:var(--mx-soft);
+    line-height:1.7;
+  }
+
+  .mx-guide .mx-mini strong{
+    color:var(--mx-navy);
+  }
+
+  .mx-guide table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.95rem;
+    overflow:hidden;
+    border-radius:16px;
+  }
+
+  .mx-guide thead th{
+    background:#24315f;
+    color:#fff;
+    text-align:left;
+    padding:14px 12px;
+    font-weight:700;
+  }
+
+  .mx-guide tbody td{
+    border-bottom:1px solid var(--mx-line);
+    padding:14px 12px;
+    vertical-align:top;
+    line-height:1.6;
+  }
+
+  .mx-guide tbody tr:nth-child(even){
+    background:#fafcff;
+  }
+
+  .mx-guide .mx-obj{
+    border-radius:20px;
+    padding:20px;
+    border:1px solid var(--mx-line);
+    background:linear-gradient(180deg,#fff 0%,#fbfcff 100%);
+  }
+
+  .mx-guide .mx-obj h4{
+    font-size:1.12rem;
+    color:var(--mx-navy);
+    margin-bottom:10px;
+  }
+
+  .mx-guide .mx-obj p{
+    margin:0 0 10px;
+    line-height:1.7;
+  }
+
+  .mx-guide .mx-obj p:last-child{margin-bottom:0;}
+
+  .mx-guide .mx-source{
+    display:block;
+    margin-top:10px;
+    font-size:.84rem;
+    color:var(--mx-soft);
+  }
+
+  .mx-guide .mx-source a{
+    color:var(--mx-indigo);
+    text-decoration:none;
+  }
+
+  .mx-guide .mx-closing{
+    background:linear-gradient(135deg,#fff7e7 0%,#fff 100%);
+    border:1px solid #f1ddab;
+  }
+
+  @media (max-width:1080px){
+    .mx-guide .mx-grid-3,
+    .mx-guide .mx-stats{
+      grid-template-columns:repeat(2,1fr);
+    }
+  }
+
+  @media (max-width:760px){
+    .mx-guide .mx-grid-3,
+    .mx-guide .mx-grid-2,
+    .mx-guide .mx-stats{
+      grid-template-columns:1fr;
+    }
+
+    .mx-guide .mx-hero h2{
+      font-size:1.95rem;
+    }
+
+    .mx-guide .mx-section,
+    .mx-guide .mx-hero,
+    .mx-guide .mx-destination{
+      padding:22px;
+    }
+  }
+</style>
+
+<section class="mx-guide" id="mexico-cadenas">
+  <div class="mx-wrap">
+
+    <div class="mx-hero">
+      <div class="mx-kicker">México Caribe · guía comercial por destino</div>
+      <h2>Riviera Maya, Cancún y Costa Mujeres: hoteles de referencia para venta consultiva</h2>
+      <p>
+        Esta guía sigue la misma lógica comercial de Punta Cana: no ordena los hoteles solo por categoría, sino por <strong>cómo se venden</strong>, qué perfil de pasajero encaja mejor en cada producto y dónde están los diferenciales reales de cada cadena. La lectura está centrada en los hoteles más comparables a los que trabajamos en Punta Cana, incorporando también <strong>Sandos</strong> como una pieza clave dentro de Riviera Maya y Cancún.
+      </p>
+
+      <div class="mx-stats">
+        <div class="mx-stat">
+          <strong>3 zonas</strong>
+          <span>Riviera Maya, Cancún y Costa Mujeres</span>
+        </div>
+        <div class="mx-stat">
+          <strong>16 hoteles</strong>
+          <span>base para capacitación comercial</span>
+        </div>
+        <div class="mx-stat">
+          <strong>4 lecturas</strong>
+          <span>familias, parejas, premium y adults only</span>
+        </div>
+        <div class="mx-stat">
+          <strong>Upsells clave</strong>
+          <span>Privileged, Elite Club, Family Selection y TRS</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="mx-section">
+      <div class="mx-section-head">
+        <div>
+          <h3>Cómo leer el Caribe mexicano comercialmente</h3>
+        </div>
+        <p>
+          A diferencia de Punta Cana, aquí la venta se apoya mucho en la <strong>zona</strong>. Riviera Maya se vende mejor como destino de resort complejo, naturaleza y playa con posibilidad de excursiones. Cancún se vende mejor cuando el cliente quiere hotelería frente al mar con una lectura más urbana o de Hotel Zone. Costa Mujeres entra cuando el pasajero busca un producto más nuevo, de playa amplia, tranquilo y con un tono más premium o más ordenado.
+        </p>
+      </div>
+
+      <div class="mx-grid-3">
+        <div class="mx-note">
+          <h4>Riviera Maya</h4>
+          <p>Ideal para clientes que quieren resort grande, más sensación de destino, naturaleza, parques acuáticos, familias y complejos de cadena con mucha infraestructura.</p>
+        </div>
+        <div class="mx-note">
+          <h4>Cancún</h4>
+          <p>Funciona mejor para parejas, pasajeros que quieren zona hotelera, un hotel más compacto o un resort con acceso más directo al estilo clásico de Cancún.</p>
+        </div>
+        <div class="mx-note">
+          <h4>Costa Mujeres</h4>
+          <p>Se posiciona muy bien para playa amplia, hoteles más modernos, segmento family premium y también propuestas adults only más claras y sofisticadas.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-section">
+
+      <div class="mx-destination" id="riviera-maya-hoteles">
+        <div class="mx-section-head">
+          <div>
+            <h3>Riviera Maya</h3>
+          </div>
+          <p>
+            La base de Riviera Maya debe construirse con cadenas de resort completo y productos que ayuden a vender familias, variedad gastronómica, actividades y experiencias diferenciales. Aquí <strong>Sandos</strong> es imprescindible, porque aporta dos lecturas distintas: Playacar como resort familiar de playa y Caracol como producto eco con parque acuático.
+          </p>
+        </div>
+
+        <div class="mx-grid-3">
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge blue">Resort complejo</span>
+              <span class="mx-badge gold">Familias y grupos</span>
+            </div>
+            <h4><a href="https://www.palladiumhotelgroup.com/en/hotels/mexico/rivieramaya" target="_blank">Grand Palladium Riviera Maya</a></h4>
+            <p>
+              Es la equivalencia más directa a Grand Palladium Punta Cana: un macrocomplejo con varias secciones, playa, manglares, piscinas, spa, kids club, teatro, bares y restaurantes. La propia cadena lo presenta como un producto pensado para distintos tipos de viaje: family hotels, adult-only hotels y all-inclusive resorts dentro del mismo universo Palladium.
+              <span class="mx-source">Fuente: <a href="https://www.palladiumhotelgroup.com/en/hotels/mexico/rivieramaya" target="_blank">Palladium Hotel Group · Riviera Maya</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> amplitud, variedad, estructura y marca reconocible.</li>
+              <li><strong>Cliente ideal:</strong> familias, grupos y clientes que quieren “un resort muy completo”.</li>
+              <li><strong>Argumento útil:</strong> “Es una opción muy sólida para quien quiere resort grande, playa y muchas alternativas dentro del complejo”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge green">Sandos imprescindible</span>
+              <span class="mx-badge blue">Playacar</span>
+            </div>
+            <h4><a href="https://www.sandos.com/es/sandos-playacar/beach-resort-todo-incluido" target="_blank">Sandos Playacar</a></h4>
+            <p>
+              Debe estar sí o sí porque representa muy bien el resort familiar de playa en Riviera Maya. La cadena destaca su ubicación en Playacar, una de las mejores zonas de playa de Playa del Carmen, dos parques acuáticos, múltiples piscinas, Kids Club, shows nocturnos y más de 14 restaurantes y bares. Además, suma una sección <strong>Select Club</strong> solo adultos que ayuda a segmentar mejor la venta.
+              <span class="mx-source">Fuente: <a href="https://www.sandos.com/es/sandos-playacar/beach-resort-todo-incluido" target="_blank">Sandos Playacar</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> playa, producto familiar, parque acuático y variedad gastronómica.</li>
+              <li><strong>Cliente ideal:</strong> familias, grupos familiares y clientes que quieren un hotel de playa clásico con mucha actividad.</li>
+              <li><strong>Argumento útil:</strong> “Es una de las referencias más claras para familia en Riviera Maya y además permite una lectura solo adultos con Select Club”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge green">Eco resort</span>
+              <span class="mx-badge rose">Water park</span>
+            </div>
+            <h4><a href="https://www.sandos.com/es/sandos-caracol/eco-resort-todo-incluido" target="_blank">Sandos Caracol Eco Resort</a></h4>
+            <p>
+              Este hotel entra porque aporta una propuesta distinta dentro del destino: un all inclusive eco con naturaleza, cenotes, selva, fauna, actividades y un parque acuático con 29 toboganes. La cadena también destaca villas familiares, varias tipologías de habitaciones, sección adults only y un relato sostenible muy marcado.
+              <span class="mx-source">Fuente: <a href="https://www.sandos.com/es/sandos-caracol/eco-resort-todo-incluido" target="_blank">Sandos Caracol Eco Resort</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> experiencia diferencial, agua, naturaleza y producto familiar activo.</li>
+              <li><strong>Cliente ideal:</strong> familias con niños, clientes que valoran parques acuáticos y pasajeros que buscan “algo más que playa”.</li>
+              <li><strong>Argumento útil:</strong> “No compite solo por playa: compite por experiencia, parque acuático y entorno natural”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge blue">Iberostar family premium</span>
+              <span class="mx-badge gold">Complejo Paraíso</span>
+            </div>
+            <h4><a href="https://www.iberostar.com/en/hotels/riviera-maya/iberostar-selection-paraiso-maya/" target="_blank">Iberostar Selection Paraíso Maya</a></h4>
+            <p>
+              Es la ficha fuerte de Iberostar para familias en Riviera Maya. La cadena lo presenta como un hotel dentro del complejo Paraíso, con parque acuático, 8 áreas de piscina, lazy river, wave pool, actividades Star Camp y una lectura muy clara de resort familiar de categoría alta.
+              <span class="mx-source">Fuente: <a href="https://www.iberostar.com/en/hotels/riviera-maya/iberostar-selection-paraiso-maya/" target="_blank">Iberostar Selection Paraíso Maya</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> marca, estructura, actividades para niños y resort de volumen con buena narrativa.</li>
+              <li><strong>Cliente ideal:</strong> familias con niños, clientes que ya conocen Iberostar y quienes buscan un all inclusive de cadena fuerte.</li>
+              <li><strong>Argumento útil:</strong> “Es Iberostar en modo resort familiar completo, con mucha agua, actividades y respaldo de marca”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge gold">Bahía superior</span>
+              <span class="mx-badge green">Naturaleza + servicio</span>
+            </div>
+            <h4><a href="https://www.bahia-principe.com/en/mexico/riviera-maya/resort-akumal/" target="_blank">Bahía Príncipe Explore Akumal</a></h4>
+            <p>
+              Es la referencia más interesante de Bahía Príncipe en Riviera Maya porque une una lectura de servicio superior con herencia maya, naturaleza y playa. La marca lo posiciona como un 5 estrellas all inclusive para familias que buscan un nivel superior de confort e instalaciones, pero con categorías adults only para quienes quieren más tranquilidad.
+              <span class="mx-source">Fuente: <a href="https://www.bahia-principe.com/en/mexico/riviera-maya/resort-akumal/" target="_blank">Bahía Príncipe Explore Akumal</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> resort cuidado, entorno natural, servicio superior y doble lectura family/adults.</li>
+              <li><strong>Cliente ideal:</strong> familias que quieren subir de nivel y parejas que valoran calma dentro de un resort grande.</li>
+              <li><strong>Argumento útil:</strong> “Es Bahía con una propuesta más refinada, muy útil para subir categoría sin salir del modelo all inclusive”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge rose">Upgrade</span>
+              <span class="mx-badge blue">Privileged</span>
+            </div>
+            <h4><a href="https://www.cataloniahotels.com/en/hotel/catalonia-playa-maroma" target="_blank">Catalonia Playa Maroma</a></h4>
+            <p>
+              Representa muy bien el rol de Catalonia en Riviera Maya: un hotel de playa con una mejora comercial clara a través de <strong>Privileged</strong>. La cadena comunica beneficios concretos como room service 24h, restaurante BLoved exclusivo, zona de playa Privileged, descuentos en spa y otros extras que ayudan mucho al upsell.
+              <span class="mx-source">Fuente: <a href="https://www.cataloniahotels.com/en/hotel/catalonia-playa-maroma" target="_blank">Catalonia Playa Maroma</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> playa, experiencia equilibrada y upgrade tangible.</li>
+              <li><strong>Cliente ideal:</strong> parejas, clientes de valor y pasajeros que responden bien a beneficios VIP concretos.</li>
+              <li><strong>Argumento útil:</strong> “Conviene si queremos vender un plus real de comodidad sin irnos a una tarifa premium mucho más alta”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge blue">Macroresort</span>
+              <span class="mx-badge gold">Barceló</span>
+            </div>
+            <h4><a href="https://www.barcelo.com/en-us/barcelo-maya-grand-resort/" target="_blank">Barceló Maya Grand Resort</a></h4>
+            <p>
+              Es la referencia más lógica de Barceló en Riviera Maya para competir en el segmento de gran complejo. La propia marca lo resume con una idea muy fuerte para venta: <strong>“Stay in one and enjoy five”</strong>, con acceso a playas, piscinas, bares, restaurantes y vida de resort a gran escala.
+              <span class="mx-source">Fuente: <a href="https://www.barcelo.com/en-us/barcelo-maya-grand-resort/" target="_blank">Barceló Maya Grand Resort</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> amplitud, sensación de resort grande y marca conocida.</li>
+              <li><strong>Cliente ideal:</strong> familias, grupos y clientes que valoran “cantidad de resort”.</li>
+              <li><strong>Argumento útil:</strong> “Es una muy buena carta cuando el pasajero quiere una cadena conocida con complejo grande y mucha infraestructura”.</li>
+            </ul>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="mx-destination" id="cancun-hoteles">
+        <div class="mx-section-head">
+          <div>
+            <h3>Cancún</h3>
+          </div>
+          <p>
+            Cancún hay que leerlo distinto: aquí importa mucho el perfil del pasajero que quiere Hotel Zone, vista al mar, producto más compacto o una experiencia más orientada a parejas, escapadas y sensación de Cancún clásico. Sandos también entra aquí, pero con una lectura mucho más elegante y adulta que en Riviera Maya.
+          </p>
+        </div>
+
+        <div class="mx-grid-3">
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge green">Sandos en Cancún</span>
+              <span class="mx-badge rose">Parejas</span>
+            </div>
+            <h4><a href="https://www.sandos.com/es/sandos-cancun/hotel-cancun-todo-incluido" target="_blank">Sandos Cancún</a></h4>
+            <p>
+              Es la versión más elegante de Sandos dentro del Caribe mexicano. La cadena destaca suites modernas, bares sofisticados, restaurantes gourmet, spa, room service 24 horas, servicio de playa y una icónica piscina de tres niveles. Se vende muy bien para clientes que quieren Cancún con estética más cuidada y un perfil más adulto.
+              <span class="mx-source">Fuente: <a href="https://www.sandos.com/es/sandos-cancun/hotel-cancun-todo-incluido" target="_blank">Sandos Cancún</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> diseño, suites, ambiente más chic y hotel zone.</li>
+              <li><strong>Cliente ideal:</strong> parejas, escapadas, pasajeros que valoran una imagen más sofisticada.</li>
+              <li><strong>Argumento útil:</strong> “Es Sandos, pero con un tono bastante más elegante y muy alineado con el estilo Cancún”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge blue">Iberostar</span>
+              <span class="mx-badge gold">Cancún clásico</span>
+            </div>
+            <h4><a href="https://www.iberostar.com/en/hotels/cancun/iberostar-selection-cancun/" target="_blank">Iberostar Selection Cancún</a></h4>
+            <p>
+              Es la carta clara de Iberostar para Cancún. La marca lo comunica como un hotel 5 estrellas all inclusive frente al mar, dentro del destino Cancún, y los resultados oficiales destacan especialmente su formato resort y sus <strong>10 piscinas</strong>, lo que ayuda a venderlo como una opción familiar y completa dentro de la zona hotelera.
+              <span class="mx-source">Fuente: <a href="https://www.iberostar.com/en/hotels/cancun/iberostar-selection-cancun/" target="_blank">Iberostar Selection Cancún</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> marca fuerte, formato resort y respaldo internacional.</li>
+              <li><strong>Cliente ideal:</strong> familias, parejas tranquilas y clientes que quieren Cancún con una cadena conocida.</li>
+              <li><strong>Argumento útil:</strong> “Es una de las opciones más fáciles de defender para quien quiere Cancún con un resort completo y reconocible”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge rose">Adults only</span>
+              <span class="mx-badge blue">RIU Palace</span>
+            </div>
+            <h4><a href="https://www.riu.com/en/hotel/mexico/cancun/hotel-riu-palace-kukulkan" target="_blank">RIU Palace Kukulkan</a></h4>
+            <p>
+              Es la ficha más clara de RIU para un Cancún solo adultos. La cadena lo presenta como un hotel adults only (18+), con cuatro piscinas, acceso directo a la playa, 24 horas all inclusive, spa y gimnasio. Comercialmente sirve para quien pide Cancún, marca conocida y experiencia adulta sin entrar en un producto demasiado complejo.
+              <span class="mx-source">Fuente: <a href="https://www.riu.com/en/hotel/mexico/cancun/hotel-riu-palace-kukulkan" target="_blank">RIU Palace Kukulkan</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> adults only, RIU Palace, ubicación y fórmula de venta muy simple.</li>
+              <li><strong>Cliente ideal:</strong> parejas, luna de miel, adultos jóvenes y clientes que ya conocen RIU.</li>
+              <li><strong>Argumento útil:</strong> “Si el cliente quiere Cancún y adultos only con una cadena que ya entiende, es una propuesta muy directa”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge gray">4★ práctico</span>
+              <span class="mx-badge gold">Occidental</span>
+            </div>
+            <h4><a href="https://www.barcelo.com/en-us/occidental-costa-cancun/" target="_blank">Occidental Costa Cancún</a></h4>
+            <p>
+              Aquí aparece la lectura más práctica y vendible de Barceló en Cancún. La cadena lo posiciona como un 4 estrellas all inclusive frente al mar en Kukulcán, con 358 habitaciones, 4 restaurantes, piscina, spa y kids' club. Es versátil y permite vender Cancún a familias, parejas o grupos sin subir demasiado el nivel tarifario.
+              <span class="mx-source">Fuente: <a href="https://www.barcelo.com/en-us/occidental-costa-cancun/" target="_blank">Occidental Costa Cancún</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> ubicación, practicidad, paquete cerrado y marca Barceló.</li>
+              <li><strong>Cliente ideal:</strong> familias, parejas y clientes que priorizan ubicación y comodidad.</li>
+              <li><strong>Argumento útil:</strong> “Es una buena opción cuando buscamos Cancún con todo incluido y una tarifa más defendible”.</li>
+            </ul>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="mx-destination" id="costa-mujeres-hoteles">
+        <div class="mx-section-head">
+          <div>
+            <h3>Costa Mujeres</h3>
+          </div>
+          <p>
+            Costa Mujeres es el gran complemento premium/familiar del Caribe mexicano. Aquí se venden especialmente bien los productos nuevos, de playa amplia y con diferenciales más claros de servicio. Es una zona perfecta para familias que quieren algo más cuidado o para parejas que buscan adults only de nivel.
+          </p>
+        </div>
+
+        <div class="mx-grid-3">
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge blue">Palladium family premium</span>
+              <span class="mx-badge rose">Family Selection</span>
+            </div>
+            <h4><a href="https://www.palladiumhotelgroup.com/en/hotels/mexico/costamujerescancun/grand-palladium-select-costa-mujeres" target="_blank">Grand Palladium Select Costa Mujeres</a></h4>
+            <p>
+              Es la referencia principal de Palladium para familias en Costa Mujeres. La marca refuerza el concepto <strong>Family Selection</strong> con 172 suites, Family Host, amenities para niños, restaurante, bar, piscina y lounge exclusivos, además del acceso al resto de las instalaciones del resort. Es una de las mejores cartas para subir ticket con familias.
+              <span class="mx-source">Fuente: <a href="https://www.palladiumhotelgroup.com/en/hotels/mexico/costamujerescancun/grand-palladium-select-costa-mujeres" target="_blank">Grand Palladium Select Costa Mujeres</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> family premium, estructura grande y mejora real de experiencia.</li>
+              <li><strong>Cliente ideal:</strong> familias con niños, familias que quieren un resort más completo y clientes de ticket medio/alto.</li>
+              <li><strong>Argumento útil:</strong> “Family Selection permite vender una experiencia mucho más cuidada sin salir del universo Palladium”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge rose">Adults only premium</span>
+              <span class="mx-badge gold">TRS</span>
+            </div>
+            <h4><a href="https://www.palladiumhotelgroup.com/en/hotels/mexico/costamujerescancun/trs-coral-hotel" target="_blank">TRS Coral Hotel</a></h4>
+            <p>
+              Es la respuesta premium/adults only dentro del mismo universo Palladium. La cadena destaca sus 473 suites, la ubicación en Costa Mujeres, el ambiente 18+, Helios Beach Club, Chic Cabaret, gastronomía internacional y una atmósfera sofisticada. Es una ficha muy importante para parejas, honeymoon y clientes que quieren subir claramente de categoría.
+              <span class="mx-source">Fuente: <a href="https://www.palladiumhotelgroup.com/en/hotels/mexico/costamujerescancun/trs-coral-hotel" target="_blank">TRS Coral Hotel</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> lujo, diseño, adults only y experiencia premium muy clara.</li>
+              <li><strong>Cliente ideal:</strong> parejas, lunas de miel, viajeros premium y clientes que priorizan tranquilidad.</li>
+              <li><strong>Argumento útil:</strong> “Es el salto lógico cuando el pasajero quiere un adults only realmente superior en Costa Mujeres”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge blue">RIU Palace</span>
+              <span class="mx-badge rose">Elite Club</span>
+            </div>
+            <h4><a href="https://www.riu.com/en/hotel/mexico/cancun/hotel-riu-palace-costa-mujeres" target="_blank">RIU Palace Costa Mujeres</a></h4>
+            <p>
+              Es la RIU más redonda para familia con tono premium en Costa Mujeres. La cadena comunica más de 600 habitaciones, 6 piscinas, playa reservada, 24h all inclusive y entretenimiento para niños. Además, permite vender <strong>Elite Club</strong> como mejora de servicio con acceso a áreas exclusivas y atención personalizada.
+              <span class="mx-source">Fuente: <a href="https://www.riu.com/en/hotel/mexico/cancun/hotel-riu-palace-costa-mujeres" target="_blank">RIU Palace Costa Mujeres</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> marca RIU, Palace, playa amplia y opción de upsell.</li>
+              <li><strong>Cliente ideal:</strong> familias, parejas que quieren RIU más cuidado y clientes que valoran upgrade simple.</li>
+              <li><strong>Argumento útil:</strong> “Es muy fácil de vender cuando el cliente ya confía en RIU y quiere algo mejor posicionado”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge green">Family active</span>
+              <span class="mx-badge blue">Fun4All</span>
+            </div>
+            <h4><a href="https://www.riu.com/en/hotel/mexico/cancun/hotel-riu-dunamar" target="_blank">RIU Dunamar</a></h4>
+            <p>
+              Es el equivalente más parecido al RIU familiar y activo dentro de Costa Mujeres. La cadena destaca más de 700 habitaciones, 5 piscinas, Splash Water World, deportes acuáticos y programa infantil RIU Land. Funciona muy bien para familias que priorizan entretenimiento y una propuesta con mucha actividad.
+              <span class="mx-source">Fuente: <a href="https://www.riu.com/en/hotel/mexico/cancun/hotel-riu-dunamar" target="_blank">RIU Dunamar</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> water park, vida familiar y resort activo.</li>
+              <li><strong>Cliente ideal:</strong> familias con niños y clientes que buscan movimiento durante toda la estadía.</li>
+              <li><strong>Argumento útil:</strong> “Si la familia quiere parque acuático y actividad, esta es una de las opciones más claras”.</li>
+            </ul>
+          </article>
+
+          <article class="mx-card">
+            <div class="mx-badges">
+              <span class="mx-badge rose">Privileged</span>
+              <span class="mx-badge gold">Catalonia</span>
+            </div>
+            <h4><a href="https://www.cataloniahotels.com/en/hotel/catalonia-grand-costa-mujeres" target="_blank">Catalonia Grand Costa Mujeres</a></h4>
+            <p>
+              Es la pieza de Catalonia que mejor representa Costa Mujeres. La cadena vuelve a reforzar su lectura comercial a través de <strong>Privileged</strong>, con zona de playa dedicada, acceso a Pure Bar, restaurante BLoved, turndown, beneficios en spa y extras románticos en ciertas habitaciones. Es muy útil para parejas y también para familias que quieren un hotel más ordenado con posibilidad de mejora.
+              <span class="mx-source">Fuente: <a href="https://www.cataloniahotels.com/en/hotel/catalonia-grand-costa-mujeres" target="_blank">Catalonia Grand Costa Mujeres</a></span>
+            </p>
+            <ul>
+              <li><strong>Lo vende bien:</strong> suites, upgrade tangible y resort de tono más cuidado.</li>
+              <li><strong>Cliente ideal:</strong> parejas, familias tranquilas y clientes que responden bien a beneficios VIP concretos.</li>
+              <li><strong>Argumento útil:</strong> “Catalonia se vuelve muy vendible cuando se explica bien el salto a Privileged”.</li>
+            </ul>
+          </article>
+
+        </div>
+      </div>
+
+    </section>
+
+    <section class="mx-section">
+      <div class="mx-section-head">
+        <div>
+          <h3>Tabla rápida de lectura comercial</h3>
+        </div>
+        <p>
+          Esta tabla ayuda a resolver rápido qué hotel o cadena presentar primero según el perfil del pasajero y cuál dejar como mejora o alternativa.
+        </p>
+      </div>
+
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Zona</th>
+              <th>Hotel / cadena</th>
+              <th>Perfil ideal</th>
+              <th>Lo que más vende</th>
+              <th>Upsell / observación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Riviera Maya</td>
+              <td>Grand Palladium Riviera Maya</td>
+              <td>Familias, grupos, clientes de resort grande</td>
+              <td>Complejo amplio, variedad de secciones y servicios</td>
+              <td>Muy comparable a Palladium Punta Cana</td>
+            </tr>
+            <tr>
+              <td>Riviera Maya</td>
+              <td>Sandos Playacar</td>
+              <td>Familias</td>
+              <td>Playa, water parks, entretenimiento, Select Club</td>
+              <td>Sandos imprescindible en la base</td>
+            </tr>
+            <tr>
+              <td>Riviera Maya</td>
+              <td>Sandos Caracol Eco Resort</td>
+              <td>Familias activas</td>
+              <td>Parque acuático, naturaleza, experiencia eco</td>
+              <td>Muy útil como producto diferencial</td>
+            </tr>
+            <tr>
+              <td>Riviera Maya</td>
+              <td>Iberostar Selection Paraíso Maya</td>
+              <td>Familias con niños</td>
+              <td>Water park, piscinas, Star Camp</td>
+              <td>Gran referencia Iberostar para family premium</td>
+            </tr>
+            <tr>
+              <td>Riviera Maya</td>
+              <td>Bahía Príncipe Explore Akumal</td>
+              <td>Familias y parejas tranquilas</td>
+              <td>Servicio superior, naturaleza y doble lectura family/adults</td>
+              <td>Bahía más refinado</td>
+            </tr>
+            <tr>
+              <td>Riviera Maya</td>
+              <td>Catalonia Playa Maroma</td>
+              <td>Parejas y clientes de valor</td>
+              <td>Playa + paquete Privileged</td>
+              <td>Muy bueno para upsell</td>
+            </tr>
+            <tr>
+              <td>Riviera Maya</td>
+              <td>Barceló Maya Grand Resort</td>
+              <td>Familias y grupos</td>
+              <td>Macroresort, “stay in one and enjoy five”</td>
+              <td>Muy defendible por amplitud</td>
+            </tr>
+            <tr>
+              <td>Cancún</td>
+              <td>Sandos Cancún</td>
+              <td>Parejas, escapadas</td>
+              <td>Suites, spa, diseño, ambiente más adulto</td>
+              <td>Sandos con tono más elegante</td>
+            </tr>
+            <tr>
+              <td>Cancún</td>
+              <td>Iberostar Selection Cancún</td>
+              <td>Familias y parejas</td>
+              <td>Resort 5★, 10 piscinas, marca fuerte</td>
+              <td>Muy noble para Cancún clásico</td>
+            </tr>
+            <tr>
+              <td>Cancún</td>
+              <td>RIU Palace Kukulkan</td>
+              <td>Parejas, honeymoon, adults only</td>
+              <td>RIU Palace + 18+</td>
+              <td>Venta simple y directa</td>
+            </tr>
+            <tr>
+              <td>Cancún</td>
+              <td>Occidental Costa Cancún</td>
+              <td>Familias y presupuesto medio</td>
+              <td>Ubicación, todo incluido práctico</td>
+              <td>Buena entrada a Cancún</td>
+            </tr>
+            <tr>
+              <td>Costa Mujeres</td>
+              <td>Grand Palladium Select Costa Mujeres</td>
+              <td>Familias</td>
+              <td>Family Selection y resort premium familiar</td>
+              <td>Upsell muy claro</td>
+            </tr>
+            <tr>
+              <td>Costa Mujeres</td>
+              <td>TRS Coral</td>
+              <td>Parejas y premium</td>
+              <td>Adults only, suites, beach club, Chic Cabaret</td>
+              <td>Salto claro de categoría</td>
+            </tr>
+            <tr>
+              <td>Costa Mujeres</td>
+              <td>RIU Palace Costa Mujeres</td>
+              <td>Familias y parejas</td>
+              <td>Palace, 6 piscinas, Elite Club</td>
+              <td>Muy bueno para upgrade fácil</td>
+            </tr>
+            <tr>
+              <td>Costa Mujeres</td>
+              <td>RIU Dunamar</td>
+              <td>Familias con niños</td>
+              <td>Splash Water World y perfil activo</td>
+              <td>Equivalente al RIU familiar más movido</td>
+            </tr>
+            <tr>
+              <td>Costa Mujeres</td>
+              <td>Catalonia Grand Costa Mujeres</td>
+              <td>Parejas y familias tranquilas</td>
+              <td>Suites + Privileged</td>
+              <td>Muy útil para venta consultiva</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mx-section">
+      <div class="mx-section-head">
+        <div>
+          <h3>Manejo de objeciones</h3>
+        </div>
+        <p>
+          En esta zona la objeción suele aparecer por confusión entre destinos o porque el cliente siente que “todos los hoteles de México son parecidos”. La clave es volver a ordenar la conversación por <strong>zona, estilo y tipo de experiencia</strong>.
+        </p>
+      </div>
+
+      <div class="mx-grid-2">
+        <div class="mx-obj">
+          <h4>“No sé si me conviene más Cancún o Riviera Maya”</h4>
+          <p><strong>Respuesta comercial:</strong> “Si buscas un hotel más de zona hotelera y una lectura más Cancún, vamos por Cancún. Si prefieres resort grande, más naturaleza y más sensación de destino, Riviera Maya suele funcionar mejor”.</p>
+        </div>
+
+        <div class="mx-obj">
+          <h4>“Quiero una opción familiar, pero no algo demasiado básico”</h4>
+          <p><strong>Respuesta comercial:</strong> “Entonces conviene mirar productos como Iberostar Paraíso Maya, Bahía Akumal o Palladium Select Costa Mujeres, porque mantienen perfil family, pero con una lectura más cuidada y mejores argumentos de valor”.</p>
+        </div>
+
+        <div class="mx-obj">
+          <h4>“Busco algo mejor, pero sin irme a súper lujo”</h4>
+          <p><strong>Respuesta comercial:</strong> “En ese punto funcionan muy bien los upgrades concretos: Privileged en Catalonia, Elite Club en RIU Palace Costa Mujeres o Family Selection en Palladium. Mejoran mucho la experiencia sin exigir un salto tan grande”.</p>
+        </div>
+
+        <div class="mx-obj">
+          <h4>“Queremos adultos only, pero no sabemos dónde mirar”</h4>
+          <p><strong>Respuesta comercial:</strong> “Si el foco está en Cancún, RIU Palace Kukulkan es muy claro. Si queréis una experiencia más premium y de playa amplia, TRS Coral en Costa Mujeres es una de las mejores respuestas”.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-section mx-closing">
+      <div class="mx-section-head">
+        <div>
+          <h3>Cierre rápido para el vendedor</h3>
+        </div>
+        <p>
+          Si necesitas orientar una recomendación inicial en segundos, esta es la lectura más simple para empezar bien la conversación.
+        </p>
+      </div>
+
+      <div class="mx-grid-3">
+        <div class="mx-note">
+          <h4>Si el cliente quiere resort grande</h4>
+          <p><strong>Riviera Maya:</strong> Grand Palladium Riviera Maya o Barceló Maya Grand Resort.<br><strong>Costa Mujeres:</strong> Grand Palladium Select.</p>
+        </div>
+        <div class="mx-note">
+          <h4>Si el cliente quiere Sandos</h4>
+          <p><strong>Familia / playa:</strong> Sandos Playacar.<br><strong>Eco + parque acuático:</strong> Sandos Caracol.<br><strong>Parejas / Cancún:</strong> Sandos Cancún.</p>
+        </div>
+        <div class="mx-note">
+          <h4>Si el cliente quiere RIU</h4>
+          <p><strong>Adults only:</strong> RIU Palace Kukulkan.<br><strong>Family premium:</strong> RIU Palace Costa Mujeres.<br><strong>Familia activa:</strong> RIU Dunamar.</p>
+        </div>
+        <div class="mx-note">
+          <h4>Si el cliente quiere Iberostar</h4>
+          <p><strong>Riviera Maya:</strong> Selection Paraíso Maya.<br><strong>Cancún:</strong> Selection Cancún.</p>
+        </div>
+        <div class="mx-note">
+          <h4>Si el cliente quiere una mejora clara</h4>
+          <p><strong>Upsells más vendibles:</strong> Privileged, Elite Club, Family Selection o salto a TRS Coral.</p>
+        </div>
+        <div class="mx-note">
+          <h4>Si el cliente pide “algo mejor sin irse demasiado”</h4>
+          <p><strong>Muy útiles:</strong> Catalonia Playa Maroma, Catalonia Grand Costa Mujeres, RIU Palace Costa Mujeres, Bahía Akumal.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>

@@ -1,0 +1,756 @@
+<style>
+  .uy-docs{
+    --uy-navy:#1f2a56;
+    --uy-indigo:#3949ab;
+    --uy-sky:#eef3ff;
+    --uy-gold:#d4a648;
+    --uy-sand:#f8f3ea;
+    --uy-mint:#eff8f4;
+    --uy-rose:#fff2f4;
+    --uy-red:#b42318;
+    --uy-red-bg:#fff1f0;
+    --uy-ink:#253047;
+    --uy-soft:#667085;
+    --uy-line:#dde4f0;
+    --uy-white:#ffffff;
+    --uy-shadow:0 18px 40px rgba(28,41,79,.08);
+    font-family:"Lato", Arial, sans-serif;
+    color:var(--uy-ink);
+  }
+
+  .uy-docs *{box-sizing:border-box;}
+
+  .uy-docs .uy-wrap{
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  .uy-docs .uy-hero{
+    background:linear-gradient(135deg,#1f2a56 0%,#3346a8 55%,#6d78da 100%);
+    color:#fff;
+    border-radius:28px;
+    padding:42px 34px;
+    margin:28px 0 24px;
+    box-shadow:var(--uy-shadow);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .uy-docs .uy-hero:after{
+    content:"";
+    position:absolute;
+    right:-60px;
+    top:-60px;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:rgba(255,255,255,.09);
+  }
+
+  .uy-docs .uy-kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:.78rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.18);
+    padding:8px 12px;
+    border-radius:999px;
+    margin-bottom:18px;
+    font-weight:700;
+  }
+
+  .uy-docs h2,
+  .uy-docs h3,
+  .uy-docs h4{
+    font-family:"Playfair Display", Georgia, serif;
+    margin:0 0 12px;
+    line-height:1.08;
+    color:inherit;
+  }
+
+  .uy-docs .uy-hero h2{
+    font-size:2.35rem;
+    max-width:920px;
+  }
+
+  .uy-docs .uy-hero p{
+    max-width:980px;
+    margin:0;
+    color:rgba(255,255,255,.92);
+    font-size:1.03rem;
+    line-height:1.7;
+  }
+
+  .uy-docs .uy-alert{
+    margin:0 0 26px;
+    background:linear-gradient(180deg,#fff1f0 0%,#ffe7e5 100%);
+    border:1px solid #f6c7c2;
+    border-left:8px solid var(--uy-red);
+    color:#7a271f;
+    border-radius:22px;
+    padding:22px 22px 22px 20px;
+    box-shadow:var(--uy-shadow);
+  }
+
+  .uy-docs .uy-alert h3{
+    color:var(--uy-red);
+    font-size:1.35rem;
+    margin-bottom:10px;
+  }
+
+  .uy-docs .uy-alert p{
+    margin:0;
+    line-height:1.75;
+    font-size:.98rem;
+  }
+
+  .uy-docs .uy-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-top:28px;
+  }
+
+  .uy-docs .uy-stat{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:18px;
+    padding:16px;
+    backdrop-filter:blur(6px);
+  }
+
+  .uy-docs .uy-stat strong{
+    display:block;
+    font-size:1.15rem;
+    margin-bottom:4px;
+    color:#fff;
+  }
+
+  .uy-docs .uy-stat span{
+    font-size:.92rem;
+    color:rgba(255,255,255,.88);
+  }
+
+  .uy-docs .uy-section{
+    margin:26px 0;
+    background:var(--uy-white);
+    border:1px solid var(--uy-line);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:var(--uy-shadow);
+  }
+
+  .uy-docs .uy-section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    gap:20px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+
+  .uy-docs .uy-section-head h3{
+    font-size:1.8rem;
+    color:var(--uy-navy);
+  }
+
+  .uy-docs .uy-section-head p{
+    margin:0;
+    max-width:780px;
+    color:var(--uy-soft);
+    line-height:1.7;
+  }
+
+  .uy-docs .uy-grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+  }
+
+  .uy-docs .uy-grid-2{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+  }
+
+  .uy-docs .uy-note{
+    background:linear-gradient(180deg,#f9fbff 0%,#f1f5ff 100%);
+    border:1px solid #dbe5ff;
+    border-radius:20px;
+    padding:20px;
+  }
+
+  .uy-docs .uy-note h4{
+    color:var(--uy-indigo);
+    font-size:1.16rem;
+  }
+
+  .uy-docs .uy-note p{
+    margin:0;
+    line-height:1.7;
+    color:var(--uy-ink);
+  }
+
+  .uy-docs .uy-card{
+    border:1px solid var(--uy-line);
+    border-radius:22px;
+    padding:22px;
+    background:#fff;
+    box-shadow:0 8px 24px rgba(17,24,39,.05);
+  }
+
+  .uy-docs .uy-card h4{
+    font-size:1.28rem;
+    color:var(--uy-navy);
+    margin-bottom:10px;
+  }
+
+  .uy-docs .uy-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:0 0 14px;
+  }
+
+  .uy-docs .uy-badge{
+    display:inline-flex;
+    align-items:center;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:.78rem;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+
+  .uy-docs .uy-badge.blue{background:#eaf1ff;color:#2f55c8;}
+  .uy-docs .uy-badge.gold{background:#fff4dc;color:#9a6a00;}
+  .uy-docs .uy-badge.green{background:#e8f7ef;color:#177245;}
+  .uy-docs .uy-badge.rose{background:#ffe9ef;color:#b33b67;}
+  .uy-docs .uy-badge.red{background:#ffe9e7;color:#b42318;}
+  .uy-docs .uy-badge.gray{background:#f2f4f7;color:#475467;}
+
+  .uy-docs .uy-card p{
+    margin:0 0 14px;
+    line-height:1.72;
+    color:var(--uy-ink);
+  }
+
+  .uy-docs .uy-card ul{
+    margin:0;
+    padding-left:18px;
+    color:var(--uy-ink);
+    line-height:1.7;
+  }
+
+  .uy-docs .uy-card li + li{margin-top:6px;}
+
+  .uy-docs .uy-mini{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px dashed var(--uy-line);
+    font-size:.95rem;
+    color:var(--uy-soft);
+    line-height:1.7;
+  }
+
+  .uy-docs .uy-mini strong{
+    color:var(--uy-navy);
+  }
+
+  .uy-docs .uy-source{
+    display:block;
+    margin-top:10px;
+    font-size:.84rem;
+    color:var(--uy-soft);
+  }
+
+  .uy-docs .uy-source a{
+    color:var(--uy-indigo);
+    text-decoration:none;
+  }
+
+  .uy-docs table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.95rem;
+    overflow:hidden;
+    border-radius:16px;
+  }
+
+  .uy-docs thead th{
+    background:#24315f;
+    color:#fff;
+    text-align:left;
+    padding:14px 12px;
+    font-weight:700;
+  }
+
+  .uy-docs tbody td{
+    border-bottom:1px solid var(--uy-line);
+    padding:14px 12px;
+    vertical-align:top;
+    line-height:1.6;
+  }
+
+  .uy-docs tbody tr:nth-child(even){
+    background:#fafcff;
+  }
+
+  .uy-docs .uy-links{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+  }
+
+  .uy-docs .uy-link-card{
+    border:1px solid var(--uy-line);
+    border-radius:18px;
+    padding:18px;
+    background:#fff;
+  }
+
+  .uy-docs .uy-link-card a{
+    color:var(--uy-indigo);
+    text-decoration:none;
+    font-weight:700;
+  }
+
+  .uy-docs .uy-link-card p{
+    margin:8px 0 0;
+    color:var(--uy-soft);
+    line-height:1.65;
+    font-size:.95rem;
+  }
+
+  .uy-docs .uy-closing{
+    background:linear-gradient(135deg,#fff7e7 0%,#fff 100%);
+    border:1px solid #f1ddab;
+  }
+
+  @media (max-width:1080px){
+    .uy-docs .uy-grid-3,
+    .uy-docs .uy-stats,
+    .uy-docs .uy-links{
+      grid-template-columns:repeat(2,1fr);
+    }
+  }
+
+  @media (max-width:760px){
+    .uy-docs .uy-grid-3,
+    .uy-docs .uy-grid-2,
+    .uy-docs .uy-stats,
+    .uy-docs .uy-links{
+      grid-template-columns:1fr;
+    }
+
+    .uy-docs .uy-hero h2{
+      font-size:1.95rem;
+    }
+
+    .uy-docs .uy-section,
+    .uy-docs .uy-hero{
+      padding:22px;
+    }
+  }
+</style>
+
+<section class="uy-docs" id="documentacion-uruguay">
+  <div class="uy-wrap">
+
+    <div class="uy-alert">
+      <h3>Importante · información únicamente orientativa</h3>
+      <p>
+        Esta guía está elaborada <strong>solo como referencia general</strong> para pasajeros con <strong>documentación uruguaya</strong>. La documentación exigida para viajar puede cambiar sin previo aviso por decisión de autoridades migratorias, sanitarias, aerolíneas o países de destino. <strong>Es responsabilidad exclusiva del pasajero/a</strong> viajar con toda la documentación vigente, en buen estado y correctamente emitida. Antes de viajar, se debe <strong>reconfirmar siempre</strong> la documentación y los requisitos de ingreso/salida con los canales oficiales correspondientes. Para documentación de otros países, se deben consultar exclusivamente las autoridades oficiales del país de origen. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior)
+      </p>
+    </div>
+
+    <div class="uy-hero">
+      <div class="uy-kicker">Información útil · documentación uruguaya</div>
+      <h2>Guía orientativa de documentación para salir de Uruguay: adultos, menores y vacunas para Latinoamérica</h2>
+      <p>
+        Esta sección resume, en formato práctico para venta y capacitación, qué documentación conviene revisar antes de un viaje desde Uruguay. El objetivo es ordenar la información esencial para <strong>adultos</strong>, <strong>menores de edad</strong> y <strong>requisitos sanitarios/vacunación</strong>, especialmente en viajes dentro de Latinoamérica, siempre remitiendo al pasajero a verificar el requisito final en fuentes oficiales antes de emitir o viajar.
+      </p>
+
+      <div class="uy-stats">
+        <div class="uy-stat">
+          <strong>Adultos</strong>
+          <span>cédula, pasaporte, visas y vigencias</span>
+        </div>
+        <div class="uy-stat">
+          <strong>Menores</strong>
+          <span>permiso, vínculo y casos frecuentes</span>
+        </div>
+        <div class="uy-stat">
+          <strong>Vacunas</strong>
+          <span>foco principal: fiebre amarilla</span>
+        </div>
+        <div class="uy-stat">
+          <strong>Enlaces útiles</strong>
+          <span>solo fuentes oficiales</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="uy-section">
+      <div class="uy-section-head">
+        <div>
+          <h3>Reglas base para pasajeros adultos con documentación uruguaya</h3>
+        </div>
+        <p>
+          La primera validación siempre es simple: documento correcto, vigente, legible, en buen estado y con foto reconocible. Después se revisa si el destino admite <strong>cédula</strong> o exige <strong>pasaporte</strong>, y si además pide visa, vigencia mínima mayor a 6 meses, seguro o documentación complementaria.
+        </p>
+      </div>
+
+      <div class="uy-grid-3">
+        <div class="uy-note">
+          <h4>Documento en buen estado</h4>
+          <p>La documentación para salir del país debe estar vigente, legible, en buen estado y con foto reconocible. Además, algunos destinos exigen que el documento tenga una vigencia superior a 6 meses. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf)</p>
+        </div>
+        <div class="uy-note">
+          <h4>MERCOSUR y asociados</h4>
+          <p>Para viajar a los Estados Parte y Asociados del MERCOSUR —Brasil, Paraguay, Argentina, Bolivia, Chile, Colombia, Ecuador, Perú y Venezuela— Uruguay indica que se puede viajar solo con cédula de identidad. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf)</p>
+        </div>
+        <div class="uy-note">
+          <h4>Resto del mundo</h4>
+          <p>Para viajar fuera de ese marco, la referencia oficial uruguaya es llevar <strong>pasaporte vigente</strong>. El pasaporte es el documento que acredita identidad y habilita a viajar según convenios internacionales. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf) [Source](https://www.gub.uy/tramites/solicitud-pasaporte-primera-vez)</p>
+        </div>
+      </div>
+
+      <div style="margin-top:22px; overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Situación</th>
+              <th>Qué revisar</th>
+              <th>Observación comercial / práctica</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Viaje dentro de MERCOSUR y asociados</td>
+              <td>Cédula vigente, en buen estado y con foto reconocible</td>
+              <td>Aunque Uruguay lo permite con cédula, el pasajero debe reconfirmar requisitos del destino y de la aerolínea. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf)</td>
+            </tr>
+            <tr>
+              <td>Viaje fuera de MERCOSUR</td>
+              <td>Pasaporte vigente</td>
+              <td>Muchos destinos piden vigencia mínima de 6 meses. Confirmar siempre antes de viajar. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior)</td>
+            </tr>
+            <tr>
+              <td>Destino con requisitos extra</td>
+              <td>Visa, seguro, reservas, solvencia, carta de invitación o vacunas</td>
+              <td>Uruguay recomienda consultar directamente a la representación diplomática o consular del país de destino. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf)</td>
+            </tr>
+            <tr>
+              <td>Prevención documental</td>
+              <td>Copias escaneadas de cédula, pasaporte y visas</td>
+              <td>Se recomienda guardarlas en un lugar seguro y también en el correo electrónico. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="uy-section">
+      <div class="uy-section-head">
+        <div>
+          <h3>Menores de edad: qué debe revisarse antes de salir de Uruguay</h3>
+        </div>
+        <p>
+          En menores, la clave no es solo el documento de viaje, sino también <strong>la acreditación del vínculo</strong> y, cuando corresponde, el <strong>permiso de menor</strong>. Es una de las áreas donde más conviene prevenir errores antes de la emisión final.
+        </p>
+      </div>
+
+      <div class="uy-grid-2">
+        <article class="uy-card">
+          <div class="uy-badges">
+            <span class="uy-badge red">Atención prioritaria</span>
+            <span class="uy-badge blue">Normativa uruguaya</span>
+          </div>
+          <h4>Qué es el permiso de menor</h4>
+          <p>
+            El permiso para menor de edad es una autorización documentada exigida por la normativa uruguaya a menores uruguayos o extranjeros residentes en Uruguay —o con más de un año de residencia efectiva— que deseen ausentarse del territorio nacional. Debe ser otorgado por los padres en ejercicio de la patria potestad, por tutor legal o mediante autorización judicial. [Source](https://www.gub.uy/tramites/permiso-menor-edad)
+          </p>
+          <ul>
+            <li>La autoridad competente para exigirlo y controlarlo es la Dirección Nacional de Migración. [Source](https://www.gub.uy/tramites/permiso-menor-edad)</li>
+            <li>Según Migración, si el menor viaja solo, con uno de sus padres o con terceros, en principio debe analizarse si necesita permiso. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</li>
+            <li>El permiso puede tramitarse ante Migración y la propia autoridad recomienda revisar previamente el caso concreto. [Source](https://www.gub.uy/tramites/permiso-menor-edad)</li>
+          </ul>
+          <div class="uy-mini">
+            <strong>Advertencia útil:</strong> aunque la situación parezca simple, en menores siempre conviene validar el caso exacto antes del viaje.
+          </div>
+        </article>
+
+        <article class="uy-card">
+          <div class="uy-badges">
+            <span class="uy-badge green">Excepciones</span>
+            <span class="uy-badge gold">Verificar vínculo</span>
+          </div>
+          <h4>Cuándo puede no exigirse permiso</h4>
+          <p>
+            Uruguay exceptúa del permiso de menor los casos en que el menor viaja acompañado de sus padres o tutor, o cuando posee un <strong>pasaporte uruguayo válido</strong>. Aun así, las autoridades uruguayas recomiendan confirmar si el país de destino pide documentación adicional para ingreso o egreso. [Source](https://www.gub.uy/tramites/permiso-menor-edad)
+          </p>
+          <ul>
+            <li>Si viaja con ambos padres y usa <strong>cédula uruguaya</strong>, Migración recuerda que debe acreditarse el vínculo con <strong>partida de nacimiento con vigencia no mayor a 1 año</strong>. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</li>
+            <li>Si es menor uruguayo con <strong>pasaporte extranjero</strong> y viaja con ambos padres, también debe acreditar vínculo con partida de nacimiento vigente. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</li>
+            <li>Si es menor extranjero con más de un año de permanencia en Uruguay y viaja con ambos padres, también puede requerir partida de nacimiento vigente para acreditar vínculo. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</li>
+          </ul>
+        </article>
+      </div>
+
+      <div style="margin-top:22px; overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Caso frecuente</th>
+              <th>Orientación general</th>
+              <th>Qué conviene confirmar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Menor con ambos padres + cédula uruguaya</td>
+              <td>No debería requerir permiso, pero sí acreditación del vínculo con partida de nacimiento vigente</td>
+              <td>Que la partida tenga menos de 1 año y que la aerolínea/destino no pida documentación extra. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</td>
+            </tr>
+            <tr>
+              <td>Menor con ambos padres + pasaporte uruguayo válido</td>
+              <td>La normativa uruguaya lo exceptúa del permiso</td>
+              <td>Confirmar igualmente si el destino solicita documentación adicional para menores. [Source](https://www.gub.uy/tramites/permiso-menor-edad)</td>
+            </tr>
+            <tr>
+              <td>Menor con uno solo de los padres</td>
+              <td>Debe revisarse expresamente si corresponde permiso de menor</td>
+              <td>No dejar este caso para último momento; validarlo con Migración. [Source](https://www.gub.uy/tramites/permiso-menor-edad)</td>
+            </tr>
+            <tr>
+              <td>Menor que viaja solo o con terceros</td>
+              <td>Debe revisarse expresamente si corresponde permiso de menor</td>
+              <td>Confirmar además condiciones de aerolínea y país de destino. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uy-grid-3" style="margin-top:22px;">
+        <div class="uy-note">
+          <h4>Vigencia y costo del permiso</h4>
+          <p>Migración informa que el permiso de menor puede tener vigencia de hasta 1 año y costo por viaje, pudiendo emitirse por más de una salida según el formulario. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</p>
+        </div>
+        <div class="uy-note">
+          <h4>Trámite presencial</h4>
+          <p>La Dirección Nacional de Migración indica que el trámite requiere agenda y que no es necesario que el menor acompañe a sus padres al momento del trámite presencial. [Source](https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar)</p>
+        </div>
+        <div class="uy-note">
+          <h4>Regla práctica</h4>
+          <p>Si hay un menor involucrado, no alcanza con “suponer” que está todo bien: conviene revisar con tiempo documento, vínculo y eventual permiso. [Source](https://www.gub.uy/tramites/permiso-menor-edad)</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="uy-section">
+      <div class="uy-section-head">
+        <div>
+          <h3>Vacunas para Latinoamérica: foco práctico para viajeros desde Uruguay</h3>
+        </div>
+        <p>
+          En esta parte la clave es no simplificar de más: <strong>no existe una exigencia única para toda Latinoamérica</strong>. La vacuna internacionalmente más relevante en viajes es la de <strong>fiebre amarilla</strong>, pero su exigencia o recomendación puede variar según el país, las zonas visitadas, las escalas y el antecedente de tránsito por áreas de riesgo.
+        </p>
+      </div>
+
+      <div class="uy-grid-2">
+        <article class="uy-card">
+          <div class="uy-badges">
+            <span class="uy-badge red">Vacuna clave</span>
+            <span class="uy-badge gold">Fiebre amarilla</span>
+          </div>
+          <h4>La referencia sanitaria principal</h4>
+          <p>
+            El propio Ministerio de Salud Pública de Uruguay señala que, a nivel internacional, la vacuna que algunos países pueden exigir es la de <strong>fiebre amarilla</strong>. Uruguay también dispone del trámite oficial para vacunación y para obtención del Certificado Internacional de Vacunación. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior) [Source](https://www.gub.uy/tramites/obtencion-certificado-internacional-vacunacion-fiebre-amarilla)
+          </p>
+          <ul>
+            <li>La protección adecuada se considera a los <strong>10 días</strong> de aplicada la vacuna. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior)</li>
+            <li>Uruguay recomienda iniciar el trámite con antelación suficiente, especialmente en temporada alta. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior)</li>
+            <li>Si la vacuna está contraindicada por razones médicas, puede tramitarse certificado de exención. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior)</li>
+          </ul>
+        </article>
+
+        <article class="uy-card">
+          <div class="uy-badges">
+            <span class="uy-badge blue">Certificado internacional</span>
+            <span class="uy-badge green">MSP Uruguay</span>
+          </div>
+          <h4>Cómo se gestiona en Uruguay</h4>
+          <p>
+            Para obtener el Certificado Internacional de Vacunación contra fiebre amarilla en Uruguay, el ciudadano debe haber recibido la vacuna y tener registrado el acto vacunal en el sistema oficial. Luego realiza la solicitud, pago y agenda para retiro del certificado. [Source](https://www.gub.uy/tramites/obtencion-certificado-internacional-vacunacion-fiebre-amarilla)
+          </p>
+          <ul>
+            <li>Debe presentarse el documento de viaje que se usará en el viaje. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior)</li>
+            <li>Si ya fue vacunado pero no tiene certificado, el MSP prevé el canal para su gestión. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior)</li>
+            <li>La agenda queda confirmada una vez abonado el arancel del certificado. [Source](https://www.gub.uy/tramites/obtencion-certificado-internacional-vacunacion-fiebre-amarilla)</li>
+          </ul>
+        </article>
+      </div>
+
+      <div style="margin-top:22px; overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Escenario en Latinoamérica</th>
+              <th>Lectura orientativa</th>
+              <th>Qué debe hacer el pasajero</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Viajes regionales sin exigencia sanitaria específica informada</td>
+              <td>No asumir que no hay requisitos: pueden cambiar por país, por escala o por tránsito</td>
+              <td>Reconfirmar con consulado/embajada, aerolínea y fuente sanitaria oficial del destino. [Source](https://www.argentina.gob.ar/salud/fiebreamarilla/paises-exigen-vacuna)</td>
+            </tr>
+            <tr>
+              <td>Destino o tránsito vinculado a zonas de riesgo de fiebre amarilla</td>
+              <td>La vacuna/certificado puede ser exigido o recomendado</td>
+              <td>Verificar si corresponde viajar con Certificado Internacional de Vacunación. [Source](https://www.cancilleria.gov.co/newsroom/news/viajar-asegurese-estar-dia-vacunas-requeridas)</td>
+            </tr>
+            <tr>
+              <td>Brasil / rutas con foco en fiebre amarilla</td>
+              <td>Brasil informa sobre el Certificado Internacional y recuerda que algunos países lo exigen para ingreso en su territorio; una única dosis aprobada por OMS tiene validez de por vida para el certificado. [Source](https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/f/febre-amarela/viajantes)</td>
+              <td>Si el itinerario involucra Brasil o zonas de riesgo, revisar con especial atención el requisito sanitario final.</td>
+            </tr>
+            <tr>
+              <td>Perú</td>
+              <td>Perú informa que la vacuna debe haberse aplicado al menos 10 días antes del viaje para que el certificado tenga validez legal y sea aceptado en migraciones. [Source](https://www.gob.pe/109062-obtener-constancia-internacional-de-vacunacion-contra-la-fiebre-amarilla)</td>
+              <td>No dejar la vacunación para último momento.</td>
+            </tr>
+            <tr>
+              <td>Colombia</td>
+              <td>Colombia recuerda que si se viaja a países que exigen el carné internacional de fiebre amarilla, debe llevarse, y que la vacuna debe recibirse al menos 10 días antes. [Source](https://www.cancilleria.gov.co/newsroom/news/viajar-asegurese-estar-dia-vacunas-requeridas)</td>
+              <td>Revisar exigencia del destino final y de cualquier escala previa.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uy-note" style="margin-top:22px;">
+        <h4>Lectura comercial correcta sobre vacunas</h4>
+        <p>
+          Para no inducir a error, la mejor práctica es comunicarlo así: <strong>“En Latinoamérica no hay una regla única para todos los destinos; la vacuna a revisar especialmente es fiebre amarilla, y el requisito final depende del país, las escalas, las zonas visitadas y la normativa vigente al momento del viaje”</strong>. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior) [Source](https://www.argentina.gob.ar/salud/fiebreamarilla/paises-exigen-vacuna)
+        </p>
+      </div>
+    </section>
+
+    <section class="uy-section">
+      <div class="uy-section-head">
+        <div>
+          <h3>Checklist rápido antes de emitir o viajar</h3>
+        </div>
+        <p>
+          Esta es la lectura más útil para usar con el pasajero antes del cierre: corta, práctica y orientada a prevenir rechazos o contratiempos.
+        </p>
+      </div>
+
+      <div class="uy-grid-3">
+        <div class="uy-note">
+          <h4>1. Documento correcto</h4>
+          <p>Confirmar si el viaje admite cédula o exige pasaporte, y revisar que el documento esté vigente, legible y en buen estado. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf)</p>
+        </div>
+        <div class="uy-note">
+          <h4>2. Vigencia mínima</h4>
+          <p>Corroborar si el país de destino exige más de 6 meses de vigencia del documento. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior)</p>
+        </div>
+        <div class="uy-note">
+          <h4>3. Menores</h4>
+          <p>Si viaja un menor, revisar vínculo, partida y eventual permiso de menor con tiempo. [Source](https://www.gub.uy/tramites/permiso-menor-edad)</p>
+        </div>
+        <div class="uy-note">
+          <h4>4. Vacunas</h4>
+          <p>Revisar especialmente si el itinerario exige vacuna/certificado de fiebre amarilla. [Source](https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior)</p>
+        </div>
+        <div class="uy-note">
+          <h4>5. Copias y respaldo</h4>
+          <p>Guardar copias escaneadas de cédula, pasaporte y visas en lugar seguro y en el correo electrónico. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior)</p>
+        </div>
+        <div class="uy-note">
+          <h4>6. Seguro y consulados</h4>
+          <p>Se recomienda contratar asistencia al viajero e identificar la oficina consular uruguaya más cercana al destino. [Source](https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior)</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="uy-section">
+      <div class="uy-section-head">
+        <div>
+          <h3>Enlaces útiles</h3>
+        </div>
+        <p>
+          En esta sección sí conviene derivar siempre a enlaces oficiales. Son la base correcta para reconfirmar requisitos antes del viaje.
+        </p>
+      </div>
+
+      <div class="uy-links">
+        <div class="uy-link-card">
+          <a href="https://www.gub.uy/tramites/permiso-menor-edad" target="_blank">Permiso para menor de edad · GUB.UY</a>
+          <p>Trámite oficial y casuísticas completas para salidas del país de menores de edad.</p>
+        </div>
+
+        <div class="uy-link-card">
+          <a href="https://www.gub.uy/ministerio-interior/comunicacion/noticias/direccion-nacional-migracion-recuerda-documentacion-tener-cuenta-para-viajar" target="_blank">Migración: documentación a tener en cuenta para viajar</a>
+          <p>Recordatorio oficial actualizado sobre documentación y casos frecuentes con menores.</p>
+        </div>
+
+        <div class="uy-link-card">
+          <a href="https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior" target="_blank">Cancillería: recomendaciones generales en caso de viajar al exterior</a>
+          <p>Guía oficial de Uruguay sobre documentación, copias, seguros, visados y asistencia consular.</p>
+        </div>
+
+        <div class="uy-link-card">
+          <a href="https://www.gub.uy/tramites/solicitud-pasaporte-primera-vez" target="_blank">Solicitud de pasaporte · GUB.UY</a>
+          <p>Trámite oficial del documento que acredita identidad y habilita a viajar fuera de los destinos donde basta la cédula.</p>
+        </div>
+
+        <div class="uy-link-card">
+          <a href="https://www.gub.uy/tramites/vacunacion-contra-fiebre-amarilla-viajes-exterior" target="_blank">Vacunación contra fiebre amarilla para viajes al exterior</a>
+          <p>Información oficial del MSP sobre vacunación, tiempos previos al viaje y certificados de exención.</p>
+        </div>
+
+        <div class="uy-link-card">
+          <a href="https://www.gub.uy/tramites/obtencion-certificado-internacional-vacunacion-fiebre-amarilla" target="_blank">Certificado Internacional de Vacunación Fiebre Amarilla</a>
+          <p>Trámite oficial para obtener el certificado internacional en Uruguay.</p>
+        </div>
+
+        <div class="uy-link-card">
+          <a href="https://mapaconsular.mrree.gub.uy/" target="_blank">Mapa Consular de Uruguay</a>
+          <p>Ubicación y contacto de embajadas y consulados uruguayos en el exterior.</p>
+        </div>
+
+        <div class="uy-link-card">
+          <a href="https://www.gub.uy/ministerio-relaciones-exteriores/sites/ministerio-relaciones-exteriores/files/2019-06/Comunicado%2038%202019%20Anexo.pdf" target="_blank">PDF oficial: documentación para salir del país</a>
+          <p>Resumen oficial de Cancillería sobre documentación, menores, visados y medidas sanitarias.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="uy-section uy-closing">
+      <div class="uy-section-head">
+        <div>
+          <h3>Mensaje final sugerido para capacitación</h3>
+        </div>
+        <p>
+          Si queréis dejar una fórmula clara dentro de la web de capacitación, esta es la más segura y profesional para cerrar la sección.
+        </p>
+      </div>
+
+      <div class="uy-note">
+        <h4>Texto recomendado</h4>
+        <p>
+          <strong>“La agencia orienta, pero la responsabilidad documental es siempre del pasajero/a. Toda persona debe reconfirmar antes de viajar la validez de su documento, requisitos migratorios, permisos de menores, visas, vacunas y demás exigencias de ingreso o salida directamente con fuentes oficiales, aerolínea y autoridades competentes.”</strong> [Source](https://www.gub.uy/ministerio-relaciones-exteriores/comunicacion/publicaciones/recomendaciones-generales-en-caso-de-viajar-al-exterior)
+        </p>
+      </div>
+    </section>
+
+  </div>
+</section>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Región Maranhão - Guía Brasil | Dr. Viaje</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-purple);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        nav {
+            background-color: var(--primary-orange);
+            padding: 15px 0;
+            position: sticky;
+            top: 120px;
+            z-index: 999;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-links a:hover {
+            background-color: white;
+            color: var(--primary-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: var(--primary-orange);
+        }
+
+        .destination-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .destination-card:nth-child(even) {
+            border-top-color: var(--primary-pink);
+        }
+
+        .destination-header {
+            border-bottom: 3px solid var(--bg-light);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .destination-header h2 {
+            color: var(--primary-purple);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .destination-subtitle {
+            color: var(--primary-pink);
+            font-size: 1.2rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .section h4 {
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: var(--text-medium);
+        }
+
+        .section ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-medium);
+        }
+
+        .section li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+            border-left: 5px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box::before {
+            content: "💡 TIP DE VENTA: ";
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 5px solid var(--primary-pink);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .alert-box::before {
+            content: "⚠️ ALERTA: ";
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border: 2px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 12px;
+            font-style: italic;
+            position: relative;
+        }
+
+        .script-box::before {
+            content: "💬 SCRIPT: ";
+            font-weight: 700;
+            color: var(--primary-purple);
+            font-style: normal;
+        }
+
+        .critical-alert {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: 3px solid #d32f2f;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .critical-alert::before {
+            content: "🚨 ALERTA CRÍTICA TEMPORAL: ";
+            font-weight: 700;
+            color: #d32f2f;
+            font-size: 1.1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-pink) 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .destination-card {
+                padding: 25px;
+            }
+
+            .destination-header h2 {
+                font-size: 2rem;
+            }
+
+            nav {
+                top: 140px;
+            }
+        }
+
+        strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    Dr.<br>Viaje<br>.com
+                </div>
+                <div class="header-title">
+                    <h1>Región Maranhão</h1>
+                    <p>El Fenómeno Natural Más Surrealista del Planeta</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#sao-luis">São Luís</a></li>
+                <li><a href="#lencois">Lençóis Maranhenses</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="index-brasil.html" class="back-link">← Volver al índice principal</a>
+
+        <!-- SÃO LUÍS -->
+        <div id="sao-luis" class="destination-card">
+            <div class="destination-header">
+                <h2>SÃO LUÍS</h2>
+                <p class="destination-subtitle">La Jamaica Brasileira - Capital Colonial Francesa</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>São Luís es la <strong>única capital brasileña fundada por franceses</strong> (1612, Fort Saint-Louis), con historia única: fundada por franceses, conquistada por holandeses, y finalmente colonizada por portugueses. Esta triple herencia colonial europea creó el centro histórico con la <strong>mayor colección de azulejos portugueses de América Latina</strong>, declarado Patrimonio UNESCO en 1997.</p>
+
+                <p>Curiosamente, es llamada <strong>"Jamaica Brasileira"</strong> por ser la única ciudad fuera de Jamaica donde el reggae es cultura dominante.</p>
+
+                <div class="info-box">
+                    <strong>Función comercial:</strong> São Luís NO es destino principal, es <strong>puerta de entrada obligatoria</strong> (1-2 noches) para Lençóis Maranhenses + experiencia cultural colonial única. Es imposible llegar a Lençóis sin pasar por São Luís.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Centro Histórico UNESCO</h3>
+                
+                <ul>
+                    <li><strong>3.500 edificios coloniales del siglo XVIII</strong> perfectamente preservados</li>
+                    <li><strong>Mayor colección de azulejos portugueses de América Latina</strong></li>
+                    <li><strong>Rua Portugal y Largo do Comércio:</strong> Las calles más fotogénicas</li>
+                    <li><strong>Bumba-meu-boi:</strong> Festival folclórico Patrimonio UNESCO (junio-julio)</li>
+                </ul>
+
+                <div class="tip-box">
+                    Usá São Luís como "base colchón": primera noche al llegar para descansar del vuelo y conocer el centro histórico, y potencialmente 1 noche al retorno de Lençóis antes del vuelo de regreso. Evitás riesgos de conexión con vuelos y das contenido cultural al viaje.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuerto: São Luís - Marechal Cunha Machado (SLZ)</h4>
+                <ul>
+                    <li><strong>Aeropuerto → Centro São Luís:</strong> 15 km (25 min)</li>
+                    <li><strong>São Luís → Barreirinhas (Lençóis):</strong> 260 km (4 horas carretera asfaltada)</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo ejecutivo</td><td>USD 10-15 por persona</td></tr>
+                        <tr><td>Cena centro histórico</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Comida maranhense típica</td><td>USD 20-30 por persona</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LENÇÓIS MARANHENSES -->
+        <div id="lencois" class="destination-card">
+            <div class="destination-header">
+                <h2>LENÇÓIS MARANHENSES</h2>
+                <p class="destination-subtitle">El Desierto de Lagunas Cristalinas</p>
+            </div>
+
+            <div class="critical-alert">
+                <h3 style="color: #d32f2f; margin-top: 0;">Tu Responsabilidad Profesional Primaria</h3>
+                <p><strong>ANTES DE CUALQUIER OTRA INFORMACIÓN: ESTE DESTINO TIENE DEPENDENCIA ABSOLUTA DE TEMPORADAS</strong></p>
+                
+                <h4 style="color: #d32f2f;">LA REGLA DE ORO INQUEBRANTABLE:</h4>
+                
+                <p><strong>TEMPORADA VENDIBLE (Mayo-Septiembre):</strong></p>
+                <ul>
+                    <li><strong>Mayo-Junio:</strong> Lagunas al 100%, agua cristalina, menos turistas, precios óptimos</li>
+                    <li><strong>Julio-Agosto:</strong> Lagunas al 80-90%, temporada alta brasileña, precios máximos</li>
+                    <li><strong>Septiembre:</strong> Lagunas al 60-70%, empiezan a evaporarse pero aún espectaculares</li>
+                </ul>
+
+                <p><strong>TEMPORADA NO VENDIBLE (Octubre-Abril):</strong></p>
+                <ul>
+                    <li><strong>Octubre-Diciembre:</strong> Lagunas evaporándose, paisaje perdiendo magia</li>
+                    <li><strong>Enero-Abril:</strong> Temporada de lluvias, lagunas formándose pero accesos complicados</li>
+                </ul>
+
+                <div class="script-box" style="margin: 20px 0;">
+                    <strong>Script obligatorio:</strong><br>
+                    "Lençóis Maranhenses SOLO se puede vender entre mayo y septiembre. Es un fenómeno natural estacional: dunas que se llenan de agua de lluvia creando miles de lagunas cristalinas. Fuera de esa ventana, vas a ver solo dunas sin agua. Como profesional responsable, prefiero perder la venta ahora que tener un cliente insatisfecho después."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p><strong>LENÇÓIS MARANHENSES</strong> (Parque Nacional de 155.000 hectáreas) es el fenómeno geológico más improbable del mundo: <strong>70 km de dunas blancas de hasta 40 metros</strong> que entre enero-junio se inundan con agua de lluvia, creando <strong>miles de lagunas de agua dulce cristalina en medio del "desierto"</strong>. El lecho de roca impermeable impide que el agua se filtre, manteniendo las lagunas hasta septiembre.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué es estratégico para tu cartera?</strong> Es tu "destino WOW absoluto": genera el mayor impacto visual en redes sociales, nadie lo conoce pero todos lo quieren cuando ven fotos, y posiciona al agente como experto en destinos únicos. Requiere asesoramiento profesional específico que justifica completamente tu valor agregado.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Bases Operativas</h3>
+                
+                <h4>Barreirinhas (base principal - 80% de ventas):</h4>
+                <ul>
+                    <li>Pueblo de 60.000 habitantes a orillas del Río Preguiças</li>
+                    <li>Mayor infraestructura hotelera y gastronómica</li>
+                    <li>Distancia desde São Luís: 260 km (4 horas carretera asfaltada)</li>
+                    <li>Acceso a Lagoa Azul y Lagoa Bonita (las más famosas)</li>
+                </ul>
+
+                <h4>Santo Amaro (alternativa auténtica):</h4>
+                <ul>
+                    <li>Pueblo de 15.000 habitantes con acceso directo a lagunas</li>
+                    <li>Infraestructura básica, experiencia más rústica</li>
+                    <li>240 km desde São Luís (4 horas)</li>
+                </ul>
+
+                <h4>Atins (para aventureros extremos):</h4>
+                <ul>
+                    <li>Pueblo remoto de pescadores, acceso solo por barco desde Barreirinhas</li>
+                    <li>Infraestructura mínima, experiencia ultra auténtica</li>
+                    <li>Capital del kitesurf nordestino</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Paseos Imperdibles</h3>
+                
+                <h4>Circuito das Lagoas (día completo obligatorio):</h4>
+                <ul>
+                    <li><strong>Horario:</strong> 8 AM - 5 PM en vehículos 4x4 especializados</li>
+                    <li><strong>Lagoa Azul y Lagoa Bonita:</strong> Las más espectaculares y accesibles</li>
+                    <li><strong>Caminata en dunas:</strong> 30-40 minutos bajo sol intenso</li>
+                    <li><strong>CRÍTICO:</strong> Físicamente demandante, no apto para todos los públicos</li>
+                </ul>
+
+                <h4>Paseo Río Preguiças (día completo complementario):</h4>
+                <ul>
+                    <li>Navegación en lancha con paradas en:
+                        <ul>
+                            <li><strong>Pequenos Lençóis:</strong> Dunas menores con lagunas</li>
+                            <li><strong>Mandacaru:</strong> Faro con vista panorámica 360°</li>
+                            <li><strong>Caburé:</strong> Península donde río encuentra océano</li>
+                            <li><strong>Atins:</strong> Pueblo de pescadores remoto</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>RESPUESTA CRÍTICA: SOLO MAYORES DE 10 AÑOS FÍSICAMENTE ACTIVOS</strong></p>
+
+                <h4>Niños de 0-9 años: NO RECOMENDABLE</h4>
+                <ul>
+                    <li><strong>Traslado:</strong> 4 horas desde São Luís por carretera</li>
+                    <li><strong>Paseos en 4x4:</strong> 3-4 horas sacudiendo violentamente tipo rally</li>
+                    <li><strong>Caminatas:</strong> Subir dunas de 40 metros bajo sol de 35°C es agotador</li>
+                    <li><strong>Infraestructura:</strong> Barreirinhas es pueblo básico sin entretenimiento infantil</li>
+                    <li><strong>Días largos:</strong> 8 AM - 6 PM sin descansos apropiados</li>
+                </ul>
+
+                <div class="script-box">
+                    "Con niños chicos, Lençóis es logísticamente muy demandante. Van a sufrir traslados largos, 4x4 intenso, caminatas agotadoras bajo sol extremo. Es destino para adultos activos o adolescentes aventureros. Para familias con niños, tengo opciones nordestinas mucho más apropiadas."
+                </div>
+
+                <h4>Adolescentes (14+ años): RECOMENDABLE</h4>
+                <ul>
+                    <li>Aprecian aventura del 4x4 y belleza extrema</li>
+                    <li>Tienen resistencia física necesaria</li>
+                    <li>Valoran experiencia fotogénica única</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>ITINERARIO LOGÍSTICO RECOMENDADO (7 días totales):</h4>
+                <ul>
+                    <li><strong>Día 1:</strong> Vuelo a São Luís, 1 noche Centro Histórico</li>
+                    <li><strong>Día 2:</strong> Mañana libre São Luís, tarde traslado Barreirinhas (4h), 1ª noche Barreirinhas</li>
+                    <li><strong>Días 3-4:</strong> 2 días completos Lençóis (Circuito Lagoas + Río Preguiças), 2ª-3ª noche Barreirinhas</li>
+                    <li><strong>Día 5:</strong> Mañana libre, tarde regreso São Luís, 2ª noche São Luís</li>
+                    <li><strong>Día 6:</strong> Vuelo regreso</li>
+                </ul>
+
+                <h4>Traslados:</h4>
+                <ul>
+                    <li><strong>Privado:</strong> USD 150-200 por vehículo, máxima comodidad</li>
+                    <li><strong>Regular compartido:</strong> USD 40-60 por persona, horarios fijos</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Costo de Vida en USD (Datos 2024)</h3>
+                
+                <h4>SÃO LUÍS:</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo ejecutivo</td><td>USD 10-15 por persona</td></tr>
+                        <tr><td>Cena centro histórico</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Comida maranhense típica</td><td>USD 20-30 por persona</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>BARREIRINHAS (25-30% más caro por logística remota):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Desayuno</td><td>USD 8-12 por persona</td></tr>
+                        <tr><td>Almuerzo</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Cena</td><td>USD 20-35 por persona</td></tr>
+                        <tr><td>Circuito Lagoas</td><td>USD 120-180 por 4x4 (hasta 4 personas)</td></tr>
+                        <tr><td>Río Preguiças</td><td>USD 100-150 por lancha (hasta 6 personas)</td></tr>
+                        <tr><td>Taxa Parque Nacional</td><td>USD 15-20 por persona</td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong></p>
+                <ul>
+                    <li><strong>Días con paseos:</strong> USD 100-150 por persona</li>
+                    <li><strong>Días sin paseos:</strong> USD 50-80 por persona</li>
+                </ul>
+
+                <div class="alert-box">
+                    Lençóis es caro por logística remota: 260 km desde São Luís, infraestructura limitada, todo llega con dificultad. Los paseos se cobran por vehículo, así que grupos dividen costos. Es inversión en experiencia única mundial.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Alertas Críticas para Evitar Reclamos</h3>
+                
+                <div class="alert-box">
+                    <strong>1. DEPENDENCIA TEMPORAL ABSOLUTA:</strong> NO VENDER fuera de mayo-septiembre bajo ninguna circunstancia.<br><br>
+                    <strong>2. EXPECTATIVAS DE INFRAESTRUCTURA:</strong> "Barreirinhas es pueblo remoto sin shoppings, vida nocturna limitada, pousadas básicas. La inversión está en el fenómeno natural único, no en comodidades urbanas."<br><br>
+                    <strong>3. EXIGENCIA FÍSICA REAL:</strong> Caminar 40 min en dunas bajo sol de 35°C, 4x4 sacude violentamente 3-4 horas. No apto para embarazadas, problemas columna, movilidad reducida.<br><br>
+                    <strong>4. SOL EXTREMO SIN SOMBRA:</strong> Dunas blancas reflejan sol como espejo. Protector factor 50+, sombrero, lentes obligatorios. Riesgo real de insolación.<br><br>
+                    <strong>5. LOGÍSTICA REMOTA:</strong> Cajeros escasos en Barreirinhas, internet limitado, servicios médicos básicos.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta Consultiva</h3>
+                
+                <div class="script-box">
+                    <strong>VENDÉ LENÇÓIS cuando el cliente:</strong><br>
+                    Busca experiencia fotogénica única, viaja mayo-septiembre, pareja aventurera sin niños pequeños, presupuesto medio-alto flexible, acepta rusticidad por belleza extrema.
+                </div>
+
+                <div class="script-box">
+                    <strong>Manejo de objeción - "¿Realmente vale la pena el esfuerzo?":</strong><br>
+                    "Lençóis es el destino donde las fotos NO le hacen justicia a la realidad. National Geographic lo llama 'el paisaje más fotogénico del planeta' por razón científica: es objetivamente único. No existe nada igual en el mundo. Cuando estés parado en dunas blancas mirando miles de lagunas cristalinas hasta el horizonte, vas a entender por qué la gente llora de emoción."
+                </div>
+
+                <div class="script-box">
+                    <strong>Manejo de objeción - precio:</strong><br>
+                    "Es caro porque es remoto y único: 260 km de logística especializada, vehículos 4x4, guías certificados. Pero es inversión en experiencia que no podés tener en ningún otro planeta. Preferible 5 días en Lençóis que 15 en destino común que no transforma."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta:</strong><br>
+                    "El paquete perfecto son 7 días: 1 noche São Luís (centro histórico colonial francés único), 4 noches Barreirinhas (2 días completos en Lençóis), 1 noche final São Luís. Viajás mayo-junio cuando lagunas están al 100%. Es la fórmula que garantiza vivir el fenómeno natural más surrealista del mundo."
+                </div>
+
+                <div class="script-box">
+                    <strong>Argumento de valor único:</strong><br>
+                    "Lençóis Maranhenses redefine tu concepto de belleza natural. Cuando tus amigos vean las fotos van a pensar que están editadas. Cuando les digas que no, que es real, van a querer ir inmediatamente. Es el tipo de viaje que divide tu vida en 'antes' y 'después' de conocer el lugar más imposible del planeta."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Datos Históricos e Interesantes</h3>
+                
+                <h4>SÃO LUÍS:</h4>
+                <ul>
+                    <li>Única ciudad brasileña fundada por franceses (1612, Fort Saint-Louis)</li>
+                    <li>Triple herencia colonial: Francesa, holandesa, portuguesa</li>
+                    <li>Jamaica Brasileira: Única ciudad donde reggae es cultura dominante</li>
+                    <li>Bumba-meu-boi: Festival Patrimonio UNESCO que mezcla teatro, danza y música</li>
+                </ul>
+
+                <h4>LENÇÓIS MARANHENSES:</h4>
+                <ul>
+                    <li>155.000 hectáreas de Parque Nacional (tamaño de la ciudad de São Paulo)</li>
+                    <li>Fenómeno único mundial: Desierto que se inunda creando miles de lagunas</li>
+                    <li>Dunas móviles: Se desplazan hasta 20 metros anuales por vientos</li>
+                    <li>Lecho impermeable: Roca que impide filtración del agua de lluvia</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            Dr.<br>Viaje<br>.com
+        </div>
+        <p><strong>Dr. Viaje - Tu especialista en destinos brasileños</strong></p>
+        <p>Guía Definitiva para Agentes de Viajes - Región Maranhão</p>
+        <p>Capacitación Profesional 2024</p>
+    </footer>
+
+    <div class="scroll-top" id="scrollTop">↑</div>
+
+    <script>
+        const scrollTop = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = 180;
+                    const elementPosition = target.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: elementPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

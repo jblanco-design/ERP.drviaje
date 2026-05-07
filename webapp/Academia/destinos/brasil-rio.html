@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Definitiva - Región de Río de Janeiro | Dr. Viaje</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #7B2D8E;
+            --primary-orange: #FF9800;
+            --primary-pink: #E91E63;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        /* Header y Navegación */
+        header {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-purple);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-title p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Navegación */
+        nav {
+            background-color: var(--primary-orange);
+            padding: 15px 0;
+            position: sticky;
+            top: 72px;
+            z-index: 90;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-links a:hover {
+            background-color: white;
+            color: var(--primary-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Cards de Destinos */
+        .destination-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .destination-card:nth-child(even) {
+            border-top-color: var(--primary-pink);
+        }
+
+        .destination-header {
+            border-bottom: 3px solid var(--bg-light);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .destination-header h2 {
+            color: var(--primary-purple);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .destination-subtitle {
+            color: var(--primary-pink);
+            font-size: 1.2rem;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* Secciones de contenido */
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h3 {
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .section h4 {
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: var(--text-medium);
+        }
+
+        .section ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            color: var(--text-medium);
+        }
+
+        .section li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        /* Cajas destacadas */
+        .info-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%);
+            border-left: 5px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-left: 5px solid var(--primary-orange);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .tip-box::before {
+            content: "💡 TIP DE VENTA: ";
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-left: 5px solid var(--primary-pink);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .alert-box::before {
+            content: "⚠️ ALERTA: ";
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border: 2px solid var(--primary-purple);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 12px;
+            font-style: italic;
+            position: relative;
+        }
+
+        .script-box::before {
+            content: "💬 SCRIPT: ";
+            font-weight: 700;
+            color: var(--primary-purple);
+            font-style: normal;
+        }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-pink) 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 20px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Botón scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-pink) 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .destination-card {
+                padding: 25px;
+            }
+
+            .destination-header h2 {
+                font-size: 2rem;
+            }
+
+            nav {
+                top: 140px;
+            }
+        }
+
+        /* Utilidades */
+        .text-center { text-align: center; }
+        .mb-0 { margin-bottom: 0; }
+        .mt-0 { margin-top: 0; }
+        strong { color: var(--text-dark); font-weight: 600; }
+    </style>
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+<script src="../js/navbar-inject.js"></script>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="header-title">
+                    <h1>Guía Definitiva para Agentes</h1>
+                    <p>Región de Río de Janeiro - Brasil</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación -->
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#rio">Río de Janeiro</a></li>
+                <li><a href="#buzios">Búzios</a></li>
+                <li><a href="#angra">Angra dos Reis</a></li>
+                <li><a href="#arraial">Arraial do Cabo</a></li>
+                <li><a href="#cabo-frio">Cabo Frio</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Container Principal -->
+    <div class="container">
+        <!-- RÍO DE JANEIRO -->
+        <div id="rio" class="destination-card">
+            <div class="destination-header">
+                <h2>RÍO DE JANEIRO</h2>
+                <p class="destination-subtitle">La Cidade Maravilhosa - Donde la naturaleza y la ciudad se encuentran</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Río de Janeiro es la "Cidade Maravilhosa", la única metrópolis del mundo donde la selva tropical, montañas imponentes y playas paradisíacas conviven en perfecta armonía urbana. Fundada en 1565, fue capital de Brasil durante 197 años y la única capital europea establecida fuera de Europa cuando la familia real portuguesa se refugió allí en 1808.</p>
+                
+                <p>El Cristo Redentor, elegido una de las Siete Maravillas del Mundo Moderno en 2007, y el Pan de Azúcar son íconos reconocidos mundialmente. Río es también la cuna de la samba, el carnaval más famoso del mundo, y la bossa nova.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Río es fundamental en tu cartera?</strong> Es el destino brasileño más vendido desde Uruguay después de Florianópolis. Funciona como destino principal (4-6 noches) o como puerta de entrada para combinar con Búzios, Arraial do Cabo o Angra dos Reis. Es versátil: sirve para familias que buscan cultura y playa, parejas que quieren romanticismo con vistas icónicas, y tiene reconocimiento inmediato.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal y Estrategia de Detección</h3>
+                
+                <h4>Cliente clase media uruguaya (tu mercado principal):</h4>
+                <p>El comprador típico de Río es alguien que quiere "conocer" más que solo tomar sol. Valora las experiencias culturales, quiere fotos en lugares icónicos, y no le molesta combinar playa con ciudad. Busca destinos con "nombre", reconocibles internacionalmente.</p>
+
+                <h4>Cómo detectar a tu cliente Río:</h4>
+                <ul>
+                    <li>Menciona palabras como "conocer el Cristo", "Pan de Azúcar", "Copacabana"</li>
+                    <li>Pregunta por destinos que "tengan de todo: playa, cultura, paseos"</li>
+                    <li>Busca un viaje corto (4-5 días) para aprovechar un fin de semana largo</li>
+                    <li>Viaja en familia o pareja, raramente solo</li>
+                    <li>Le interesa la vida urbana, salir a cenar, shoppings</li>
+                </ul>
+
+                <div class="script-box">
+                    "Río es el destino perfecto si querés combinar playa con cultura e historia. En una semana tenés tiempo de conocer los íconos mundiales como el Cristo y el Pan de Azúcar, disfrutar las playas de Copacabana e Ipanema, y vivir la energía carioca. No es un lugar para quedarse encerrado en el hotel, sino para salir y explorar."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Alojamientos: Qué Recomendar Según el Cliente</h3>
+                
+                <h4>Copacabana (la opción más versátil):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Familias, grupos de amigos, primera vez en Río, presupuestos medios</li>
+                    <li><strong>Ventajas:</strong> Playa en la puerta, máxima infraestructura, opciones para todos los presupuestos</li>
+                    <li><strong>Contra:</strong> Muy turístico, puede ser ruidoso</li>
+                </ul>
+
+                <h4>Ipanema/Leblon (la opción premium):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Parejas, clientes que buscan sofisticación</li>
+                    <li><strong>Ventajas:</strong> Zona más elegante, playas más limpias, mejores restaurantes</li>
+                    <li><strong>Contra:</strong> Significativamente más caro</li>
+                </ul>
+
+                <h4>Barra da Tijuca (para familias que priorizan playa):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Familias con niños, estadías largas</li>
+                    <li><strong>Ventajas:</strong> Playas extensas, hoteles tipo resort, ambiente residencial</li>
+                    <li><strong>Contra:</strong> Muy lejos de atractivos turísticos (30-40 min)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>SÍ, absolutamente, pero con planificación correcta:</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-5 años:</strong> Recomendá Barra da Tijuca o Leblon. Necesitan hoteles con piscinas grandes, playas menos concurridas</li>
+                    <li><strong>Niños de 6-12 años:</strong> Copacabana es ideal. Ya disfrutan todos los paseos y tienen resistencia para caminar</li>
+                    <li><strong>Adolescentes:</strong> Cualquier zona funciona. Ya aprecian la cultura y la gastronomía urbana</li>
+                </ul>
+
+                <div class="alert-box">
+                    El sol es muy fuerte (protector solar factor 50+ obligatorio), las playas tienen oleaje (supervisión constante), caminar es inevitable (calzado cómodo esencial), hidratación constante por calor y humedad.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Aeropuertos y Traslados:</h4>
+                <ul>
+                    <li><strong>Galeão (GIG):</strong> Principal aeropuerto internacional. 25-28 km (30-60 min según tráfico)</li>
+                    <li><strong>Santos Dumont (SDU):</strong> Aeropuerto doméstico céntrico, ideal si llegan desde otro punto de Brasil</li>
+                </ul>
+
+                <div class="tip-box">
+                    Para la llegada recomiendo siempre traslado privado o taxi oficial del aeropuerto. Río es seguro en zonas turísticas, pero el aeropuerto está en zona complicada.
+                </div>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en restaurante medio</td><td>USD 12-20 por persona</td></tr>
+                        <tr><td>Cena en zona turística</td><td>USD 20-35 por persona</td></tr>
+                        <tr><td>Consumo en playa</td><td>USD 15-20 por día</td></tr>
+                        <tr><td>Metro/Taxi urbano</td><td>USD 1-10 por viaje</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong> USD 80-120 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta Consultiva</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de objeción - seguridad:</strong><br>
+                    "Entiendo tu preocupación, es la pregunta que más recibo sobre Río. Las zonas turísticas son seguras si tomás precauciones básicas: no uses joyas en la playa, tomá taxi de noche, y quedate en Copacabana o Ipanema. Millones de uruguayos van cada año sin problemas."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta:</strong><br>
+                    "Para aprovechar Río te recomiendo mínimo 5 noches, idealmente 6. Así tenés tiempo para las atracciones principales, disfrutar las playas sin apuro, y tener tiempo libre para explorar. ¿Qué fechas estabas pensando?"
+                </div>
+            </div>
+        </div>
+
+        <!-- BÚZIOS -->
+        <div id="buzios" class="destination-card">
+            <div class="destination-header">
+                <h2>BÚZIOS</h2>
+                <p class="destination-subtitle">El Saint-Tropez de América Latina</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Búzios es la joya de la costa brasileña, una península de 8 kilómetros que concentra más de 20 playas diferentes, cada una con su propia personalidad. Este antiguo pueblo de pescadores saltó a la fama mundial en 1964 cuando Brigitte Bardot lo visitó, transformándolo en el destino más sofisticado y cosmopolita de Brasil.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Búzios es perfecto para tu cartera?</strong> Es el destino que te permite trabajar con todos los segmentos: desde parejas jóvenes hasta familias y grupos de amigos. Su versatilidad geográfica lo convierte en una opción segura para la clase media uruguaya que busca calidad sin pagar precios ultra premium.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <p>El comprador típico busca "algo diferente" sin salirse de su presupuesto. Valora la experiencia gastronómica, le gusta caminar y explorar, y no necesita que le resuelvan todo desde el hotel.</p>
+
+                <h4>Cómo detectar a tu cliente Búzios:</h4>
+                <ul>
+                    <li>Menciona "romántico", "tranquilo pero con vida nocturna", "buena comida"</li>
+                    <li>Pregunta por destinos "diferentes" o dice "ya conozco Floripa/Camboriú"</li>
+                    <li>Rechaza opciones de all-inclusive o resorts grandes</li>
+                    <li>Viaja en pareja o grupo pequeño de amigos</li>
+                    <li>Tiene flexibilidad de fechas</li>
+                </ul>
+
+                <div class="script-box">
+                    "Búzios es perfecto si buscás algo diferente en Brasil. Combina 20 playas distintas con la mejor gastronomía de la costa. Es ideal para parejas o grupos que quieren explorar durante el día y disfrutar del ambiente cosmopolita por la noche."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Alojamientos: Qué Recomendar Según el Cliente</h3>
+                
+                <p><strong>Formato estrella: La Pousada.</strong> En Búzios NO vendas all-inclusive porque prácticamente no existe. El encanto está en las pousadas con desayuno incluido y salir a cenar afuera.</p>
+
+                <h4>Centro (cerca de Rua das Pedras):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Parejas que priorizan vida nocturna, grupos de amigos</li>
+                    <li><strong>Ventajas:</strong> Caminan a restaurantes y bares</li>
+                    <li><strong>Contra:</strong> Puede ser ruidoso, las playas céntricas no son las mejores</li>
+                </ul>
+
+                <h4>João Fernandes (la zona histórica para uruguayos):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Familias, parejas que quieren balance playa-centro</li>
+                    <li><strong>Ventajas:</strong> Playa hermosa, mar calmo, muchas opciones de pousadas</li>
+                    <li><strong>Contra:</strong> Calles empinadas (advertir con equipaje pesado)</li>
+                </ul>
+
+                <h4>Ferradura (ideal para familias con niños):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Familias con niños pequeños</li>
+                    <li><strong>Ventajas:</strong> Bahía cerrada, mar como piscina, ambiente residencial</li>
+                    <li><strong>Contra:</strong> Más alejado del centro (10-15 min en taxi)</li>
+                </ul>
+
+                <h4>Geribá (para público joven):</h4>
+                <ul>
+                    <li><strong>Para quién:</strong> Grupos de amigos, familias con adolescentes, surfistas</li>
+                    <li><strong>Ventajas:</strong> Playa amplia, buen ambiente diurno</li>
+                    <li><strong>Contra:</strong> Mar con olas (no apto para niños pequeños)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>SÍ, pero con las recomendaciones correctas:</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-5 años:</strong> Recomendá Ferradura exclusivamente. Mar calmo, playa amplia</li>
+                    <li><strong>Niños de 6-12 años:</strong> João Fernandes o Ferradura. Ya disfrutan explorar diferentes playas</li>
+                    <li><strong>Adolescentes:</strong> Cualquier zona. Ya aprecian la gastronomía y el ambiente cosmopolita</li>
+                </ul>
+
+                <div class="alert-box">
+                    Rua das Pedras tiene piedras irregulares (no apta para cochecitos), muchas pousadas están en morros con escaleras, no todas las playas tienen infraestructura, el sol es muy fuerte.
+                </div>
+
+                <div class="script-box">
+                    "Búzios es excelente para familias, pero la clave está en elegir la zona correcta. Para niños pequeños, Ferradura es como una piscina natural gigante. Para más grandes, João Fernandes les da playa hermosa y están cerca del movimiento nocturno."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Cómo Llegar:</h4>
+                <ul>
+                    <li><strong>Aeropuerto principal:</strong> Galeão (GIG) - 173 km (2.5 a 3 horas según tráfico)</li>
+                    <li><strong>Alternativa:</strong> Santos Dumont (SDU) - mismo tiempo, mejor para vuelos domésticos si se llega desde otro punto de Brasil</li>
+                    <li><strong>Opción premium:</strong> Cabo Frio (CFB) - 30 km (40 minutos) pero conectividad limitada desde Uruguay</li>
+                </ul>
+
+                <div class="tip-box">
+                    El traslado privado parece un gasto extra, pero después de 2-3 horas de vuelo, llegar directo y cómodo al hotel hace la diferencia entre empezar las vacaciones relajado o estresado.
+                </div>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en la playa</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Cena en Rua das Pedras</td><td>USD 25-40 por persona (sin alcohol)</td></tr>
+                        <tr><td>Supermercado/snacks</td><td>USD 10-15 por día</td></tr>
+                        <tr><td>Taxi entre zonas</td><td>USD 8-15 por trayecto</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong> USD 70-100 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Scripts de Venta</h3>
+                
+                <div class="script-box">
+                    <strong>Manejo de objeción - precio:</strong><br>
+                    "Sí, Búzios es más caro que otros destinos brasileños, pero es como comparar Punta del Este con La Paloma. Si el presupuesto es ajustado, puedo armarte el mismo destino en temporada media donde ahorrás significativamente."
+                </div>
+
+                <div class="script-box">
+                    <strong>Cierre de venta:</strong><br>
+                    "Para aprovechar Búzios al máximo te recomiendo mínimo 4 noches, idealmente 5-6. Así tenés tiempo de conocer las diferentes playas, hacer el paseo en barco, disfrutar las noches en Rua das Pedras y no andar con apuro."
+                </div>
+            </div>
+        </div>
+
+        <!-- ANGRA DOS REIS -->
+        <div id="angra" class="destination-card">
+            <div class="destination-header">
+                <h2>ANGRA DOS REIS</h2>
+                <p class="destination-subtitle">La Bahía de las 365 Islas - Paraíso Náutico</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Angra dos Reis es conocida como la "Bahía de las 365 islas", un paraíso náutico rodeado de montañas de la Serra do Mar. Fundada en 1502 y nombrada por Américo Vespucio el 6 de enero (Día de los Reyes Magos), su geografía única de bahía protegida con aguas calmas la convierte en el principal destino náutico de Brasil.</p>
+
+                <p>La joya de la corona es <strong>Ilha Grande</strong>, una isla de 193 km² que estuvo prohibida al turismo hasta 1994 por albergar la prisión de máxima seguridad Cândido Mendes. Su playa Lopes Mendes es considerada entre las 10 mejores del mundo.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Angra es estratégico?</strong> Funciona como alternativa más económica a Búzios manteniendo calidad excepcional de playas, o como complemento perfecto para crear paquetes combinados desde Río. Atrae al segmento náutico y familias que buscan aguas calmas.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <p>El comprador típico busca exclusividad náutica o aguas totalmente seguras para niños pequeños. Valora los paseos en barco, la privacidad, y no le molesta pagar más por experiencias únicas.</p>
+
+                <h4>Cómo detectar a tu cliente Angra:</h4>
+                <ul>
+                    <li>Viaja con niños menores de 6 años y prioriza seguridad acuática</li>
+                    <li>Menciona interés en deportes náuticos, pesca, veleros</li>
+                    <li>Busca resorts con todo incluido o casas para grupos grandes</li>
+                    <li>Quiere privacidad y exclusividad</li>
+                    <li>Tiene presupuesto medio-alto</li>
+                </ul>
+
+                <div class="script-box">
+                    "Angra dos Reis es perfecta si buscás aguas calmas como piscina para los niños, o si te gusta el turismo náutico. Tiene 365 islas para explorar en paseos en barco. Es como tener un archipiélago privado a 3 horas de Río."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Alojamientos Recomendados</h3>
+                
+                <p><strong>Formato recomendado: Resorts o casas con muelle.</strong> Angra es uno de los pocos destinos brasileños donde el all-inclusive tiene sentido comercial porque las mejores playas están en islas y requieren paseos náuticos.</p>
+
+                <h4>Para familias con niños pequeños:</h4>
+                <p>Resorts all-inclusive o casas en condominios cerrados con playa privada y aguas calmas garantizadas.</p>
+
+                <h4>Para grupos grandes (8-12 personas):</h4>
+                <p>Casas o villas con muelle privado. Excelente relación costo-beneficio dividiendo gastos entre varias familias.</p>
+
+                <h4>Ubicaciones estratégicas:</h4>
+                <ul>
+                    <li><strong>Vila Velha/Frade:</strong> Zona de resorts de lujo con infraestructura completa</li>
+                    <li><strong>Centro de Angra:</strong> Más económico, acceso directo a ferrys para Ilha Grande</li>
+                    <li><strong>Ilha Grande:</strong> Para experiencia auténtica sin autos</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>SÍ, IDEAL PARA FAMILIAS</strong></p>
+
+                <h4>Ventajas específicas para familias:</h4>
+                <ul>
+                    <li>Mar sin olas (lo más seguro de Brasil para niños pequeños)</li>
+                    <li>Resorts con programación infantil profesional</li>
+                    <li>Paseos en barco que entretienen todas las edades</li>
+                    <li>Aguas cálidas durante todo el año</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Cómo Llegar:</h4>
+                <ul>
+                    <li><strong>Aeropuerto principal:</strong> Galeão (GIG) - 155 km (2-2.5 horas según tráfico)</li>
+                    <li><strong>Para Ilha Grande:</strong> Traslado terrestre hasta puerto + ferry/lancha (30-90 minutos según embarcación)</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en restaurante</td><td>USD 15-25 por persona</td></tr>
+                        <tr><td>Cena</td><td>USD 25-40 por persona (sin alcohol)</td></tr>
+                        <tr><td>Comida en islas durante paseos</td><td>USD 20-30 por persona</td></tr>
+                        <tr><td>Taxi acuático</td><td>USD 10-20 por trayecto</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong> USD 90-130 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Alertas Críticas</h3>
+                <div class="alert-box">
+                    <strong>Dependencia climática:</strong> Días nublados afectan significativamente los paseos en barco (principal atractivo). <strong>Dependencia náutica:</strong> Las mejores playas requieren paseos en barco (costo adicional obligatorio). <strong>Ilha Grande:</strong> No hay cajeros automáticos, llevar efectivo suficiente.
+                </div>
+            </div>
+        </div>
+
+        <!-- ARRAIAL DO CABO -->
+        <div id="arraial" class="destination-card">
+            <div class="destination-header">
+                <h2>ARRAIAL DO CABO</h2>
+                <p class="destination-subtitle">El Caribe Brasileño - Fenómeno de Resurgencia</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Arraial do Cabo es llamado el "Caribe Brasileño" por sus aguas turquesas resultado de un fenómeno oceanográfico único llamado "resurgencia": corrientes frías suben desde 200 metros de profundidad, creando tonalidades azules imposibles de encontrar en otros lugares de Brasil y una vida marina espectacular.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Arraial es estratégico?</strong> Es tu carta de venta cuando el cliente busca "lo más lindo" sin importar comodidades. Funciona como alternativa más económica a Búzios manteniendo (o superando) la calidad visual de las playas.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <p>El comprador típico prioriza belleza natural extrema sobre comodidades. Es atraído por fotos de redes sociales, busca experiencias auténticas, y no le importa hacer esfuerzo físico para llegar a playas espectaculares.</p>
+
+                <h4>Cómo detectar a tu cliente Arraial:</h4>
+                <ul>
+                    <li>Pregunta específicamente por "las playas más lindas de Brasil"</li>
+                    <li>Menciona "Caribe brasileño" o muestra fotos de Instagram</li>
+                    <li>No le importa caminar, hacer trilhas o ir en barco</li>
+                    <li>Busca destinos "menos turísticos" o "más auténticos"</li>
+                    <li>Prioriza belleza sobre infraestructura</li>
+                </ul>
+
+                <div class="script-box">
+                    "Arraial do Cabo tiene las aguas más cristalinas de Brasil por un fenómeno oceanográfico único. Es literalmente como el Caribe pero más económico. Eso sí, es más rústico que Búzios: la belleza está en las playas, no en los hoteles."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Características Turísticas</h3>
+                
+                <h4>Tu argumento de venta estrella: el fenómeno de resurgencia</h4>
+                <p>Arraial tiene el agua más transparente de Brasil gracias a corrientes frías que suben desde 200 metros de profundidad, creando tonalidades azul turquesa únicas en el país.</p>
+
+                <div class="tip-box">
+                    Arraial no es simplemente 'otra playa bonita'. El color del agua es científicamente diferente a todo lo que viste en Brasil. Es el único lugar donde el océano Atlántico parece el Caribe, y es más barato que ir al Caribe real.
+                </div>
+
+                <h4>Playas principales:</h4>
+                <ul>
+                    <li><strong>Praia do Farol:</strong> Considerada la más linda, acceso limitado por reserva ambiental</li>
+                    <li><strong>Praia do Forno:</strong> Aguas cristalinas, acceso por trilha de 20 minutos o barco</li>
+                    <li><strong>Prainha:</strong> Pequeña, aguas turquesas, ideal para snorkel y fotos</li>
+                    <li><strong>Praia Grande:</strong> La única urbana, 30 km de extensión, infraestructura completa</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>DEPENDE CRÍTICAMENTE DE LA EDAD</strong></p>
+
+                <ul>
+                    <li><strong>Niños de 0-5 años:</strong> NO recomendable. Playas con acceso difícil, infraestructura muy limitada</li>
+                    <li><strong>Niños de 6-12 años:</strong> Condicional. Solo si son físicamente activos y les gusta explorar</li>
+                    <li><strong>Adolescentes:</strong> Muy recomendable. Aprecian la belleza natural extrema</li>
+                </ul>
+
+                <div class="alert-box">
+                    Muchas playas requieren caminatas largas o acceso en barco, opciones gastronómicas muy limitadas, cero entretenimiento fuera de actividades de playa, agua fría puede ser problema para niños friolentos.
+                </div>
+
+                <div class="script-box">
+                    "Arraial es visualmente espectacular pero no es el destino más cómodo para familias con niños pequeños. Si tus hijos necesitan comodidades, Angra o Cabo Frio son opciones mucho mejores."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Cómo Llegar:</h4>
+                <ul>
+                    <li><strong>Aeropuerto principal:</strong> Galeão (GIG) - 165 km (2.5-3 horas)</li>
+                    <li><strong>Desde Cabo Frio:</strong> Transfer local muy económico (25 minutos)</li>
+                </ul>
+
+                <div class="alert-box">
+                    <strong>Alerta crítica:</strong> Arraial tiene infraestructura hotelera muy limitada y básica. No hay resorts ni hoteles de lujo. En temporada alta se agota completamente. Reservar con mínimo 90 días de anticipación o considerar alojamiento en Cabo Frio con excursiones diarias.
+                </div>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo</td><td>USD 12-20 por persona</td></tr>
+                        <tr><td>Cena</td><td>USD 15-25 por persona (opciones limitadas)</td></tr>
+                        <tr><td>Comida en playa</td><td>USD 15-20 por persona</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong> USD 60-80 por persona (perfil medio)</p>
+            </div>
+        </div>
+
+        <!-- CABO FRIO -->
+        <div id="cabo-frio" class="destination-card">
+            <div class="destination-header">
+                <h2>CABO FRIO</h2>
+                <p class="destination-subtitle">Base Inteligente - Región dos Lagos</p>
+            </div>
+
+            <div class="section">
+                <h3>Presentación del Destino</h3>
+                <p>Cabo Frio, fundada en 1615 como fortificación portuguesa, es la ciudad más grande y desarrollada de la Región dos Lagos. Combina playas urbanas de arena blanca como talco con infraestructura completa, funcionando como puerta de entrada económica a toda la región.</p>
+
+                <div class="info-box">
+                    <strong>¿Por qué Cabo Frio es estratégico?</strong> Es tu destino "base operaciones inteligente". Tiene playas propias hermosas, está a 25 km de Búzios, 18 km de Arraial, y tiene infraestructura completa de ciudad real. Perfecto para presupuestos ajustados sin renunciar a calidad.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Perfil de Cliente Ideal</h3>
+                
+                <p>El comprador típico busca la mejor relación costo-beneficio con infraestructura completa. Valora tener supermercados, farmacias, shoppings cerca. Es ideal para familias numerosas, grupos grandes, o como base para explorar toda la Región dos Lagos.</p>
+
+                <h4>Cómo detectar a tu cliente Cabo Frio:</h4>
+                <ul>
+                    <li>Presupuesto limitado pero quiere Brasil con buenas playas</li>
+                    <li>Pregunta por opciones "más económicas que Búzios"</li>
+                    <li>Viaja en grupo grande o familia extendida</li>
+                    <li>Valora infraestructura urbana (supermercados, servicios médicos)</li>
+                    <li>Quiere hacer excursiones desde una base fija</li>
+                </ul>
+
+                <div class="script-box">
+                    "Cabo Frio es la opción inteligente para conocer toda la Región dos Lagos ahorrando en alojamiento. Desde ahí hacés excursiones a Búzios y Arraial, tenés playas lindas en la puerta, y toda la comodidad de una ciudad completa con precios razonables."
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Características Turísticas</h3>
+                
+                <h4>Playas principales:</h4>
+                <ul>
+                    <li><strong>Praia do Forte:</strong> La más popular, frente al centro histórico, aguas relativamente calmas</li>
+                    <li><strong>Praia das Conchas:</strong> Pequeña bahía protegida, ideal para familias con niños</li>
+                    <li><strong>Praia do Peró:</strong> 7 km de extensión, menos concurrida, oleaje moderado</li>
+                    <li><strong>Dunas de Cabo Frio:</strong> Paisaje desértico único junto al mar</li>
+                </ul>
+
+                <h4>Paseos desde Cabo Frio:</h4>
+                <ul>
+                    <li>Excursión de día completo a Búzios</li>
+                    <li>Excursión de día completo a Arraial do Cabo</li>
+                    <li>Paseo en barco por Lagoa de Araruama</li>
+                </ul>
+
+                <div class="tip-box">
+                    Cabo Frio te da lo mejor de ambos mundos: ahorrás significativamente en alojamiento y tenés toda la comodidad urbana, pero estás a minutos de las playas más espectaculares de la región.
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>¿Es Recomendable para Niños?</h3>
+                
+                <p><strong>SÍ, MUY RECOMENDABLE PARA TODAS LAS EDADES</strong></p>
+
+                <h4>Ventajas específicas para familias:</h4>
+                <ul>
+                    <li>Playas urbanas con infraestructura completa (baños, duchas, kioscos)</li>
+                    <li>Supermercados, farmacias 24hs, hospitales (tranquilidad para padres)</li>
+                    <li>Gran variedad gastronómica (opciones para niños selectivos)</li>
+                    <li>Shoppings con cines y entretenimiento cubierto</li>
+                    <li>Praia das Conchas especialmente diseñada para niños pequeños (aguas muy calmas)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Información Operativa</h3>
+                
+                <h4>Cómo Llegar:</h4>
+                <ul>
+                    <li><strong>Aeropuerto principal:</strong> Galeão (GIG) - 180 km (2.5-3 horas)</li>
+                    <li><strong>Alternativa:</strong> Aeropuerto de Cabo Frio (CFB) - 15 km (20 minutos) pero conectividad limitada</li>
+                    <li><strong>Bus regular:</strong> Buena opción, servicio frecuente desde Río (3 horas)</li>
+                </ul>
+
+                <h4>Costo de Vida en USD (Datos 2024):</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Almuerzo en restaurante</td><td>USD 10-18 por persona</td></tr>
+                        <tr><td>Cena</td><td>USD 15-30 por persona</td></tr>
+                        <tr><td>Comida rápida</td><td>USD 8-12 por persona</td></tr>
+                        <tr><td>Supermercado</td><td>USD 8-15 por día</td></tr>
+                    </tbody>
+                </table>
+                
+                <p><strong>Presupuesto diario recomendado (sin alojamiento):</strong> USD 65-90 por persona (perfil medio)</p>
+            </div>
+
+            <div class="section">
+                <h3>Script de Venta Consultiva</h3>
+                
+                <div class="script-box">
+                    <strong>Estrategia de venta combinada:</strong><br>
+                    "Mi recomendación es combinar: 3-4 noches en Río para conocer los íconos, y después 4-5 noches en Cabo Frio para relajar en algunas de las playas más espectaculares de Brasil. Así aprovechás el vuelo internacional y tenés vacaciones completas: cultura urbana + paraíso natural."
+                </div>
+
+                <div class="info-box">
+                    <strong>Comparativa para tu estrategia:</strong> Cabo Frio es el más económico de los tres destinos de la Región dos Lagos, ideal para presupuestos ajustados. Arraial es moderado pero con opciones muy limitadas. Angra es el más caro pero ofrece experiencias náuticas únicas que justifican la diferencia.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            Dr.<br>Viaje<br>.com
+        </div>
+        <p><strong>Dr. Viaje - Tu especialista en destinos brasileños</strong></p>
+        <p>Guía Definitiva para Agentes de Viajes - Región de Río de Janeiro</p>
+        <p>Capacitación Profesional 2024</p>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <div class="scroll-top" id="scrollTop">
+        ↑
+    </div>
+
+    <script>
+        // Scroll to top functionality
+        const scrollTop = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = 180; // Ajuste para la navegación sticky
+                    const elementPosition = target.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: elementPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Highlight active navigation
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.destination-card');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 200;
+                if (window.pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                if (link.getAttribute('href') === '#' + current) {
+                    link.style.backgroundColor = 'rgba(255,255,255,0.3)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
