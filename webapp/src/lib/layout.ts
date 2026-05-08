@@ -30,6 +30,7 @@ export function baseLayout(title: string, content: string, user: { nombre: strin
     { href: '/bancos', icon: 'fa-university', label: 'Bancos', page: 'bancos' },
     { href: '/gastos', icon: 'fa-receipt', label: 'Gastos', page: 'gastos' },
     ...(rol === 'gerente' ? [{ href: '/tesoreria/desimputar', icon: 'fa-undo', label: 'Desimputar Pagos', page: 'desimputar' }] : []),
+    { href: '/tesoreria/pendientes', icon: 'fa-clock', label: 'Pendientes', page: 'pendientes' },
     { href: '/tesoreria/cc', icon: 'fa-file-invoice-dollar', label: 'Cuentas Corrientes', page: 'cc' },
   ] : []
 
