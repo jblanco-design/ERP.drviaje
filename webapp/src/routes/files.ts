@@ -1998,7 +1998,7 @@ files.get('/files/:id', async (c) => {
             <button type="button" class="modal-close" onclick="document.getElementById('modal-movimiento').classList.remove('active')">&times;</button>
           </div>
           <div class="modal-body">
-            <form method="POST" action="/tesoreria/movimiento" onsubmit="return validarFormMovimiento(event)">
+            <form method="POST" action="/tesoreria/movimiento" id="form-movimiento">
               <input type="hidden" name="file_id" value="${id}">
               <input type="hidden" name="cliente_id" value="${file.cliente_id || ''}">
               <div class="grid-2">
@@ -2162,7 +2162,7 @@ files.get('/files/:id', async (c) => {
                 </div>
               </div>
               <div style="display:flex;gap:10px;">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Registrar</button>
+                <button type="button" onclick="if(validarFormMovimiento(event)){document.getElementById('form-movimiento').submit()}" class="btn btn-primary"><i class="fas fa-save"></i> Registrar</button>
                 <button type="button" onclick="document.getElementById('modal-movimiento').classList.remove('active')" class="btn btn-outline">Cancelar</button>
               </div>
             </form>
