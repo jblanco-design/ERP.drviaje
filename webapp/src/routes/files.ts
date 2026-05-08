@@ -3716,7 +3716,11 @@ files.get('/files/:id', async (c) => {
     return c.html(baseLayout(`File #${String(file.numero).replace(/^\d{4}/,'')}`, content, user, 'files'))
   } catch (e: any) {
     console.error('[FILE_DETAIL]', e.message)
-    return c.html(baseLayout('File', `<div class="alert alert-danger">Error interno del servidor</div>`, user, 'files'))
+    return c.html(baseLayout('File', `
+      <div class="alert alert-danger">
+        <strong>Error al cargar el file:</strong> ${e.message || 'error desconocido'}
+        <br><small style="color:#9ca3af;">${e.stack?.split('\n')[1] || ''}</small>
+      </div>`, user, 'files'))
   }
 })
 
