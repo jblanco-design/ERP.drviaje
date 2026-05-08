@@ -1114,11 +1114,12 @@ files.get('/files/:id', async (c) => {
 
     const totalVentaServicios = servicios.results.reduce((s: number, sv: any) => s + Number(sv.precio_venta || 0), 0)
     const totalCostoServicios = servicios.results.reduce((s: number, sv: any) => s + Number(sv.costo_original || 0), 0)
-    const totalCobrado    = movimientos.results.filter((m: any) => m.tipo === 'ingreso').reduce((s: number, m: any) => s + Number(m.monto || 0), 0)
-    const totalDevuelto   = (devoluciones.results as any[]).filter((d: any) => d.estado === 'aprobada').reduce((s: number, d: any) => s + Number(d.monto || 0), 0)
+    const totalCobrado      = movimientos.results.filter((m: any) => m.tipo === 'ingreso' && !m.anulado).reduce((s: number, m: any) => s + Number(m.monto || 0), 0)
+    const totalDevuelto     = (devoluciones.results as any[]).filter((d: any) => d.estado === 'aprobada').reduce((s: number, d: any) => s + Number(d.monto || 0), 0)
     const totalDevPendiente = (devoluciones.results as any[]).filter((d: any) => d.estado === 'pendiente').reduce((s: number, d: any) => s + Number(d.monto || 0), 0)
-    const cobradoNeto     = totalCobrado - totalDevuelto
-    const saldoPendiente  = totalVentaServicios - cobradoNeto
+    const cobradoNeto       = Math.max(0, totalCobrado - totalDevuelto)
+    const baseVenta         = totalVentaServicios > 0 ? totalVentaServicios : Number(file.total_venta || 0)
+    const saldoPendiente    = Math.max(0, baseVenta - cobradoNeto)
 
     const content = `
       <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
@@ -1351,11 +1352,11 @@ files.get('/files/:id', async (c) => {
             </div>
             <div>
               <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:6px;">ESTADO COBRO</div>
-              <div style="font-size:15px;font-weight:700;color:#059669;">Cobrado: $${Number(totalCobrado).toLocaleString()}</div>
-              ${totalDevuelto > 0 ? `<div style="font-size:13px;font-weight:600;color:#dc2626;">Devuelto: -$${Number(totalDevuelto).toLocaleString()}</div>` : ''}
-              ${totalDevPendiente > 0 ? `<div style="font-size:12px;color:#d97706;font-weight:600;"><i class="fas fa-clock"></i> Dev. pendiente aprobación: $${Number(totalDevPendiente).toLocaleString()}</div>` : ''}
-              <div style="font-size:13px;color:${saldoPendiente > 0 ? '#dc2626' : '#059669'};font-weight:600;">
-                Pendiente: $${Number(saldoPendiente).toLocaleString()}
+              <div style="font-size:15px;font-weight:700;color:#059669;">Cobrado: $${Number(cobradoNeto).toLocaleString('es-UY',{minimumFractionDigits:2})}</div>
+              ${totalDevuelto > 0 ? `<div style="font-size:13px;font-weight:600;color:#dc2626;">Devuelto: -$${Number(totalDevuelto).toLocaleString('es-UY',{minimumFractionDigits:2})}</div>` : ''}
+              ${totalDevPendiente > 0 ? `<div style="font-size:12px;color:#d97706;font-weight:600;"><i class="fas fa-clock"></i> Dev. pendiente aprobación: $${Number(totalDevPendiente).toLocaleString('es-UY',{minimumFractionDigits:2})}</div>` : ''}
+              <div style="font-size:13px;color:${saldoPendiente > 0.01 ? '#dc2626' : '#059669'};font-weight:600;">
+                Pendiente: $${Number(saldoPendiente).toLocaleString('es-UY',{minimumFractionDigits:2})}
               </div>
               <div style="font-size:11px;font-weight:700;color:#6b7280;letter-spacing:1px;margin:10px 0 4px;">FECHA VIAJE</div>
               <div style="font-weight:700;">${file.fecha_viaje || '—'}</div>
