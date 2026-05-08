@@ -1188,7 +1188,7 @@ files.get('/files/:id', async (c) => {
           <i class="fas fa-calendar"></i> Debés ingresar una fecha de vencimiento para el crédito.
         </div>
       ` : ''}
-      ${ok === 'cc_registrada' ? `
+      ${okParam === 'cc_registrada' ? `
         <div class="alert alert-success" style="margin-bottom:16px;">
           <i class="fas fa-check-circle"></i> Crédito registrado en cuenta corriente. El file quedó en estado <strong>Señado</strong>.
         </div>
