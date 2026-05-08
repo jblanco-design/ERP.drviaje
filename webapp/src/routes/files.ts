@@ -1084,13 +1084,30 @@ files.get('/files/:id', async (c) => {
         </strong></td>
         <td style="font-size:11px;color:#9ca3af;">${esc(m.usuario_nombre)||''}</td>
         <td>
-          ${m.tipo === 'ingreso'
-            ? `<a href="/tesoreria/recibo/${m.id}" target="_blank"
+          ${m.tipo === 'ingreso' ? (() => {
+            const isPending = m.estado === 'pendiente'
+            const isRejected = m.estado === 'rechazado' || m.anulado
+            if (isRejected) return `<span style="font-size:11px;font-weight:700;color:#dc2626;"><i class="fas fa-times-circle"></i> Rechazado</span>`
+            if (isPending) return `
+              <span style="font-size:11px;font-weight:700;color:#d97706;background:#fef3c7;padding:2px 8px;border-radius:6px;">
+                <i class="fas fa-clock"></i> Pendiente
+              </span>
+              ${isAdminOrAbove(user.rol) ? `
+              <div style="display:flex;gap:4px;margin-top:4px;">
+                <button onclick="confirmarMov(${m.id},this)" style="font-size:10px;padding:2px 6px;background:#059669;color:white;border:none;border-radius:4px;cursor:pointer;">
+                  <i class="fas fa-check"></i> OK
+                </button>
+                <button onclick="rechazarMov(${m.id},this)" style="font-size:10px;padding:2px 6px;background:#dc2626;color:white;border:none;border-radius:4px;cursor:pointer;">
+                  <i class="fas fa-times"></i> Rechazar
+                </button>
+              </div>` : ''}
+            `
+            return `<a href="/tesoreria/recibo/${m.id}" target="_blank"
                  title="Ver recibo de pago"
                  style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#5a2d75;background:#f3e8ff;border:1px solid #e9d5ff;padding:3px 8px;border-radius:6px;text-decoration:none;">
                 <i class="fas fa-receipt" style="font-size:10px;"></i> Recibo
                </a>`
-            : ''}
+          })() : ''}
         </td>
       </tr>
     `).join('')
@@ -3518,6 +3535,35 @@ files.get('/files/:id', async (c) => {
         function abrirModalCliente() {
           document.getElementById('modal-editar-cliente').style.display = 'flex'
         }
+        async function confirmarMov(id, btn) {
+          if (!confirm('¿Confirmar este movimiento?')) return
+          btn.disabled = true
+          const r = await fetch('/tesoreria/movimiento/' + id + '/confirmar', { method: 'POST' })
+          const d = await r.json()
+          if (d.ok) {
+            location.reload()
+          } else {
+            alert('Error: ' + d.error)
+            btn.disabled = false
+          }
+        }
+
+        async function rechazarMov(id, btn) {
+          const motivo = prompt('Motivo del rechazo (opcional):')
+          if (motivo === null) return
+          btn.disabled = true
+          const fd = new FormData()
+          fd.append('motivo', motivo || 'Rechazado por administración')
+          const r = await fetch('/tesoreria/movimiento/' + id + '/rechazar', { method: 'POST', body: fd })
+          const d = await r.json()
+          if (d.ok) {
+            location.reload()
+          } else {
+            alert('Error: ' + d.error)
+            btn.disabled = false
+          }
+        }
+
         function abrirModalVoucherTraslado(svcId) {
           document.getElementById('voucher-svc-id').value = svcId
           // Reset campos
