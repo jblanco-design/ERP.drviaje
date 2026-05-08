@@ -567,12 +567,17 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
 
     const cajaSesionId = cajaSesionIdEfectivo
 
+    // Estado del movimiento según método
+    // efectivo/cheque → confirmado inmediato
+    // transferencia/tarjeta → pendiente hasta confirmación manual
+    const estadoMovimiento = (metodo === 'efectivo' || metodo === 'cheque') ? 'confirmado' : 'pendiente'
+
     const res = await c.env.DB.prepare(`
-      INSERT INTO movimientos_caja (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, proveedor_id, banco_id, concepto, usuario_id, pasajero_pagador_id, fecha, caja_sesion_id)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'),?)
+      INSERT INTO movimientos_caja (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, proveedor_id, banco_id, concepto, usuario_id, pasajero_pagador_id, fecha, caja_sesion_id, estado)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'),?,?)
     `).bind(tipo, metodo, moneda, monto, cot, monto * cot,
       safeFileId, clienteIdRaw, proveedorIdRaw, bancoIdRaw,
-      concepto, user.id, pagadorId, cajaSesionId
+      concepto, user.id, pagadorId, cajaSesionId, estadoMovimiento
     ).run()
 
     // Si hay sesión de caja, actualizar los totales
@@ -628,8 +633,8 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
       ).bind(safeFileId, user.id, tipoLabel, det).run().catch(() => {})
     }
 
-    // Si es un INGRESO vinculado a un file → redirigir al recibo
-    if (tipo === 'ingreso' && safeFileId && movId) {
+    // Si es un INGRESO vinculado a un file → redirigir al recibo SOLO si está confirmado
+    if (tipo === 'ingreso' && safeFileId && movId && estadoMovimiento === 'confirmado') {
       return c.redirect(`/tesoreria/recibo/${movId}`)
     }
     return c.redirect(redirectTo)
@@ -6156,7 +6161,172 @@ tesoreria.get('/tesoreria/tarjetas/reporte', async (c) => {
 })
 
 
-// ── GET /tesoreria/cc/:id/cobrar — Formulario de cobro CC ────
+// ── POST /tesoreria/movimiento/:id/confirmar ─────────────────
+tesoreria.post('/tesoreria/movimiento/:id/confirmar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.json({ error: 'sin_permiso' }, 403)
+
+  const id = Number(c.req.param('id'))
+  const mov = await c.env.DB.prepare(
+    `SELECT * FROM movimientos_caja WHERE id = ? AND estado = 'pendiente' AND anulado = 0`
+  ).bind(id).first() as any
+
+  if (!mov) return c.json({ error: 'movimiento_no_encontrado' }, 404)
+
+  await c.env.DB.prepare(
+    `UPDATE movimientos_caja SET estado = 'confirmado' WHERE id = ?`
+  ).bind(id).run()
+
+  // Auditoría
+  if (mov.file_id) {
+    await c.env.DB.prepare(
+      `INSERT INTO file_auditoria (file_id, usuario_id, accion, detalle) VALUES (?, ?, 'Confirmó movimiento', ?)`
+    ).bind(mov.file_id, user.id,
+      `$${Number(mov.monto).toFixed(2)} ${mov.moneda} (${mov.metodo}) — ${mov.concepto}`
+    ).run().catch(() => {})
+  }
+
+  return c.json({ ok: true, movimiento_id: id })
+})
+
+// ── POST /tesoreria/movimiento/:id/rechazar ──────────────────
+tesoreria.post('/tesoreria/movimiento/:id/rechazar', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.json({ error: 'sin_permiso' }, 403)
+
+  const id = Number(c.req.param('id'))
+  const body = await c.req.parseBody()
+  const motivo = String(body.motivo || 'Rechazado por administración').trim()
+
+  const mov = await c.env.DB.prepare(
+    `SELECT * FROM movimientos_caja WHERE id = ? AND estado = 'pendiente' AND anulado = 0`
+  ).bind(id).first() as any
+
+  if (!mov) return c.json({ error: 'movimiento_no_encontrado' }, 404)
+
+  await c.env.DB.prepare(
+    `UPDATE movimientos_caja SET estado = 'rechazado', anulado = 1, motivo_anulacion = ? WHERE id = ?`
+  ).bind(motivo, id).run()
+
+  // Auditoría
+  if (mov.file_id) {
+    await c.env.DB.prepare(
+      `INSERT INTO file_auditoria (file_id, usuario_id, accion, detalle) VALUES (?, ?, 'Rechazó movimiento', ?)`
+    ).bind(mov.file_id, user.id,
+      `$${Number(mov.monto).toFixed(2)} ${mov.moneda} (${mov.metodo}) — ${motivo}`
+    ).run().catch(() => {})
+  }
+
+  return c.json({ ok: true, movimiento_id: id })
+})
+
+// ── GET /tesoreria/pendientes — Vista central de pendientes ──
+tesoreria.get('/tesoreria/pendientes', async (c) => {
+  const user = await getUser(c)
+  if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/tesoreria')
+
+  const pendientes = await c.env.DB.prepare(`
+    SELECT m.*, f.numero as file_numero,
+           COALESCE(cl.nombre || ' ' || cl.apellido, cl.nombre_completo) as cliente_nombre,
+           u.nombre as operador_nombre
+    FROM movimientos_caja m
+    LEFT JOIN files f ON f.id = m.file_id
+    LEFT JOIN clientes cl ON cl.id = m.cliente_id
+    LEFT JOIN usuarios u ON u.id = m.usuario_id
+    WHERE m.estado = 'pendiente' AND m.anulado = 0
+    ORDER BY m.fecha DESC
+  `).all()
+
+  const rows = (pendientes.results as any[]).map((m: any) => {
+    const fileNum = m.file_numero ? String(m.file_numero).replace(/^\d{4}/, '') : '—'
+    const metodoIcon = m.metodo === 'transferencia' ? '🏦' : m.metodo === 'tarjeta' ? '💳' : '💵'
+    return `
+      <tr style="border-bottom:1px solid #f3f4f6;" id="mov-row-${m.id}">
+        <td style="padding:10px 12px;font-size:12px;color:#6b7280;">${(m.fecha||'').substring(0,16)}</td>
+        <td style="padding:10px 12px;">
+          ${m.file_numero ? `<a href="/files/${m.file_id}" style="color:#7B3FA0;font-weight:600;">#${fileNum}</a>` : '—'}
+        </td>
+        <td style="padding:10px 12px;">${esc(m.cliente_nombre||'—')}</td>
+        <td style="padding:10px 12px;">${metodoIcon} ${esc(m.metodo)}</td>
+        <td style="padding:10px 12px;font-size:12px;">${esc(m.concepto||'')}</td>
+        <td style="padding:10px 12px;font-weight:700;color:${m.tipo==='ingreso'?'#059669':'#dc2626'};">
+          ${m.tipo==='ingreso'?'+':'-'}$${Number(m.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${m.moneda}
+        </td>
+        <td style="padding:10px 12px;font-size:11px;color:#6b7280;">${esc(m.operador_nombre||'')}</td>
+        <td style="padding:10px 12px;">
+          <div style="display:flex;gap:6px;">
+            <button onclick="confirmarMov(${m.id})"
+              class="btn btn-sm" style="background:#059669;color:white;border:none;font-size:11px;">
+              <i class="fas fa-check"></i> Confirmar
+            </button>
+            <button onclick="rechazarMov(${m.id})"
+              class="btn btn-sm" style="background:#dc2626;color:white;border:none;font-size:11px;">
+              <i class="fas fa-times"></i> Rechazar
+            </button>
+          </div>
+        </td>
+      </tr>`
+  }).join('')
+
+  const content = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h2 style="margin:0;"><i class="fas fa-clock" style="color:#d97706;"></i> Movimientos Pendientes de Confirmación</h2>
+      <span style="background:#fef3c7;color:#d97706;padding:4px 14px;border-radius:20px;font-weight:700;font-size:13px;">
+        ${pendientes.results.length} pendiente${pendientes.results.length !== 1 ? 's' : ''}
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th><th>File</th><th>Cliente</th><th>Método</th>
+              <th>Concepto</th><th>Monto</th><th>Operador</th><th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-pendientes">
+            ${rows || '<tr><td colspan="8" style="text-align:center;padding:30px;color:#9ca3af;">Sin movimientos pendientes ✓</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      async function confirmarMov(id) {
+        if (!confirm('¿Confirmar este movimiento?')) return
+        const r = await fetch('/tesoreria/movimiento/' + id + '/confirmar', { method: 'POST' })
+        const d = await r.json()
+        if (d.ok) {
+          const row = document.getElementById('mov-row-' + id)
+          if (row) {
+            row.style.opacity = '0.4'
+            row.cells[7].innerHTML = '<span style="color:#059669;font-weight:700;"><i class="fas fa-check-circle"></i> Confirmado</span>'
+          }
+        } else { alert('Error: ' + d.error) }
+      }
+
+      async function rechazarMov(id) {
+        const motivo = prompt('Motivo del rechazo (opcional):') 
+        if (motivo === null) return
+        const fd = new FormData()
+        fd.append('motivo', motivo || 'Rechazado por administración')
+        const r = await fetch('/tesoreria/movimiento/' + id + '/rechazar', { method: 'POST', body: fd })
+        const d = await r.json()
+        if (d.ok) {
+          const row = document.getElementById('mov-row-' + id)
+          if (row) {
+            row.style.opacity = '0.4'
+            row.cells[7].innerHTML = '<span style="color:#dc2626;font-weight:700;"><i class="fas fa-times-circle"></i> Rechazado</span>'
+          }
+        } else { alert('Error: ' + d.error) }
+      }
+    </script>
+  `
+  return c.html(baseLayout('Movimientos Pendientes', content, user, 'tesoreria'))
+})
+
+
 tesoreria.get('/tesoreria/cc/:id/cobrar', async (c) => {
   const user = await getUser(c)
   if (!user || !isAdminOrAbove(user.rol)) return c.redirect('/login')
