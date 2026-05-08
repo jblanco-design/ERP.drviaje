@@ -530,6 +530,7 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
     let   bancoIdRaw     = b.banco_id     ? Number(b.banco_id)     : null
 
     // Si el método es efectivo: verificar caja abierta del día
+    let cajaSesionIdEfectivo: number | null = null
     if (metodo === 'efectivo') {
       const hoy = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]
 
@@ -558,13 +559,13 @@ tesoreria.post('/tesoreria/movimiento', async (c) => {
       }
 
       // Guardamos el id para vincularlo al movimiento
-      Object.assign(b, { _caja_sesion_id: String(cajaHoy.id) })
+      cajaSesionIdEfectivo = cajaHoy.id
     }
 
     // Banco para efectivo: ya no se usa "Caja Chica" como banco
     // Los movimientos de efectivo se vinculan a caja_sesiones directamente
 
-    const cajaSesionId = b['_caja_sesion_id'] ? Number(b['_caja_sesion_id']) : null
+    const cajaSesionId = cajaSesionIdEfectivo
 
     const res = await c.env.DB.prepare(`
       INSERT INTO movimientos_caja (tipo, metodo, moneda, monto, cotizacion, monto_uyu, file_id, cliente_id, proveedor_id, banco_id, concepto, usuario_id, pasajero_pagador_id, fecha, caja_sesion_id)
