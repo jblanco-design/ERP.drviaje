@@ -434,18 +434,26 @@ bancos.get('/bancos', async (c) => {
                 const safeFecha = hEsc((m.fecha||'').split('T')[0])
                 const safeConc  = hEsc(m.concepto)
                 const safeTipo  = m.tipo === 'ingreso' ? 'ingreso' : 'egreso'
-                const safeColor = safeTipo === 'ingreso' ? '#059669' : '#dc2626'
+                const isPending = m.estado === 'pendiente'
+                const safeColor = isPending ? '#d97706' : safeTipo === 'ingreso' ? '#059669' : '#dc2626'
                 const safeBadge = safeTipo === 'ingreso' ? 'badge-confirmado' : 'badge-anulado'
                 const safeMonto = hEsc(Number(m.monto).toLocaleString('es-UY',{minimumFractionDigits:2}))
                 const safeMoneda = hEsc(m.moneda)
-                html += \`<tr>
+                const rowStyle = isPending ? 'opacity:0.65;background:#fffbeb;' : ''
+                html += \`<tr style="\${rowStyle}">
                   <td style="font-size:12px;">\${safeFecha}</td>
                   <td>\${safeConc}</td>
-                  <td><span class="badge \${safeBadge}">\${safeTipo}</span></td>
-                  <td><strong style="color:\${safeColor}">\${safeTipo==='ingreso'?'+':'-'} \${safeMonto} \${safeMoneda}</strong></td>
+                  <td>
+                    <span class="badge \${safeBadge}">\${safeTipo}</span>
+                    \${isPending ? '<span style="font-size:9px;font-weight:700;color:#d97706;background:#fef3c7;padding:1px 5px;border-radius:4px;margin-left:4px;">PENDIENTE</span>' : ''}
+                  </td>
+                  <td><strong style="color:\${safeColor}">\${safeTipo==='ingreso'?'+':'-'} \${safeMonto} \${safeMoneda}\${isPending?' ⚑':''}</strong></td>
                   <td style="text-align:center;">
-                    <input type="checkbox" \${m.conciliado?'checked':''} onchange="toggleConciliacion(\${safeId}, this.checked)"
-                      style="width:16px;height:16px;cursor:pointer;accent-color:#7B3FA0;">
+                    \${isPending
+                      ? '<span style="font-size:10px;color:#d97706;font-style:italic;">Sin confirmar</span>'
+                      : \`<input type="checkbox" \${m.conciliado?'checked':''} onchange="toggleConciliacion(\${safeId}, this.checked)"
+                          style="width:16px;height:16px;cursor:pointer;accent-color:#7B3FA0;">\`
+                    }
                   </td>
                 </tr>\`
               })
