@@ -57,13 +57,13 @@ bancos.get('/bancos', async (c) => {
 
     const bancosConSaldo = await Promise.all(bancosList.results.map(async (b: any) => {
       const ing = await c.env.DB.prepare(
-        `SELECT COALESCE(SUM(monto),0) as total FROM movimientos_caja WHERE banco_id=? AND tipo='ingreso' AND anulado=0`
+        `SELECT COALESCE(SUM(monto),0) as total FROM movimientos_caja WHERE banco_id=? AND tipo='ingreso' AND anulado=0 AND estado='confirmado'`
       ).bind(b.id).first() as any
       const egr = await c.env.DB.prepare(
-        `SELECT COALESCE(SUM(monto),0) as total FROM movimientos_caja WHERE banco_id=? AND tipo='egreso' AND anulado=0`
+        `SELECT COALESCE(SUM(monto),0) as total FROM movimientos_caja WHERE banco_id=? AND tipo='egreso' AND anulado=0 AND estado='confirmado'`
       ).bind(b.id).first() as any
       const movCount = await c.env.DB.prepare(
-        `SELECT COUNT(*) as n FROM movimientos_caja WHERE banco_id=? AND anulado=0`
+        `SELECT COUNT(*) as n FROM movimientos_caja WHERE banco_id=? AND anulado=0 AND estado='confirmado'`
       ).bind(b.id).first() as any
       return {
         ...b,
@@ -1100,13 +1100,17 @@ bancos.get('/bancos/caja/:id/cerrar', async (c) => {
               <thead><tr><th>Hora</th><th>Tipo</th><th>Concepto</th><th>File</th><th>Monto</th><th>Operador</th></tr></thead>
               <tbody>
                 ${(movimientos.results as any[]).map((m: any) => `
-                  <tr>
+                  <tr style="${m.estado === 'pendiente' ? 'opacity:0.7;background:#fffbeb;' : ''}">
                     <td style="font-size:11px;color:#6b7280;">${(m.fecha||'').substring(11,16)}</td>
-                    <td><span class="badge ${m.tipo === 'ingreso' ? 'badge-seniado' : 'badge-en_proceso'}">${m.tipo}</span></td>
+                    <td>
+                      <span class="badge ${m.tipo === 'ingreso' ? 'badge-seniado' : 'badge-en_proceso'}">${m.tipo}</span>
+                      ${m.estado === 'pendiente' ? '<span style="font-size:9px;font-weight:700;color:#d97706;background:#fef3c7;padding:1px 5px;border-radius:4px;margin-left:3px;">PEND.</span>' : ''}
+                    </td>
                     <td style="font-size:12px;">${esc(m.concepto)}</td>
                     <td style="font-size:12px;">${m.file_numero ? '#' + String(m.file_numero).replace(/^\d{4}/,'') : '—'}</td>
-                    <td style="font-weight:700;color:${m.tipo==='ingreso'?'#059669':'#dc2626'};">
+                    <td style="font-weight:700;color:${m.estado==='pendiente'?'#d97706':m.tipo==='ingreso'?'#059669':'#dc2626'};">
                       ${m.tipo==='ingreso'?'+':'-'}$${Number(m.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${m.moneda}
+                      ${m.estado === 'pendiente' ? '<span style="font-size:9px;font-weight:400;color:#d97706;"> (pendiente)</span>' : ''}
                     </td>
                     <td style="font-size:11px;color:#6b7280;">${esc(m.operador_nombre||'')}</td>
                   </tr>
