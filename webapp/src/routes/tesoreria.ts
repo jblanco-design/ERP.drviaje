@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { getUser, canAccessTesoreria, isAdminOrAbove } from '../lib/auth'
-import { baseLayout } from '../lib/layout'
+import { baseLayout, toUYT, toUYTDate } from '../lib/layout'
 import { esc } from '../lib/escape'
 import { getOrFetch } from '../lib/cache'
 
@@ -714,7 +714,7 @@ tesoreria.get('/tesoreria/exportar', async (c) => {
     ].join(','))
   ]
 
-  const fechaHoy = new Date().toISOString().split('T')[0]
+  const fechaHoy = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
   const nombreArchivo = `movimientos${metodoF ? '_' + metodoF : ''}${desde ? '_' + desde : ''}${hasta ? '_al_' + hasta : ''}_${fechaHoy}.csv`
 
   return new Response(csvLines.join('\n'), {
@@ -2780,7 +2780,7 @@ tesoreria.get('/tesoreria/proveedor/:id/cuenta', async (c) => {
       const metodoIcon: Record<string,string> = { transferencia:'fa-exchange-alt', efectivo:'fa-money-bill', cheque:'fa-file-alt', tarjeta:'fa-credit-card' }
       return `
         <tr style="border-bottom:1px solid #f3f4f6;">
-          <td style="padding:8px 12px;font-size:12px;color:#6b7280;white-space:nowrap;">${(m.created_at||'').substring(0,16)}</td>
+          <td style="padding:8px 12px;font-size:12px;color:#6b7280;white-space:nowrap;">${toUYT(m.created_at||'')}</td>
           <td style="padding:8px 12px;">
             <span style="font-size:11px;font-weight:700;color:${esCredito?'#7B3FA0':'#374151'};
               background:${esCredito?'#f3e8ff':'#f3f4f6'};padding:2px 8px;border-radius:8px;">
@@ -6242,7 +6242,7 @@ tesoreria.get('/tesoreria/pendientes', async (c) => {
     const metodoIcon = m.metodo === 'transferencia' ? '🏦' : m.metodo === 'tarjeta' ? '💳' : '💵'
     return `
       <tr style="border-bottom:1px solid #f3f4f6;" id="mov-row-${m.id}">
-        <td style="padding:10px 12px;font-size:12px;color:#6b7280;">${(m.fecha||'').substring(0,16)}</td>
+        <td style="padding:10px 12px;font-size:12px;color:#6b7280;">${toUYT(m.fecha||'')}</td>
         <td style="padding:10px 12px;">
           ${m.file_numero ? `<a href="/files/${m.file_id}" style="color:#7B3FA0;font-weight:600;">#${fileNum}</a>` : '—'}
         </td>
