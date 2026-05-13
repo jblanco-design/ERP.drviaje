@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { getUser, canSeeAllFiles, canReopenFile, canCloseAtLoss, canAnularFile, canAccessTesoreria, isSupervisorOrAbove, isAdminOrAbove, isGerente } from '../lib/auth'
-import { baseLayout } from '../lib/layout'
+import { baseLayout, toUYT, toUYTDate } from '../lib/layout'
 import { esc } from '../lib/escape'
 import { getOrFetch, invalidateCachePrefix } from '../lib/cache'
 
@@ -286,7 +286,7 @@ files.get('/files', async (c) => {
         <td style="color:#6b7280;">$${Number(f.total_costo||0).toLocaleString()}</td>
         <td><strong style="color:#F7941D;">$${Number((f.total_venta||0)-(f.total_costo||0)).toLocaleString()}</strong></td>
         <td>${(() => { const saldo = Number(f.total_venta||0) - Number(f.total_cobrado||0); if (saldo <= 0.01) return '<span style="font-size:11px;color:#059669;font-weight:700;">✓</span>'; return '<strong style="color:#dc2626;">-$' + saldo.toLocaleString('es-UY',{minimumFractionDigits:2}) + '</strong>' })()}</td>
-        <td style="font-size:12px;color:#9ca3af;">${esc(f.fecha_apertura?.split('T')[0])||''}</td>
+        <td style="font-size:12px;color:#9ca3af;">${toUYTDate(f.fecha_apertura||'')}</td>
         <td>
           <a href="/files/${f.id}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></a>
           <a href="/files/${f.id}/editar" class="btn btn-sm" style="background:#f3e8ff;color:#7B3FA0;"><i class="fas fa-edit"></i></a>
@@ -539,14 +539,14 @@ files.get('/files/nuevo', async (c) => {
       <script>
       // ── Restricción de fechas ──────────────────────────────────
       (function() {
-        const hoyStr = new Date().toISOString().split('T')[0]
+        const hoyStr = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
         // Fecha de viaje: no puede ser pasada
         const fv = document.getElementById('inp-fecha-viaje-nuevo')
         if (fv) fv.min = hoyStr
       })()
 
       function validarFechaViaje(input) {
-        const hoyStr = new Date().toISOString().split('T')[0]
+        const hoyStr = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
         const errEl  = document.getElementById('err-fecha-viaje-nuevo')
         if (input.value && input.value < hoyStr) {
           if (errEl) errEl.style.display = 'block'
@@ -665,7 +665,7 @@ files.post('/files', async (c) => {
     const numero = await generarNumeroFile(c.env.DB)
 
     // Validar fecha_viaje: no puede ser pasada
-    const hoyStr = new Date().toISOString().split('T')[0]
+    const hoyStr = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
     if (body.fecha_viaje && String(body.fecha_viaje) < hoyStr) {
       return c.redirect('/files/nuevo?error=fecha_viaje_pasada')
     }
@@ -1072,7 +1072,7 @@ files.get('/files/:id', async (c) => {
 
     const movimientosHtml = movimientos.results.map((m: any) => `
       <tr>
-        <td style="font-size:12px;">${esc(m.fecha?.split('T')[0])||''}</td>
+        <td style="font-size:12px;">${toUYT(m.fecha||'').substring(0,16)}</td>
         <td><span class="badge ${m.tipo==='ingreso'?'badge-confirmado':'badge-anulado'}">${esc(m.tipo)}</span></td>
         <td>
           ${esc(m.concepto)}
@@ -1456,7 +1456,7 @@ files.get('/files/:id', async (c) => {
           const estadoLabel = t.estado === 'pendiente' ? '⏳ Pendiente autorización' : t.estado === 'autorizada' ? '✓ Autorizada' : '✗ Rechazada'
           return `
             <tr style="border-bottom:1px solid #f3f4f6;${t.estado==='pendiente'?'background:#fffbeb;':''}">
-              <td style="padding:7px 10px;font-size:12px;color:#6b7280;">${(t.fecha_cargo||t.created_at||'').substring(0,10)}</td>
+              <td style="padding:7px 10px;font-size:12px;color:#6b7280;">${toUYTDate(t.fecha_cargo||t.created_at||'')}</td>
               <td style="padding:7px 10px;font-size:13px;font-weight:700;">
                 <i class="fas fa-credit-card" style="color:#EC008C;font-size:11px;"></i> **** ${esc(t.ultimos_4)}
                 ${t.tipo_tarjeta ? `<span style="font-size:10px;font-weight:700;color:#7B3FA0;margin-left:4px;">${esc(t.tipo_tarjeta)}</span>` : ''}
@@ -1539,7 +1539,7 @@ files.get('/files/:id', async (c) => {
                     const estadoLabel = cc.estado === 'pagado' ? '✓ Pagado' : vencido ? '⚠ Vencida' : cc.estado === 'parcial' ? '◑ Parcial' : '⏳ Pendiente'
                     return `
                       <tr style="border-bottom:1px solid #fef3c7;">
-                        <td style="padding:8px 12px;">${(cc.fecha_emision||'').substring(0,10)}</td>
+                        <td style="padding:8px 12px;">${toUYTDate(cc.fecha_emision||'')}</td>
                         <td style="padding:8px 12px;font-weight:600;color:${vencido?'#dc2626':porVencer?'#d97706':'#374151'}">${cc.fecha_vencimiento||''}</td>
                         <td style="padding:8px 12px;">$${Number(cc.monto_original).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</td>
                         <td style="padding:8px 12px;font-weight:700;color:#d97706;">$${Number(cc.monto_pendiente).toLocaleString('es-UY',{minimumFractionDigits:2})} ${cc.moneda}</td>
@@ -1606,7 +1606,7 @@ files.get('/files/:id', async (c) => {
                   </td>` : (isGerente(user.rol) ? '<td></td>' : '')
                 return `
                 <tr style="border-bottom:1px solid #fee2e2;">
-                  <td style="padding:8px 12px;color:#6b7280;">${(d.created_at||'').substring(0,10)}</td>
+                  <td style="padding:8px 12px;color:#6b7280;">${toUYTDate(d.created_at||'')}</td>
                   <td style="padding:8px 12px;font-weight:700;color:#dc2626;">-$${Number(d.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${d.moneda||'USD'}</td>
                   <td style="padding:8px 12px;">${esc(d.metodo||'')}</td>
                   <td style="padding:8px 12px;font-size:12px;">${esc(d.motivo||'—')}</td>
@@ -2514,7 +2514,7 @@ files.get('/files/:id', async (c) => {
 
         // ── Restricción global de fechas ────────────────────────────
         (function() {
-          const hoyStr = new Date().toISOString().split('T')[0]
+          const hoyStr = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
           // Fechas de servicio: no pueden ser pasadas
           const fi = document.getElementById('svc-fecha-inicio')
           const ff = document.getElementById('svc-fecha-fin')
@@ -2546,7 +2546,7 @@ files.get('/files/:id', async (c) => {
         }
 
         function validarFechaViajeEdit(input) {
-          const hoyStr = new Date().toISOString().split('T')[0]
+          const hoyStr = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
           const errEl  = document.getElementById('err-fecha-viaje-edit')
           if (input.value && input.value < hoyStr) {
             if (errEl) errEl.style.display = 'block'
@@ -2559,7 +2559,7 @@ files.get('/files/:id', async (c) => {
         }
 
         function validarFechaNac(input) {
-          const hoyStr = new Date().toISOString().split('T')[0]
+          const hoyStr = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
           const errEl  = document.getElementById('err-fecha-nac-pax')
           if (input.value && input.value > hoyStr) {
             if (errEl) errEl.style.display = 'block'
@@ -3742,7 +3742,7 @@ files.get('/files/:id', async (c) => {
                     const color = colorMap[accionKey] || '#9ca3af'
                     return `
                       <tr style="border-bottom:1px solid #f3f4f6;">
-                        <td style="padding:7px 14px;color:#9ca3af;white-space:nowrap;">${(a.created_at||'').substring(0,16).replace('T',' ')}</td>
+                        <td style="padding:7px 14px;color:#9ca3af;white-space:nowrap;">${toUYT(a.created_at||'')}</td>
                         <td style="padding:7px 14px;font-weight:600;color:#374151;">${esc(a.usuario_nombre||'—')}</td>
                         <td style="padding:7px 14px;">
                           <span style="color:${color};">
