@@ -8,6 +8,19 @@ export const COLORS = {
   purpleDark: '#5a2d75',
 }
 
+// ── Helpers de fecha en timezone Uruguay (UTC-3) ─────────────
+export function toUYT(utcStr: string): string {
+  if (!utcStr) return ''
+  const d = new Date(utcStr.replace(' ', 'T') + (utcStr.includes('T') || utcStr.includes('+') ? '' : 'Z'))
+  if (isNaN(d.getTime())) return utcStr
+  d.setHours(d.getHours() - 3)
+  return d.toISOString().replace('T', ' ').substring(0, 16)
+}
+
+export function toUYTDate(utcStr: string): string {
+  return toUYT(utcStr).substring(0, 10)
+}
+
 export function baseLayout(title: string, content: string, user: { nombre: string; rol: string } | null, activePage: string = ''): string {
   const rol = user?.rol || ''
   const esObservador = rol === 'observador'
