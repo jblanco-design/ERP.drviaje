@@ -2515,11 +2515,7 @@ files.get('/files/:id', async (c) => {
         // ── Restricción global de fechas ────────────────────────────
         (function() {
           const hoyStr = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
-          // Fechas de servicio: no pueden ser pasadas
-          const fi = document.getElementById('svc-fecha-inicio')
-          const ff = document.getElementById('svc-fecha-fin')
-          if (fi) fi.min = hoyStr
-          if (ff) ff.min = hoyStr
+          // Fechas de servicio: pueden ser pasadas (vuelos/hoteles ya reservados)
           // Fecha de nacimiento pasajero: no puede ser futura
           const fn = document.getElementById('pax-fecha-nac')
           if (fn) fn.max = hoyStr
@@ -5457,3 +5453,4 @@ files.post('/api/files/:id/ajustar-venta', async (c) => {
 })
 
 export default files
+
