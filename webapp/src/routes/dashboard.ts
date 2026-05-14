@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { getUser, canSeeAllFiles, canAccessTesoreria, canSeeReportes, rolLabel, rolColor, rolTextColor } from '../lib/auth'
-import { baseLayout } from '../lib/layout'
+import { baseLayout, toUYT, toUYTDate } from '../lib/layout'
 import { esc } from '../lib/escape'
 
 type Bindings = { DB: D1Database }
@@ -94,8 +94,8 @@ dashboard.get('/dashboard', async (c) => {
     }
 
     // Alertas prepago
-    const hoy = new Date().toISOString().split('T')[0]
-    const en3dias = new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0]
+    const hoy = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0]
+    const en3dias = new Date(Date.now() - 3*60*60*1000 + 3 * 86400000).toISOString().split('T')[0]
     
     let alertasQuery = isGerente
       ? `SELECT s.*, f.numero as file_numero, COALESCE(c.nombre || ' ' || c.apellido, c.nombre_completo) as cliente_nombre
@@ -112,7 +112,7 @@ dashboard.get('/dashboard', async (c) => {
       : await c.env.DB.prepare(alertasQuery).bind(en3dias, user.id).all()
 
     // Pasaportes por vencer (30 días)
-    const en30dias = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
+    const en30dias = new Date(Date.now() - 3*60*60*1000 + 30 * 86400000).toISOString().split('T')[0]
     const pasaportesPorVencer = await c.env.DB.prepare(
       `SELECT COALESCE(nombre || ' ' || apellido, nombre_completo) as nombre_completo, vencimiento_pasaporte FROM clientes 
        WHERE vencimiento_pasaporte IS NOT NULL AND vencimiento_pasaporte <= ? AND vencimiento_pasaporte >= ?
@@ -249,7 +249,7 @@ dashboard.get('/dashboard', async (c) => {
                     <td>${esc(f.destino_principal) || '<span style="color:#9ca3af">—</span>'}</td>
                     <td><span class="badge ${getBadge(f.estado)}">${getLabelEstado(f.estado)}</span></td>
                     <td><strong>$${Number(f.total_venta || 0).toLocaleString()}</strong></td>
-                    <td style="font-size:12px;color:#9ca3af;">${esc(f.fecha_apertura?.split('T')[0]) || ''}</td>
+                    <td style="font-size:12px;color:#9ca3af;">${toUYTDate(f.fecha_apertura || f.created_at || '')}</td>
                     <td>
                       <a href="/files/${f.id}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></a>
                     </td>
