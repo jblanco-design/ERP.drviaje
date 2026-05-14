@@ -425,9 +425,9 @@ bancos.get('/bancos', async (c) => {
             const r    = await fetch('/bancos/' + encodeURIComponent(bancoId) + '/movimientos')
             const data = await r.json()
 
-            let html = '<div class="table-wrapper"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Tipo</th><th>Monto</th><th>✓ Conciliado</th></tr></thead><tbody>'
+            let html = '<div class="table-wrapper"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>File</th><th>Tipo</th><th>Monto</th><th>✓ Conciliado</th></tr></thead><tbody>'
             if (data.movimientos.length === 0) {
-              html += '<tr><td colspan="5" style="text-align:center;padding:20px;color:#9ca3af;">Sin movimientos en este banco</td></tr>'
+              html += '<tr><td colspan="6" style="text-align:center;padding:20px;color:#9ca3af;">Sin movimientos en este banco</td></tr>'
             } else {
               data.movimientos.forEach(m => {
                 const safeId    = Number.isInteger(m.id) ? m.id : 0
@@ -440,9 +440,14 @@ bancos.get('/bancos', async (c) => {
                 const safeMonto = hEsc(Number(m.monto).toLocaleString('es-UY',{minimumFractionDigits:2}))
                 const safeMoneda = hEsc(m.moneda)
                 const rowStyle = isPending ? 'opacity:0.65;background:#fffbeb;' : ''
+                const safeFileNum = m.file_numero ? hEsc(String(m.file_numero)) : ''
+                const fileCell = safeFileNum
+                  ? `<a href="/files/${encodeURIComponent(m.file_id)}" style="font-size:11px;font-weight:700;color:#7B3FA0;background:#f3e8ff;padding:2px 7px;border-radius:8px;text-decoration:none;white-space:nowrap;" title="Ver file ${safeFileNum}"># ${safeFileNum}</a>`
+                  : '<span style="color:#9ca3af;font-size:11px;">—</span>'
                 html += \`<tr style="\${rowStyle}">
                   <td style="font-size:12px;">\${safeFecha}</td>
                   <td>\${safeConc}</td>
+                  <td>\${fileCell}</td>
                   <td>
                     <span class="badge \${safeBadge}">\${safeTipo}</span>
                     \${isPending ? '<span style="font-size:9px;font-weight:700;color:#d97706;background:#fef3c7;padding:1px 5px;border-radius:4px;margin-left:4px;">PENDIENTE</span>' : ''}
@@ -601,7 +606,11 @@ bancos.get('/bancos/:id/movimientos', async (c) => {
   if (!user) return c.json({ error: 'No autenticado' }, 401)
   const id = c.req.param('id')
   const movs = await c.env.DB.prepare(
-    `SELECT * FROM movimientos_caja WHERE banco_id = ? AND anulado = 0 ORDER BY fecha DESC LIMIT 100`
+    `SELECT m.*, f.numero as file_numero
+     FROM movimientos_caja m
+     LEFT JOIN files f ON m.file_id = f.id
+     WHERE m.banco_id = ? AND m.anulado = 0
+     ORDER BY m.fecha DESC LIMIT 100`
   ).bind(id).all()
   return c.json({ movimientos: movs.results })
 })
@@ -1183,3 +1192,4 @@ bancos.post('/bancos/caja/:id/cerrar', async (c) => {
 })
 
 export default bancos
+
