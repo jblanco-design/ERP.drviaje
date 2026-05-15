@@ -441,8 +441,9 @@ bancos.get('/bancos', async (c) => {
                 const safeMoneda = hEsc(m.moneda)
                 const rowStyle = isPending ? 'opacity:0.65;background:#fffbeb;' : ''
                 const safeFileNum = m.file_numero ? hEsc(String(m.file_numero)) : ''
+                const safeFileId  = m.file_id ? encodeURIComponent(m.file_id) : ''
                 const fileCell = safeFileNum
-                  ? `<a href="/files/${encodeURIComponent(m.file_id)}" style="font-size:11px;font-weight:700;color:#7B3FA0;background:#f3e8ff;padding:2px 7px;border-radius:8px;text-decoration:none;white-space:nowrap;" title="Ver file ${safeFileNum}"># ${safeFileNum}</a>`
+                  ? '<a href="/files/' + safeFileId + '" style="font-size:11px;font-weight:700;color:#7B3FA0;background:#f3e8ff;padding:2px 7px;border-radius:8px;text-decoration:none;white-space:nowrap;" title="Ver file ' + safeFileNum + '"># ' + safeFileNum + '</a>'
                   : '<span style="color:#9ca3af;font-size:11px;">—</span>'
                 html += \`<tr style="\${rowStyle}">
                   <td style="font-size:12px;">\${safeFecha}</td>
