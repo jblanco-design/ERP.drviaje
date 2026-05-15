@@ -91,12 +91,18 @@ reportes.get('/reportes', async (c) => {
   })())
 
   // Condición WHERE dinámica por fecha
+  // fechaCond/fechaCondPlain: para contar files por fecha de apertura (listados, estados)
   const fechaCond = modoFecha === 'rango'
     ? `date(f.fecha_apertura) BETWEEN '${desde}' AND '${hasta}'`
     : `strftime('%Y-%m', f.fecha_apertura) = '${mes}'`
   const fechaCondPlain = modoFecha === 'rango'
     ? `date(fecha_apertura) BETWEEN '${desde}' AND '${hasta}'`
     : `strftime('%Y-%m', fecha_apertura) = '${mes}'`
+  // fechaCondSvc: para sumar ingresos/costos por fecha de creación del servicio
+  // Así un servicio cargado en mayo sobre un file de abril impacta en mayo
+  const fechaCondSvc = modoFecha === 'rango'
+    ? `date(s.created_at) BETWEEN '${desde}' AND '${hasta}'`
+    : `strftime('%Y-%m', s.created_at) = '${mes}'`
   const periodoLabel = modoFecha === 'rango' ? `${desde} → ${hasta}` : mes
 
   const filtroVendedor = !isGerente ? user.id : (vendedorId || null)
@@ -136,38 +142,41 @@ reportes.get('/reportes', async (c) => {
 
     const evolucionQuery = !filtroVendedor
       ? c.env.DB.prepare(`
-          SELECT strftime('%Y-%m', fecha_apertura) as mes,
-                 COALESCE(SUM(total_venta),0) as v,
-                 COALESCE(SUM(total_costo),0) as c,
-                 COUNT(*) as n
-          FROM files
-          WHERE estado NOT IN ('anulado')
-            AND date(fecha_apertura) BETWEEN '${mesMin}' AND '${mesMax}'
-          GROUP BY strftime('%Y-%m', fecha_apertura)
+          SELECT strftime('%Y-%m', s.created_at) as mes,
+                 COALESCE(SUM(s.precio_venta),0) as v,
+                 COALESCE(SUM(s.costo_original),0) as c,
+                 COUNT(DISTINCT f.id) as n
+          FROM servicios s
+          JOIN files f ON s.file_id = f.id
+          WHERE f.estado NOT IN ('anulado')
+            AND date(s.created_at) BETWEEN '${mesMin}' AND '${mesMax}'
+          GROUP BY strftime('%Y-%m', s.created_at)
         `).all()
       : c.env.DB.prepare(`
-          SELECT strftime('%Y-%m', f.fecha_apertura) as mes,
-                 COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as v,
-                 COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as c,
-                 COUNT(f.id) as n
-          FROM files f
+          SELECT strftime('%Y-%m', s.created_at) as mes,
+                 COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN s.precio_venta*0.5 ELSE s.precio_venta END),0) as v,
+                 COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN s.costo_original*0.5 ELSE s.costo_original END),0) as c,
+                 COUNT(DISTINCT f.id) as n
+          FROM servicios s
+          JOIN files f ON s.file_id = f.id
           LEFT JOIN file_compartido fc ON fc.file_id = f.id
           WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado')
-            AND date(f.fecha_apertura) BETWEEN '${mesMin}' AND '${mesMax}'
-          GROUP BY strftime('%Y-%m', f.fecha_apertura)
+            AND date(s.created_at) BETWEEN '${mesMin}' AND '${mesMax}'
+          GROUP BY strftime('%Y-%m', s.created_at)
         `).bind(filtroVendedor).all()
 
     const evolucionCompQuery = filtroVendedor
       ? c.env.DB.prepare(`
-          SELECT strftime('%Y-%m', f.fecha_apertura) as mes,
-                 COALESCE(SUM(f.total_venta*0.5),0) as v,
-                 COALESCE(SUM(f.total_costo*0.5),0) as c,
-                 COUNT(f.id) as n
-          FROM file_compartido fc
-          JOIN files f ON f.id = fc.file_id
-          WHERE fc.vendedor_id = ? AND f.estado NOT IN ('anulado')
-            AND date(f.fecha_apertura) BETWEEN '${mesMin}' AND '${mesMax}'
-          GROUP BY strftime('%Y-%m', f.fecha_apertura)
+          SELECT strftime('%Y-%m', s.created_at) as mes,
+                 COALESCE(SUM(s.precio_venta*0.5),0) as v,
+                 COALESCE(SUM(s.costo_original*0.5),0) as c,
+                 COUNT(DISTINCT f.id) as n
+          FROM servicios s
+          JOIN files f ON s.file_id = f.id
+          JOIN file_compartido fc ON fc.file_id = f.id AND fc.vendedor_id = ?
+          WHERE f.estado NOT IN ('anulado')
+            AND date(s.created_at) BETWEEN '${mesMin}' AND '${mesMax}'
+          GROUP BY strftime('%Y-%m', s.created_at)
         `).bind(filtroVendedor).all()
       : Promise.resolve({ results: [] as any[] })
 
@@ -185,32 +194,38 @@ reportes.get('/reportes', async (c) => {
       filesDetalleRaw,
       filesDetalleCompRaw,
     ] = await Promise.all([
-      // Ventas propias del período
+      // Ventas propias del período — agrupadas por created_at del servicio
       !filtroVendedor
-        ? c.env.DB.prepare(
-            `SELECT COALESCE(SUM(total_venta),0) as venta, COALESCE(SUM(total_costo),0) as costo, COUNT(*) as total_files
-             FROM files WHERE estado NOT IN ('anulado') AND ${fechaCondPlain}`
+        ? c.env.DB.prepare(`
+            SELECT COALESCE(SUM(s.precio_venta),0) as venta,
+                   COALESCE(SUM(s.costo_original),0) as costo,
+                   COUNT(DISTINCT f.id) as total_files
+            FROM servicios s
+            JOIN files f ON s.file_id = f.id
+            WHERE f.estado NOT IN ('anulado') AND ${fechaCondSvc}`
           ).first()
         : c.env.DB.prepare(`
             SELECT
-              COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as venta,
-              COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as costo,
-              COUNT(f.id) as total_files
-            FROM files f
+              COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN s.precio_venta*0.5 ELSE s.precio_venta END),0) as venta,
+              COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN s.costo_original*0.5 ELSE s.costo_original END),0) as costo,
+              COUNT(DISTINCT f.id) as total_files
+            FROM servicios s
+            JOIN files f ON s.file_id = f.id
             LEFT JOIN file_compartido fc ON fc.file_id = f.id
-            WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCondPlain}
+            WHERE f.vendedor_id = ? AND f.estado NOT IN ('anulado') AND ${fechaCondSvc}
           `).bind(filtroVendedor).first(),
 
-      // Ventas compartidas del período
+      // Ventas compartidas del período — agrupadas por created_at del servicio
       filtroVendedor
         ? c.env.DB.prepare(`
             SELECT
-              COALESCE(SUM(f.total_venta*0.5),0) as venta,
-              COALESCE(SUM(f.total_costo*0.5),0) as costo,
-              COUNT(f.id) as total_files
-            FROM files f
+              COALESCE(SUM(s.precio_venta*0.5),0) as venta,
+              COALESCE(SUM(s.costo_original*0.5),0) as costo,
+              COUNT(DISTINCT f.id) as total_files
+            FROM servicios s
+            JOIN files f ON s.file_id = f.id
             JOIN file_compartido fc ON fc.file_id = f.id AND fc.vendedor_id = ?
-            WHERE f.estado NOT IN ('anulado') AND ${fechaCondPlain}
+            WHERE f.estado NOT IN ('anulado') AND ${fechaCondSvc}
           `).bind(filtroVendedor).first()
         : Promise.resolve(null),
 
@@ -225,13 +240,13 @@ reportes.get('/reportes', async (c) => {
          FROM files WHERE estado NOT IN ('anulado') AND ${fechaCondPlain}${whereVendPlain} GROUP BY estado`
       ).bind(...paramVend).all(),
 
-      // Top destinos
+      // Top destinos — por created_at del servicio
       c.env.DB.prepare(`
         SELECT s.destino_codigo, COUNT(*) as cantidad,
                SUM(s.precio_venta) as total_venta, SUM(s.costo_original) as total_costo
         FROM servicios s JOIN files f ON s.file_id = f.id
         WHERE s.destino_codigo IS NOT NULL AND s.destino_codigo != ''
-          AND f.estado NOT IN ('anulado') AND ${fechaCond}${whereVendF}
+          AND f.estado NOT IN ('anulado') AND ${fechaCondSvc}${whereVendF}
         GROUP BY s.destino_codigo ORDER BY total_venta DESC LIMIT 10
       `).bind(...paramVend).all(),
 
@@ -241,32 +256,32 @@ reportes.get('/reportes', async (c) => {
       // Evolución 6 meses (compartidos)
       evolucionCompQuery,
 
-      // Ranking propios (solo gerente sin filtro)
+      // Ranking propios (solo gerente sin filtro) — por created_at del servicio
       (isGerente && !filtroVendedor)
         ? c.env.DB.prepare(`
             SELECT u.id, u.nombre,
-                   COUNT(f.id) as total_files,
-                   COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_venta*0.5 ELSE f.total_venta END),0) as total_venta,
-                   COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN f.total_costo*0.5 ELSE f.total_costo END),0) as total_costo
+                   COUNT(DISTINCT f.id) as total_files,
+                   COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN s.precio_venta*0.5 ELSE s.precio_venta END),0) as total_venta,
+                   COALESCE(SUM(CASE WHEN fc.id IS NOT NULL THEN s.costo_original*0.5 ELSE s.costo_original END),0) as total_costo
             FROM usuarios u
-            LEFT JOIN files f ON f.vendedor_id = u.id
-              AND f.estado NOT IN ('anulado') AND ${fechaCond}
+            LEFT JOIN files f ON f.vendedor_id = u.id AND f.estado NOT IN ('anulado')
+            LEFT JOIN servicios s ON s.file_id = f.id AND ${fechaCondSvc}
             LEFT JOIN file_compartido fc ON fc.file_id = f.id
             WHERE u.rol IN ('vendedor','supervisor','administracion','gerente') AND u.email != 'gerente@drviaje.com'
             GROUP BY u.id, u.nombre
           `).all()
         : Promise.resolve({ results: [] as any[] }),
 
-      // Ranking compartidos (solo gerente sin filtro)
+      // Ranking compartidos (solo gerente sin filtro) — por created_at del servicio
       (isGerente && !filtroVendedor)
         ? c.env.DB.prepare(`
             SELECT fc.vendedor_id as id,
-                   COUNT(f.id) as total_files,
-                   COALESCE(SUM(f.total_venta*0.5),0) as total_venta,
-                   COALESCE(SUM(f.total_costo*0.5),0) as total_costo
+                   COUNT(DISTINCT f.id) as total_files,
+                   COALESCE(SUM(s.precio_venta*0.5),0) as total_venta,
+                   COALESCE(SUM(s.costo_original*0.5),0) as total_costo
             FROM file_compartido fc
-            JOIN files f ON f.id = fc.file_id
-              AND f.estado NOT IN ('anulado') AND ${fechaCond}
+            JOIN files f ON f.id = fc.file_id AND f.estado NOT IN ('anulado')
+            JOIN servicios s ON s.file_id = f.id AND ${fechaCondSvc}
             GROUP BY fc.vendedor_id
           `).all()
         : Promise.resolve({ results: [] as any[] }),
@@ -1601,3 +1616,4 @@ reportes.get('/reportes/exportar/servicios-pendientes', async (c) => {
     return c.text('Error: ' + e.message, 500)
   }
 })
+
