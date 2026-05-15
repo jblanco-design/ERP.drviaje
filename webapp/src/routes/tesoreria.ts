@@ -5096,6 +5096,30 @@ tesoreria.get('/tesoreria/transferencias', async (c) => {
       `SELECT id, nombre_entidad, moneda FROM bancos WHERE activo=1 ORDER BY nombre_entidad`
     ).all()
 
+    // Cajas abiertas hoy (para depósito caja→banco)
+    const cajasAbiertas = await c.env.DB.prepare(
+      `SELECT cs.id, cs.moneda, cs.fecha, cs.monto_inicial,
+              COALESCE(SUM(CASE WHEN mc.tipo='ingreso' THEN mc.monto ELSE 0 END),0) as total_ingresos,
+              COALESCE(SUM(CASE WHEN mc.tipo='egreso'  THEN mc.monto ELSE 0 END),0) as total_egresos
+       FROM caja_sesiones cs
+       LEFT JOIN movimientos_caja mc ON mc.caja_sesion_id = cs.id AND mc.anulado = 0
+       WHERE cs.estado = 'abierta'
+       GROUP BY cs.id`
+    ).all()
+
+    // Historial de depósitos caja→banco
+    const depositosCaja = await c.env.DB.prepare(
+      `SELECT d.*, b.nombre_entidad as banco_nombre, b.moneda as banco_moneda,
+              u.nombre as usuario_nombre, ua.nombre as anulado_por_nombre,
+              cs.fecha as caja_fecha
+       FROM depositos_caja_banco d
+       LEFT JOIN bancos b      ON b.id = d.banco_destino_id
+       LEFT JOIN usuarios u    ON u.id = d.usuario_id
+       LEFT JOIN usuarios ua   ON ua.id = d.anulado_por_usuario
+       LEFT JOIN caja_sesiones cs ON cs.id = d.caja_sesion_id
+       ORDER BY d.fecha DESC LIMIT 50`
+    ).all().catch(() => ({ results: [] as any[] }))
+
     const cotHoy = await c.env.DB.prepare(
       `SELECT moneda_origen, moneda_destino, valor FROM cotizaciones WHERE fecha = date('now')`
     ).all()
@@ -5104,16 +5128,20 @@ tesoreria.get('/tesoreria/transferencias', async (c) => {
       cot[`${r.moneda_origen}_${r.moneda_destino}`] = r.valor
     }
 
-    const successMsg = success === 'creada'  ? '✅ Transferencia registrada correctamente.'
-                     : success === 'anulada' ? '✅ Transferencia anulada. Los movimientos fueron revertidos.'
+    const successMsg = success === 'creada'         ? '✅ Transferencia registrada correctamente.'
+                     : success === 'anulada'        ? '✅ Transferencia anulada. Los movimientos fueron revertidos.'
+                     : success === 'deposito_ok'    ? '✅ Depósito de caja al banco registrado correctamente.'
+                     : success === 'deposito_anul'  ? '✅ Depósito anulado. Los movimientos fueron revertidos.'
                      : ''
-    const errorMsg   = error === 'misma_cuenta'    ? 'La cuenta origen y destino no pueden ser la misma.'
-                     : error === 'monto_invalido'  ? 'Los montos deben ser mayores a cero.'
-                     : error === 'banco_invalido'  ? 'Cuenta bancaria no encontrada o cerrada.'
-                     : error === 'sin_permiso'     ? 'No tenés permiso para esta acción.'
-                     : error === 'no_encontrada'   ? 'Transferencia no encontrada.'
-                     : error === 'ya_anulada'      ? 'La transferencia ya fue anulada.'
-                     : error === 'motivo_requerido'? 'El motivo de anulación es obligatorio.'
+    const errorMsg   = error === 'misma_cuenta'       ? 'La cuenta origen y destino no pueden ser la misma.'
+                     : error === 'monto_invalido'     ? 'Los montos deben ser mayores a cero.'
+                     : error === 'banco_invalido'     ? 'Cuenta bancaria no encontrada o cerrada.'
+                     : error === 'sin_permiso'        ? 'No tenés permiso para esta acción.'
+                     : error === 'no_encontrada'      ? 'Transferencia no encontrada.'
+                     : error === 'ya_anulada'         ? 'La transferencia ya fue anulada.'
+                     : error === 'motivo_requerido'   ? 'El motivo de anulación es obligatorio.'
+                     : error === 'sin_caja_abierta'   ? 'No hay caja abierta para esa moneda. Abrí la caja primero.'
+                     : error === 'deposito_no_encontrado' ? 'Depósito no encontrado.'
                      : ''
 
     const filaTransferencia = (t: any) => {
@@ -5275,6 +5303,121 @@ tesoreria.get('/tesoreria/transferencias', async (c) => {
               </div>
             </div>
           </form>
+        </div>
+      </div>
+
+      <!-- Depósito Caja → Banco -->
+      <div class="card" style="margin-bottom:24px;">
+        <div class="card-header">
+          <span class="card-title">
+            <i class="fas fa-piggy-bank" style="color:#059669"></i> Depósito de Caja al Banco
+          </span>
+        </div>
+        <div class="card-body">
+          ${(cajasAbiertas.results as any[]).length === 0
+            ? `<div style="text-align:center;padding:20px;color:#9ca3af;">
+                <i class="fas fa-cash-register" style="font-size:28px;margin-bottom:8px;display:block;"></i>
+                No hay cajas abiertas. <a href="/bancos/caja" style="color:#7B3FA0;font-weight:600;">Abrí una caja</a> primero.
+               </div>`
+            : `<form method="POST" action="/tesoreria/deposito-caja">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px;align-items:flex-end;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">CAJA ORIGEN</label>
+                    <select name="caja_sesion_id" required class="form-control">
+                      <option value="">— Seleccionar —</option>
+                      ${(cajasAbiertas.results as any[]).map((cs: any) => {
+                        const saldo = Number(cs.monto_inicial) + Number(cs.total_ingresos) - Number(cs.total_egresos)
+                        return `<option value="${cs.id}">Caja ${cs.moneda} — Saldo: ${cs.moneda} $${saldo.toLocaleString('es-UY',{minimumFractionDigits:2})}</option>`
+                      }).join('')}
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">BANCO DESTINO</label>
+                    <select name="banco_destino_id" required class="form-control">
+                      <option value="">— Seleccionar —</option>
+                      ${(bancos.results as any[]).map((b: any) =>
+                        `<option value="${b.id}">${esc(b.nombre_entidad)} (${b.moneda})</option>`
+                      ).join('')}
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">MONTO</label>
+                    <input type="number" name="monto" required min="0.01" step="0.01"
+                      class="form-control" placeholder="0.00">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">CONCEPTO</label>
+                    <input type="text" name="concepto" class="form-control"
+                      placeholder="Ej: Depósito diario" maxlength="200">
+                  </div>
+                  <button type="submit" class="btn btn-primary" style="white-space:nowrap;">
+                    <i class="fas fa-arrow-right"></i> Depositar
+                  </button>
+                </div>
+                <div style="font-size:11px;color:#6b7280;margin-top:8px;">
+                  <i class="fas fa-info-circle"></i>
+                  Se registrará un egreso en la caja y un ingreso en el banco vinculados automáticamente.
+                </div>
+              </form>
+              ${(depositosCaja.results as any[]).length > 0 ? `
+              <div style="margin-top:16px;border-top:1px solid #e5e7eb;padding-top:16px;">
+                <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px;">Historial reciente</div>
+                <div class="table-wrapper">
+                  <table>
+                    <thead><tr><th>Fecha</th><th>Caja</th><th>Banco</th><th>Monto</th><th>Concepto</th><th>Usuario</th><th>Estado</th><th></th></tr></thead>
+                    <tbody>
+                      ${(depositosCaja.results as any[]).map((d: any) => {
+                        const anulado = d.anulado === 1
+                        return `<tr style="${anulado ? 'opacity:0.5;text-decoration:line-through;background:#fef2f2;' : ''}">
+                          <td style="font-size:12px;color:#6b7280;">${(d.fecha||'').split('T')[0]}</td>
+                          <td style="font-size:12px;">Caja ${esc(d.moneda)} · ${esc(d.caja_fecha||'')}</td>
+                          <td style="font-size:12px;">${esc(d.banco_nombre||'—')}</td>
+                          <td><strong style="color:#059669;">$${Number(d.monto).toLocaleString('es-UY',{minimumFractionDigits:2})} ${esc(d.moneda)}</strong></td>
+                          <td style="font-size:12px;">${esc(d.concepto||'—')}</td>
+                          <td style="font-size:12px;">${esc(d.usuario_nombre||'—')}</td>
+                          <td>${anulado
+                            ? `<span style="font-size:10px;background:#fee2e2;color:#dc2626;padding:2px 6px;border-radius:4px;font-weight:700;">ANULADO</span>`
+                            : `<span style="font-size:10px;background:#d1fae5;color:#059669;padding:2px 6px;border-radius:4px;font-weight:700;">OK</span>`}
+                          </td>
+                          <td>
+                            ${!anulado ? `<button onclick="anularDeposito(${d.id})" class="btn btn-danger btn-sm" title="Anular"><i class="fas fa-times"></i></button>` : ''}
+                          </td>
+                        </tr>`
+                      }).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>` : ''}
+            `
+          }
+        </div>
+      </div>
+
+      <!-- Modal anular depósito caja→banco -->
+      <div class="modal-overlay" id="modal-anular-deposito">
+        <div class="modal" style="max-width:460px;">
+          <div class="modal-header">
+            <span class="modal-title"><i class="fas fa-times-circle" style="color:#dc2626"></i> Anular Depósito</span>
+            <button type="button" class="modal-close"
+              onclick="document.getElementById('modal-anular-deposito').classList.remove('active')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:#92400e;">
+              <i class="fas fa-exclamation-triangle"></i>
+              Se revertirá el egreso de caja y el ingreso al banco. Ingresá el motivo.
+            </div>
+            <form method="POST" id="form-anular-deposito" action="">
+              <div class="form-group">
+                <label class="form-label">MOTIVO *</label>
+                <input type="text" name="motivo" required class="form-control" placeholder="Motivo de anulación" maxlength="500">
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button type="submit" class="btn btn-danger"><i class="fas fa-times-circle"></i> Confirmar Anulación</button>
+                <button type="button" class="btn btn-outline"
+                  onclick="document.getElementById('modal-anular-deposito').classList.remove('active')">Cancelar</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
 
@@ -5447,6 +5590,11 @@ tesoreria.get('/tesoreria/transferencias', async (c) => {
           document.getElementById('anular-motivo').value    = ''
           document.getElementById('form-anular-transf').action = '/tesoreria/transferencias/' + id + '/anular'
           document.getElementById('modal-anular-transf').classList.add('active')
+        }
+
+        function anularDeposito(id) {
+          document.getElementById('form-anular-deposito').action = '/tesoreria/deposito-caja/' + id + '/anular'
+          document.getElementById('modal-anular-deposito').classList.add('active')
         }
       </script>
     `
@@ -6726,6 +6874,112 @@ tesoreria.post('/tesoreria/desimputar', async (c) => {
     return c.redirect('/tesoreria/desimputar?ok=1')
   } catch (e: any) {
     return c.redirect('/tesoreria/desimputar?error=' + encodeURIComponent(e.message || 'error_interno'))
+  }
+})
+
+// ══════════════════════════════════════════════════════════════
+// POST /tesoreria/deposito-caja — Registrar depósito caja → banco
+// ══════════════════════════════════════════════════════════════
+tesoreria.post('/tesoreria/deposito-caja', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/tesoreria/transferencias?error=sin_permiso')
+
+  try {
+    const b              = await c.req.parseBody()
+    const cajaSesionId   = Number(b.caja_sesion_id)
+    const bancoDestinoId = Number(b.banco_destino_id)
+    const monto          = Number(b.monto)
+    const concepto       = String(b.concepto || '').trim().substring(0, 200) || 'Depósito de caja al banco'
+
+    if (!Number.isInteger(cajaSesionId)   || cajaSesionId   <= 0) return c.redirect('/tesoreria/transferencias?error=sin_caja_abierta')
+    if (!Number.isInteger(bancoDestinoId) || bancoDestinoId <= 0) return c.redirect('/tesoreria/transferencias?error=banco_invalido')
+    if (!isFinite(monto) || monto <= 0)                           return c.redirect('/tesoreria/transferencias?error=monto_invalido')
+
+    // Verificar caja abierta
+    const caja = await c.env.DB.prepare(
+      `SELECT id, moneda FROM caja_sesiones WHERE id = ? AND estado = 'abierta'`
+    ).bind(cajaSesionId).first() as any
+    if (!caja) return c.redirect('/tesoreria/transferencias?error=sin_caja_abierta')
+
+    // Verificar banco destino activo
+    const banco = await c.env.DB.prepare(
+      `SELECT id FROM bancos WHERE id = ? AND activo = 1`
+    ).bind(bancoDestinoId).first() as any
+    if (!banco) return c.redirect('/tesoreria/transferencias?error=banco_invalido')
+
+    const moneda = caja.moneda as string
+    const cotizacion = moneda === 'USD' ? 1 : 1
+    const montoUyu   = moneda === 'UYU' ? monto : 0
+
+    // Egreso de caja
+    const resEgreso = await c.env.DB.prepare(`
+      INSERT INTO movimientos_caja
+        (tipo, metodo, moneda, monto, cotizacion, monto_uyu, caja_sesion_id, concepto, usuario_id, fecha, estado)
+      VALUES ('egreso', 'efectivo', ?, ?, ?, ?, ?, ?, ?, datetime('now'), 'confirmado')
+    `).bind(moneda, monto, cotizacion, montoUyu, cajaSesionId,
+        `[Depósito banco] ${concepto}`, user.id).run()
+    const movEgresoId = resEgreso.meta?.last_row_id as number
+
+    // Ingreso al banco
+    const resIngreso = await c.env.DB.prepare(`
+      INSERT INTO movimientos_caja
+        (tipo, metodo, moneda, monto, cotizacion, monto_uyu, banco_id, concepto, usuario_id, fecha, estado)
+      VALUES ('ingreso', 'efectivo', ?, ?, ?, ?, ?, ?, ?, datetime('now'), 'confirmado')
+    `).bind(moneda, monto, cotizacion, montoUyu, bancoDestinoId,
+        `[Depósito caja] ${concepto}`, user.id).run()
+    const movIngresoId = resIngreso.meta?.last_row_id as number
+
+    // Registrar el depósito vinculando ambos movimientos
+    await c.env.DB.prepare(`
+      INSERT INTO depositos_caja_banco
+        (mov_egreso_id, mov_ingreso_id, caja_sesion_id, banco_destino_id, moneda, monto, concepto, usuario_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(movEgresoId, movIngresoId, cajaSesionId, bancoDestinoId, moneda, monto, concepto, user.id).run()
+
+    return c.redirect('/tesoreria/transferencias?success=deposito_ok')
+  } catch (e: any) {
+    console.error('[DEPOSITO CAJA]', e.message)
+    return c.redirect('/tesoreria/transferencias?error=error_interno')
+  }
+})
+
+// ══════════════════════════════════════════════════════════════
+// POST /tesoreria/deposito-caja/:id/anular — Anular depósito
+// ══════════════════════════════════════════════════════════════
+tesoreria.post('/tesoreria/deposito-caja/:id/anular', async (c) => {
+  const user = await getUser(c)
+  if (!user) return c.redirect('/login')
+  if (!isAdminOrAbove(user.rol)) return c.redirect('/tesoreria/transferencias?error=sin_permiso')
+
+  try {
+    const id     = Number(c.req.param('id'))
+    const body   = await c.req.parseBody()
+    const motivo = String(body.motivo || '').trim().substring(0, 500)
+
+    if (!Number.isInteger(id) || id <= 0) return c.redirect('/tesoreria/transferencias?error=deposito_no_encontrado')
+    if (!motivo)                           return c.redirect('/tesoreria/transferencias?error=motivo_requerido')
+
+    const dep = await c.env.DB.prepare(
+      `SELECT * FROM depositos_caja_banco WHERE id = ?`
+    ).bind(id).first() as any
+    if (!dep)             return c.redirect('/tesoreria/transferencias?error=deposito_no_encontrado')
+    if (dep.anulado === 1) return c.redirect('/tesoreria/transferencias?error=ya_anulada')
+
+    await c.env.DB.batch([
+      c.env.DB.prepare(`UPDATE movimientos_caja SET anulado=1 WHERE id=?`).bind(dep.mov_egreso_id),
+      c.env.DB.prepare(`UPDATE movimientos_caja SET anulado=1 WHERE id=?`).bind(dep.mov_ingreso_id),
+      c.env.DB.prepare(`
+        UPDATE depositos_caja_banco
+        SET anulado=1, motivo_anulacion=?, anulado_por_usuario=?, anulado_at=datetime('now')
+        WHERE id=?
+      `).bind(motivo, user.id, id),
+    ])
+
+    return c.redirect('/tesoreria/transferencias?success=deposito_anul')
+  } catch (e: any) {
+    console.error('[DEPOSITO CAJA ANULAR]', e.message)
+    return c.redirect('/tesoreria/transferencias?error=error_interno')
   }
 })
 
