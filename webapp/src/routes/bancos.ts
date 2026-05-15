@@ -768,6 +768,23 @@ bancos.get('/bancos/caja', async (c) => {
     ORDER BY cs.fecha DESC
   `).all()
 
+  // Totales en tiempo real para sesiones abiertas
+  const sesionesIds = (sesionesAbiertas.results as any[]).map((s: any) => s.id)
+  const totalesRealMap: Record<number, { ingresos: number; egresos: number }> = {}
+  for (const sid of sesionesIds) {
+    const tr = await c.env.DB.prepare(`
+      SELECT
+        COALESCE(SUM(CASE WHEN tipo='ingreso' THEN monto ELSE 0 END), 0) as total_ingresos,
+        COALESCE(SUM(CASE WHEN tipo='egreso'  THEN monto ELSE 0 END), 0) as total_egresos
+      FROM movimientos_caja
+      WHERE caja_sesion_id = ? AND anulado = 0
+    `).bind(sid).first() as any
+    totalesRealMap[sid] = {
+      ingresos: Number(tr?.total_ingresos || 0),
+      egresos:  Number(tr?.total_egresos  || 0)
+    }
+  }
+
   // Alerta: cajas abiertas de días anteriores
   const cajasVencidas = (sesionesAbiertas.results as any[]).filter((s: any) => s.fecha < hoy)
 
@@ -849,16 +866,16 @@ bancos.get('/bancos/caja', async (c) => {
                   <div style="text-align:center;padding:10px;background:#f0fdf4;border-radius:8px;">
                     <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">ESPERADO</div>
                     <div style="font-size:16px;font-weight:800;color:#059669;">
-                      ${fmtMonto(cajaActual.monto_inicial + cajaActual.monto_ingresos - cajaActual.monto_egresos, moneda)}
+                      ${fmtMonto(cajaActual.monto_inicial + (totalesRealMap[cajaActual.id]?.ingresos||0) - (totalesRealMap[cajaActual.id]?.egresos||0), moneda)}
                     </div>
                   </div>
                   <div style="text-align:center;padding:10px;background:#dbeafe;border-radius:8px;">
                     <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">INGRESOS</div>
-                    <div style="font-size:14px;font-weight:700;color:#1d4ed8;">+${fmtMonto(cajaActual.monto_ingresos, moneda)}</div>
+                    <div style="font-size:14px;font-weight:700;color:#1d4ed8;">+${fmtMonto(totalesRealMap[cajaActual.id]?.ingresos||0, moneda)}</div>
                   </div>
                   <div style="text-align:center;padding:10px;background:#fee2e2;border-radius:8px;">
                     <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">EGRESOS</div>
-                    <div style="font-size:14px;font-weight:700;color:#dc2626;">-${fmtMonto(cajaActual.monto_egresos, moneda)}</div>
+                    <div style="font-size:14px;font-weight:700;color:#dc2626;">-${fmtMonto(totalesRealMap[cajaActual.id]?.egresos||0, moneda)}</div>
                   </div>
                 </div>
                 <div style="font-size:11px;color:#6b7280;margin-bottom:12px;">
@@ -1030,7 +1047,25 @@ bancos.get('/bancos/caja/:id/cerrar', async (c) => {
   if (!sesion)                   return c.redirect('/bancos/caja?error=no_encontrada')
   if (sesion.estado === 'cerrada') return c.redirect('/bancos/caja?error=ya_cerrada')
 
-  const esperado = sesion.monto_inicial + sesion.monto_ingresos - sesion.monto_egresos
+  // Calcular totales en tiempo real desde movimientos_caja
+  // (más confiable que los campos cacheados de caja_sesiones)
+  const totalesReal = await c.env.DB.prepare(`
+    SELECT
+      COALESCE(SUM(CASE WHEN tipo='ingreso' THEN monto ELSE 0 END), 0) as total_ingresos,
+      COALESCE(SUM(CASE WHEN tipo='egreso'  THEN monto ELSE 0 END), 0) as total_egresos
+    FROM movimientos_caja
+    WHERE caja_sesion_id = ? AND anulado = 0
+  `).bind(id).first() as any
+
+  const totalIngresos = Number(totalesReal?.total_ingresos || 0)
+  const totalEgresos  = Number(totalesReal?.total_egresos  || 0)
+
+  // Sincronizar campos cacheados por si hubiera discrepancia
+  await c.env.DB.prepare(
+    `UPDATE caja_sesiones SET monto_ingresos = ?, monto_egresos = ? WHERE id = ?`
+  ).bind(totalIngresos, totalEgresos, id).run()
+
+  const esperado = sesion.monto_inicial + totalIngresos - totalEgresos
   const fmtMonto = (m: number) =>
     `$${Number(m).toLocaleString('es-UY', { minimumFractionDigits: 2 })} ${sesion.moneda}`
 
@@ -1071,11 +1106,11 @@ bancos.get('/bancos/caja/:id/cerrar', async (c) => {
             </div>
             <div style="text-align:center;padding:12px;background:#dbeafe;border-radius:8px;">
               <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">INGRESOS DEL DÍA</div>
-              <div style="font-size:16px;font-weight:800;color:#1d4ed8;">+${fmtMonto(sesion.monto_ingresos)}</div>
+              <div style="font-size:16px;font-weight:800;color:#1d4ed8;">+${fmtMonto(totalIngresos)}</div>
             </div>
             <div style="text-align:center;padding:12px;background:#fee2e2;border-radius:8px;">
               <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">EGRESOS DEL DÍA</div>
-              <div style="font-size:16px;font-weight:800;color:#dc2626;">-${fmtMonto(sesion.monto_egresos)}</div>
+              <div style="font-size:16px;font-weight:800;color:#dc2626;">-${fmtMonto(totalEgresos)}</div>
             </div>
           </div>
           <div style="text-align:center;padding:16px;background:#f0fdf4;border-radius:10px;margin-bottom:20px;">
