@@ -6921,6 +6921,11 @@ tesoreria.post('/tesoreria/deposito-caja', async (c) => {
         `[Depósito banco] ${concepto}`, user.id).run()
     const movEgresoId = resEgreso.meta?.last_row_id as number
 
+    // Actualizar totales de la sesión de caja
+    await c.env.DB.prepare(
+      `UPDATE caja_sesiones SET monto_egresos = monto_egresos + ? WHERE id = ?`
+    ).bind(monto, cajaSesionId).run()
+
     // Ingreso al banco
     const resIngreso = await c.env.DB.prepare(`
       INSERT INTO movimientos_caja
@@ -6969,6 +6974,8 @@ tesoreria.post('/tesoreria/deposito-caja/:id/anular', async (c) => {
     await c.env.DB.batch([
       c.env.DB.prepare(`UPDATE movimientos_caja SET anulado=1 WHERE id=?`).bind(dep.mov_egreso_id),
       c.env.DB.prepare(`UPDATE movimientos_caja SET anulado=1 WHERE id=?`).bind(dep.mov_ingreso_id),
+      // Revertir el egreso en los totales de la sesión de caja
+      c.env.DB.prepare(`UPDATE caja_sesiones SET monto_egresos = MAX(0, monto_egresos - ?) WHERE id=?`).bind(dep.monto, dep.caja_sesion_id),
       c.env.DB.prepare(`
         UPDATE depositos_caja_banco
         SET anulado=1, motivo_anulacion=?, anulado_por_usuario=?, anulado_at=datetime('now')
